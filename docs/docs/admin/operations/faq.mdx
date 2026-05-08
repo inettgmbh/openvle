@@ -1,0 +1,43 @@
+---
+id: faq
+sidebar_label: FAQ
+sidebar_position: 15
+status: finished
+tags:
+  - operations
+  - faq
+---
+
+# FAQ {#faq}
+
+## Wie kann ich alle Benutzer auf einmal abmelden und zur erneuten Anmeldung zwingen? {#logout-all-users}
+
+Dazu muss in der `.env` der Wert von `AUTH_SECRET` ausgetauscht und das Backend neu gestartet werden. Danach sind alle bestehenden Benutzersitzungen sofort ungültig, und alle Benutzer müssen sich erneut anmelden.
+
+:::note
+Wenn nur einzelne Benutzersitzungen ungültig gemacht werden sollen, kann der jeweilige Benutzer gesperrt werden. Dies führt ebenfalls zur sofortigen Abmeldung des Benutzers.
+:::
+
+## Was passiert bei einem geplanten Neustart der Container? {#planned-restarts}
+
+In der Regel nichts Kritisches. Wenn die Docker-Container geordnet beendet werden, schließen sie laufende Tasks noch ab, verarbeiten jedoch keine neuen mehr. Docker wartet, bis der Container meldet, dass alle Aufgaben abgeschlossen sind, und beendet ihn anschließend sauber.
+
+Beim nächsten Start werden anstehende Tasks aus der Redis-Queue wieder ganz normal weiterbearbeitet.
+
+Wenn Container jedoch zwangsweise beendet werden, kann es unter Umständen zu Problemen mit noch laufenden Tasks kommen. OpenVLE versucht in diesem Fall, den Zustand automatisch so weit wie möglich wiederherzustellen. Der Status einzelner Tasks kann unter `System -> Tasks` eingesehen werden.
+
+:::note
+Docker wartet beim Beenden eines Containers nur eine begrenzte Zeit, bevor dieser zwangsweise gestoppt wird. Gegebenenfalls sollte das Timeout des Docker-Stop-Befehls (z. B. mit `--time <Sekunden>`) erhöht werden.
+:::
+
+## Welche Python-Version wird im Backend verwendet? {#current-python-version}
+
+Aktuell verwendet das Backend **Python 3.10**.
+
+## Welche Komponenten werden zum Start von OpenVLE benötigt? {#req-components}
+
+Für den Start von OpenVLE werden alle Komponenten des Docker-Compose-Stacks benötigt: **MariaDB**, **MongoDB**, **Redis**, **Scheduler**, **alle Worker** (worker, worker-vm-clone, worker-periodic), **Backend** und **Frontend**.
+
+Die externen Systeme wie **Proxmox VE**, **Apache Guacamole**, **LDAP-Server**, **OIDC-Provider** oder **SMTP-Server** werden nicht für den Start der Anwendung benötigt. Sobald jedoch Aktionen innerhalb von OpenVLE ausgeführt werden, die auf diese Systeme zugreifen (z. B. VM-Erstellung, E-Mail-Versand, SSO-Login), müssen diese erreichbar und korrekt konfiguriert sein.
+
+Ein Start des Stacks ist somit auch ohne die externen Komponenten möglich. Siehe [Infrastruktur — Externe Systeme](../infrastructure/#external-systems) für eine Übersicht.

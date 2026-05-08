@@ -1,0 +1,171 @@
+---
+id: sent
+sidebar_label: Sent
+sidebar_position: 10
+status: finished
+tags:
+  - mails
+  - sent
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Sent emails
+
+In the **Sent** section, you will find an overview of all emails sent by the system.  
+Here you can track when, to whom, and with which template a message was sent -- e.g. notifications about events or virtual machines.
+
+This overview serves as proof and verification, in case users report not having received an expected message, or if you want to check whether a specific dispatch took place.
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Emails → Sent"
+  alternative="Accessible via links from tasks, events, or users"
+/>
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'View all automatically or manually sent emails',
+    'Filter by recipient, send time, subject, or status',
+    'View subject, content, and delivery status',
+    'Verify the send time and any error messages',
+    'Link to the respective email template and task',
+  ]}
+/>
+
+---
+
+## Important fields at a glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Subject',
+      description:
+        "Subject line of the email. Displayed in the recipient's inbox.",
+    },
+    {
+      name: 'Recipient',
+      description:
+        'Email address of the recipient to whom the message was sent. For system emails, this is typically the address of a user account.',
+    },
+    {
+      name: 'Email template',
+      description:
+        'Reference to the email template used, which defines the text, layout, and any placeholders.',
+    },
+    {
+      name: 'Status',
+      description:
+        'Current delivery status of the email, e.g. *sent* (successfully sent), *failed* (delivery error), or *queued* (in queue).',
+    },
+    {
+      name: 'Created at',
+      description:
+        'Timestamp when the email was generated in the system and prepared for dispatch.',
+    },
+    {
+      name: 'Sender name / Sender address',
+      description:
+        'Displayed name and sender address that the recipient sees in their email application. These values are typically taken from the email template or the global system settings.',
+    },
+    {
+      name: 'Reply-to address',
+      description:
+        'Email address to which replies from the recipient should be sent. May differ from the actual sender.',
+    },
+    {
+      name: 'Content',
+      description:
+        'The actual message text of the sent email. Contains the resolved content of the template including all placeholders used.',
+    },
+  ]}
+/>
+
+---
+
+## Example or use case
+
+<Example title="Tracking a sent system email">
+  A user reports that she did not receive a notification about the start of an
+  event. In the **Emails → Sent** view, you can search for her address and see
+  that the email was successfully sent. This allows you to trace the dispatch or
+  identify possible errors (e.g. rejected delivery).
+</Example>
+
+{/* TODO: Add screenshot -- Sent overview example */}
+
+---
+
+## Notes / special considerations
+
+- Failed emails can be resent if needed.
+- Sent emails are stored for a defined period and then automatically deleted, see [Administration -> Installation -> Configuration](/docs/admin/install/configuration).
+- For large volumes of system emails (e.g. event start), dispatch is performed in batches (_bulk send_).
+- The actual email dispatch is performed asynchronously by the task worker process.
+- In the detail view of an email, the email template name used and the recipient are directly visible.
+
+---
+
+## Relationships to other objects
+
+<ObjectRelations
+  showChangelogs={false}
+  showPermissions={false}
+  showTasks={true}
+  showTags={false}
+  items={[
+    {
+      object: 'Email template',
+      description: 'Each sent email is assigned to exactly one email template.',
+      behavior: 'No automations.',
+    },
+  ]}
+/>
+
+---
+
+## Required permissions
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    { action: 'View emails', permission: 'mails_read', scoped: false },
+    {
+      action: 'Send emails',
+      permission: 'mails_send',
+      scoped: false,
+    },
+    {
+      action: 'Send emails (bulk)',
+      permission: 'mails_send_bulk',
+      scoped: false,
+      beta: true,
+    },
+  ]}
+/>
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Email templates', href: './templates' },
+    { label: 'Settings', href: '../system/settings' },
+    { label: 'Tasks', href: '../system/tasks' },
+  ]}
+/>

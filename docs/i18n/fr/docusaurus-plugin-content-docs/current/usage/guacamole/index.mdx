@@ -1,0 +1,133 @@
+---
+id: guacamole
+sidebar_label: Accès aux machines virtuelles
+sidebar_position: 100
+status: finished
+tags:
+  - guacamole
+  - remote-access
+---
+
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { Example } from '@site/src/components/Example.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Accès aux machines virtuelles
+
+OpenVLE utilise **Apache Guacamole** pour permettre l'accès web aux machines virtuelles.  
+Vous pouvez ainsi accéder de manière sécurisée à vos postes de travail, serveurs ou stations de travail depuis n'importe où – sans logiciel supplémentaire.
+
+---
+
+## Prérequis
+
+Pour l'accès via Apache Guacamole, vous avez besoin de :
+
+- Une **connexion Internet**
+- Un **navigateur web récent** (par ex. Firefox, Chrome, Edge, Safari)
+- Un **compte utilisateur** valide sur la plateforme OpenVLE (compte OIDC / LDAP ou accès local)
+
+---
+
+## Aperçu des fonctionnalités
+
+<FeatureList
+  items={[
+    'Accès distant sécurisé via le navigateur web (sans installation de logiciel local)',
+    'Prise en charge des connexions RDP, SSH et VNC',
+    'Authentification unique automatique avec les identifiants OpenVLE',
+    'Gestion des sessions et accès parallèle à plusieurs systèmes',
+    'Transfert de fichiers optionnel entre le système local et le système distant',
+    'Design responsive – idéal pour ordinateur de bureau, ordinateur portable ou tablette',
+  ]}
+/>
+
+---
+
+## Connexion à Guacamole
+
+1. Ouvrez votre navigateur et accédez à l'URL Guacamole de votre organisation.  
+   Vous pouvez obtenir l'URL auprès de votre administrateur (par ex. `https://desktop.example.com`).
+2. Connectez-vous avec les mêmes identifiants que ceux que vous utilisez pour OpenVLE.
+3. Après une connexion réussie, vous serez automatiquement redirigé vers votre tableau de bord personnel.
+
+<Example title="Exemple : Connexion via Guacamole">
+  Après la saisie des identifiants, la page d'accueil s'affiche avec toutes les
+  connexions disponibles. Si une seule machine virtuelle vous est attribuée,
+  vous serez automatiquement connecté directement à celle-ci.
+</Example>
+
+---
+
+## Accès aux systèmes distants
+
+Après la connexion, vous voyez une **liste de vos connexions disponibles**.  
+Chaque connexion correspond à un système distant – par ex. une machine virtuelle d'un événement.
+
+- Cliquez sur une connexion pour ouvrir le bureau distant.
+- L'accès se fait directement dans le navigateur – sans installation d'outils supplémentaires.
+- Vous pouvez utiliser la souris et le clavier comme d'habitude, les saisies sont transmises en temps réel.
+
+---
+
+## Gestion des sessions
+
+- Si vous gérez plusieurs systèmes, vous pouvez à tout moment basculer vers d'autres connexions.
+- Pour mettre fin à une session, il suffit de fermer l'onglet ou la fenêtre du navigateur.
+- Une **déconnexion** manuelle via le menu Guacamole met fin à toutes les sessions actives de manière complète.
+
+---
+
+## Transfert de fichiers (optionnel)
+
+Si activé, vous pouvez échanger des fichiers entre votre ordinateur local et le système distant :
+
+- Glissez-déposez des fichiers dans la session.
+- Ou utilisez le **gestionnaire de fichiers** intégré.
+
+> Cette fonctionnalité n'est disponible que si elle a été activée côté serveur.
+
+---
+
+## Conseils d'utilisation
+
+- **Raccourcis clavier :**  
+  Ouvrez le menu Guacamole pendant une session avec  
+  `Ctrl + Alt + Shift` (Windows/Linux) ou `Ctrl + Option + Shift` (macOS).
+
+- **Adaptabilité :**  
+  Guacamole s'adapte automatiquement aux différentes tailles d'écran – idéal pour une utilisation sur ordinateur portable ou appareil mobile.
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Accès distant à un événement">
+  Une enseignante souhaite accéder aux VM préparées pour les étudiants pendant
+  un événement. Via l'URL Guacamole de son organisation, elle se connecte,
+  sélectionne la connexion **« Environnement Sécurité IT – VM 01 »** et ouvre
+  l'environnement distant directement dans le navigateur.
+</Example>
+
+---
+
+## Remarques / Particularités
+
+- Guacamole est entièrement basé sur le web – aucune installation client n'est nécessaire.
+- Les sessions continuent de fonctionner côté serveur, même si le navigateur est fermé (selon la configuration).
+- L'accès est contrôlé par les rôles et les permissions dans OpenVLE.
+- En cas d'interruption réseau, la connexion peut être automatiquement rétablie.
+
+---
+
+## Sujets associés
+
+<RelatedLinks
+  items={[
+    { label: 'Machines virtuelles', href: '../openvle/vms' },
+    { label: 'Connexions', href: '../openvle/connections' },
+    { label: 'Environnements', href: '../openvle/courses' },
+    { label: 'Événements', href: '../openvle/events' },
+  ]}
+/>

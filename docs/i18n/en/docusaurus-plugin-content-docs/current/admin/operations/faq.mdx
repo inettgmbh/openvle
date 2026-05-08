@@ -1,0 +1,43 @@
+---
+id: faq
+sidebar_label: FAQ
+sidebar_position: 15
+status: finished
+tags:
+  - operations
+  - faq
+---
+
+# FAQ {#faq}
+
+## How can I log out all users at once and force them to re-authenticate? {#logout-all-users}
+
+To do this, change the value of `AUTH_SECRET` in the `.env` and restart the backend. After that, all existing user sessions are immediately invalidated, and all users must log in again.
+
+:::note
+If only individual user sessions need to be invalidated, the respective user can be blocked. This also results in the immediate logout of that user.
+:::
+
+## What happens during a planned container restart? {#planned-restarts}
+
+Generally nothing critical. When Docker containers are shut down gracefully, they finish running tasks but no longer accept new ones. Docker waits until the container reports that all tasks are completed, then shuts it down cleanly.
+
+On the next startup, pending tasks from the Redis queue are processed normally.
+
+If containers are forcefully terminated, issues may arise with still-running tasks. OpenVLE attempts to automatically restore the state as much as possible in this case. The status of individual tasks can be viewed under `System -> Tasks`.
+
+:::note
+Docker only waits a limited time when stopping a container before it is forcefully killed. You may need to increase the timeout of the Docker stop command (e.g., with `--time <seconds>`).
+:::
+
+## Which Python version is used in the backend? {#current-python-version}
+
+The backend currently uses **Python 3.10**.
+
+## Which components are required to start OpenVLE? {#req-components}
+
+All components of the Docker Compose stack are required to start OpenVLE: **MariaDB**, **MongoDB**, **Redis**, **Scheduler**, **all workers** (worker, worker-vm-clone, worker-periodic), **Backend**, and **Frontend**.
+
+The external systems such as **Proxmox VE**, **Apache Guacamole**, **LDAP server**, **OIDC provider**, or **SMTP server** are not required to start the application. However, once actions within OpenVLE are performed that access these systems (e.g., VM creation, email sending, SSO login), they must be reachable and correctly configured.
+
+Starting the stack is therefore also possible without the external components. See [Infrastructure — External Systems](../infrastructure/#external-systems) for an overview.

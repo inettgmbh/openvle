@@ -1,0 +1,9 @@
+---
+name: openvle
+
+services:
+  docs:
+    image: ${IMAGE_REGISTRY:-ghcr.io/inettgmbh}/openvle/docs:${DOCS_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - 0.0.0.0:3000:80

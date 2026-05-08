@@ -1,0 +1,203 @@
+---
+id: applications
+sidebar_label: Applications
+sidebar_position: 120
+status: finished
+tags:
+  - infrastructure
+  - applications
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Applications
+
+In the **Applications** section, you manage software components used in VM templates, virtual machines, or environments.  
+This allows you to keep track of which software versions are used in your OpenVLE infrastructure and to document them systematically.
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Infrastructure → Applications"
+  alternative="Linked from Vendors, Virtual Machines, or VM templates"
+/>
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'View, create, edit, and delete applications',
+    'Assign an application to a vendor',
+    'Capture version information and descriptions',
+    'Link applications to VM templates or environments',
+    'Support for inventory management of deployed software',
+  ]}
+/>
+
+---
+
+## Important fields at a glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'The name of the application, e.g. "LibreOffice" or "Visual Studio Code". Displayed in lists and associations.',
+    },
+    {
+      name: 'Vendor',
+      description:
+        'Relationship to the vendor that provides the application. Enables consistent assignment and filtering within the infrastructure.',
+    },
+    {
+      name: 'Description',
+      description:
+        'Brief description or version information of the application, e.g. "Office suite for word processing, spreadsheets, and presentations".',
+    },
+  ]}
+/>
+
+---
+
+## Creating an application
+
+1. Open the **Infrastructure → Applications** section from the main menu.
+2. Click **Add** to create a new application.
+3. Enter a **name**, a **vendor**, and a **description** for the application.
+4. Save the application.
+5. Then switch to the **VMs** or **VM templates** tab to add or remove the required VM templates for the application.
+
+:::info
+The required vendor must exist before creating the application.
+:::
+
+---
+
+## Editing an application
+
+1. Open the **Infrastructure → Applications** section from the main menu.
+2. Find the desired application in the list.
+3. Click **Edit**, or open the context menu of the application and select **Edit**.
+4. The form displays all current data of the application.
+5. Adjust the desired fields -- for example **Name** or **Description**.
+6. Save the changes.
+
+:::note
+If a software version has been updated, e.g. from _Office 2016_ to _Office 2019_, it is recommended to create a **new application**.  
+This prevents already assigned VMs and VM templates from being affected by this version change.  
+Otherwise, it would appear in OpenVLE as though all assigned systems had been upgraded to the new version.
+:::
+
+---
+
+## Deleting an application
+
+1. Open the **Infrastructure → Applications** section from the main menu.
+2. Find the desired application in the list.
+3. Click **Delete**, or open the context menu of the application and select **Delete**.
+4. Confirm the deletion in the displayed dialog.
+5. The application is then permanently removed.
+
+:::note
+When deleting an application, all assignments to VMs and VM templates are removed.  
+However, the affected VMs and VM templates themselves remain unchanged.
+:::
+
+---
+
+## Example or use case
+
+<Example title="Create a new application for VM templates">
+  An administrator wants to document an application for all training machines.  
+  She opens the **Infrastructure → Applications** section, clicks **Add**, and enters the data:  
+  - Name: *LibreOffice*  
+  - Vendor: *The Document Foundation*  
+  - Description: *Office suite for word processing, spreadsheets, and presentations*
+
+She then assigns the application to the relevant VM templates to ensure clean inventory management.
+
+</Example>
+
+---
+
+## Notes / special considerations
+
+- Applications serve exclusively for **documentation** and **assignment** -- they are not automatically installed.
+- An application can be assigned to multiple VM templates or virtual machines.
+- When an application is deleted, existing assignments in VMs or VM templates are also removed.
+- Vendors must already exist before creating an application.
+
+---
+
+## Relationships to other objects
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Vendor',
+      description: 'Exactly one vendor can be assigned to an application.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'VM templates',
+      description:
+        'Any number of VM templates can be assigned to an application.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'VMs',
+      description: 'Any number of VMs can be assigned to an application.',
+      behavior: 'No automations.',
+    },
+  ]}
+/>
+
+---
+
+## Required permissions
+
+<Permissions
+  data={[
+    {
+      action: 'View applications',
+      permission: 'applications_read',
+      scoped: true,
+    },
+    { action: 'Create applications', permission: 'applications_create' },
+    {
+      action: 'Edit applications',
+      permission: 'applications_update',
+      scoped: true,
+    },
+    {
+      action: 'Delete applications',
+      permission: 'applications_delete',
+      scoped: true,
+    },
+    { action: 'View vendors', permission: 'vendors_read' },
+  ]}
+/>
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Operating systems', href: './os' },
+    { label: 'Vendors', href: './vendors' },
+    { label: 'Virtual Machines', href: '../vms' },
+    { label: 'VM templates', href: '../vm-templates' },
+  ]}
+/>

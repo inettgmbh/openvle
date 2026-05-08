@@ -1,0 +1,100 @@
+---
+id: dashboard
+sidebar_label: Dashboard
+sidebar_position: 20
+status: finished
+tags:
+  - dashboard
+---
+
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { Example } from '@site/src/components/Example.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Dashboard
+
+Nach dem Login gelangst du auf das **Dashboard** – die zentrale Startseite von **OpenVLE**.  
+Hier erhältst du auf einen Blick Zugriff auf deine wichtigsten Ressourcen, Aktivitäten und Systeme.
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="Dashboard"
+  alternative="Das Dashboard wird direkt nach dem Login oder über das Hauptmenü aufgerufen."
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Übersicht über persönliche oder systemweite Aktivitäten',
+    'Schneller Zugriff auf häufig genutzte externe Systeme (z. B. Confluence, Ticketsystem)',
+    'Darstellung von virtuellen Maschinen, Umgebungen und Vorlagen in tabellarischer oder kachelbasierter Form',
+    'Statusanzeigen zu laufenden Prozessen, Aufgaben oder anstehenden Veranstaltungen',
+    'Rollenbasierte Anzeige von Informationen je nach Berechtigung (Benutzer, Trainer, Administrator)',
+  ]}
+/>
+
+---
+
+## Zugriff auf Ressourcen
+
+Welche Inhalte auf dem Dashboard erscheinen, hängt von deinen Benutzerrechten ab:
+
+- **Eigene Ressourcen:** Du siehst nur deine persönlichen Objekte (z. B. eigene VMs oder Umgebungen).
+- **Unternehmensressourcen:** Als Administratorin oder Administrator siehst du alle Ressourcen des Systems.
+- **Globale Ansicht:** Mit erweiterten Rollen (z. B. Systembetreuung oder Superuser) erhältst du Zugriff auf erweiterte Informationen.
+
+> So siehst du immer nur die Inhalte, die für deine Rolle relevant sind.
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Dashboard-Ansicht eines Studierenden">
+  Ein Studierender meldet sich in OpenVLE an und sieht auf dem Dashboard seine
+  aktiven Umgebungen, die dazugehörigen virtuellen Maschinen und anstehende
+  Veranstaltungstermine. Über die Kacheln kann er direkt zu seinen Systemen
+  wechseln, ohne andere Bereiche öffnen zu müssen.
+</Example>
+
+{/* TODO: Screenshot ![Beispiel Dashboard eines Studierenden](/screens/dashboards/student-01.png) */}
+{/* TODO: Screenshot ![Weitere Ansicht für Studierende](/screens/dashboards/student-02.png) */}
+
+---
+
+<Example title="Dashboard-Ansicht einer Administratorin">
+  Eine Administratorin sieht auf ihrem Dashboard eine Übersicht aller laufenden
+  Veranstaltungen, systemweiten Aufgaben und offenen Prozesse. Außerdem hat sie
+  direkten Zugriff auf Infrastruktur-Bereiche wie **Vorlagen**, **VMs** oder die
+  **Benutzerverwaltung**.
+</Example>
+
+{/* TODO: Screenshot ![Beispiel Dashboard einer Administratorin](/screens/dashboards/admin-01.png) */}
+{/* TODO: Screenshot ![Weitere Ansicht für Administratorinnen und Administratoren](/screens/dashboards/admin-02.png) */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Das Dashboard ist individuell an die Berechtigungen des angemeldeten Benutzers angepasst.
+- Systemweite Benachrichtigungen werden ebenfalls hier angezeigt.
+- Bestimmte Module (z. B. Aktivitäten oder Tasks) werden nur eingeblendet, wenn entsprechende Berechtigungen vorhanden sind.
+- Für externe Links (z. B. Ticketsystem, Confluence) gelten stets die Zugriffsrechte des jeweiligen Zielsystems.
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Umgebungen', href: '../courses' },
+    { label: 'Virtuelle Maschinen', href: '../vms' },
+    { label: 'Veranstaltungen', href: '../events' },
+  ]}
+/>

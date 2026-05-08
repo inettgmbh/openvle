@@ -1,0 +1,16 @@
+---
+name: openvle
+
+services:
+  frontend:
+    image: ${IMAGE_REGISTRY:-ghcr.io/inettgmbh}/openvle/frontend:${FRONTEND_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    volumes:
+      - ./.env:/docker-entrypoint.d/.env:ro
+#     - ./static/logo_background.svg:/usr/share/nginx/html/logo_background.svg:ro
+#     - ./static/logo-with-text-light.svg:/usr/share/nginx/html/logo-with-text-light.svg:ro
+#     - ./static/logo-with-text-dark.svg:/usr/share/nginx/html/logo-with-text-dark.svg:ro
+#     - ./static/favicon.svg:/usr/share/nginx/html/favicon.svg
+#     - ./static/apple-touch-icon.png:/usr/share/nginx/html/apple-touch-icon.png
+    ports:
+      - 0.0.0.0:80:80

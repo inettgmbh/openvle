@@ -1,0 +1,107 @@
+---
+id: openvle
+sidebar_label: OpenVLE
+sidebar_position: 0
+status: finished
+tags:
+  - overview
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# OpenVLE
+
+OpenVLE est un logiciel de gestion en ligne conçu pour organiser et piloter efficacement des infrastructures informatiques complexes.  
+Il permet la gestion centralisée de **machines virtuelles**, d'**utilisateurs**, d'**environnements** et d'**événements** dans une interface unique et intuitive.  
+Même les utilisateurs ayant peu de connaissances techniques peuvent utiliser OpenVLE sans difficulté.
+
+OpenVLE intègre des technologies modernes telles que **Proxmox VE**, **Apache Guacamole**, **Cloud-Init** et le **Qemu Guest Agent** pour provisionner et gérer automatiquement les environnements virtuels.  
+Ainsi, plusieurs utilisateurs peuvent accéder simultanément aux machines virtuelles — de manière sécurisée, efficace et sans installation de logiciel supplémentaire.
+
+{/* TODO: Screenshot hinzufügen – Überblick der Verwaltungsoberfläche */}
+
+---
+
+## Où trouver cette section ?
+
+Après la connexion, vous accédez directement au **tableau de bord** d'OpenVLE.  
+De là, vous pouvez accéder à toutes les sections via le **menu principal à gauche** — par exemple :
+
+- **Contrôle d'accès** pour les utilisateurs, rôles et permissions
+- **Environnements** et **événements** pour les environnements d'apprentissage
+- **Machines virtuelles** et **modèles** pour la gestion technique
+- **Système** et **e-mails** pour les paramètres et les notifications
+
+---
+
+## Aperçu des fonctionnalités
+
+OpenVLE offre un large éventail de fonctionnalités puissantes couvrant l'ensemble du cycle de vie des environnements d'apprentissage et de travail virtuels :
+
+<FeatureList
+  items={[
+    'Créer, dupliquer, configurer et supprimer des machines virtuelles — y compris en masse pour des formations ou des scénarios de test',
+    'Gestion des modèles pour la réutilisation efficace de configurations prédéfinies',
+    "Intégration d'Apache Guacamole pour un accès RDP/SSH via le navigateur sans installation de logiciel local",
+    'Gestion des environnements et des événements avec provisionnement automatisé pour des groupes de participants',
+    "Notifications par e-mail automatisées lors d'événements système (par ex. création de VM, provisionnement d'événement)",
+    "Gestion des politiques pour le consentement aux accords de confidentialité ou d'utilisation avant l'utilisation",
+    'Étiquetage et catégorisation de tous les objets pour une meilleure organisation et un meilleur filtrage',
+    'Journalisation des activités et suivi des modifications avec traçabilité complète',
+    "Gestion des fabricants, systèmes d'exploitation et applications pour une attribution structurée et une vue d'ensemble",
+  ]}
+/>
+
+{/* TODO: Screenshot hinzufügen – Beispielansicht einer VM-Liste */}
+
+---
+
+## Guide pas à pas
+
+Voici comment démarrer avec OpenVLE :
+
+1. **Se connecter :** Connectez-vous avec votre compte utilisateur.
+2. **Explorer le tableau de bord :** Consultez les tâches ouvertes, les événements planifiés et les activités récentes.
+3. **Gérer les machines virtuelles :** Ouvrez la section _Machines virtuelles_ pour créer ou démarrer de nouvelles instances.
+4. **Créer des environnements :** Regroupez des modèles et des VMs dans un environnement afin de les mettre à disposition dans des événements.
+5. **Vérifier les permissions :** Attribuez des rôles et des droits d'accès pour contrôler l'utilisation.
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Mettre à disposition un environnement d'apprentissage virtuel pour des formations">
+  Une administratrice souhaite mettre à disposition un environnement
+  d'apprentissage avec plusieurs machines virtuelles préconfigurées pour une
+  formation informatique. Elle crée d'abord un environnement standard dans la
+  section **Modèles de VM**, puis crée un **environnement** et planifie un
+  **événement** pour attribuer automatiquement les machines aux participants.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Ablauf der Umgebungserstellung */}
+
+---
+
+## Remarques / Particularités
+
+- Les modifications dans OpenVLE sont enregistrées automatiquement.
+- Certaines actions (par ex. création de VM ou opérations en masse) sont exécutées en arrière-plan sous forme de **tâches**.
+- Via le **journal des activités**, vous pouvez retracer toutes les modifications.
+- Si certaines sections sont grisées, il vous manque probablement les permissions correspondantes.
+- Toutes les actions des utilisateurs sont journalisées afin de garantir la transparence et la sécurité.
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: 'Tableau de bord', href: './dashboard' },
+    { label: "Contrôle d'accès", href: './access-control' },
+    { label: 'Machines virtuelles', href: './vms' },
+    { label: 'Environnements', href: './courses' },
+    { label: 'Événements', href: './events' },
+  ]}
+/>

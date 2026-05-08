@@ -1,0 +1,100 @@
+---
+id: dashboard
+sidebar_label: Dashboard
+sidebar_position: 20
+status: finished
+tags:
+  - dashboard
+---
+
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { Example } from '@site/src/components/Example.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Dashboard
+
+After logging in, you are taken to the **Dashboard** — the central start page of **OpenVLE**.  
+Here you get an at-a-glance overview of your most important resources, activities, and systems.
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Dashboard"
+  alternative="The dashboard is displayed directly after login or can be accessed via the main menu."
+/>
+
+---
+
+## Features at a Glance
+
+<FeatureList
+  items={[
+    'Overview of personal or system-wide activities',
+    'Quick access to frequently used external systems (e.g., Confluence, ticket system)',
+    'Display of virtual machines, environments, and templates in table or tile-based layout',
+    'Status indicators for running processes, tasks, or upcoming events',
+    'Role-based display of information depending on permissions (user, trainer, administrator)',
+  ]}
+/>
+
+---
+
+## Accessing Resources
+
+Which content appears on the dashboard depends on your user permissions:
+
+- **Own resources:** You only see your personal objects (e.g., your own VMs or environments).
+- **Organization resources:** As an administrator, you can see all resources in the system.
+- **Global view:** With extended roles (e.g., system administration or superuser), you gain access to additional information.
+
+> This way, you always see only the content that is relevant to your role.
+
+---
+
+## Example or Use Case
+
+<Example title="Dashboard view of a student">
+  A student logs into OpenVLE and sees their active environments, the associated
+  virtual machines, and upcoming event dates on the dashboard. Via the tiles,
+  they can navigate directly to their systems without having to open other
+  sections.
+</Example>
+
+{/* TODO: Screenshot ![Example dashboard of a student](/screens/dashboards/student-01.png) */}
+{/* TODO: Screenshot ![Additional view for students](/screens/dashboards/student-02.png) */}
+
+---
+
+<Example title="Dashboard view of an administrator">
+  An administrator sees an overview of all running events, system-wide tasks,
+  and open processes on their dashboard. They also have direct access to
+  infrastructure sections such as **Templates**, **VMs**, or **User
+  Management**.
+</Example>
+
+{/* TODO: Screenshot ![Example dashboard of an administrator](/screens/dashboards/admin-01.png) */}
+{/* TODO: Screenshot ![Additional view for administrators](/screens/dashboards/admin-02.png) */}
+
+---
+
+## Notes / Special Considerations
+
+- The dashboard is individually tailored to the permissions of the logged-in user.
+- System-wide notifications are also displayed here.
+- Certain modules (e.g., activities or tasks) are only shown when the corresponding permissions are available.
+- For external links (e.g., ticket system, Confluence), the access rights of the respective target system always apply.
+
+---
+
+## Related Topics
+
+<RelatedLinks
+  items={[
+    { label: 'Environments', href: '../courses' },
+    { label: 'Virtual Machines', href: '../vms' },
+    { label: 'Events', href: '../events' },
+  ]}
+/>

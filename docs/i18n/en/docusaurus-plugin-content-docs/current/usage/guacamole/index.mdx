@@ -1,0 +1,133 @@
+---
+id: guacamole
+sidebar_label: Accessing virtual machines
+sidebar_position: 100
+status: finished
+tags:
+  - guacamole
+  - remote-access
+---
+
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { Example } from '@site/src/components/Example.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Accessing virtual machines
+
+OpenVLE uses **Apache Guacamole** to provide web-based access to virtual machines.  
+This allows you to securely access your desktops, servers, or workstations from anywhere – without any additional software.
+
+---
+
+## Prerequisites
+
+To access via Apache Guacamole, you need:
+
+- An **internet connection**
+- A **modern web browser** (e.g., Firefox, Chrome, Edge, Safari)
+- A valid **user account** on the OpenVLE platform (OIDC / LDAP account or local account)
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'Secure remote access via the web browser (no local software installation required)',
+    'Support for RDP, SSH, and VNC connections',
+    'Automatic single sign-on with OpenVLE credentials',
+    'Session management and parallel access to multiple systems',
+    'Optional file transfer between local and remote systems',
+    'Responsive design – ideal for desktop, laptop, or tablet',
+  ]}
+/>
+
+---
+
+## Logging in to Guacamole
+
+1. Open your browser and navigate to your organization's Guacamole URL.  
+   You can get the URL from your administrator (e.g. `https://desktop.example.com`).
+2. Log in with the same credentials you use for OpenVLE.
+3. After successful login, you will be automatically redirected to your personal dashboard.
+
+<Example title="Example: Login via Guacamole">
+  After entering your credentials, the home page appears with all available
+  connections. If only one virtual machine is assigned to you, you will be
+  automatically connected to it directly.
+</Example>
+
+---
+
+## Accessing remote systems
+
+After logging in, you will see a **list of your available connections**.  
+Each connection corresponds to a remote system – e.g., a virtual machine from an event.
+
+- Click on a connection to open the remote desktop.
+- Access happens directly in the browser – no additional tools need to be installed.
+- You can use mouse and keyboard as usual; inputs are transmitted in real time.
+
+---
+
+## Session management
+
+- If you manage multiple systems, you can switch to other connections at any time.
+- To end a session, simply close the browser tab or window.
+- A manual **logout** via the Guacamole menu will fully terminate all active sessions.
+
+---
+
+## File transfer (optional)
+
+If enabled, you can exchange files between your local machine and the remote system:
+
+- Drag and drop files into the session via **drag & drop**.
+- Or use the integrated **file browser**.
+
+> This feature is only available if it has been enabled on the server side.
+
+---
+
+## Tips for usage
+
+- **Keyboard shortcuts:**  
+  Open the Guacamole menu during a session with  
+  `Ctrl + Alt + Shift` (Windows/Linux) or `Ctrl + Option + Shift` (macOS).
+
+- **Adaptability:**  
+  Guacamole automatically adjusts to different screen sizes – ideal for use on laptops or mobile devices.
+
+---
+
+## Example or use case
+
+<Example title="Remote access to an event">
+  An instructor wants to access the prepared VMs of participants during an
+  event. She logs in via her organization's Guacamole URL, selects the
+  connection **"Environment IT Security – VM 01"** and opens the remote
+  environment directly in the browser.
+</Example>
+
+---
+
+## Notes / Special considerations
+
+- Guacamole is fully web-based – no client installation required.
+- Sessions continue running on the server side even when the browser is closed (depending on the configuration).
+- Access is controlled by roles and permissions in OpenVLE.
+- In case of network interruptions, the connection can be automatically restored.
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Virtual machines', href: '../openvle/vms' },
+    { label: 'Connections', href: '../openvle/connections' },
+    { label: 'Environments', href: '../openvle/courses' },
+    { label: 'Events', href: '../openvle/events' },
+  ]}
+/>

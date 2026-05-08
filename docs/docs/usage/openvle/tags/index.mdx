@@ -1,0 +1,221 @@
+---
+id: tags
+sidebar_label: Tags
+sidebar_position: 60
+status: finished
+tags:
+  - tags
+  - organization
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Tags
+
+Tags sind Schlagworte, mit denen Objekte (z. B. Umgebungen, VM-Vorlagen oder virtuelle Maschinen) kategorisiert, gefiltert und leichter gefunden werden können.  
+Sie helfen, große Datenmengen übersichtlich zu strukturieren und Objekte thematisch zu gruppieren.
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="Tags"
+  alternative="Über Detailansichten von Umgebungen, VMs, VM-Vorlagen oder anderen Objekten verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Erstellen und Verwalten von Schlagworten (Tags)',
+    'Zuordnung von Tags zu Objekten wie Umgebungen, VM-Vorlagen, VMs oder anderen Objekten',
+    'Schnelles Filtern und Gruppieren',
+    'Automatische Vorschläge beim Hinzufügen neuer Tags basierend auf bestehenden Einträgen',
+  ]}
+/>
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Name des Tags. Wird in allen Listen- und Detailansichten angezeigt.',
+    },
+    {
+      name: 'Wert',
+      description:
+        'Wert des Tags. Wird in allen Listen- und Detailansichten angezeigt.',
+    },
+  ]}
+/>
+
+---
+
+## Erstellen eines Tags
+
+1. Öffne im Hauptmenü den Bereich des gewünschten Objekts.
+2. Suche in der Liste nach dem gewünschten Objekt und öffne dieses.
+3. In der Detailansicht des Objekts gibt es einen Abschnitt **Tags**.
+4. Klicke auf den Plus Button um einen neuen Tag hinzuzufügen.
+5. Gib einen **Namen** und einen **Wert** für den Tag an.
+6. Speichere den Tag.
+
+---
+
+## Löschen eines Tags
+
+1. Öffne im Hauptmenü den Bereich des gewünschten Objekts.
+2. Suche in der Liste nach dem gewünschten Objekt und öffne es.
+3. In der Detailansicht des Objekts befindet sich ein Abschnitt **Tags**.
+4. Klicke auf den X Button neben dem zu löschenden Tag.
+5. Bestätige den Löschvorgang im angezeigten Dialog.
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Kategorisierung von Umgebungen mit Tags">
+  Eine Umgebungsleiterin möchte ihre Veranstaltungen nach Themenbereichen
+  organisieren. Sie legt die Tags *Netzwerktechnik*, *Grundlagen* und
+  *Fortgeschritten* an. Anschließend kann sie in der Umgebungsübersicht nach
+  diesen Tags filtern und gezielt Umgebungen finden, die einem bestimmten
+  Themenfeld zugeordnet sind.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel Tagverwaltung */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Tags können mehrfach verwendet und mehreren Objekten gleichzeitig zugewiesen werden.
+- Beim Löschen eines Objekts werden die zugewiesenen Tags automatisch entfernt.
+- Tags sind unabhängig von Benutzerrollen – alle Benutzer mit den entsprechenden Berechtigungen können sie sehen und verwenden.
+- Das Tagging-System ist universell und unterstützt nahezu alle Objektmodelle in OpenVLE.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  showChangelogs={false}
+  showTags={false}
+  showPermissions={false}
+  items={[
+    {
+      object: 'Anwendungen',
+      description: 'Anwendungen können beliebig viele Tags zugewiesen werden.',
+      behavior:
+        'Automatisches Entfernen des Tags beim Löschen des zugehörigen Objekts.',
+    },
+    {
+      object: 'Betriebssysteme',
+      description:
+        'Betriebssystemen können beliebig viele Tags zugewiesen werden.',
+      behavior:
+        'Automatisches Entfernen des Tags beim Löschen des zugehörigen Objekts.',
+    },
+    {
+      object: 'Hersteller',
+      description: 'Hersteller können beliebig viele Tags zugewiesen werden.',
+      behavior:
+        'Automatisches Entfernen des Tags beim Löschen des zugehörigen Objekts.',
+    },
+    {
+      object: 'E-Mail Vorlagen',
+      description:
+        'E-Mail Vorlagen können beliebig viele Tags zugewiesen werden.',
+      behavior:
+        'Automatisches Entfernen des Tags beim Löschen des zugehörigen Objekts.',
+    },
+    {
+      object: 'Veranstaltungen',
+      description:
+        'Veranstaltungen können beliebig viele Tags zugewiesen werden.',
+      behavior:
+        'Automatisches Entfernen des Tags beim Löschen des zugehörigen Objekts.',
+    },
+    {
+      object: 'Verbindungen',
+      description: 'Verbindungen können beliebig viele Tags zugewiesen werden.',
+      behavior:
+        'Automatisches Entfernen des Tags beim Löschen des zugehörigen Objekts.',
+    },
+    {
+      object: 'Verbindungsvorlagen',
+      description:
+        'Verbindungsvorlagen können beliebig viele Tags zugewiesen werden.',
+      behavior:
+        'Automatisches Entfernen des Tags beim Löschen des zugehörigen Objekts.',
+    },
+    {
+      object: 'VMs',
+      description: 'VMs können beliebig viele Tags zugewiesen werden.',
+      behavior:
+        'Automatisches Entfernen des Tags beim Löschen des zugehörigen Objekts.',
+    },
+    {
+      object: 'VM-Vorlagen',
+      description: 'VM-Vorlagen können beliebig viele Tags zugewiesen werden.',
+      behavior:
+        'Automatisches Entfernen des Tags beim Löschen des zugehörigen Objekts.',
+    },
+    {
+      object: 'Benutzer',
+      description: 'Benutzer können beliebig viele Tags zugewiesen werden.',
+      behavior:
+        'Automatisches Entfernen des Tags beim Löschen des zugehörigen Objekts.',
+    },
+    {
+      object: 'Richtlinien',
+      description: 'Richtlinien können beliebig viele Tags zugewiesen werden.',
+      behavior:
+        'Automatisches Entfernen des Tags beim Löschen des zugehörigen Objekts.',
+    },
+    {
+      object: 'Rollen',
+      description: 'Rollen können beliebig viele Tags zugewiesen werden.',
+      behavior:
+        'Automatisches Entfernen des Tags beim Löschen des zugehörigen Objekts.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    { action: 'Tags anzeigen', permission: 'tags_read', scoped: false },
+    { action: 'Tags anlegen', permission: 'tags_create' },
+    { action: 'Tags bearbeiten', permission: 'tags_update', scoped: false },
+    { action: 'Tags löschen', permission: 'tags_delete', scoped: false },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Umgebungen', href: '../courses' },
+    { label: 'VM-Vorlagen', href: '../vm-templates' },
+    { label: 'Virtuelle Maschinen', href: '../vms' },
+  ]}
+/>

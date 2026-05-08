@@ -1,0 +1,343 @@
+---
+id: configuration
+sidebar_label: Référence de configuration
+sidebar_position: 50
+status: finished
+tags:
+  - installation
+  - configuration
+---
+
+# Référence de configuration {#configuration}
+
+Référence complète de toutes les variables d'environnement disponibles pour le backend et le frontend. Les variables sont configurées via deux fichiers à la racine du projet : `.env` (backend, workers, scheduler) et `frontend.env` (frontend).
+
+Les variables requises pour le démarrage sont décrites dans le [guide d'installation OpenVLE](openvle#configuration). Cette page sert de référence pour toutes les options disponibles.
+
+Dans les tableaux, **Oui** = toujours requis et **Oui\*** = requis lorsque la fonctionnalité correspondante est activée.
+
+:::info
+Toutes les variables du backend doivent être définies entre **guillemets (`" "`)**, sans quoi des erreurs d'analyse se produiront au démarrage. Après chaque modification, les conteneurs doivent être redémarrés : `docker compose down && docker compose up -d`.
+:::
+
+## Backend (`.env`) {#backend}
+
+### Général {#general}
+
+Paramètres de base de l'application. `CORS_ORIGINS` est la seule variable requise dans cette catégorie — elle doit contenir l'URL à laquelle le frontend est accessible, sinon le navigateur bloquera les requêtes API. Les autres variables contrôlent le nom du projet affiché, les informations de contact et l'environnement (production/développement).
+
+| Variable              | Valeur par défaut                     | Requis  | Description                                                        |
+| --------------------- | ------------------------------------- | ------- | ------------------------------------------------------------------ |
+| `API_HEALTH_TOKEN`    | `""`                                  | Non     | Jeton d'authentification pour les requêtes de health check         |
+| `APP_ENV`             | `"prod"`                              | Non     | Environnement (par ex. `prod`, `dev`)                              |
+| `CONTACT_MAIL`        | `"support@inett.de"`                  | Non     | E-mail de contact                                                  |
+| `CONTACT_NAME`        | `"inett GmbH"`                        | Non     | Nom de la personne/organisation de contact                         |
+| `CONTACT_URL`         | `"https://inett.de"`                  | Non     | Site web de contact                                                |
+| `CORS_ORIGINS`        | `[""]`                                | **Oui** | Origines autorisées pour CORS (URL du frontend)                    |
+| `DOCS_ENABLED`        | `False`                               | Non     | Activer les endpoints OpenAPI (`/docs`, `/redoc`, `/openapi.json`) |
+| `PROJECT_DESCRIPTION` | `"Kursverwaltungssoftware - Backend"` | Non     | Description du projet                                              |
+| `PROJECT_NAME`        | `"OpenVLE"`                           | Non     | Nom interne du projet                                              |
+| `PROJECT_TITLE`       | `"OpenVLE"`                           | Non     | Titre affiché dans l'interface                                     |
+| `PROJECT_VERSION`     | `1.0`                                 | Non     | Version du projet                                                  |
+
+### Authentification {#auth}
+
+Contrôle les sessions utilisateur et l'authentification basée sur des jetons. `AUTH_SECRET` et `SESSION_SECRET_TOKEN` doivent être définis sur des chaînes aléatoires et sécurisées — ils protègent les jetons JWT et les données de session. Un changement de `AUTH_SECRET` déconnecte immédiatement tous les utilisateurs actifs.
+
+| Variable                          | Valeur par défaut | Requis  | Description                                    |
+| --------------------------------- | ----------------- | ------- | ---------------------------------------------- |
+| `AUTH_ACCESS_TOKE_EXPIRE_MINUTES` | `480`             | Non     | Durée d'expiration des Access Tokens (minutes) |
+| `AUTH_ALOGORITHM`                 | `"HS256"`         | Non     | Algorithme pour l'authentification JWT         |
+| `AUTH_SECRET`                     | `""`              | **Oui** | Clé secrète pour l'authentification JWT        |
+| `SESSION_SECRET_TOKEN`            | `""`              | **Oui** | Jeton secret pour la gestion des sessions      |
+
+### Base de données — MariaDB {#mariadb}
+
+MariaDB est la base de données relationnelle principale et stocke toutes les entités centrales : utilisateurs, rôles, permissions, environnements, événements, VM, modèles de VM et connexions. Les informations de connexion doivent correspondre à l'instance MariaDB dans le stack Docker Compose. Les paramètres de pool contrôlent le nombre de connexions simultanées à la base de données que le backend maintient ouvertes — les valeurs par défaut sont suffisantes pour la plupart des installations.
+
+| Variable                     | Valeur par défaut | Requis  | Description                             |
+| ---------------------------- | ----------------- | ------- | --------------------------------------- |
+| `MARIADB_CHARSET`            | `"utf8mb4"`       | Non     | Jeu de caractères                       |
+| `MARIADB_DATABASE`           | `"project"`       | **Oui** | Nom de la base de données               |
+| `MARIADB_HOST`               | `"db"`            | **Oui** | Nom d'hôte du serveur MariaDB           |
+| `MARIADB_IMAGE_TAG`          | `"11.2"`          | Non     | Tag de l'image Docker                   |
+| `MARIADB_PASSWORD`           | `"project"`       | **Oui** | Mot de passe                            |
+| `MARIADB_POOL_ACQUIRE`       | `15000`           | Non     | Délai d'acquisition (ms)                |
+| `MARIADB_POOL_IDLE`          | `60000`           | Non     | Délai d'inactivité (ms)                 |
+| `MARIADB_POOL_MAX`           | `12`              | Non     | Connexions maximales dans le pool       |
+| `MARIADB_POOL_MIN`           | `2`               | Non     | Connexions minimales dans le pool       |
+| `MARIADB_PORT`               | `3306`            | **Oui** | Port MariaDB                            |
+| `MARIADB_QUERY_RESULT_LIMIT` | `200`             | Non     | Max. enregistrements par requête        |
+| `MARIADB_ROOT_PASSWORD`      | `""`              | **Oui** | Mot de passe root de l'instance MariaDB |
+| `MARIADB_TIMEOUT`            | `120`             | Non     | Délai de connexion (secondes)           |
+| `MARIADB_TYPE`               | `"mysql"`         | **Oui** | Type de base de données                 |
+| `MARIADB_USER`               | `"project"`       | **Oui** | Nom d'utilisateur                       |
+
+### Base de données — MongoDB {#mongodb}
+
+MongoDB stocke les activités, les événements système et les journaux d'audit. Ces données sont utilisées pour l'aperçu des activités dans l'interface utilisateur. Les informations de connexion doivent correspondre à l'instance MongoDB dans le stack Docker Compose.
+
+| Variable            | Valeur par défaut | Requis  | Description                   |
+| ------------------- | ----------------- | ------- | ----------------------------- |
+| `MONGODB_DATABASE`  | `"project"`       | **Oui** | Nom de la base de données     |
+| `MONGODB_HOST`      | `"localhost"`     | **Oui** | Nom d'hôte du serveur MongoDB |
+| `MONGODB_IMAGE_TAG` | `"jammy"`         | Non     | Tag de l'image Docker         |
+| `MONGODB_PASSWORD`  | `"project"`       | **Oui** | Mot de passe                  |
+| `MONGODB_PORT`      | `27017`           | **Oui** | Port                          |
+| `MONGODB_USER`      | `"project"`       | **Oui** | Nom d'utilisateur             |
+
+### Base de données — Redis {#redis}
+
+Redis sert de file d'attente de tâches et de cache pour les processus Worker et Scheduler. Toutes les tâches asynchrones (opérations VM, envoi d'e-mails, tâches périodiques) sont distribuées via les files Redis.
+
+| Variable          | Valeur par défaut | Requis  | Description                 |
+| ----------------- | ----------------- | ------- | --------------------------- |
+| `REDIS_DATABASE`  | `0`               | **Oui** | Index de la base de données |
+| `REDIS_HOST`      | `"localhost"`     | **Oui** | Nom d'hôte du serveur Redis |
+| `REDIS_IMAGE_TAG` | `"latest"`        | Non     | Tag de l'image Docker       |
+| `REDIS_PASSWORD`  | `"password"`      | **Oui** | Mot de passe                |
+| `REDIS_PORT`      | `6379`            | **Oui** | Port                        |
+| `REDIS_USERNAME`  | `"username"`      | **Oui** | Nom d'utilisateur           |
+
+### Proxmox VE {#proxmox}
+
+Configure la connexion à Proxmox VE, l'hyperviseur qui gère les machines virtuelles. Les identifiants (utilisateur, jeton) doivent correspondre à la configuration de l'[intégration Proxmox VE](proxmoxve).
+
+Les paramètres réseau et VM (`PVE_VMS_*`) déterminent la configuration des VM nouvellement créées : dans quel pool elles sont placées, quel réseau et sous-réseau elles utilisent, et si Cloud-Init est utilisé pour la configuration automatique.
+
+| Variable                     | Valeur par défaut   | Requis  | Description                                                                                                                                                                                 |
+| ---------------------------- | ------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PVE_API_POLL_RATE`          | `5`                 | Non     | Intervalle d'interrogation de l'API (secondes)                                                                                                                                              |
+| `PVE_CI_DRIVE`               | `"cephssd"`         | Non     | Stockage pour le lecteur Cloud-Init                                                                                                                                                         |
+| `PVE_CI_ENABLED`             | `False`             | Non     | Activer Cloud-Init lors de la création de VM                                                                                                                                                |
+| `PVE_FQDN`                   | `"domain.intern"`   | **Oui** | FQDN du serveur Proxmox                                                                                                                                                                     |
+| `PVE_HOSTNAME`               | `"proxmox:8006"`    | **Oui** | Nom d'hôte et port du serveur Proxmox                                                                                                                                                       |
+| `PVE_TOKEN_NAME`             | `"my-token"`        | **Oui** | Nom du jeton API                                                                                                                                                                            |
+| `PVE_TOKEN_VALUE`            | `"my-token-secret"` | **Oui** | Valeur secrète du jeton API                                                                                                                                                                 |
+| `PVE_USER`                   | `"user@pve"`        | **Oui** | Utilisateur Proxmox                                                                                                                                                                         |
+| `PVE_VERIFY_SSL`             | `True`              | Non     | Vérifier les certificats SSL                                                                                                                                                                |
+| `PVE_VM_SUBNET`              | `"0.0.0.0/16"`      | **Oui** | Sous-réseau pour les VM                                                                                                                                                                     |
+| `PVE_VMS_CIPASSWORD`         | `""`                | Non     | Mot de passe Cloud-Init                                                                                                                                                                     |
+| `PVE_VMS_CIUPGRADE`          | `False`             | Non     | Mise à jour système au démarrage de la VM                                                                                                                                                   |
+| `PVE_VMS_CIUSER`             | `"user"`            | Non     | Nom d'utilisateur Cloud-Init                                                                                                                                                                |
+| `PVE_VMS_DNS_DOMAIN`         | `""`                | Non     | Domaine DNS pour les VM                                                                                                                                                                     |
+| `PVE_VMS_DNS_SERVER`         | `"1.1.1.1"`         | Non     | Serveur DNS pour les VM                                                                                                                                                                     |
+| `PVE_VMS_EXCLUDED_IPS`       | `""`                | Non     | Adresses exclues de l'attribution d'IP. Liste séparée par des virgules d'IP, de plages d'IP (`1-254`) et de CIDR (`/24`). Défaut : `172.20.0.200, 172.20.0.1-172.20.0.254, 172.20.100.0/24` |
+| `PVE_VMS_FULL_CLONE_DEFAULT` | `False`             | Non     | Full Clones par défaut au lieu de Linked Clones                                                                                                                                             |
+| `PVE_VMS_GATEWAY`            | `""`                | Non     | Passerelle pour les réseaux VM                                                                                                                                                              |
+| `PVE_VMS_NETWORK`            | `""`                | **Oui** | Configuration réseau pour les VM                                                                                                                                                            |
+| `PVE_VMS_POOL`               | `"OpenVLE-VMs"`     | **Oui** | Pool Proxmox pour les VM gérées                                                                                                                                                             |
+| `PVE_VMS_SMBIOS_METADATA`    | `True`              | Non     | Transmettre les métadonnées VM au système d'exploitation invité via SMBIOS                                                                                                                  |
+| `PVE_VMS_SUBNET`             | `"/24"`             | Non     | Taille du sous-réseau                                                                                                                                                                       |
+
+### E-mail / SMTP {#smtp}
+
+OpenVLE envoie des e-mails système pour différents événements : notifications d'événements et messages de statut pour les opérations VM. Un serveur SMTP fonctionnel est requis pour l'exploitation en production. `MAIL_MAX_AGE_WEEKS` contrôle la durée de conservation des e-mails envoyés dans la base de données avant leur suppression automatique.
+
+| Variable             | Valeur par défaut       | Requis  | Description                                  |
+| -------------------- | ----------------------- | ------- | -------------------------------------------- |
+| `MAIL_MAX_AGE_WEEKS` | `4`                     | Non     | Durée de conservation des e-mails (semaines) |
+| `SMTP_FROM_MAIL`     | `"OpenVLE@example.com"` | **Oui** | Adresse de l'expéditeur                      |
+| `SMTP_FROM_NAME`     | `"OpenVLE"`             | **Oui** | Nom d'affichage de l'expéditeur              |
+| `SMTP_HOST`          | `"localhost"`           | **Oui** | Nom d'hôte du serveur SMTP                   |
+| `SMTP_METHOD`        | `"ssl"`                 | **Oui** | Méthode de connexion (SSL/TLS)               |
+| `SMTP_PASSWORD`      | `"password"`            | **Oui** | Mot de passe SMTP                            |
+| `SMTP_PORT`          | `465`                   | **Oui** | Port SMTP                                    |
+| `SMTP_USERNAME`      | `"username"`            | **Oui** | Nom d'utilisateur SMTP                       |
+
+### Événements {#events}
+
+Contrôle le déploiement automatique et le nettoyage des événements. Le délai de préparation (`PREP_TIME_DAYS`) détermine combien de jours avant la date de début ou après la date de fin d'un événement les processus automatiques (création de VM, suppression de VM) sont déclenchés. Avec `EVENTS_START_REQUIRE_STUDENTS`, il est possible de définir si un événement ne démarre que lorsqu'au moins un participant est affecté.
+
+| Variable                        | Valeur par défaut | Requis | Description                                                 |
+| ------------------------------- | ----------------- | ------ | ----------------------------------------------------------- |
+| `EVENTS_END_PREP_TIME_DAYS`     | `7`               | Non    | Jours avant la fin de l'événement pour les post-traitements |
+| `EVENTS_START_PREP_TIME_DAYS`   | `7`               | Non    | Jours avant le début de l'événement pour les préparations   |
+| `EVENTS_START_REQUIRE_STUDENTS` | `False`           | Non    | Ne démarrer l'événement que lorsqu'il y a des participants  |
+
+### Worker {#worker}
+
+Le processus Worker exécute les tâches asynchrones en arrière-plan : opérations VM (clonage, démarrage, arrêt), envoi d'e-mails et gestion des connexions Guacamole. Le Scheduler déclenche des tâches périodiques, par exemple la synchronisation régulière des informations des nœuds Proxmox. `WORKER_MAX_RETRY` contrôle le nombre de tentatives automatiques pour un job échoué avant qu'il ne soit marqué comme définitivement échoué.
+
+| Variable                       | Valeur par défaut | Requis | Description                                        |
+| ------------------------------ | ----------------- | ------ | -------------------------------------------------- |
+| `WORKER_MAX_RETRY`             | `5`               | Non    | Max. tentatives pour les jobs échoués              |
+| `WORKER_PVE_PERIODIC_INTERVAL` | `60`              | Non    | Intervalle des jobs Proxmox périodiques (secondes) |
+
+### Apache Guacamole (optionnel) {#guacamole}
+
+:::info Optionnel
+Ces variables ne sont requises que si [Apache Guacamole](guacamole) est utilisé pour l'accès bureau à distance. Sans Guacamole, OpenVLE peut toujours être utilisé pour gérer les VM et les modèles de VM — cependant, l'accès bureau à distance via le navigateur ne sera pas disponible.
+:::
+
+OpenVLE se connecte à la base de données Guacamole via ces identifiants pour créer, mettre à jour et supprimer automatiquement des connexions. Le `CONNECTIONS_PREFIX` permet de distinguer les connexions de différentes instances OpenVLE sur le même serveur Guacamole.
+
+| Variable                              | Valeur par défaut                 | Requis | Description                                        |
+| ------------------------------------- | --------------------------------- | ------ | -------------------------------------------------- |
+| `GUACAMOLE_CONNECTIONS_PREFIX`        | `""`                              | Non    | Préfixe pour les connexions créées automatiquement |
+| `GUACAMOLE_CONNECTIONS_PREFIX_EVENTS` | `False`                           | Non    | Préfixe également pour les connexions d'événements |
+| `GUACAMOLE_DB`                        | `"mysql"`                         | Oui\*  | Type de base de données Guacamole                  |
+| `GUACAMOLE_PASSWORD`                  | `"OpenVLE"`                       | Oui\*  | Mot de passe du compte OpenVLE                     |
+| `GUACAMOLE_URL`                       | `"http://openvle-guacamole:8080"` | Oui\*  | URL du serveur Guacamole                           |
+| `GUACAMOLE_USER`                      | `"OpenVLE"`                       | Oui\*  | Nom d'utilisateur du compte OpenVLE dans Guacamole |
+
+#### Paramètres de connexion — Général {#guacamole-connection-defaults}
+
+Ces variables contrôlent les valeurs par défaut des connexions Guacamole créées automatiquement. Elles sont utilisées comme configuration par défaut lors de la création de nouvelles connexions et peuvent être adaptées par type de connexion (RDP, VNC, SSH).
+
+| Variable                  | Valeur par défaut | Description                   |
+| ------------------------- | ----------------- | ----------------------------- |
+| `GUACAMOLE_CONN_TIMEZONE` | `Europe/Berlin`   | Fuseau horaire des connexions |
+
+#### Paramètres de connexion — RDP {#guacamole-rdp}
+
+Valeurs par défaut pour les connexions RDP (Remote Desktop Protocol). Ces paramètres contrôlent la qualité d'affichage, les autorisations de transfert de fichiers et la disposition du clavier pour l'accès bureau à distance.
+
+| Variable                                   | Valeur par défaut | Description                                                                  |
+| ------------------------------------------ | ----------------- | ---------------------------------------------------------------------------- |
+| `GUACAMOLE_RDP_COLOR_DEPTH`                | `32`              | Profondeur de couleur en bits (8, 16, 24 ou 32)                              |
+| `GUACAMOLE_RDP_DISABLE_BITMAP_CACHING`     | `False`           | Désactiver la mise en cache des bitmaps                                      |
+| `GUACAMOLE_RDP_DISABLE_DOWNLOAD`           | `True`            | Empêcher le téléchargement de fichiers depuis le bureau à distance           |
+| `GUACAMOLE_RDP_DISABLE_GFX`                | `False`           | Désactiver le pipeline GFX                                                   |
+| `GUACAMOLE_RDP_DISABLE_OFFSCREEN_CACHING`  | `False`           | Désactiver la mise en cache hors écran                                       |
+| `GUACAMOLE_RDP_DISABLE_UPLOAD`             | `True`            | Empêcher l'envoi de fichiers vers le bureau à distance                       |
+| `GUACAMOLE_RDP_ENABLE_AUDIO_INPUT`         | `False`           | Activer la redirection du microphone                                         |
+| `GUACAMOLE_RDP_ENABLE_DESKTOP_COMPOSITION` | `False`           | Activer la composition du bureau (Aero)                                      |
+| `GUACAMOLE_RDP_ENABLE_DRIVE`               | `False`           | Activer la redirection de lecteur (transfert de fichiers)                    |
+| `GUACAMOLE_RDP_ENABLE_FONT_SMOOTHING`      | `False`           | Activer le lissage des polices (ClearType)                                   |
+| `GUACAMOLE_RDP_ENABLE_FULL_WINDOW_DRAG`    | `True`            | Afficher le contenu de la fenêtre lors du déplacement                        |
+| `GUACAMOLE_RDP_ENABLE_MENU_ANIMATIONS`     | `False`           | Activer les animations de menu                                               |
+| `GUACAMOLE_RDP_ENABLE_PRINTING`            | `False`           | Activer la redirection d'imprimante                                          |
+| `GUACAMOLE_RDP_ENABLE_THEMING`             | `False`           | Activer les effets de thème Windows                                          |
+| `GUACAMOLE_RDP_ENABLE_WALLPAPER`           | `True`            | Afficher l'image d'arrière-plan du bureau                                    |
+| `GUACAMOLE_RDP_IGNORE_CERT`                | `True`            | Ne pas valider le certificat du serveur RDP                                  |
+| `GUACAMOLE_RDP_PRINTER_NAME`               | `Printer-Name`    | Nom de l'imprimante redirigée                                                |
+| `GUACAMOLE_RDP_RESIZE_METHOD`              | `reconnect`       | Méthode de redimensionnement de la fenêtre (`reconnect` ou `display-update`) |
+| `GUACAMOLE_RDP_SECURITY`                   | `""`              | Mode de sécurité RDP (vide = automatique, `nla`, `tls`, `rdp`, `any`)        |
+| `GUACAMOLE_RDP_SERVER_LAYOUT`              | `de-de-qwertz`    | Disposition du clavier (par ex. `de-de-qwertz`, `en-us-qwerty`)              |
+
+:::note Qualité d'affichage vs. performance
+Les options pour le fond d'écran, la composition du bureau, le lissage des polices, le thème et les animations de menu améliorent le rendu visuel, mais augmentent la bande passante nécessaire. Pour les connexions à bande passante limitée, il est recommandé de laisser ces options désactivées.
+:::
+
+:::caution Transfert de fichiers
+Par défaut, l'envoi et le téléchargement sont désactivés (`DISABLE_DOWNLOAD=True`, `DISABLE_UPLOAD=True`). N'activez ces options que si le transfert de fichiers entre l'utilisateur et la VM est souhaité. Pour cela, `ENABLE_DRIVE=True` doit également être défini.
+:::
+
+#### Paramètres de connexion — VNC {#guacamole-vnc}
+
+Valeurs par défaut pour les connexions VNC (Virtual Network Computing).
+
+| Variable                    | Valeur par défaut | Description                   |
+| --------------------------- | ----------------- | ----------------------------- |
+| `GUACAMOLE_VNC_COLOR_DEPTH` | `32`              | Profondeur de couleur en bits |
+
+#### Paramètres de connexion — SSH / SFTP {#guacamole-ssh}
+
+Valeurs par défaut pour les connexions SSH et SFTP. Les valeurs `SERVER_ALIVE_INTERVAL` contrôlent l'intervalle de keep-alive pour empêcher les connexions inactives d'expirer.
+
+| Variable                               | Valeur par défaut | Description                                                  |
+| -------------------------------------- | ----------------- | ------------------------------------------------------------ |
+| `GUACAMOLE_SFTP_SERVER_ALIVE_INTERVAL` | `30`              | Intervalle de keep-alive pour les connexions SFTP (secondes) |
+| `GUACAMOLE_SSH_SERVER_ALIVE_INTERVAL`  | `30`              | Intervalle de keep-alive pour les connexions SSH (secondes)  |
+
+### LDAP (optionnel) {#ldap}
+
+:::info Optionnel
+Ces variables ne sont requises que si les utilisateurs doivent s'authentifier via un serveur LDAP existant (par ex. Active Directory, OpenLDAP). Lorsque LDAP est activé, les utilisateurs peuvent se connecter avec leurs identifiants existants sans avoir besoin d'un mot de passe OpenVLE séparé.
+:::
+
+| Variable          | Valeur par défaut          | Requis | Description                             |
+| ----------------- | -------------------------- | ------ | --------------------------------------- |
+| `LDAP_ATTR_MAIL`  | `"mail"`                   | Non    | Attribut LDAP pour l'e-mail             |
+| `LDAP_ATTR_USER`  | `"uid"`                    | Non    | Attribut LDAP pour le nom d'utilisateur |
+| `LDAP_DN_PEOPLE`  | `"ou=people,dc=org,dc=de"` | Oui\*  | DN pour la recherche de personnes       |
+| `LDAP_ENABLED`    | `False`                    | Non    | Activer l'authentification LDAP         |
+| `LDAP_HOST`       | `"localhost"`              | Oui\*  | Nom d'hôte du serveur LDAP              |
+| `LDAP_PORT`       | `389`                      | Oui\*  | Port                                    |
+| `LDAP_VERIFY_SSL` | `True`                     | Non    | Vérifier les certificats SSL            |
+
+### OIDC (optionnel) {#oidc}
+
+:::info Optionnel
+Ces variables ne sont requises que si les utilisateurs doivent s'authentifier via un fournisseur OpenID Connect (par ex. Keycloak, Azure AD, Google). OIDC permet le Single Sign-On (SSO) — les utilisateurs se connectent via le fournisseur d'identité externe et sont automatiquement enregistrés dans OpenVLE si nécessaire (`OIDC_ENROLL_USERS`).
+:::
+
+| Variable                     | Valeur par défaut        | Requis | Description                                                          |
+| ---------------------------- | ------------------------ | ------ | -------------------------------------------------------------------- |
+| `OIDC_ALLOWED_REDIRECT_URLS` | `[""]`                   | Non    | URL de redirection autorisées                                        |
+| `OIDC_ATTR_EMAIL`            | `"email"`                | Non    | Attribut pour l'e-mail                                               |
+| `OIDC_ATTR_NAME`             | `"name"`                 | Non    | Attribut pour le nom d'affichage                                     |
+| `OIDC_ATTR_USERNAME`         | `"sub"`                  | Non    | Attribut pour le nom d'utilisateur                                   |
+| `OIDC_CLIENT_ID`             | `""`                     | Oui\*  | Client-ID                                                            |
+| `OIDC_CLIENT_SECRET`         | `""`                     | Oui\*  | Client-Secret                                                        |
+| `OIDC_ENABLED`               | `False`                  | Non    | Activer l'authentification OIDC                                      |
+| `OIDC_ENROLL_USERS`          | `True`                   | Non    | Enregistrer automatiquement les utilisateurs à la première connexion |
+| `OIDC_SCOPES`                | `"openid email profile"` | Non    | Scopes OIDC                                                          |
+| `OIDC_URL_METADATA`          | `""`                     | Oui\*  | URL du document de métadonnées OIDC                                  |
+
+### Moodle (optionnel) {#moodle}
+
+:::info Optionnel
+Ces variables ne sont requises que si OpenVLE doit être connecté à une [instance Moodle](moodle). Si cette fonctionnalité n'est pas utilisée, tous les éléments liés à Moodle ne sont pas affichés dans l'interface utilisateur. L'intégration est désactivée par défaut.
+:::
+
+| Variable                               | Valeur par défaut | Requis | Description                                                                                                     |
+| -------------------------------------- | ----------------- | ------ | --------------------------------------------------------------------------------------------------------------- |
+| `MOODLE_COURSE_VISIBLE`                | `"True"`          | Non    | Visibilité des cours Moodle dupliqués                                                                           |
+| `MOODLE_DELETE_COURSE_ON_EVENT_DELETE` | `"False"`         | Non    | Supprimer le cours Moodle lorsque l'événement est supprimé                                                      |
+| `MOODLE_ENABLED`                       | `False`           | Non    | Activer l'intégration Moodle                                                                                    |
+| `MOODLE_SYNC_TIMEOUT`                  | `"10"`            | Non    | Délai d'expiration des tâches de synchronisation (secondes)                                                     |
+| `MOODLE_TIMEOUT`                       | `"30"`            | Non    | Délai d'expiration des requêtes API (secondes)                                                                  |
+| `MOODLE_TOKEN`                         | `""`              | Oui\*  | Jeton API Web Services                                                                                          |
+| `MOODLE_URL`                           | `""`              | Oui\*  | URL de l'instance Moodle (sans barre oblique finale)                                                            |
+| `MOODLE_USER_AUTH`                     | `"manual"`        | Non    | Méthode d'authentification pour les utilisateurs Moodle nouvellement créés (par ex. `ldap`, `oauth2`, `manual`) |
+| `MOODLE_USER_MATCH_FIELD`              | `"email"`         | Non    | Champ de correspondance entre les utilisateurs OpenVLE et Moodle (`email` ou `username`)                        |
+| `MOODLE_VERIFY_SSL`                    | `True`            | Non    | Vérifier le certificat SSL                                                                                      |
+
+### Sentry (optionnel) {#sentry}
+
+:::info Optionnel
+Ces variables ne sont requises que si [Sentry](https://sentry.io) doit être activé pour la surveillance des erreurs et le suivi des performances. Sentry capture automatiquement les exceptions, les traces et les profils de performance du backend et du worker — aussi bien dans les environnements de développement que de production. OpenVLE ne fournit pas de point de terminaison Sentry public. Vous pouvez renseigner ici les valeurs DSN de votre propre instance Sentry (on-premise ou SaaS).
+:::
+
+| Variable                              | Valeur par défaut | Requis | Description                           |
+| ------------------------------------- | ----------------- | ------ | ------------------------------------- |
+| `SENTRY_BACKEND_DSN`                  | `""`              | Oui\*  | DSN pour le projet backend            |
+| `SENTRY_BACKEND_ENABLE_TRACING`       | `True`            | Non    | Activer le tracing                    |
+| `SENTRY_BACKEND_ENABLED`              | `False`           | Non    | Activer Sentry pour le backend        |
+| `SENTRY_BACKEND_PROFILES_SAMPLE_RATE` | `1.0`             | Non    | Taux d'échantillonnage des profils    |
+| `SENTRY_BACKEND_TRACES_SAMPLE_RATE`   | `1.0`             | Non    | Taux d'échantillonnage des traces     |
+| `SENTRY_ENV`                          | `"dev"`           | Non    | Environnement (par ex. `dev`, `prod`) |
+| `SENTRY_WORKER_DSN`                   | `""`              | Oui\*  | DSN pour le projet worker             |
+| `SENTRY_WORKER_ENABLE_TRACING`        | `True`            | Non    | Activer le tracing                    |
+| `SENTRY_WORKER_ENABLED`               | `False`           | Non    | Activer Sentry pour le worker         |
+| `SENTRY_WORKER_PROFILES_SAMPLE_RATE`  | `1.0`             | Non    | Taux d'échantillonnage des profils    |
+| `SENTRY_WORKER_TRACES_SAMPLE_RATE`    | `1.0`             | Non    | Taux d'échantillonnage des traces     |
+
+## Frontend {#frontend}
+
+La configuration du frontend se fait via le fichier `frontend.env`. Seule `VITE_BACKEND_URL` est requise — elle doit pointer vers l'URL du backend à laquelle le frontend envoie les requêtes API (par ex. `https://openvle.example.com/v1`). Toutes les autres variables concernent l'intégration optionnelle de Sentry pour le suivi des erreurs côté client dans le navigateur.
+
+| Variable                                   | Valeur par défaut            | Requis  | Description                                              |
+| ------------------------------------------ | ---------------------------- | ------- | -------------------------------------------------------- |
+| `VITE_BACKEND_URL`                         | `'http://localhost:8000/v1'` | **Oui** | URL de l'API backend                                     |
+| `VITE_SENTRY_DSN`                          | `''`                         | Non     | DSN Sentry                                               |
+| `VITE_SENTRY_ENABLED`                      | `'false'`                    | Non     | Activer Sentry                                           |
+| `VITE_SENTRY_ENV`                          | `'dev'`                      | Non     | Environnement Sentry                                     |
+| `VITE_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE` | `1.0`                        | Non     | Taux d'échantillonnage pour les replays en cas d'erreur  |
+| `VITE_SENTRY_REPLAYS_SESSION_SAMPLE_RATE`  | `1.0`                        | Non     | Taux d'échantillonnage pour les replays de session       |
+| `VITE_SENTRY_REPORT_ERROR_ENABLED`         | `'false'`                    | Non     | Activer le rapport d'erreurs                             |
+| `VITE_SENTRY_REPORT_USER_ENABLED`          | `'false'`                    | Non     | Activer le rapport utilisateur                           |
+| `VITE_SENTRY_TRACE_PROPAGATION_TARGETS`    | `['localhost']`              | Non     | Cibles pour la propagation des traces                    |
+| `VITE_SENTRY_TRACES_SAMPLE_RATE`           | `1.0`                        | Non     | Taux d'échantillonnage des traces                        |
+| `VITE_SENTRY_TRANSMIT_USER_DETAILS`        | `'false'`                    | Non     | Transmettre les informations détaillées de l'utilisateur |
+
+## Dépannage {#troubleshooting}
+
+| Problème                                                | Solution                                                                                                                                                                     |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Le backend ne démarre pas après une modification `.env` | Assurez-vous que toutes les valeurs sont entre **guillemets**. Les guillemets manquants provoquent des erreurs d'analyse.                                                    |
+| La connexion à la base de données échoue                | Vérifiez que `MARIADB_HOST`, `MARIADB_PORT`, `MARIADB_USER` et `MARIADB_PASSWORD` sont correctement définis et que le conteneur de base de données est en cours d'exécution. |
+| Erreur CORS dans le navigateur                          | Assurez-vous que `CORS_ORIGINS` contient l'URL de votre frontend (par ex. `["https://openvle.example.com"]`).                                                                |
+| La modification d'une variable n'a aucun effet          | Les conteneurs doivent être redémarrés après les modifications `.env` : `docker compose down && docker compose up -d`.                                                       |

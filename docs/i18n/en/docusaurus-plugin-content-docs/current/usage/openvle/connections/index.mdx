@@ -1,0 +1,89 @@
+---
+id: connections
+sidebar_label: Connections
+sidebar_position: 90
+status: finished
+tags:
+  - connections
+  - infrastructure
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Connections
+
+In **OpenVLE**, connection configurations define **how** users can connect to virtual machines or VM templates -- for example via **RDP** or **SSH**.  
+These connections are centrally managed and enable secure, browser-based access through **Apache Guacamole**.
+
+In the **Connections** section, you can view existing configurations, create new connections, and assign them to specific users or virtual machines.
+
+{/* TODO: Add screenshot -- Connections overview */}
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Connections"
+  alternative="Linked from Virtual Machines or VM templates"
+/>
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'View all existing connections',
+    'Create new connection templates (e.g. RDP, SSH)',
+    'Create connections based on connection templates',
+    'Centrally manage reusable connection templates',
+  ]}
+/>
+
+{/* TODO: Add screenshot -- Example: Connection detail view */}
+
+---
+
+## Example or use case
+
+<Example title="Create an RDP connection for a virtual machine">
+  An administrator wants to give users access to a new Windows VM. In the
+  **Connections** section, she creates a new **connection template** with the
+  **RDP** protocol, enters the credentials, and links it to the corresponding
+  VM. She then creates new connections based on this template, assigning them to
+  individual users. These users can now connect directly to the VM via the
+  browser -- securely and without local RDP software.
+</Example>
+
+{/* TODO: Add screenshot -- RDP connection example */}
+
+---
+
+## Notes / special considerations
+
+- Connections in OpenVLE are **centrally managed** and are **independent of the user account**.
+- Connections **cannot be edited**, only **deleted and recreated**.
+- **Connection templates** are used to standardize recurring configurations.
+- Only users with the appropriate **permissions** can modify connection settings or credentials.
+- Active sessions can be monitored via the **Apache Guacamole server**.
+- **Connection templates** and **VM templates** are two distinct object types, each with its own function and assignment.
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Connection templates', href: './templates' },
+    { label: 'Virtual Machines', href: '../vms' },
+    { label: 'VM templates', href: '../vm-templates' },
+    { label: 'User management', href: '../access-control/users' },
+  ]}
+/>

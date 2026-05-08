@@ -1,0 +1,196 @@
+---
+id: permissions
+sidebar_label: Permissions
+sidebar_position: 40
+status: finished
+tags:
+  - access-control
+  - permissions
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Permissions
+
+Les permissions régissent dans OpenVLE l'accès aux fonctions et aux contenus.  
+Vous déterminez quels utilisateurs ou rôles sont autorisés à effectuer certaines actions telles que **Lire**, **Créer**, **Modifier** ou **Supprimer**.  
+Dans cette section, vous pouvez gérer les permissions existantes.
+
+{/* TODO: Ajouter une capture d'écran – Aperçu des permissions */}
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Contrôle d'accès → Permissions"
+  alternative="Accessible via les vues Utilisateurs ou Rôles"
+/>
+
+---
+
+## Aperçu des fonctionnalités
+
+<FeatureList
+  items={[
+    'Afficher et gérer les permissions existantes',
+    'Filtrer et rechercher par nom de permission ou rôles assignés',
+    'Vérifier quels rôles ou utilisateurs possèdent une permission donnée',
+  ]}
+/>
+
+{/* TODO: Ajouter une capture d'écran – Vue détaillée d'une permission */}
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        'Le nom de la permission, par ex. « Lire les activités » ou « Créer des fabricants ». Affiché dans les listes et les associations.',
+    },
+    {
+      name: 'Key (Slug)',
+      description:
+        "Nom abrégé de la permission. Utilisé en interne au sein d'OpenVLE.",
+    },
+  ]}
+/>
+
+---
+
+## Ajouter des permissions d'objet pour un utilisateur
+
+Pour différents modèles d'objets, des **permissions d'objet directes** peuvent être accordées.  
+Cela signifie que l'utilisateur reçoit une permission **uniquement pour un objet spécifique**, et non pour tous les objets du même type.
+
+1. Recherchez et ouvrez l'objet souhaité.
+2. Passez à l'onglet **Permissions**.  
+   Si cet onglet n'est pas disponible, soit vous ne disposez pas des permissions requises pour créer des permissions d'objet, soit le modèle d'objet concerné ne prend pas en charge les permissions d'objet.
+3. Cliquez sur le **bouton vert plus**.
+4. Dans le formulaire de saisie, vous pouvez rechercher l'utilisateur souhaité et sélectionner la permission appropriée.  
+   Les permissions suivantes sont disponibles par défaut :
+
+   - **Lecture**
+   - **Lecture et modification**
+   - **Accès complet**
+
+   Pour les **machines virtuelles (VM)**, la permission **Lecture et contrôle de VM** est également disponible,  
+   laquelle autorise en plus l'utilisateur à effectuer des actions telles que **Démarrer**, **Arrêter** ou **Redémarrer** la VM.
+
+5. Enregistrez la permission.
+
+---
+
+## Retirer des permissions d'objet d'un utilisateur
+
+1. Ouvrez l'objet concerné.
+2. Passez à l'onglet **Permissions**.
+3. Dans la liste des permissions existantes, cliquez sur **Retirer** pour la ligne souhaitée ou ouvrez le menu contextuel et sélectionnez **Supprimer**.
+4. Confirmez l'opération dans la boîte de dialogue affichée.
+
+:::note
+Le retrait d'une permission d'objet prend effet **immédiatement**. L'utilisateur perd instantanément l'accès à l'objet concerné.
+:::
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Attribuer une permission au rôle Responsable d'environnement">
+  Une administratrice souhaite définir que seuls les enseignants peuvent créer
+  de nouveaux environnements. Pour cela, elle crée un nouveau rôle **Responsable
+  d'environnement** et lui attribue la permission
+  <code>courses_create</code>. Ainsi, seuls les membres de ce rôle peuvent créer
+  de nouveaux environnements, les autres utilisateurs non.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran – Exemple : création d'une permission */}
+
+---
+
+## Remarques / Particularités
+
+- Les permissions suivent le **principe CRUD** (Create, Read, Update, Delete).
+- Les permissions peuvent être attribuées aussi bien de manière **globale** que **spécifique à un objet (scoped)**.
+- Les modifications apportées à une permission prennent effet immédiatement sur tous les rôles et utilisateurs qui l'utilisent.
+- Les nouvelles permissions ne doivent être créées que par des administrateurs, car elles ont un impact direct sur l'accès au système.
+- Via les onglets **Utilisateurs** et **Rôles**, vous pouvez consulter où la permission est attribuée.
+
+---
+
+## Relations avec d'autres objets
+
+<ObjectRelations
+  showChangelogs={false}
+  showPermissions={false}
+  showTags={false}
+  items={[
+    {
+      object: 'Rôles',
+      description:
+        'Une permission peut être attribuée à un nombre illimité de rôles.',
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'Utilisateurs',
+      description:
+        "Une permission peut être attribuée à un nombre illimité d'utilisateurs.",
+      behavior: 'Aucune automatisation.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    {
+      action: 'Afficher les permissions',
+      permission: 'permissions_read',
+      scoped: false,
+    },
+    {
+      action: 'Créer des permissions',
+      permission: 'permissions_create',
+      deprecated: true,
+    },
+    {
+      action: 'Modifier des permissions',
+      permission: 'permissions_update',
+      scoped: false,
+      deprecated: true,
+    },
+    {
+      action: 'Supprimer des permissions',
+      permission: 'permissions_delete',
+      scoped: false,
+      deprecated: true,
+    },
+    { action: 'Afficher les rôles', permission: 'roles_read' },
+  ]}
+/>
+
+---
+
+## Sujets associés
+
+<RelatedLinks
+  items={[
+    { label: 'Gestion des utilisateurs', href: './users' },
+    { label: 'Rôles', href: './roles' },
+    { label: 'Politiques', href: './policies' },
+  ]}
+/>

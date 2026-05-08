@@ -1,0 +1,26 @@
+{
+  "title": {
+    "message": "OpenVLE",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "Logo",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Benutzung": {
+    "message": "Benutzung",
+    "description": "Navbar item with label Benutzung"
+  },
+  "item.label.Administration": {
+    "message": "Administration",
+    "description": "Navbar item with label Administration"
+  },
+  "item.label.Changelogs": {
+    "message": "Changelogs",
+    "description": "Navbar item with label Changelogs"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  }
+}

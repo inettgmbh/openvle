@@ -1,0 +1,314 @@
+---
+id: tasks
+sidebar_label: Tasks
+sidebar_position: 30
+status: finished
+tags:
+  - system
+  - tasks
+  - subtasks
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+# Tasks
+
+The **Tasks** section displays automated or manually triggered processes within the system – for example, creating a VM, rolling out an event, or sending emails.  
+Here you can monitor running tasks, identify errors, and trace completed processes.
+
+---
+
+## Difference between Tasks and SubTasks
+
+A **Task** represents a higher-level process, such as "creating a VM" or "sending an email".  
+A **SubTask** is an individual step within that process – for example, cloning a VM template or updating a database.  
+Multiple SubTasks can belong to a single Task and together form the complete workflow.
+
+- **Tasks** provide an overview and tracking of the entire process.
+- **SubTasks** enable detailed analysis of individual steps, including error handling and retries.
+- If a SubTask fails, it can be retried individually without restarting the entire Task.
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="System → Tasks"
+  alternative="Linked from notifications or the detail view of objects"
+/>
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'Display of all running, scheduled, and completed tasks in the system',
+    'Filtering by status, user, or time period',
+    'Review of error logs and system messages',
+    'Monitoring the progress of individual processes',
+    'Automatic refresh of running tasks',
+  ]}
+/>
+
+---
+
+## Important fields at a glance
+
+<Tabs groupId="model" queryString="model">
+  <TabItem value="task" label="Task" default>
+    <FieldReference
+      fields={[
+        {
+          name: 'ID',
+          description:
+            'Unique identifier of the task. Automatically assigned and used for tracking individual processes.',
+        },
+        {
+          name: 'Name',
+          description:
+            'Label or type of the task, e.g., "Create VM" or "Send email". Facilitates identification in the task log.',
+        },
+        {
+          name: 'Status',
+          description:
+            'Current status of the task, e.g., *running*, *queued*, *failed*, or *success*.',
+        },
+        {
+          name: 'Event',
+          description: '(Optional) Assigned event that triggered this task.',
+        },
+        {
+          name: 'Created at',
+          description: '(Standard field) Time at which the task was created.',
+        },
+        {
+          name: 'Created by',
+          description: '(Standard field) User who created the task.',
+        },
+        {
+          name: 'Updated at',
+          description:
+            '(Standard field) Time at which the task was completed or last updated.',
+        },
+      ]}
+    />
+  </TabItem>
+  <TabItem value="subtask" label="SubTask">
+    <FieldReference
+      fields={[
+        {
+          name: 'ID',
+          description:
+            'Unique identifier of the SubTask. Automatically assigned and used for tracking individual processes.',
+        },
+        {
+          name: 'Name',
+          description:
+            'Label or type of the SubTask, e.g., "Create VM" or "Send email". Facilitates identification in the task log.',
+        },
+        {
+          name: 'Status',
+          description:
+            'Current status of the SubTask, e.g., *running*, *queued*, *failed*, or *success*.',
+        },
+        {
+          name: 'Created at',
+          description:
+            '(Standard field) Time at which the SubTask was created.',
+        },
+        {
+          name: 'Created by',
+          description: '(Standard field) User who created the SubTask.',
+        },
+        {
+          name: 'Updated at',
+          description:
+            '(Standard field) Time at which the SubTask was completed or last updated.',
+        },
+        {
+          name: 'Object type',
+          description:
+            'Type of the object that the SubTask refers to, e.g., **vm**, **template**, **event**, or **mail**.',
+        },
+        {
+          name: 'Object ID',
+          description:
+            'Unique identifier (UUID) of the object that the SubTask refers to.',
+        },
+        {
+          name: 'Action',
+          description: 'Action performed as part of the SubTask.',
+        },
+        {
+          name: 'Attempt',
+          description:
+            'Counter indicating how many times the SubTask has been executed. Automatically incremented with each retry.',
+        },
+        {
+          name: 'Parent task',
+          description:
+            'Unique identifier of the parent task to which this SubTask belongs.',
+        },
+        {
+          name: 'Job ID',
+          description:
+            'Internal reference ID of the background job (RQ job) associated with the SubTask.',
+        },
+        {
+          name: 'Response code',
+          description:
+            'Response code of the SubTask after completing the action, e.g., HTTP status code or system-specific return value.',
+        },
+        {
+          name: 'Response message',
+          description:
+            'Output or error message generated during the execution of the SubTask. Used for traceability and error analysis.',
+        },
+      ]}
+    />
+  </TabItem>
+</Tabs>
+
+---
+
+## Viewing a Task / SubTask
+
+1. Open the **System → Tasks** section from the main menu.
+2. Search the list for the desired task.
+3. Click on the desired task to display its details.
+4. In the detail view, you can see the status, description, and associated SubTasks.
+
+---
+
+## Retrying a SubTask
+
+1. Open the **System → Tasks** section from the main menu.
+2. Search the list for the desired task and open it.
+3. Switch to the **SubTasks** tab and open the desired SubTask.
+4. Click **Retry**.
+5. Confirm the action in the displayed dialog.
+6. The SubTask will now be executed again.
+
+:::warning
+Currently, only SubTasks that are no older than 24 hours can be retried.
+:::
+
+:::warning
+If downstream tasks could not be executed due to a failed SubTask, successfully retrying the SubTask will trigger the execution of those dependent tasks.
+:::
+
+---
+
+## Example or use case
+
+<Example title="Monitoring an ongoing VM creation">
+  An administrator starts the creation of multiple virtual machines. In the
+  **System → Tasks** section, she sees that the task *"Create VM"* is running
+  and part of it has already been completed. In case of an error, she could open
+  the log to directly identify the cause (e.g., insufficient resources) and
+  resolve it.
+</Example>
+
+{/* TODO: Add screenshot – Example: Task overview */}
+
+---
+
+## Notes / Special considerations
+
+- Tasks are automatically created by the system when a process is started.
+- In case of system errors, the status is set to _failed_; details can be found in the task log.
+- Tasks with the status _queued_ are waiting for available resources or dependent processes.
+- Completed tasks remain viewable for a limited time and are then automatically deleted.
+- The display refreshes regularly as long as the section is open.
+
+---
+
+## Relationships with other objects
+
+<ObjectRelations
+  showChangelogs={false}
+  showTags={false}
+  showPermissions={false}
+  items={[
+    {
+      object: 'Events',
+      description: 'Any number of tasks can be assigned to an event.',
+      behavior:
+        'Tasks are automatically created for certain actions of the event.',
+    },
+    {
+      object: 'VM templates',
+      description: 'Any number of tasks can be assigned to a VM template.',
+      behavior:
+        'Tasks are automatically created for certain actions of the VM template.',
+    },
+    {
+      object: 'VMs',
+      description: 'Any number of tasks can be assigned to a VM.',
+      behavior:
+        'Tasks are automatically created for certain actions of the VM.',
+    },
+    {
+      object: 'Connections',
+      description: 'Any number of tasks can be assigned to a connection.',
+      behavior:
+        'Tasks are automatically created for certain actions of the connection.',
+    },
+    {
+      object: 'Emails',
+      description: 'Any number of tasks can be assigned to an email.',
+      behavior:
+        'Tasks are automatically created for certain actions of the email.',
+    },
+    {
+      object: 'Tasks',
+      description: 'Any number of SubTasks can be assigned to a task.',
+      behavior:
+        'Tasks & SubTasks are automatically created for certain actions.',
+    },
+    {
+      object: 'SubTasks',
+      description: 'Exactly one task can be assigned to a SubTask.',
+      behavior:
+        'Tasks & SubTasks are automatically created for certain actions.',
+    },
+  ]}
+/>
+
+---
+
+## Required permissions
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    { action: 'View tasks', permission: 'tasks_read', scoped: false },
+    {
+      action: 'View subtasks',
+      permission: 'sub_tasks_read',
+      scoped: false,
+    },
+  ]}
+/>
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Activities', href: './activities' },
+    { label: 'Settings', href: './settings' },
+    { label: 'Virtual machines', href: '../vms' },
+  ]}
+/>

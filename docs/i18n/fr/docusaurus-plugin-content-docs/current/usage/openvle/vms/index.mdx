@@ -1,0 +1,327 @@
+---
+id: vms
+sidebar_label: Machines virtuelles
+sidebar_position: 100
+status: finished
+tags:
+  - infrastructure
+  - vms
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Machines virtuelles
+
+Les machines virtuelles (VM) constituent dans OpenVLE les environnements de travail effectifs pour les **événements**, les **tests** ou les **projets**.  
+Elles sont basées sur des modèles de VM et peuvent être démarrées, arrêtées, mises en pause ou réinitialisées individuellement.  
+Chaque VM est gérée de manière centralisée et peut être utilisée directement dans le navigateur via une connexion Guacamole.
+
+{/* TODO: Ajouter une capture d'écran -- Vue d'ensemble des VM */}
+
+---
+
+## Où trouver cette section ? {#where}
+
+<NavigationHint
+  path="VMs"
+  alternative="Accessible via les événements, les environnements ou les modèles"
+/>
+
+---
+
+## Aperçu des fonctionnalités {#features}
+
+<FeatureList
+  items={[
+    'Afficher, démarrer, arrêter et redémarrer des machines virtuelles',
+    'Créer de nouvelles VM à partir de modèles existants',
+    'Associer des VM à des environnements ou des utilisateurs',
+    "Surveiller l'état actuel (en cours d'exécution, en pause, arrêtée)",
+    'Accéder via les connexions Guacamole intégrées (RDP, SSH)',
+    "Réinitialiser à l'état initial du modèle",
+    'Afficher les informations de ressources telles que CPU, RAM ou utilisation du stockage',
+  ]}
+/>
+
+{/* TODO: Ajouter une capture d'écran -- Vue détaillée d'une VM */}
+
+---
+
+## Aperçu des champs importants {#fields}
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        'Désignation de la machine virtuelle. Affiché dans le système, dans les listes et dans les connexions. Le nom doit être choisi de manière unique et explicite (par ex. "IT-Formation-Win10-01").',
+    },
+    {
+      name: "Système d'exploitation",
+      description:
+        "Le système d'exploitation installé sur la VM. Celui-ci est automatiquement repris du modèle associé et sert à la catégorisation et au filtrage.",
+    },
+    {
+      name: 'CPU',
+      description:
+        "Nombre de coeurs vCPU attribués à la machine virtuelle. Plus de coeurs améliorent les performances, mais augmentent la consommation de ressources sur l'hôte.",
+    },
+    {
+      name: 'Mémoire vive',
+      description:
+        "Mémoire vive (RAM) attribuée en gigaoctets. Détermine le nombre d'applications pouvant être exécutées simultanément dans la VM.",
+    },
+    {
+      name: 'Disque dur',
+      description:
+        'Espace de stockage attribué en gigaoctets. Cette valeur est généralement reprise du modèle et ne peut pas être modifiée.',
+    },
+    {
+      name: 'Adresse IPv4',
+      description:
+        "Adresse IP automatiquement attribuée à la VM. Elle est détectée et affichée automatiquement dès que le Qemu Guest Agent est actif. Sert à l'identification et à la connexion distante à la machine.",
+    },
+    {
+      name: 'Infos Proxmox VE',
+      description:
+        "Attributions internes au système vers Proxmox VE, composées du **VMID** (identifiant unique sur l'hôte) et du **nom du noeud** (système hôte au sein du cluster). Ces champs sont gérés automatiquement et sont en lecture seule.",
+    },
+    {
+      name: 'Description',
+      description:
+        'Champ de texte libre pour la documentation ou les commentaires sur la VM. Prend en charge la syntaxe Markdown (par ex. pour les listes ou les mises en évidence).',
+    },
+    {
+      name: 'Statut',
+      description:
+        'État de fonctionnement actuel de la VM. Les valeurs possibles sont : `running`, `stopped`, `cloning`, `starting`, `stopping`, `deleting`. Le statut est contrôlé par des actions (démarrage, arrêt, clonage, suppression) ou des processus automatiques.',
+    },
+  ]}
+/>
+
+---
+
+## Créer une machine virtuelle {#create}
+
+1. Ouvrez la section **VMs** dans le menu principal.
+2. Cliquez sur **Ajouter** pour créer une nouvelle VM.
+3. Sélectionnez le **modèle de VM** souhaité comme base.
+4. Saisissez un **nom** pour la VM.
+5. Les autres champs sont automatiquement préremplis sur la base du modèle de VM choisi. Ils peuvent être ajustés si nécessaire.
+6. Enregistrez la VM.
+7. La VM est maintenant créée automatiquement en arrière-plan. Une fois le processus terminé, le statut de la VM passe à `Running`.
+8. Rendez-vous dans l'onglet **Connexions** pour y créer une connexion vers la VM.
+9. Vous pouvez ensuite vous connecter à la VM via **Apache Guacamole**.
+
+:::info
+Lors de la création d'une VM, les associations suivantes sont automatiquement créées ou héritées :
+
+- **Applications ↔ Modèle de VM** : Toutes les applications assignées au modèle de VM sont automatiquement assignées à la nouvelle VM.
+- **Modèles de connexion ↔ Modèle de VM** : Tous les modèles de connexion du modèle de VM sont copiés et assignés à la VM.
+
+Ainsi, les modèles de connexion nouvellement créés peuvent être utilisés pour créer des connexions vers la VM, soit manuellement, soit dans le cadre d'un événement.
+:::
+
+---
+
+## Modifier une machine virtuelle {#edit}
+
+1. Ouvrez la section **VMs** dans le menu principal.
+2. Recherchez la VM souhaitée dans la liste.
+3. Cliquez sur **Modifier** ou ouvrez le menu contextuel de la VM et sélectionnez **Modifier**.
+4. Le formulaire affiche toutes les données actuelles de la VM.
+5. Ajustez les champs souhaités, par ex. le nom, la description, le CPU, la mémoire vive ou le système d'exploitation.
+6. Enregistrez les modifications.
+7. La mise à jour est appliquée en arrière-plan ; selon la modification, un redémarrage de la VM peut être nécessaire.
+8. Après une mise à jour réussie, le nouveau statut et les valeurs modifiées sont affichés dans la vue d'ensemble.
+9. Optionnel : ouvrez l'onglet **Connexions** pour vérifier les accès existants ou les ajuster si nécessaire.
+
+:::info
+Les modifications du **CPU** ou de la **mémoire vive** nécessitent un **redémarrage de la VM** pour prendre effet.  
+Le redémarrage peut être sélectionné directement lors de la modification ou effectué ultérieurement.
+:::
+
+---
+
+## Supprimer une machine virtuelle {#delete}
+
+1. Ouvrez la section **VMs** dans le menu principal.
+2. Recherchez la VM souhaitée dans la liste.
+3. Cliquez sur **Supprimer** ou ouvrez le menu contextuel de la VM et sélectionnez **Supprimer**.
+4. Confirmez la suppression dans la boîte de dialogue affichée.
+5. La VM est alors définitivement supprimée.
+6. Une fois le processus terminé, la VM disparaît de la vue d'ensemble.
+
+:::danger
+Lors de la suppression d'une VM, toutes les connexions et modèles de connexion associés sont **automatiquement supprimés**.  
+Cette opération ne peut pas être annulée.
+:::
+
+---
+
+## Actions d'une machine virtuelle {#actions}
+
+Dans le menu contextuel d'une VM, différentes actions sont disponibles pour contrôler le statut actuel ou la configuration de la VM.
+
+1. **Démarrer** -- Allume une VM éteinte et la met dans le statut `running`.
+2. **Arrêter proprement** -- Arrête la VM de manière contrôlée via le système d'exploitation.
+3. **Redémarrer** -- Effectue un redémarrage contrôlé de la VM.
+4. **Stopper** -- Arrête immédiatement la VM sans arrêt régulier (équivalent à un hard-power-off).
+5. **Reset** -- Effectue un redémarrage immédiat, comparable à l'appui sur le bouton de réinitialisation d'une machine physique.
+6. **Actualiser l'IP** -- Met à jour l'adresse IP de la VM enregistrée dans OpenVLE, si celle-ci a changé ou n'est plus à jour.
+
+:::warning
+Certaines actions, comme **Stopper** ou **Reset**, accèdent directement à l'environnement de virtualisation et peuvent entraîner une perte de données si des modifications non enregistrées sont présentes dans la VM.  
+Ces actions ne doivent être exécutées que si un arrêt ou un redémarrage régulier n'est pas possible.
+:::
+
+---
+
+## Exemple ou cas d'utilisation {#example}
+
+<Example title="Mettre à disposition une VM pour une formation">
+  Un administrateur système souhaite mettre à disposition une VM individuelle
+  pour une formation. Cette personne ouvre la section **Machines virtuelles**,
+  clique sur **Ajouter**, sélectionne le modèle de VM "Windows 10 -- Formation"
+  et la démarre. La machine virtuelle est alors créée et peut être utilisée.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran -- Exemple : Mise à disposition d'une VM */}
+
+---
+
+## Remarques / Particularités {#notes}
+
+- Les machines virtuelles sont automatiquement créées sur la base du modèle choisi.
+- Une VM peut être démarrée, mise en pause ou arrêtée à tout moment.
+- Les actions comme **Reset** ou **Shutdown** agissent immédiatement sur le système invité.
+- Les VM en cours d'exécution consomment des ressources sur le système hôte -- arrêtez les machines inutilisées pour économiser de la capacité.
+- Les utilisateurs ne peuvent accéder qu'aux VM pour lesquelles les permissions correspondantes sont disponibles.
+- Les modifications d'une VM (par ex. nom, attribution) nécessitent les droits correspondants.
+- L'affichage se met à jour régulièrement tant que la section est ouverte.
+
+---
+
+## Relations avec d'autres objets {#relations}
+
+<ObjectRelations
+  showTasks={true}
+  items={[
+    {
+      object: 'Applications',
+      description:
+        "Un nombre illimité d'applications peut être attribué à une VM.",
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'Événement',
+      description:
+        "Lors de la création dans le cadre d'un événement, la VM est attribuée à exactement un événement.",
+      behavior:
+        "Suppression automatique lors de certaines actions au sein de l'événement.",
+    },
+    {
+      object: "Système d'exploitation",
+      description:
+        "Exactement un système d'exploitation peut être attribué à une VM.",
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'Modèles de connexion',
+      description:
+        'Un nombre illimité de modèles de connexion peut être attribué à une VM.',
+      behavior: 'Suppression automatique lors de la suppression de la VM.',
+    },
+    {
+      object: 'Connexions',
+      description:
+        'Un nombre illimité de connexions peut être attribué à une VM.',
+      behavior: 'Suppression automatique lors de la suppression de la VM.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises {#permissions}
+
+<Permissions
+  data={[
+    {
+      action: 'Afficher les machines virtuelles',
+      permission: 'vms_read',
+      scoped: true,
+    },
+    { action: 'Créer des machines virtuelles', permission: 'vms_create' },
+    {
+      action: 'Modifier des machines virtuelles',
+      permission: 'vms_update',
+      scoped: true,
+    },
+    {
+      action: 'Supprimer des machines virtuelles',
+      permission: 'vms_delete',
+      scoped: true,
+    },
+    {
+      action: 'Action VM : Hibernate',
+      permission: 'vms_actions_hibernate',
+      scoped: true,
+    },
+    {
+      action: 'Action VM : Pause',
+      permission: 'vms_actions_pause',
+      scoped: true,
+    },
+    {
+      action: 'Action VM : Reboot',
+      permission: 'vms_actions_reboot',
+      scoped: true,
+    },
+    {
+      action: 'Action VM : Reset',
+      permission: 'vms_actions_reset',
+      scoped: true,
+    },
+    {
+      action: 'Action VM : Resume',
+      permission: 'vms_actions_resume',
+      scoped: true,
+    },
+    {
+      action: 'Action VM : Shutdown',
+      permission: 'vms_actions_shutdown',
+      scoped: true,
+    },
+    {
+      action: 'Action VM : Start',
+      permission: 'vms_actions_start',
+      scoped: true,
+    },
+    {
+      action: 'Action VM : Stop',
+      permission: 'vms_actions_stop',
+      scoped: true,
+    },
+    { action: 'Afficher les modèles de VM', permission: 'templates_read' },
+  ]}
+/>
+
+---
+
+## Sujets connexes {#related}
+
+<RelatedLinks
+  items={[
+    { label: 'Modèles de VM', href: '../vm-templates' },
+    { label: 'Connexions', href: '../connections' },
+    { label: 'Environnements', href: '../courses' },
+    { label: 'Événements', href: '../events' },
+  ]}
+/>

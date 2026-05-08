@@ -1,0 +1,475 @@
+{
+  "homepage.feature.easy-to-use.title": {
+    "message": "Facile à utiliser",
+    "description": "Title of the `Easy to Use` feature"
+  },
+  "homepage.feature.easy-to-use.description": {
+    "message": "La convivialité est au premier plan : avec une interface intuitive, l'application simplifie les tâches complexes telles que la gestion des machines virtuelles et des événements. L'intégration transparente de différents services garantit que les utilisateurs peuvent travailler efficacement même avec des connaissances techniques minimales.",
+    "description": "Description of the `Easy to Use` feature"
+  },
+  "homepage.feature.focus-on-what-matters.title": {
+    "message": "Concentration sur l'essentiel",
+    "description": "Title of the `Focus on What Matters` feature"
+  },
+  "homepage.feature.focus-on-what-matters.description": {
+    "message": "Concentrez-vous sur l'essentiel : Cette application polyvalente prend en charge un large éventail de processus de travail, de la gestion des environnements virtuels à la gestion des événements et des autorisations des utilisateurs. Grâce à sa structure modulaire, elle s'adapte à différentes exigences organisationnelles et convient donc à différents secteurs et cas d'utilisation.",
+    "description": "Description of the `Focus on What Matters` feature"
+  },
+  "homepage.feature.integrates-with-pve.title": {
+    "message": "Intégré avec Proxmox VE",
+    "description": "Title of the `Integrates with Proxmox VE` feature"
+  },
+  "homepage.feature.integrates-with-pve.description": {
+    "message": "L'intégration avec Proxmox VE permet de gérer le cycle de vie des machines virtuelles et d'optimiser l'allocation des ressources et la virtualisation. Cela permet de contrôler les environnements virtuels pour les événements et les cours et simplifie considérablement le déploiement et la gestion des machines virtuelles.",
+    "description": "Description of the `Integrates with Proxmox VE` feature"
+  },
+  "homepage.feature.build-with-fastapi.title": {
+    "message": "Construit avec FastAPI sur Python 3",
+    "description": "Title of the `Built with FastAPI on Python 3` feature"
+  },
+  "homepage.feature.build-with-fastapi.description": {
+    "message": "Développé avec Python 3 et FastAPI, le backend offre une puissante API REST pour la gestion des services et des données. Grâce à SQLAlchemy pour les interactions avec les bases de données et à Pydantic pour la validation des données, il garantit une gestion robuste de la logique commerciale complexe et des entrées utilisateur.",
+    "description": "Description of the `Built with FastAPI on Python 3` feature"
+  },
+  "homepage.feature.build-with-vuejs.title": {
+    "message": "Construit avec Vue.js",
+    "description": "Title of the `Built with Vue.js` feature"
+  },
+  "homepage.feature.build-with-vuejs.description": {
+    "message": "Le front-end est basé sur Vue.js 3 et utilise des composants réactifs ainsi que l'API de composition pour une gestion efficace des états et des interfaces utilisateur dynamiques. Ce framework moderne permet une expérience fluide et réactive et s'intègre de manière transparente avec les services back-end d'OpenVLE pour afficher les données en temps réel et les interactions avec les utilisateurs.",
+    "description": "Description of the `Built with Vue.js` feature"
+  },
+  "homepage.feature.integrates-with-guacamole.title": {
+    "message": "Intégré avec Apache Guacamole",
+    "description": "Title of the `Integrates with Apache Guacamole` feature"
+  },
+  "homepage.feature.integrates-with-guacamole.description": {
+    "message": "La connexion à Apache Guacamole permet un accès à distance transparent aux machines virtuelles via des connexions basées sur un navigateur. Les utilisateurs peuvent facilement se connecter aux machines virtuelles sans avoir besoin de logiciels supplémentaires, en utilisant des profils de connexion préconfigurés et gérés par le système.",
+    "description": "Description of the `Integrates with Apache Guacamole` feature"
+  },
+  "theme.ErrorPageContent.title": {
+    "message": "Cette page a planté.",
+    "description": "The title of the fallback page when the page crashed"
+  },
+  "theme.blog.archive.title": {
+    "message": "Archive",
+    "description": "The page & hero title of the blog archive page"
+  },
+  "theme.blog.archive.description": {
+    "message": "Archive",
+    "description": "The page & hero description of the blog archive page"
+  },
+  "theme.BackToTopButton.buttonAriaLabel": {
+    "message": "Retour au début de la page",
+    "description": "The ARIA label for the back to top button"
+  },
+  "theme.blog.paginator.navAriaLabel": {
+    "message": "Pagination de la liste des articles du blog",
+    "description": "The ARIA label for the blog pagination"
+  },
+  "theme.blog.paginator.newerEntries": {
+    "message": "Nouvelles entrées",
+    "description": "The label used to navigate to the newer blog posts page (previous page)"
+  },
+  "theme.blog.paginator.olderEntries": {
+    "message": "Anciennes entrées",
+    "description": "The label used to navigate to the older blog posts page (next page)"
+  },
+  "theme.tags.tagsPageLink": {
+    "message": "Voir tous les tags",
+    "description": "The label of the link targeting the tag list page"
+  },
+  "theme.blog.post.paginator.navAriaLabel": {
+    "message": "Pagination des articles du blog",
+    "description": "The ARIA label for the blog posts pagination"
+  },
+  "theme.blog.post.paginator.newerPost": {
+    "message": "Article plus récent",
+    "description": "The blog post button label to navigate to the newer/previous post"
+  },
+  "theme.blog.post.paginator.olderPost": {
+    "message": "Article plus ancien",
+    "description": "The blog post button label to navigate to the older/next post"
+  },
+  "theme.colorToggle.ariaLabel": {
+    "message": "Basculer entre le mode sombre et clair (actuellement {mode})",
+    "description": "The ARIA label for the navbar color mode toggle"
+  },
+  "theme.colorToggle.ariaLabel.mode.dark": {
+    "message": "mode sombre",
+    "description": "The name for the dark color mode"
+  },
+  "theme.colorToggle.ariaLabel.mode.light": {
+    "message": "mode clair",
+    "description": "The name for the light color mode"
+  },
+  "theme.docs.DocCard.categoryDescription.plurals": {
+    "message": "1 élément|{count} éléments",
+    "description": "The default description for a category card in the generated index about how many items this category includes"
+  },
+  "theme.docs.breadcrumbs.navAriaLabel": {
+    "message": "Fil d'Ariane",
+    "description": "The ARIA label for the breadcrumbs"
+  },
+  "theme.docs.tagDocListPageTitle.nDocsTagged": {
+    "message": "Un document tagué|{count} documents tagués",
+    "description": "Pluralized label for \"{count} docs tagged\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.docs.tagDocListPageTitle": {
+    "message": "{nDocsTagged} avec \"{tagName}\"",
+    "description": "The title of the page for a docs tag"
+  },
+  "theme.docs.versionBadge.label": {
+    "message": "Version: {versionLabel}"
+  },
+  "theme.docs.paginator.navAriaLabel": {
+    "message": "Pages de documentation",
+    "description": "The ARIA label for the docs pagination"
+  },
+  "theme.docs.paginator.previous": {
+    "message": "Précédent",
+    "description": "The label used to navigate to the previous doc"
+  },
+  "theme.docs.paginator.next": {
+    "message": "Suivant",
+    "description": "The label used to navigate to the next doc"
+  },
+  "theme.docs.versions.unreleasedVersionLabel": {
+    "message": "Ceci est la documentation de la prochaine version {versionLabel} de {siteTitle}.",
+    "description": "The label used to tell the user that he's browsing an unreleased doc version"
+  },
+  "theme.docs.versions.unmaintainedVersionLabel": {
+    "message": "Ceci est la documentation de {siteTitle} {versionLabel}, qui n'est plus activement maintenue.",
+    "description": "The label used to tell the user that he's browsing an unmaintained doc version"
+  },
+  "theme.docs.versions.latestVersionSuggestionLabel": {
+    "message": "Pour une documentation à jour, consultez la {latestVersionLink} ({versionLabel}).",
+    "description": "The label used to tell the user to check the latest version"
+  },
+  "theme.docs.versions.latestVersionLinkLabel": {
+    "message": "dernière version",
+    "description": "The label used for the latest version suggestion link label"
+  },
+  "theme.common.editThisPage": {
+    "message": "Éditer cette page",
+    "description": "The link label to edit the current page"
+  },
+  "theme.lastUpdated.atDate": {
+    "message": " le {date}",
+    "description": "The words used to describe on which date a page has been last updated"
+  },
+  "theme.lastUpdated.byUser": {
+    "message": " par {user}",
+    "description": "The words used to describe by who the page has been last updated"
+  },
+  "theme.lastUpdated.lastUpdatedAtBy": {
+    "message": "Dernière mise à jour{atDate}{byUser}",
+    "description": "The sentence used to display when a page has been last updated, and by who"
+  },
+  "theme.common.headingLinkTitle": {
+    "message": "Lien direct vers {heading}",
+    "description": "Title for link to heading"
+  },
+  "theme.NotFound.title": {
+    "message": "Page introuvable",
+    "description": "The title of the 404 page"
+  },
+  "theme.navbar.mobileVersionsDropdown.label": {
+    "message": "Versions",
+    "description": "The label for the navbar versions dropdown on mobile view"
+  },
+  "theme.AnnouncementBar.closeButtonAriaLabel": {
+    "message": "Fermer",
+    "description": "The ARIA label for close button of announcement bar"
+  },
+  "theme.tags.tagsListLabel": {
+    "message": "Tags :",
+    "description": "The label alongside a tag list"
+  },
+  "theme.admonition.caution": {
+    "message": "attention",
+    "description": "The default label used for the Caution admonition (:::caution)"
+  },
+  "theme.admonition.danger": {
+    "message": "danger",
+    "description": "The default label used for the Danger admonition (:::danger)"
+  },
+  "theme.admonition.info": {
+    "message": "info",
+    "description": "The default label used for the Info admonition (:::info)"
+  },
+  "theme.admonition.note": {
+    "message": "remarque",
+    "description": "The default label used for the Note admonition (:::note)"
+  },
+  "theme.admonition.tip": {
+    "message": "astuce",
+    "description": "The default label used for the Tip admonition (:::tip)"
+  },
+  "theme.admonition.warning": {
+    "message": "attention",
+    "description": "The default label used for the Warning admonition (:::warning)"
+  },
+  "theme.blog.sidebar.navAriaLabel": {
+    "message": "Navigation article de blog récent",
+    "description": "The ARIA label for recent posts in the blog sidebar"
+  },
+  "theme.CodeBlock.wordWrapToggle": {
+    "message": "Activer/désactiver le retour à la ligne",
+    "description": "The title attribute for toggle word wrapping button of code block lines"
+  },
+  "theme.CodeBlock.copied": {
+    "message": "Copié",
+    "description": "The copied button label on code blocks"
+  },
+  "theme.CodeBlock.copyButtonAriaLabel": {
+    "message": "Copier le code",
+    "description": "The ARIA label for copy code blocks button"
+  },
+  "theme.CodeBlock.copy": {
+    "message": "Copier",
+    "description": "The copy button label on code blocks"
+  },
+  "theme.DocSidebarItem.expandCategoryAriaLabel": {
+    "message": "Développer la catégorie '{label}' de la barre latérale",
+    "description": "The ARIA label to expand the sidebar category"
+  },
+  "theme.DocSidebarItem.collapseCategoryAriaLabel": {
+    "message": "Réduire la catégorie '{label}' de la barre latérale",
+    "description": "The ARIA label to collapse the sidebar category"
+  },
+  "theme.NavBar.navAriaLabel": {
+    "message": "Main",
+    "description": "The ARIA label for the main navigation"
+  },
+  "theme.NotFound.p1": {
+    "message": "Nous n'avons pas trouvé ce que vous recherchez.",
+    "description": "The first paragraph of the 404 page"
+  },
+  "theme.NotFound.p2": {
+    "message": "Veuillez contacter le propriétaire du site qui vous a lié à l'URL d'origine et leur faire savoir que leur lien est cassé.",
+    "description": "The 2nd paragraph of the 404 page"
+  },
+  "theme.TOCCollapsible.toggleButtonLabel": {
+    "message": "Sur cette page",
+    "description": "The label used by the button on the collapsible TOC component"
+  },
+  "theme.navbar.mobileLanguageDropdown.label": {
+    "message": "Langues",
+    "description": "The label for the mobile language switcher dropdown"
+  },
+  "theme.blog.post.readMore": {
+    "message": "Lire plus",
+    "description": "The label used in blog post item excerpts to link to full blog posts"
+  },
+  "theme.blog.post.readMoreLabel": {
+    "message": "En savoir plus sur {title}",
+    "description": "The ARIA label for the link to full blog posts from excerpts"
+  },
+  "theme.blog.post.readingTime.plurals": {
+    "message": "Une minute de lecture|{readingTime} minutes de lecture",
+    "description": "Pluralized label for \"{readingTime} min read\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.docs.breadcrumbs.home": {
+    "message": "Page d'accueil",
+    "description": "The ARIA label for the home page in the breadcrumbs"
+  },
+  "theme.docs.sidebar.navAriaLabel": {
+    "message": "Docs sidebar",
+    "description": "The ARIA label for the sidebar navigation"
+  },
+  "theme.docs.sidebar.collapseButtonTitle": {
+    "message": "Réduire le menu latéral",
+    "description": "The title attribute for collapse button of doc sidebar"
+  },
+  "theme.docs.sidebar.collapseButtonAriaLabel": {
+    "message": "Réduire le menu latéral",
+    "description": "The title attribute for collapse button of doc sidebar"
+  },
+  "theme.docs.sidebar.closeSidebarButtonAriaLabel": {
+    "message": "Fermer la barre de navigation",
+    "description": "The ARIA label for close button of mobile sidebar"
+  },
+  "theme.navbar.mobileSidebarSecondaryMenu.backButtonLabel": {
+    "message": "← Retour au menu principal",
+    "description": "The label of the back button to return to main menu, inside the mobile navbar sidebar secondary menu (notably used to display the docs sidebar)"
+  },
+  "theme.docs.sidebar.toggleSidebarButtonAriaLabel": {
+    "message": "Ouvrir/fermer la barre de navigation",
+    "description": "The ARIA label for hamburger menu button of mobile navigation"
+  },
+  "theme.docs.sidebar.expandButtonTitle": {
+    "message": "Déplier le menu latéral",
+    "description": "The ARIA label and title attribute for expand button of doc sidebar"
+  },
+  "theme.docs.sidebar.expandButtonAriaLabel": {
+    "message": "Déplier le menu latéral",
+    "description": "The ARIA label and title attribute for expand button of doc sidebar"
+  },
+  "theme.blog.post.plurals": {
+    "message": "Un article|{count} articles",
+    "description": "Pluralized label for \"{count} posts\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.blog.tagTitle": {
+    "message": "{nPosts} tagués avec « {tagName} »",
+    "description": "The title of the page for a blog tag"
+  },
+  "theme.blog.author.pageTitle": {
+    "message": "{authorName} - {nPosts}",
+    "description": "The title of the page for a blog author"
+  },
+  "theme.blog.authorsList.pageTitle": {
+    "message": "Authors",
+    "description": "The title of the authors page"
+  },
+  "theme.blog.authorsList.viewAll": {
+    "message": "View All Authors",
+    "description": "The label of the link targeting the blog authors page"
+  },
+  "theme.contentVisibility.unlistedBanner.title": {
+    "message": "Page non répertoriée",
+    "description": "The unlisted content banner title"
+  },
+  "theme.contentVisibility.unlistedBanner.message": {
+    "message": "Cette page n'est pas répertoriée. Les moteurs de recherche ne l'indexeront pas, et seuls les utilisateurs ayant un lien direct peuvent y accéder.",
+    "description": "The unlisted content banner message"
+  },
+  "theme.contentVisibility.draftBanner.title": {
+    "message": "Draft page",
+    "description": "The draft content banner title"
+  },
+  "theme.contentVisibility.draftBanner.message": {
+    "message": "This page is a draft. It will only be visible in dev and be excluded from the production build.",
+    "description": "The draft content banner message"
+  },
+  "theme.ErrorPageContent.tryAgain": {
+    "message": "Réessayer",
+    "description": "The label of the button to try again rendering when the React error boundary captures an error"
+  },
+  "theme.common.skipToMainContent": {
+    "message": "Aller au contenu principal",
+    "description": "The skip to content label used for accessibility, allowing to rapidly navigate to main content with keyboard tab/enter navigation"
+  },
+  "theme.tags.tagsPageTitle": {
+    "message": "Tags",
+    "description": "The title of the tag list page"
+  },
+  "theme.blog.author.noPosts": {
+    "message": "Cet auteur n'a encore rédigé aucun article.",
+    "description": "The text for authors with 0 blog post"
+  },
+  "homepage.title": {
+    "message": "Documentation"
+  },
+  "homepage.tagline": {
+    "message": "Documentation"
+  },
+  "homepage.description": {
+    "message": "Documentation d'OpenVLE - un logiciel de gestion de cours basé sur Proxmox VE et Apache Guacamole"
+  },
+  "docStatus.stable": {
+    "message": "Stable"
+  },
+  "docStatus.draft": {
+    "message": "En cours"
+  },
+  "docStatus.deprecated": {
+    "message": "Obsolète"
+  },
+  "component.example.label": {
+    "message": "Exemple :"
+  },
+  "component.navigation.label": {
+    "message": "Navigation :"
+  },
+  "component.navigation.mainMenu": {
+    "message": "Via le menu principal :"
+  },
+  "component.navigation.alternative": {
+    "message": "Également accessible via :"
+  },
+  "component.fieldReference.header.name": {
+    "message": "Nom du champ"
+  },
+  "component.fieldReference.header.description": {
+    "message": "Description"
+  },
+  "component.fieldReference.deprecated.tooltip": {
+    "message": "Ce champ est obsolète et ne devrait plus être utilisé."
+  },
+  "component.objectRelations.intro": {
+    "message": "De nombreux objets dans OpenVLE sont liés à d'autres éléments du système. L'aperçu suivant montre quelles relations existent et si elles déclenchent certaines automatisations."
+  },
+  "component.objectRelations.header.object": {
+    "message": "Objet"
+  },
+  "component.objectRelations.header.description": {
+    "message": "Description"
+  },
+  "component.objectRelations.header.behavior": {
+    "message": "Comportement automatique"
+  },
+  "component.objectRelations.changelogs.description": {
+    "message": "Toutes les modifications de l'objet sont automatiquement enregistrées."
+  },
+  "component.objectRelations.autoRemove": {
+    "message": "Suppression automatique lors de la suppression de l'objet."
+  },
+  "component.objectRelations.permissions.name": {
+    "message": "Permissions"
+  },
+  "component.objectRelations.permissions.description": {
+    "message": "Les permissions spécifiques à l'objet peuvent être attribuées directement à l'objet."
+  },
+  "component.objectRelations.tags.description": {
+    "message": "Les objets peuvent être marqués avec un nombre quelconque de tags pour les catégoriser ou les filtrer."
+  },
+  "component.objectRelations.tasks.description": {
+    "message": "Tâches internes au système, automatiquement créées et surveillées lors d'actions (par ex. démarrage, arrêt ou clonage)."
+  },
+  "component.objectRelations.tasks.behavior": {
+    "message": "Création automatique pour certains processus ou actions."
+  },
+  "component.permissions.intro": {
+    "message": "Les permissions requises pour les actions peuvent être attribuées via des rôles ou individuellement. Si certains droits vous manquent, les fonctions correspondantes dans l'interface utilisateur sont masquées ou désactivées."
+  },
+  "component.permissions.header.action": {
+    "message": "Action"
+  },
+  "component.permissions.header.permission": {
+    "message": "Permission requise"
+  },
+  "component.permissions.header.path": {
+    "message": "Chemin"
+  },
+  "component.permissions.header.info": {
+    "message": "Informations supplémentaires"
+  },
+  "component.permissions.or": {
+    "message": "ou"
+  },
+  "component.permissions.deprecated.tooltip": {
+    "message": "Cette permission est obsolète et ne devrait plus être utilisée."
+  },
+  "component.permissions.version.tooltip": {
+    "message": "Introduit dans la version {version}"
+  },
+  "component.permissions.beta.tooltip": {
+    "message": "Cette permission ne devrait pas encore être utilisée."
+  },
+  "component.permissions.admonition.scope": {
+    "message": "Les permissions *_read, *_update et *_delete peuvent être définies sur un chemin spécifique, c'est-à-dire sur l'UUID d'un objet."
+  },
+  "component.permissions.admonition.example": {
+    "message": "Exemple :"
+  },
+  "component.permissions.admonition.exampleDesc": {
+    "message": "L'utilisateur n'a alors accès qu'à cet unique objet."
+  },
+  "component.permissions.admonition.global": {
+    "message": "Si le chemin / est utilisé, la permission s'applique globalement à tous les objets de ce type."
+  },
+  "component.permissions.admonition.create": {
+    "message": "Pour les permissions *_create, seul le chemin global / est autorisé."
+  }
+}

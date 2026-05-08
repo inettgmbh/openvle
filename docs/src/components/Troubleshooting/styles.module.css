@@ -1,0 +1,45 @@
+.container {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.introWrapper {
+  margin-bottom: 1.5rem;
+}
+
+.item {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.description {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.block {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.list {
+  margin-left: 1.2rem;
+  line-height: 1.6;
+}
+
+.tipList {
+  margin-left: 1rem;
+  line-height: 1.6;
+}
+
+.example {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.linkList {
+  margin-left: 1.2rem;
+  line-height: 1.6;
+}

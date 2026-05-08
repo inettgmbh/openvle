@@ -1,0 +1,218 @@
+---
+id: policies
+sidebar_label: Richtlinien
+sidebar_position: 90
+status: finished
+tags:
+  - access-control
+  - policies
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Richtlinien
+
+Richtlinien sind Regeln oder Nutzungsbedingungen, die Benutzerinnen und Benutzer akzeptieren müssen, bevor sie bestimmte Funktionen in OpenVLE nutzen können.  
+Dies kann beispielsweise Datenschutzbestimmungen, IT-Nutzungsrichtlinien oder Haftungsausschlüsse betreffen.  
+Aktive Richtlinien werden beim Login angezeigt.
+
+{/* TODO: Screenshot hinzufügen – Beispiel einer angezeigten Richtlinie beim Login */}
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint path="Zugriffskontrolle → Richtlinien" />
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeigen und Verwalten vorhandener Richtlinien',
+    'Erstellen neuer Richtlinien mit Titel, Beschreibung und Inhalt',
+    'Festlegen, ob eine Richtlinie aktiv oder inaktiv ist',
+    'Einsehen, welche Benutzer einer Richtlinie bereits zugestimmt haben',
+    'Löschen oder Deaktivieren nicht mehr benötigter Richtlinien',
+  ]}
+/>
+
+{/* TODO: Screenshot hinzufügen – Richtlinienliste oder Detailansicht */}
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Bezeichnung der Richtlinie. Wird in Listen, Dialogen und bei der Zustimmung der Benutzer angezeigt.',
+    },
+    {
+      name: 'Inhalt',
+      description:
+        'Vollständiger Text der Richtlinie, der den Benutzern beim Akzeptieren angezeigt wird. Unterstützt **Markdown**-Formatierung (z. B. Überschriften, Listen, Links, Hervorhebungen).',
+    },
+    {
+      name: 'Beschreibung',
+      description:
+        'Kurze Beschreibung der Richtlinie, z. B. „Datenschutzrichtlinie für Studierende“ oder „Allgemeine Nutzungsbedingungen für Administratoren“.',
+    },
+    {
+      name: 'Status',
+      description:
+        'Aktueller Status der Richtlinie, entweder „Inaktiv“ oder „Aktiv“.',
+    },
+  ]}
+/>
+
+---
+
+## Erstellen einer Richtlinie
+
+1. Öffne im Hauptmenü den Bereich **Zugriffskontrolle → Richtlinien**.
+2. Klicke auf **Hinzufügen**, um eine neue Richtlinie anzulegen.
+3. Gib Name, Beschreibung und den Textinhalt der Richtlinie ein.  
+   Der Textinhalt unterstützt Markdown-Formatierung, sodass du z. B. Überschriften, Listen, Links oder Hervorhebungen verwenden kannst.
+4. Speichere die Richtlinie.
+
+---
+
+## Aktivieren oder Deaktivieren einer Richtlinie
+
+1. Öffne im Hauptmenü den Bereich **Zugriffskontrolle → Richtlinien**.
+2. Suche in der Liste nach der gewünschten Richtlinie und öffne diese.
+3. In der Aktionsleiste der Richtlinie siehst du nun entweder einen **roten Button „Inaktiv“** (zum Aktivieren) oder einen **grünen Button „Aktiv“** (zum Deaktivieren).  
+   Durch Klicken auf den jeweiligen Button kannst du die Richtlinie aktivieren oder deaktivieren.
+
+:::info
+Richtlinien können beliebig oft aktiviert und deaktiviert werden.
+:::
+
+:::info
+Nach der Aktivierung wird die Richtlinie erst bei der **nächsten Anmeldung** der Benutzer angezeigt.  
+Bereits angemeldete Benutzer bleiben bis zum Ende ihrer aktuellen Sitzung angemeldet.  
+Um alle Benutzer auf einmal abzumelden siehe [Administration -> Betrieb und Verwaltung -> FAQ](/docs/admin/operations/faq#logout-all-users).
+:::
+
+---
+
+## Bearbeiten einer Richtlinie
+
+1. Öffne im Hauptmenü den Bereich **Zugriffskontrolle → Richtlinien**.
+2. Suche in der Liste nach der gewünschten Richtlinie.
+3. Klicke auf **Bearbeiten**, oder öffne das Kontextmenü der Richtlinie und wähle **Bearbeiten**.
+4. Im Formular werden alle aktuellen Daten der Richtlinie angezeigt.
+5. Passe die gewünschten Felder an – beispielsweise **Name**, **Beschreibung** oder **Textinhalt**.
+6. Speichere die Änderungen.
+
+:::note
+Eine Richtlinie kann nur bearbeitet werden, wenn sie **inaktiv** ist und **keine Benutzer** ihr bereits zugestimmt haben.  
+Aktive Richtlinien oder Richtlinien mit bestehenden Zustimmungen können **nicht mehr verändert** werden.
+
+Wenn sich z. B. deine Datenschutzrichtlinie geändert hat, lege eine **neue Richtlinie** an (z. B. „Datenschutzrichtlinie v2“),  
+deaktiviere die alte Richtlinie und aktiviere anschließend die neue Version.
+:::
+
+---
+
+## Löschen einer Richtlinie
+
+1. Öffne im Hauptmenü den Bereich **Zugriffskontrolle → Richtlinien**.
+2. Suche in der Liste nach der gewünschten Richtlinie.
+3. Klicke auf **Löschen**, oder öffne das Kontextmenü der Richtlinie und wähle **Löschen**.
+4. Bestätige den Löschvorgang im angezeigten Dialog.
+5. Die Richtlinie wird daraufhin dauerhaft entfernt.
+
+:::warning
+Es können nur **inaktive Richtlinien** gelöscht werden.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Datenschutzrichtlinie für alle Benutzer anlegen">
+  Eine Administratorin möchte sicherstellen, dass alle Benutzer die
+  Datenschutzbedingungen gelesen und akzeptiert haben. Sie erstellt im Bereich
+  **Richtlinien** eine neue Richtlinie mit dem Titel „Datenschutzbestimmungen“.
+  Die Richtlinie wird als aktiv markiert, sodass alle Benutzer beim nächsten
+  Login zur Bestätigung aufgefordert werden.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispielanzeige der Datenschutzrichtlinie */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Benutzer können aktive Richtlinien nur **lesen und akzeptieren**, nicht jedoch bearbeiten.
+- Richtlinien werden in der Richtlinien Detailansicht pro Benutzer als **akzeptiert** markiert.
+- Aktive Richtlinien werden ausschließlich innerhalb von **OpenVLE** erzwungen – nicht innerhalb von **Apache Guacamole**.
+- Eine Richtlinie kann deaktiviert werden, ohne sie zu löschen.
+- Änderungen an bereits aktiven Richtlinien sind nicht mehr möglich.
+- Im Tab **Benutzer** können Administratoren prüfen, wer eine Richtlinie bereits akzeptiert hat.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Benutzer',
+      description: 'Einer Richtlinie können beliebig viele Benutzer zustimmen.',
+      behavior: 'Keine Automatisierungen.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  data={[
+    {
+      action: 'Richtlinien anzeigen',
+      permission: 'policies_read',
+      scoped: true,
+    },
+    { action: 'Richtlinien anlegen', permission: 'policies_create' },
+    {
+      action: 'Richtlinien bearbeiten',
+      permission: 'policies_update',
+      scoped: true,
+    },
+    {
+      action: 'Richtlinien löschen',
+      permission: 'policies_delete',
+      scoped: true,
+    },
+    {
+      action: 'Benutzerzustimmungen anzeigen',
+      permission: 'policies_users_read',
+    },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Benutzerverwaltung', href: './users' },
+    { label: 'Rollen', href: './roles' },
+    { label: 'Berechtigungen', href: './permissions' },
+  ]}
+/>

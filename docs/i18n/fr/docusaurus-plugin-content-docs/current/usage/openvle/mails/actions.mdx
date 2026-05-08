@@ -1,0 +1,215 @@
+---
+id: actions
+sidebar_label: Actions
+sidebar_position: 5
+status: finished
+tags:
+  - mails
+  - actions
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Actions e-mail
+
+Dans la section **Actions**, vous trouverez un aperçu de tous les événements internes au système pour lesquels OpenVLE peut envoyer automatiquement des e-mails.  
+Chaque action représente un événement concret dans le système, comme la création d'une machine virtuelle, le démarrage d'un événement ou la fin d'un événement.  
+L'attribution d'un modèle d'e-mail à une action détermine quel message est envoyé dans ce cas.
+
+Si aucun modèle d'e-mail n'est attribué à une action, **aucun e-mail** n'est envoyé lorsque cette action se produit.
+
+---
+
+## Où trouver cette section ? {#where}
+
+<NavigationHint
+  path="E-mails -> Actions"
+  alternative="Accessible via les modèles d'e-mail"
+/>
+
+---
+
+## Aperçu des fonctionnalités {#features}
+
+<FeatureList
+  items={[
+    'Affichage de toutes les actions e-mail présentes dans le système',
+    "Attribution ou modification du modèle d'e-mail utilisé par action",
+    'Aperçu rapide des actions qui envoient actuellement des e-mails',
+    'Modification des modèles attribués directement depuis la vue des actions',
+  ]}
+/>
+
+---
+
+## Aperçu des champs importants {#fields}
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        "Nom d'affichage de l'action dans l'interface. Décrit quand l'action est déclenchée, par ex. \"L'événement est en cours de déploiement\".",
+    },
+    {
+      name: 'Description',
+      description:
+        "Brève description ou indication de version de l'action, contient les variables e-mail autorisées.",
+    },
+    {
+      name: 'Slug',
+      description:
+        'Nom interne de l\'action, par ex. "events_post_deployment_success". Utilisé côté système.',
+    },
+  ]}
+/>
+
+---
+
+## Actions e-mail actuellement disponibles {#current-actions}
+
+:::info
+Les actions suivantes au sein d'**OpenVLE** déclenchent actuellement des e-mails automatiques.
+:::
+
+### Événements
+
+<div style={{ overflowX: 'auto' }} className="compact-table">
+
+| Nom                                            | Slug                             | Description                                                                                                                                                                                  |
+| ---------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Événement déployé avec succès                  | events_post_deployment_success   | Notifie **tous les participants (enseignants et étudiants)** que l'événement a été déployé avec succès et est désormais disponible.                                                          |
+| L'événement n'a pas pu être archivé            | events_post_decommission_failed  | Informe **les administrateurs de l'événement** que l'archivage de l'événement a échoué et que des mesures manuelles peuvent être nécessaires.                                                |
+| L'événement n'a pas pu être déployé            | events_post_deployment_failed    | Notifie **les administrateurs de l'événement** que le déploiement de l'événement a échoué. Contient éventuellement des détails techniques ou des indications pour la résolution du problème. |
+| L'événement est en cours d'archivage           | events_decommission_started      | Informe **tous les participants (enseignants et étudiants)** que l'événement est en cours d'archivage et ne sera plus accessible.                                                            |
+| L'événement va bientôt commencer               | events_pre_start                 | Envoie un rappel à **tous les participants (enseignants et étudiants)** que l'événement démarre bientôt. Contient éventuellement des données d'accès ou des informations organisationnelles. |
+| L'événement est en cours de déploiement        | events_deployment_started        | Informe **les administrateurs de l'événement** que le déploiement de l'événement a commencé. Sert au suivi du statut du déploiement.                                                         |
+| L'événement sera bientôt archivé (enseignants) | events_pre_end_admin             | Notifie **uniquement les enseignants** que l'événement sera bientôt archivé, avec la possibilité d'effectuer encore des dernières modifications ou téléchargements.                          |
+| L'événement sera bientôt archivé (étudiants)   | events_pre_end_student           | Informe **uniquement les étudiants** que l'événement sera bientôt archivé et que le matériel ou les résultats doivent être sauvegardés au préalable.                                         |
+| L'événement a été archivé avec succès          | events_post_decommission_success | Confirme aux **administrateurs de l'événement** que l'archivage a été effectué avec succès.                                                                                                  |
+| L'événement a été supprimé                     | events_delete                    | Notifie **les administrateurs de l'événement** que l'événement a été entièrement supprimé. Contient éventuellement des informations de confirmation ou de journal.                           |
+
+</div>
+
+### Machines virtuelles
+
+<div style={{ overflowX: 'auto' }} className="compact-table">
+
+| Nom                                        | Slug              | Description                                                                                                                |
+| ------------------------------------------ | ----------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| VirtualMachine n'a pas pu être déployée    | vm_create_failed  | Informe qu'une machine virtuelle n'a pas pu être créée lors du déploiement. Contient des détails techniques sur l'erreur.  |
+| VirtualMachine n'a pas pu être supprimée   | vm_delete_failed  | Notifie que la suppression d'une machine virtuelle a échoué. Éventuellement avec des indications pour un nettoyage manuel. |
+| VirtualMachine est en cours de suppression | vm_delete_started | Envoie un message de statut indiquant que le processus de suppression d'une machine virtuelle a été lancé.                 |
+| VirtualMachine a été déployée avec succès  | vm_create_success | Notifie que la machine virtuelle a été créée avec succès et est prête à l'emploi.                                          |
+
+</div>
+
+---
+
+## Attribuer un modèle d'e-mail {#assign-template}
+
+1. Ouvrez la section **E-mails -> Actions** dans le menu principal.
+2. Recherchez l'action souhaitée dans la liste.
+3. Ouvrez l'action.
+4. Rendez-vous dans l'onglet **Modèles d'e-mail** et cliquez sur **Attribuer**.
+5. Recherchez le modèle d'e-mail souhaité et sélectionnez-le.
+6. Enregistrez l'attribution.
+
+:::info
+Lorsqu'**un** modèle d'e-mail est attribué à une action, cela est indiqué dans la vue détaillée du modèle d'e-mail en haut à droite par un **symbole vert**.
+:::
+
+---
+
+## Retirer un modèle d'e-mail {#remove-template}
+
+1. Ouvrez la section **E-mails -> Actions** dans le menu principal.
+2. Recherchez l'action souhaitée dans la liste.
+3. Ouvrez l'action.
+4. Rendez-vous dans l'onglet **Modèles d'e-mail**.
+5. Cliquez sur **Retirer** pour le modèle d'e-mail à retirer, ou ouvrez le menu contextuel et sélectionnez **Retirer**.
+6. Confirmez l'opération dans la boîte de dialogue affichée.
+
+:::info
+Lorsqu'**aucun** modèle d'e-mail n'est attribué à une action, cela est indiqué dans la vue détaillée du modèle d'e-mail en haut à droite par un **symbole rouge**.
+:::
+
+---
+
+## Exemple ou cas d'utilisation {#example}
+
+<Example title="Action e-mail pour les machines virtuelles déployées">
+  Après la création d'une nouvelle machine virtuelle, un e-mail doit être envoyé
+  automatiquement. Ouvrez dans la section **E-mails -> Actions** l'action
+  *"VirtualMachine a été déployée avec succès"* et attribuez-lui le modèle
+  *"VirtualMachine a été déployée avec succès"*. Désormais, lors de la création
+  d'une nouvelle machine virtuelle, cet e-mail sera automatiquement envoyé.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran -- Exemple de gestion des actions */}
+
+---
+
+## Remarques / Particularités {#notes}
+
+- Les actions sont prédéfinies par le système et ne peuvent pas être créées ou supprimées manuellement.
+- Si aucun modèle n'est attribué à une action, aucun envoi d'e-mail n'a lieu.
+- Les modifications du modèle attribué prennent effet immédiatement pour les événements futurs.
+- Les actions sont généralement regroupées par domaine (par ex. utilisateurs, environnements, événements, système).
+- Certaines actions sont purement internes et servent à la journalisation, sans fonction d'envoi.
+
+---
+
+## Relations avec d'autres objets {#relations}
+
+<ObjectRelations
+  showChangelogs={false}
+  showPermissions={false}
+  showTags={false}
+  items={[
+    {
+      object: "Modèles d'e-mail",
+      description:
+        "Un nombre illimité de modèles d'e-mail peut être attribué à une action.",
+      behavior: 'Aucune automatisation.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises {#permissions}
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    {
+      action: "Afficher les modèles d'e-mail",
+      permission: 'mailtemplates_read',
+      scoped: true,
+    },
+    {
+      action: "Modifier les modèles d'e-mail",
+      permission: 'mailtemplates_update',
+      scoped: false,
+    },
+  ]}
+/>
+
+---
+
+## Sujets connexes {#related}
+
+<RelatedLinks
+  items={[
+    { label: 'E-mails envoyés', href: './sent' },
+    { label: "Modèles d'e-mail", href: './templates' },
+    { label: 'Paramètres système', href: '../system/settings' },
+  ]}
+/>

@@ -1,0 +1,224 @@
+---
+id: connection
+sidebar_label: Verbindungen
+sidebar_position: 10
+status: finished
+tags:
+  - connections
+  - guacamole
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Verbindungen
+
+In **OpenVLE** definieren Verbindungen, **welche Benutzerinnen und Benutzer** sich mit welchen **virtuellen Maschinen** verbinden können.  
+Diese Verbindungen werden über **Apache Guacamole** bereitgestellt und ermöglichen den Fernzugriff direkt im Browser – ohne zusätzliche Softwareinstallation.
+
+Jede Verbindung enthält Informationen wie **virtuelle Maschine**, **Verbindungsvorlage** und **Benutzer**.  
+Administratorinnen und Administratoren können hier Verbindungen erstellen, löschen oder überwachen.
+
+{/* TODO: Screenshot hinzufügen – Guacamole-Verbindungsübersicht */}
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="Verbindungen → Verbindungen"
+  alternative="Über Virtuelle Maschinen oder VM-Vorlagen verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeigen bestehender Guacamole-Verbindungen',
+    'Erstellen neuer Verbindungen für Benutzer basierend auf Verbindungsvorlagen',
+    'Verwenden von Verbindungsvorlagen als Grundlage',
+    'Löschen veralteter oder nicht mehr benötigter Verbindungen',
+  ]}
+/>
+
+{/* TODO: Screenshot hinzufügen – Detailansicht einer Verbindung */}
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Anzeigename der Verbindung. Wird in Listen und Dialogen angezeigt – dies ist auch der Name der Verbindung in Apache Guacamole, den Benutzer beim Anmelden sehen.',
+    },
+    {
+      name: 'Benutzer',
+      description:
+        'Benutzerkonto, dem diese Verbindung zugewiesen ist. Nur dieser Benutzer kann über Apache Guacamole auf die VM zugreifen.',
+    },
+    {
+      name: 'Virtuelle Maschine (VM)',
+      description:
+        'Referenz auf die VM, mit der sich der Benutzer über diese Verbindung verbinden kann.',
+    },
+    {
+      name: 'Verbindungsvorlage',
+      description:
+        'Verwendete Verbindungsvorlage, die Protokoll, Port und Zugangsdaten definiert.',
+    },
+    {
+      name: 'Veranstaltung',
+      description:
+        '(Optional) Zugeordnete Veranstaltung, falls die Verbindung im Rahmen einer Veranstaltung automatisch erstellt wurde.',
+    },
+  ]}
+/>
+
+---
+
+## Erstellen einer Verbindung
+
+1. Öffne im Hauptmenü den Bereich **Verbindungen → Verbindungen**.
+2. Klicke auf **Hinzufügen**, um eine neue Verbindung zu erstellen.
+3. Wähle die gewünschte **Verbindungsvorlage** aus.
+4. Wähle den **Benutzer**, der Zugriff auf die Verbindung erhalten soll.
+5. Speichere die Verbindung.
+6. Der Benutzer kann sich anschließend sofort über **Apache Guacamole** mit der zugehörigen VM verbinden.
+
+---
+
+## Löschen einer Verbindung
+
+1. Öffne im Hauptmenü den Bereich **Verbindungen → Verbindungen**.
+2. Suche die gewünschte Verbindung in der Liste.
+3. Klicke auf **Löschen**, oder öffne das Kontextmenü und wähle **Löschen**.
+4. Bestätige den Löschvorgang im angezeigten Dialog.
+5. Die Verbindung wird daraufhin dauerhaft entfernt.
+
+:::danger
+Nach dem Löschen verliert der Benutzer **sofort** den Zugriff auf die virtuelle Maschine in Apache Guacamole.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="SSH-Verbindung zu einer Linux-VM anlegen">
+  Eine Administratorin möchte Entwicklern Zugriff auf eine Linux-VM ermöglichen.
+  Sie öffnet den Bereich **Verbindungen**, erstellt für jeden Benutzer eine neue
+  Verbindung basierend auf einer passenden **Verbindungsvorlage** der
+  gewünschten VM. Anschließend können die Benutzer die Verbindung direkt über
+  den Browser starten – sicher und ohne lokale SSH-Software.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel einer SSH-Verbindung */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Jede Verbindung basiert auf einer **Verbindungsvorlage**.
+- Änderungen an einer Verbindung wirken sich **sofort** aus.
+- Sensible Daten (z. B. Passwörter) können **nicht erneut eingesehen** werden.
+- Aktive Sitzungen lassen sich über den **Apache Guacamole-Server** einsehen und bei Bedarf beenden.
+- Nur **Administratorinnen und Administratoren** dürfen Verbindungen erstellen oder löschen.
+- Verbindungen sind **benutzerspezifisch** und können nicht mehrfach zugewiesen werden.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  showChangelogs={false}
+  showPermissions={false}
+  showTasks={true}
+  items={[
+    {
+      object: 'Virtuelle Maschine (VM)',
+      description: 'Jede Verbindung ist genau einer VM zugewiesen.',
+      behavior:
+        'Beim Löschen der VM werden alle zugehörigen Verbindungen automatisch gelöscht.',
+    },
+    {
+      object: 'Verbindungsvorlage',
+      description:
+        'Jede Verbindung basiert auf genau einer Verbindungsvorlage.',
+      behavior:
+        'Keine automatischen Änderungen bei der Aktualisierung oder dem Löschen der Vorlage.',
+    },
+    {
+      object: 'Benutzer',
+      description: 'Jede Verbindung ist genau einem Benutzer zugewiesen.',
+      behavior:
+        'Beim Löschen des Benutzers werden alle zugehörigen Verbindungen automatisch gelöscht.',
+    },
+    {
+      object: 'Veranstaltung',
+      description:
+        '(Optional) Eine Verbindung kann einer Veranstaltung zugewiesen sein.',
+      behavior:
+        'Beim Löschen der Veranstaltung werden alle zugehörigen Verbindungen automatisch gelöscht.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  data={[
+    {
+      action: 'Verbindungen anzeigen',
+      permission: 'guacamoles_read',
+      scoped: true,
+    },
+    {
+      action: 'Verbindungen anlegen',
+      permission: 'guacamoles_create',
+    },
+    {
+      action: 'Verbindungen löschen',
+      permission: 'guacamoles_delete',
+      scoped: true,
+    },
+    {
+      action: 'Verbindungsvorlagen anzeigen',
+      permission: 'guacamole_connection_profiles_read',
+      scoped: true,
+    },
+    {
+      action: 'Verbindungsvorlagen anlegen',
+      permission: 'guacamole_connection_profiles_create',
+    },
+    {
+      action: 'Verbindungsvorlagen löschen',
+      permission: 'guacamole_connection_profiles_delete',
+      scoped: true,
+    },
+    { action: 'Virtuelle Maschinen anzeigen', permission: 'vms_read' },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Verbindungen (Übersicht)', href: './' },
+    { label: 'Verbindungsvorlagen', href: './templates' },
+    { label: 'Virtuelle Maschinen', href: '../vms' },
+    { label: 'VM-Vorlagen', href: '../vm-templates' },
+  ]}
+/>

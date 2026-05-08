@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+
+# Test / coverage / type-check caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+cover/
+coverage.xml
+report.xml
+.cache
+
+# Virtualenv
+.venv
+venv/
+env/
+ENV/
+.python-version
+*pyvenv.cfg
+
+# Project-specific
+bin/
+code/bin
+code/sbom-cyclonedx.json
+.autoenv*
+moodle/

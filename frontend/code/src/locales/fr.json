@@ -1,0 +1,2213 @@
+{
+  "common": {
+    "actions": "Actions",
+    "active": "Actif",
+    "add": "Ajouter",
+    "all": "Tous",
+    "and": "et",
+    "assign": "Attribuer",
+    "authBackend": "Auth Backend",
+    "autoRefresh": "Actualisation automatique toutes les {seconds} secondes",
+    "autoRefreshOff": "Actualisation automatique désactivée",
+    "back": "Retour",
+    "cancel": "Annuler",
+    "clone": "Copier",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "content": "Contenu",
+    "copied": "Copié !",
+    "confirmation": "Confirmation",
+    "create": "Créer",
+    "createdAt": "Créé le",
+    "createdBy": "Créé par",
+    "cpuUsage": "Utilisation CPU",
+    "date": "Date",
+    "delete": "Supprimer",
+    "description": "Description",
+    "details": "Détails",
+    "disabled": "Désactivé",
+    "done": "Terminé",
+    "edit": "Modifier",
+    "enabled": "Activé",
+    "errorLoading": "Erreur de chargement",
+    "event": "Événement",
+    "export": "Exporter",
+    "filter": "Filtrer",
+    "filterPlaceholder": "Ajouter un filtre...",
+    "hostname": "Nom d'hôte",
+    "id": "ID",
+    "import": "Importer",
+    "inactive": "Inactif",
+    "infos": "Infos",
+    "key": "Clé",
+    "label": "Libellé",
+    "loading": "Chargement...",
+    "manual": "Manuel",
+    "memory": "Mémoire vive",
+    "name": "Nom",
+    "next": "Suivant",
+    "node": "Nœud",
+    "no": "Non",
+    "noContent": "Aucun contenu",
+    "noData": "Aucune donnée disponible",
+    "noPermission": "pas de permission",
+    "noResults": "Aucun résultat trouvé.",
+    "noValidContent": "Aucun contenu valide trouvé",
+    "none": "Aucun",
+    "of": "sur",
+    "object": "Objet",
+    "overview": "Aperçu",
+    "participants": "Participants",
+    "password": "Mot de passe",
+    "port": "Port",
+    "protected": "Protégé",
+    "protocol": "Protocole",
+    "proxmox": "Proxmox VE",
+    "ram": "RAM",
+    "refresh": "Actualiser",
+    "remove": "Retirer",
+    "reset": "Réinitialiser",
+    "response": "Réponse",
+    "retry": "Réessayer",
+    "save": "Enregistrer",
+    "search": "Rechercher",
+    "searchPlaceholder": "Rechercher... (min. 3 caractères)",
+    "statistics": "Statistiques",
+    "status": "Statut",
+    "storageSpace": "Stockage",
+    "students": "Étudiants",
+    "submit": "Envoyer",
+    "teachers": "Enseignants",
+    "triggeredBy": "Déclenché par",
+    "type": "Type",
+    "unknown": "Inconnu",
+    "unknownError": "Erreur inconnue",
+    "updatedAt": "Mis à jour le",
+    "url": "URL",
+    "user": "Utilisateur",
+    "username": "Nom d'utilisateur",
+    "userStatus": "Statut utilisateur",
+    "value": "Valeur",
+    "view": "Afficher",
+    "virtualMachine": "Machine virtuelle",
+    "yes": "Oui",
+    "createSuccess": "{entity} créé(e) avec succès",
+    "createError": "{entity} n'a pas pu être créé(e)",
+    "editSuccess": "{entity} modifié(e) avec succès",
+    "editError": "{entity} n'a pas pu être modifié(e)",
+    "deleteSuccess": "{entity} supprimé(e)",
+    "deleteError": "{entity} n'a pas pu être supprimé(e)",
+    "addSuccess": "{entity} ajouté(e)",
+    "addError": "{entity} n'a pas pu être ajouté(e)",
+    "removeSuccess": "{entity} retiré(e)",
+    "removeError": "{entity} n'a pas pu être retiré(e)",
+    "loadError": "{entity} n'a pas pu être chargé(e)",
+    "loadErrorPlural": "{entities} n'ont pas pu être chargé(e)s",
+    "notFound": "{entity} n'a pas pu être trouvé(e)",
+    "lockSuccess": "{entity} bloqué(e) avec succès",
+    "lockError": "{entity} n'a pas pu être bloqué(e)",
+    "unlockSuccess": "{entity} débloqué(e) avec succès",
+    "unlockError": "{entity} n'a pas pu être débloqué(e)",
+    "setSuccess": "{entity} défini(e) avec succès",
+    "setError": "{entity} n'a pas pu être défini(e)",
+    "cloneSuccess": "{entity} copié(e) avec succès",
+    "cloneError": "{entity} n'a pas pu être copié(e)",
+    "disableSuccess": "{entity} désactivé(e)",
+    "disableError": "{entity} n'a pas pu être désactivé(e)",
+    "enableSuccess": "{entity} activé(e)",
+    "enableError": "{entity} n'a pas pu être activé(e)",
+    "importSuccess": "{entity} importé(e) avec succès",
+    "importError": "{entity} n'a pas pu être importé(e)",
+    "protectionChangeError": "La protection de {entity} n'a pas pu être modifiée",
+    "loadSuccess": "{entity} chargé(e) avec succès",
+    "createTitle": "Créer {entity}",
+    "editTitle": "Modifier {entity}",
+    "cloneTitle": "Copier {entity}",
+    "importTitle": "Importer {entity}",
+    "sendTitle": "Envoyer {entity}",
+    "wizardTitle": "Assistant {entity}",
+    "confirmTitle": "Confirmer {entity}"
+  },
+  "components": {
+    "baseTable": {
+      "presets": {
+        "description": "Description",
+        "email": "E-mail",
+        "key": "Clé",
+        "name": "Nom",
+        "protected": "Système",
+        "status": "Statut",
+        "username": "Nom d'utilisateur"
+      },
+      "refreshing": "Actualisation...",
+      "search": "Rechercher..."
+    },
+    "baseTags": {
+      "addTag": "Ajouter un tag",
+      "tagExample": "département : 3",
+      "formatHelp": "Aperçu",
+      "maxChars": "Maximum {max} caractères",
+      "nameRequired": "Le nom du tag est requis",
+      "preview": "Aperçu",
+      "tagAdded": "Tag ajouté",
+      "tagDeleted": "Tag supprimé",
+      "tagExists": "Le tag existe déjà",
+      "tags": "Tags",
+      "valueRequired": "La valeur du tag est requise"
+    },
+    "batchAddModal": {
+      "completed": "Terminé",
+      "errorCount": "{count} erreur(s) survenue(s)",
+      "errorsOccurred": "Terminé",
+      "saving": "Enregistrement...",
+      "selected": "{count} sélectionné(s)",
+      "skipped": "{count} ignoré(s) (déjà existant)",
+      "unknownError": "Erreur inconnue"
+    },
+    "bulkDeleteModal": {
+      "andMore": "et {count} de plus",
+      "areYouSure": "Êtes-vous sûr ?",
+      "completed": "Terminé",
+      "errorCount": "{count} erreur(s) survenue(s)",
+      "errorsOccurred": "Terminé",
+      "removing": "Suppression...",
+      "title": "Supprimer {count} entrées",
+      "unknownError": "Erreur inconnue"
+    },
+    "changelog": {
+      "columns": {
+        "change": "Modification",
+        "changedBy": "Modifié par",
+        "timestamp": "Horodatage",
+        "unknown": "Inconnu"
+      },
+      "fields": {
+        "active": "Actif",
+        "content": "Contenu",
+        "contentHtml": "Contenu (HTML)",
+        "course": "Environnement",
+        "cpu": "CPU",
+        "dateEnd": "Date de fin",
+        "dateStart": "Date de début",
+        "defaultUserStatus": "Statut utilisateur par défaut",
+        "description": "Description",
+        "enabled": "Activé",
+        "endpointUrl": "URL de l'endpoint",
+        "language": "Langue",
+        "mailAction": "Action e-mail",
+        "moodleCourseId": "ID de cours modèle Moodle",
+        "os": "Système d'exploitation",
+        "permissions": "Autorisations",
+        "protected": "Protégé",
+        "ram": "RAM",
+        "replyTo": "Répondre à",
+        "roles": "Rôles",
+        "subject": "Objet",
+        "syncGroups": "Groupes de synchronisation",
+        "templates": "Modèles",
+        "timeEnd": "Heure de fin",
+        "timeStart": "Heure de début",
+        "vendor": "Fabricant"
+      },
+      "noChanges": "Aucune modification",
+      "noValue": "Aucune valeur",
+      "permissionAdded": "Permission ajoutée",
+      "permissionRemoved": "Permission supprimée"
+    },
+    "cloneModal": {
+      "assignmentsCopied": "Dans la plupart des cas, toutes les affectations à d'autres objets seront également copiées.",
+      "willBeCloned": "L'objet {name} sera copié."
+    },
+    "csvUpload": {
+      "alreadyMapped": "Déjà assigné",
+      "back": "Retour",
+      "delimiterInfo": "Le délimiteur (par ex. , , ;) peut être quelconque.",
+      "dragOrSelect": "Glisser le fichier CSV ici ou sélectionner un fichier",
+      "duplicateMapping": "Assignation en double",
+      "error": "Erreur",
+      "failed": "Échoué",
+      "failedRows": "Lignes échouées ({count})",
+      "importComplete": "Importation terminée",
+      "importRunning": "Importation en cours...",
+      "limitExceeded": "Le fichier contient {count} lignes – maximum {limit} autorisées. Veuillez d'abord diviser le fichier et réessayer.",
+      "mapColumns": "Assigner les colonnes",
+      "maxRows": "Le fichier peut contenir au maximum {limit} lignes.",
+      "next": "Suivant",
+      "pleaseSelect": "Veuillez sélectionner...",
+      "remaining": "Restant",
+      "requiredColumns": "Colonnes requises",
+      "restart": "Recommencer",
+      "retryFailed": "Réessayer les importations échouées ({count})",
+      "rowCount": "{count} lignes",
+      "selectFile": "Sélectionner un fichier",
+      "showPreview": "Afficher l'aperçu",
+      "startImport": "Démarrer l'importation ({count} lignes)",
+      "stepImport": "Importation",
+      "stepMapping": "Assignation",
+      "stepResult": "Résultat",
+      "stepUpload": "Téléchargement",
+      "successful": "Réussi",
+      "template": "Modèle",
+      "templateFilename": "modele-import.csv",
+      "total": "Total"
+    },
+    "deleteModal": {
+      "confirmAction": "Confirmer l'action",
+      "confirmPrompt": "Veuillez saisir pour confirmer :",
+      "tooltipBothMissing": "Saisir le texte de confirmation et activer la confirmation supplémentaire",
+      "tooltipExtraMissing": "Activer la confirmation supplémentaire ci-dessus",
+      "tooltipNameMissing": "Saisir le texte de confirmation pour supprimer",
+      "willBeDeleted": "L'objet {name} sera supprimé."
+    },
+    "deleteRelationModal": {
+      "objectsRemain": "Les deux objets resteront, ils ne seront simplement plus liés l'un à l'autre.",
+      "willBeRemoved": "L'affectation entre {parent} et {related} sera supprimée."
+    },
+    "deleteUserModal": {
+      "emptyState": "Aucun autre objet n'est lié à cet utilisateur.",
+      "objectsAutoDeleted": "Les objets suivants seront automatiquement supprimés :",
+      "previewError": "Erreur lors du chargement de l'aperçu de suppression.",
+      "sectionCountTruncated": "{total} au total – {shown} affichés",
+      "userWillBeDeleted": "L'utilisateur {name} sera définitivement supprimé :"
+    },
+    "eventStatus": {
+      "extendShorten": "Prolonger/Raccourcir",
+      "rollout": "Déployer",
+      "stop": "Arrêter",
+      "statusPending": "En attente",
+      "statusManual": "Manuel",
+      "statusRunning": "En cours",
+      "statusDone": "Terminé",
+      "statusError": "Erreur",
+      "steps": {
+        "planned": {
+          "title": "Planifié",
+          "actionLabel": "Créé",
+          "description": "L'événement a été créé et le déploiement est planifié.",
+          "help1": "L'événement sera automatiquement déployé avant la date de début.",
+          "help2": "Un déploiement manuel est possible à tout moment.",
+          "help3": "Dans cet état, un événement peut être déployé, modifié ou supprimé."
+        },
+        "deploying": {
+          "title": "Déploiement",
+          "actionLabel": "Initié",
+          "description": "Les machines virtuelles et les connexions sont en cours de création.",
+          "help1": "Aucune modification n'est possible dans cet état.",
+          "help2": "Une fois toutes les machines virtuelles et connexions déployées, le statut passe à Actif.",
+          "help3": "Tous les participants reçoivent un e-mail concernant leur machine virtuelle.",
+          "help4": "Les enseignants reçoivent des e-mails supplémentaires concernant l'événement."
+        },
+        "active": {
+          "title": "Actif",
+          "actionLabel": "Démarré",
+          "description": "L'événement est actif. Les machines virtuelles et les connexions ont été provisionnées.",
+          "help1": "Les utilisateurs peuvent accéder à leurs machines virtuelles via les connexions fournies.",
+          "help2": "L'événement sera automatiquement terminé à la date de fin enregistrée (si définie).",
+          "help3": "Dans cet état, un événement peut être prolongé, raccourci ou terminé.",
+          "help4": "L'ajout ou la suppression de participants est également possible."
+        },
+        "archiving": {
+          "title": "Archivage",
+          "actionLabel": "Initié",
+          "description": "L'événement est en cours d'archivage. Toutes les machines virtuelles et connexions sont supprimées.",
+          "help1": "L'archivage est automatiquement déclenché après la date de fin (si définie).",
+          "help2": "Aucune modification n'est possible dans cet état.",
+          "help3": "Une fois toutes les machines virtuelles et connexions supprimées, le statut passe à Archivé.",
+          "help4": "Tous les participants reçoivent un e-mail concernant leur machine virtuelle.",
+          "help5": "Les enseignants reçoivent des e-mails supplémentaires concernant l'événement."
+        },
+        "archived": {
+          "title": "Archivé",
+          "actionLabel": "Terminé",
+          "description": "L'événement a été archivé. Toutes les ressources ont été supprimées et il peut maintenant être supprimé.",
+          "help1": "Dans cet état, l'événement ne peut être que supprimé.",
+          "help2": "Il reste pour le moment afin de continuer à associer des participants.",
+          "help3": "La suppression doit être effectuée manuellement."
+        }
+      },
+      "errors": {
+        "preRolloutCheck": "Erreur lors de la vérification pré-déploiement : {error}",
+        "deploying": "Erreur lors du déploiement : {error}",
+        "archiving": "Erreur lors de l'archivage : {error}"
+      },
+      "tooltipManualRollout": "L'événement doit être (re)déployé manuellement",
+      "tooltipManualArchive": "L'événement doit être archivé manuellement (pas de date de fin définie)",
+      "tooltipManualReArchive": "L'événement doit être (ré)archivé manuellement",
+      "infoTitle": "Voici un aperçu des différents statuts d'un événement.",
+      "infoSubtext": "Certaines méta-informations — telles que les tâches associées, les horodatages de modification ou les personnes responsables — ne sont pas encore affichées.",
+      "tipsWarnings": "Conseils et avertissements"
+    },
+    "eventWarningRollout": {
+      "connectionsToCreate": "Connexions à créer",
+      "eventRollout": "Déploiement de l'événement",
+      "participants": "Participants",
+      "rollout": "Déployer",
+      "vmsToCreate": "VMs à créer",
+      "readyToRollout": "Prêt pour le déploiement",
+      "highVmCount": "Nombre élevé de VMs",
+      "highVmCountMessage": "{count} VMs seront créées. Cela peut entraîner des temps de provisionnement plus longs.",
+      "immediateStart": "L'événement sera démarré immédiatement.",
+      "immediateStartSub": "Toutes les VMs et connexions seront créées immédiatement.",
+      "irreversible": "Cette action ne peut pas être annulée.",
+      "irreversibleSub": "Des modifications ultérieures aux participants sont possibles.",
+      "moodleHint": "Intégration Moodle active.",
+      "moodleHintSub": "Le cours modèle Moodle de l'environnement sera dupliqué et les participants seront inscrits au cours Moodle.",
+      "deploymentDetails": "Détails du déploiement",
+      "environment": "Environnement",
+      "todayUntil": "Aujourd'hui jusqu'au",
+      "duration": "Durée",
+      "lastMessage": "Dernier message",
+      "vmTemplates": "Modèles de VM",
+      "connectionProfileCount": "{count} modèle de connexion | {count} modèles de connexion",
+      "formula": "Formule de calcul",
+      "formulaVMs": "VMs = Participants × Modèles de VM",
+      "formulaConnections": "Connexions = (Étudiants × Modèles de connexion) + (Enseignants × Participants × Modèles de connexion)",
+      "permEnvironments": "Environnements",
+      "permConnectionProfiles": "Modèles de connexion",
+      "permissionWarning": "Il vous manque la permission de consulter {names}. Une vérification complète n'est donc pas possible.",
+      "submitReady": "Prêt pour le déploiement",
+      "submitCheck": "Veuillez vérifier les prérequis",
+      "checks": {
+        "noTemplates": {
+          "title": "Aucun modèle de VM",
+          "message": "L'environnement assigné ne contient aucun modèle de VM. Veuillez en ajouter au moins un."
+        },
+        "missingProxmox": {
+          "title": "Attribution Proxmox manquante",
+          "message": "Les modèles de VM suivants n'ont pas d'attribution Proxmox valide : {names}. Veuillez contacter un administrateur."
+        },
+        "noParticipants": {
+          "title": "Aucun participant",
+          "message": "Au moins un étudiant et un enseignant doivent participer."
+        },
+        "noStudents": {
+          "title": "Aucun étudiant",
+          "message": "Au moins un étudiant doit participer."
+        },
+        "noTeachers": {
+          "title": "Aucun enseignant",
+          "message": "Au moins un enseignant doit participer."
+        },
+        "missingConnProfiles": {
+          "title": "Modèles de connexion manquants",
+          "message": "Les modèles de VM suivants n'ont pas de modèles de connexion : {names}. Veuillez en ajouter au moins un par modèle de VM."
+        },
+        "endDatePast": {
+          "title": "Date de fin dans le passé",
+          "message": "La date de fin est dans le passé. Veuillez ajuster la date."
+        }
+      }
+    },
+    "eventWarningStop": {
+      "confirmationRequired": "Confirmation requise",
+      "connectionsToDelete": "Connexions à supprimer",
+      "participants": "Participants",
+      "vmsToDelete": "VMs à supprimer",
+      "stopImmediate": "L'événement sera arrêté immédiatement.",
+      "stopDescription": "Toutes les machines virtuelles (VMs) seront immédiatement arrêtées et tous les participants perdront l'accès à leurs connexions. Le processus commence immédiatement, sans autre confirmation.",
+      "irreversible": "Le processus ne peut pas être annulé ou inversé.",
+      "dataLossHint": "Toutes les données sur les VMs seront perdues. L'événement ne peut pas être redémarré.",
+      "moodleHint": "Le cours Moodle associé sera archivé et tous les participants seront désinscrits.",
+      "deploymentDetails": "Détails du déploiement",
+      "environment": "Environnement",
+      "plannedPeriod": "Période planifiée",
+      "until": "jusqu'au",
+      "actualPeriod": "Période réelle après l'arrêt",
+      "lastDeploymentMessage": "Dernier message de déploiement"
+    },
+    "formControl": {
+      "fieldRequired": "Ce champ est requis.",
+      "maxLengthExceeded": "Longueur maximale de {max} caractères dépassée.",
+      "open": "Ouvrir"
+    },
+    "metadata": {
+      "creation": "Création",
+      "lastChange": "Dernière modification"
+    },
+    "metricsSelectionPanel": {
+      "arcSize": "Taille ARC (Go)",
+      "average": "Moyenne",
+      "cfConsolidation": "CF (Consolidation)",
+      "cpuPressure": "Pression CPU",
+      "cpuTotal": "CPU total (Nombre)",
+      "cpuUsage": "Utilisation CPU (%)",
+      "enterToSelect": "Appuyez sur Entrée pour sélectionner",
+      "enterToRemove": "Appuyez sur Entrée pour supprimer",
+      "ioPressure": "Pression I/O",
+      "ioPressureFull": "Pression I/O (Complète)",
+      "ioWait": "Attente I/O (ms)",
+      "label": "Libellé",
+      "lastDay": "Dernier jour",
+      "lastDecade": "Dernière décennie",
+      "lastHour": "Dernière heure",
+      "lastMonth": "Dernier mois",
+      "lastWeek": "Dernière semaine",
+      "lastYear": "Dernière année",
+      "loadAverage": "Charge moyenne",
+      "max": "Max.",
+      "metrics": "Métriques",
+      "networkIn": "Réseau (Entrant) (Mo/s)",
+      "networkOut": "Réseau (Sortant) (Mo/s)",
+      "ramAvailable": "RAM disponible (Go)",
+      "ramPressure": "Pression RAM",
+      "ramPressureFull": "Pression RAM (Complète)",
+      "ramUsageHost": "Utilisation RAM Hôte (Go)",
+      "ramUsageNode": "Utilisation RAM Node (%)",
+      "ramUsed": "RAM utilisée (Go)",
+      "selected": "Sélectionné",
+      "server": "Serveur",
+      "storageTotal": "Stockage total (Go)",
+      "storageUsed": "Stockage utilisé (Go)",
+      "swapTotal": "SWAP total (Go)",
+      "swapUsed": "SWAP utilisé (Go)",
+      "createChart": "Créer",
+      "updateChart": "Actualiser",
+      "maxElements": "Options max. sélectionnées. Supprimez une option pour en choisir une autre.",
+      "timeframe": "Période",
+      "selectCf": "Sélectionner CF",
+      "selectMetrics": "Sélectionner métriques",
+      "selectServer": "Sélectionner serveur",
+      "selectTimeframe": "Sélectionner période"
+    },
+    "pagination": {
+      "dataAsOf": "Données au",
+      "pageOfTotal": "Page {current} de {total}",
+      "perPage": "Par page",
+      "totalEntries": "Total : {count} entrées"
+    },
+    "permissionChangesConfirm": {
+      "added": "Ajouté",
+      "allPermissions": "Toutes les autorisations",
+      "confirmTitle": "Confirmer les modifications",
+      "confirmSubtitle": "Veuillez vérifier les modifications d'autorisations avant d'enregistrer",
+      "global": "Global",
+      "noChanges": "Aucune modification présente.",
+      "removed": "Supprimé",
+      "saveChanges": "Enregistrer les modifications"
+    },
+    "permissionMatrix": {
+      "collapseAll": "Tout replier",
+      "dataStatus": "Données au : {time}",
+      "deselectAll": "Tout désélectionner",
+      "editDisabledTooltip": "Impossible en mode édition",
+      "editHint": "Remarque : « Supprimer » définit l'autorisation sur « none » et efface les droits supplémentaires (équivaut à : supprimer l'entrée).",
+      "expandAll": "Tout déplier",
+      "filterObjectModels": "Filtrer les modèles d'objets...",
+      "globalPermission": "Autorisation globale",
+      "objectModel": "Modèle d'objet",
+      "objectScoped": "Lié à l'objet",
+      "onlyAssigned": "Afficher uniquement les attribués",
+      "permissions": "Autorisations",
+      "reloadDisabledTooltip": "Actualisation impossible en mode édition",
+      "refreshing": "Actualisation...",
+      "selectAll": "Tout sélectionner"
+    },
+    "permissionMatrixRow": {
+      "globalHint": "Global : s'applique à tous les objets de ce type",
+      "collapse": "Replier",
+      "expand": "Déplier",
+      "notPossible": "Non disponible",
+      "notPossibleTooltip": "Les autorisations liées à un objet ne peuvent pas être créées pour ce modèle d'objet",
+      "noneAvailable": "Aucune disponible",
+      "noneAvailableTooltip": "Aucune autorisation liée à un objet n'existe actuellement pour ce modèle d'objet"
+    },
+    "permissionSelector": {
+      "none": "Aucune",
+      "special": "Spéciales"
+    },
+    "objectScopedPermissions": {
+      "title": "Autorisations liées à un objet",
+      "subtitle": "Les dérogations s'appliquent uniquement aux objets individuels",
+      "permission": "Autorisation",
+      "action": "Action",
+      "remove": "Supprimer",
+      "noObjectPermissions": "Aucune autorisation liée à un objet disponible."
+    },
+    "permissionMatrixInfo": {
+      "title": "Comprendre les autorisations",
+      "subtitle": "Cliquez pour plus de détails sur les niveaux d'autorisation et le comportement",
+      "levelsTitle": "Niveaux d'autorisation",
+      "notesTitle": "Notes importantes",
+      "levelFullAccess": "Accès complet",
+      "levelFullAccessDesc": "Inclut toutes les autorisations : Créer, Lire, Modifier, Supprimer ainsi que toutes les autorisations supplémentaires.",
+      "levelCreate": "Créer",
+      "levelCreateDesc": "Permet de créer de nouveaux objets de ce type. Disponible uniquement pour les autorisations globales.",
+      "levelRead": "Lire",
+      "levelReadDesc": "Permet d'afficher les objets.",
+      "levelEdit": "Modifier",
+      "levelEditDesc": "Inclut Lire et permet en plus la modification.",
+      "levelDelete": "Supprimer",
+      "levelDeleteDesc": "Inclut Lire et Modifier et permet en plus la suppression.",
+      "levelExtras": "Autorisations supplémentaires",
+      "levelExtrasDesc": "Autorisations supplémentaires spécifiques au modèle d'objet, comme le contrôle VM, la définition de mot de passe ou l'accès au tableau de bord.",
+      "noteChain": "Chaîne d'autorisations",
+      "noteChainDesc": "Lire → Modifier → Supprimer se construisent les uns sur les autres. Quiconque a l'autorisation de supprimer peut automatiquement aussi lire et modifier.",
+      "noteAutoFull": "Accès complet automatique",
+      "noteAutoFullDesc": "Lorsque toutes les autorisations disponibles d'un modèle d'objet sont activées, le système passe automatiquement en accès complet.",
+      "noteImplicit": "Autorisations implicites",
+      "noteImplicitDesc": "Lorsque l'accès complet est actif, toutes les autorisations sont affichées en couleur plus claire comme « implicitement incluses ».",
+      "noteOverrides": "Exceptions liées à l'objet",
+      "noteOverridesDesc": "En plus des autorisations globales, des autorisations spécifiques peuvent être attribuées à des objets individuels."
+    },
+    "permissionModalCreate": {
+      "loading": "Chargement des données...",
+      "objectSelect": "Sélectionner l'objet",
+      "createObjectPermission": "Créer une permission limitée à l'objet",
+      "optionApplications": "Applications",
+      "optionCourses": "Environnements",
+      "optionDocuments": "Documents",
+      "optionEvents": "Événements",
+      "optionGuacamole": "Connexions",
+      "optionMailTemplates": "Modèles de courriel",
+      "optionOs": "Systèmes d'exploitation",
+      "optionPolicies": "Politiques",
+      "optionRoles": "Rôles",
+      "optionTemplates": "Modèles de VM",
+      "optionUsers": "Utilisateurs",
+      "optionVendors": "Fabricants",
+      "optionVms": "VMs",
+      "permission": "Permission",
+      "permissionAdded": "Permission ajoutée",
+      "placeholderApplications": "Rechercher une application (min. 3 caractères)",
+      "placeholderCourses": "Rechercher un environnement (min. 3 caractères)",
+      "placeholderDocuments": "Rechercher un document (min. 3 caractères)",
+      "placeholderEvents": "Rechercher un événement (min. 3 caractères)",
+      "placeholderGuacamole": "Rechercher une connexion (min. 3 caractères)",
+      "placeholderMailTemplates": "Rechercher un modèle de courriel (min. 3 caractères)",
+      "placeholderOs": "Rechercher un système d'exploitation (min. 3 caractères)",
+      "placeholderPolicies": "Rechercher une politique (min. 3 caractères)",
+      "placeholderRoles": "Rechercher un rôle (min. 3 caractères)",
+      "placeholderTemplates": "Rechercher un modèle VM (min. 3 caractères)",
+      "placeholderUsers": "Rechercher un utilisateur (min. 3 caractères)",
+      "placeholderVendors": "Rechercher un fabricant (min. 3 caractères)",
+      "placeholderVms": "Rechercher une VM (min. 3 caractères)"
+    },
+    "permissionSave": {
+      "partialSave": "{saved} sur {total} permissions enregistrées",
+      "saveSuccess": "Permissions enregistrées avec succès",
+      "saveError": "Erreur lors de l'enregistrement des permissions"
+    },
+    "pillTagWithDelete": {
+      "confirmDelete": "Confirmer la suppression",
+      "deleteTag": "Supprimer le tag",
+      "sure": "Sûr ?"
+    },
+    "proxmoxRrdChart": {
+      "timeLabel": "Heure",
+      "cpu": "CPU (%)",
+      "mem": "Utilisation RAM Node (%)",
+      "memused": "RAM utilisée (Go)",
+      "memavailable": "RAM disponible (Go)",
+      "memhost": "Utilisation RAM Hôte (Go)",
+      "swapused": "Swap utilisé (Go)",
+      "swaptotal": "Swap total (Go)",
+      "rootused": "Disque utilisé (Go)",
+      "roottotal": "Disque total (Go)",
+      "netin": "Réseau In (Mo/s)",
+      "netout": "Réseau Out (Mo/s)",
+      "arcsize": "ARC Size (Go)",
+      "iowait": "IO Wait (ms)",
+      "loadavg": "Charge moy.",
+      "pressurecpusome": "Pression CPU Some (%)",
+      "pressurememorysome": "Pression mémoire Some (%)",
+      "pressurememoryfull": "Pression mémoire Full (%)",
+      "pressureiosome": "Pression IO Some (%)",
+      "pressureiofull": "Pression IO Full (%)",
+      "maxcpu": "Max CPU (Cores)"
+    },
+    "searchField": {
+      "entriesLimitHint": "{shown} sur {total} entrées – veuillez affiner votre recherche.",
+      "navigationHint": "Sélection par souris ou avec ↑/↓ et Entrée."
+    },
+    "searchOperators": {
+      "after": "après",
+      "afterOrOn": "à partir de",
+      "before": "avant",
+      "beforeOrOn": "jusqu'à",
+      "contains": "contient",
+      "empty": "vide",
+      "eq": "est égal",
+      "gt": "supérieur à",
+      "gte": "supérieur ou égal",
+      "lt": "inférieur à",
+      "lte": "inférieur ou égal",
+      "ncontains": "ne contient pas",
+      "nempty": "non vide",
+      "neq": "n'est pas égal"
+    },
+    "searchPresets": {
+      "authBackend": "Auth Backend",
+      "createdBy": "Créé par",
+      "datetime": "Date/Heure",
+      "email": "E-mail",
+      "protocol": "Protocole",
+      "subject": "Sujet",
+      "time": "Heure",
+      "updatedBy": "Modifié par",
+      "language": "Langue",
+      "replyTo": "Répondre à",
+      "slug": "Slug",
+      "username": "Nom d'utilisateur",
+      "cpu": "Cœurs CPU",
+      "disk": "Disque",
+      "ipv4": "Adresse IPv4",
+      "os": "Système d'exploitation",
+      "ram": "Mémoire",
+      "taskAction": "Action",
+      "taskAttempt": "Tentative",
+      "taskJobId": "Redis Job ID",
+      "taskResponseCode": "Code de réponse",
+      "taskResponseMessage": "Message de réponse",
+      "visibility": "Visibilité"
+    },
+    "saveProgressModal": {
+      "errorHint": "Veuillez recharger les permissions et recommencer la modification. Certaines modifications ont peut-être déjà été appliquées. L'erreur peut être causée par des modifications simultanées en arrière-plan de l'objet.",
+      "errorsOccurred": "{count} erreurs survenues",
+      "operationIndex": "Opération {index}",
+      "phaseCreating": "Création des permissions",
+      "phaseDeleting": "Suppression des permissions",
+      "phaseDone": "Terminé",
+      "phaseError": "Erreurs survenues",
+      "phaseIdle": "Préparation...",
+      "phaseRefreshing": "Actualisation des données",
+      "title": "Enregistrement des permissions",
+      "unknownError": "Erreur inconnue"
+    },
+    "sectionTitle": {
+      "docsLink": "Lien vers la documentation"
+    },
+    "tablePermissions": {
+      "assignTo": "Attribuer à",
+      "assignedTo": "Attribué à",
+      "columnAssignedBy": "Attribué par",
+      "columnAssignedTo": "Attribué à",
+      "searchAssignedBy": "Attribué par",
+      "searchAssignedToPerson": "Attribué à une personne",
+      "searchAssignedToRole": "Attribué à un rôle",
+      "columnObject": "Objet",
+      "columnPermission": "Permission",
+      "columnScope": "Portée",
+      "columnType": "Type",
+      "deleteLabel": "Permission : {permission} de {entityLabel} {entity}",
+      "infoText": "Les permissions définissent qui peut voir et modifier cet objet. Elles peuvent être attribuées à des personnes ou des rôles.",
+      "oldPermissionNotFound": "Ancienne permission introuvable",
+      "permission": "Permission",
+      "permissionAdd": "Ajouter une permission",
+      "permissionAdded": "Permission ajoutée",
+      "permissionEdit": "Modifier une permission",
+      "permissionEdited": "Permission modifiée",
+      "permissionRemoved": "Permission supprimée",
+      "permissionSave": "Enregistrer la permission",
+      "permissions": "Autorisations",
+      "person": "Personne",
+      "protectedRolesWarning": "Les rôles protégés ne peuvent pas être modifiés",
+      "role": "Rôle",
+      "scopeGlobal": "Global",
+      "scopeObject": "Objet",
+      "searchRolePlaceholder": "Rechercher par nom de rôle (min. 3 caractères)",
+      "searchUserPlaceholder": "Rechercher par nom de personne (min. 3 caractères)",
+      "tooltipGlobalScope": "S'applique à tous les objets de ce type",
+      "tooltipObjectScope": "S'applique uniquement à cet objet",
+      "tooltipPerson": "Personne individuelle",
+      "tooltipRole": "Rôle"
+    },
+    "tableProxmoxLogs": {
+      "description": "Description",
+      "endTime": "Heure de fin",
+      "node": "Nœud",
+      "sampleModal": "Détails du log",
+      "startTime": "Heure de début",
+      "username": "Nom d'utilisateur"
+    },
+    "tableSearchBar": {
+      "allFiltersUsed": "Tous les filtres utilisés",
+      "applyEnter": "Appliquer (Entrée)",
+      "enterValue": "Saisir une valeur...",
+      "maxFiltersReached": "Nombre maximum de filtres atteint",
+      "minCharsHint": "Saisir au moins {min} caractères...",
+      "removeAllFilters": "Supprimer tous les filtres",
+      "searchByName": "Entrée : Rechercher \"{query}\" par nom",
+      "searchMinChars": "Rechercher... (min. {min} caractères)",
+      "searching": "Recherche...",
+      "selectOperator": "Sélectionner un opérateur...",
+      "selectValue": "Sélectionner une valeur..."
+    },
+    "tableTags": {
+      "objectId": "ID d'objet",
+      "objectType": "Type d'objet",
+      "tag": "Tag",
+      "tagDeleted": "Tag supprimé"
+    },
+    "taskRetryModal": {
+      "confirmRetry": "Voulez-vous vraiment relancer cette tâche ?",
+      "externalDependencies": "Les résultats dépendent de systèmes et conditions externes.",
+      "failedSubtasksRetried": "Sous-tâches échouées qui seront relancées :",
+      "noGuarantee": "La relance ne garantit pas le succès.",
+      "queuedSubtasksMayTrigger": "Sous-tâches en attente qui pourraient être déclenchées :",
+      "retry": "Relancer",
+      "taskWillRetry": "La tâche \"{name}\" sera réessayée."
+    },
+    "templateWarning": {
+      "createAccount": "Créez un compte utilisateur avec un mot de passe sécurisé.",
+      "docsLink": "Pour plus d'informations, consultez la documentation",
+      "enableDhcp": "Activez le DHCP sur l'interface réseau.",
+      "generalConfig": "Configuration générale",
+      "here": "ici",
+      "installGuestAgent": "Installez l'agent invité QEMU.",
+      "intro": "Veuillez vous assurer que le modèle VM répond aux exigences suivantes avant de le convertir.",
+      "saveCredentials": "Enregistrez les identifiants en lieu sûr.",
+      "shutdownVm": "Arrêtez la VM.",
+      "sysprep": "Exécutez Sysprep (si nécessaire).",
+      "testLogin": "Testez la connexion avec les identifiants créés.",
+      "testNetwork": "Testez la connexion réseau.",
+      "verifyBeforeConvert": "Vérifier avant la conversion",
+      "virtioDrivers": "Installez les pilotes VirtIO.",
+      "windowsConfig": "Configuration spécifique à Windows"
+    },
+    "unsavedChangesModal": {
+      "continueEditing": "Continuer à modifier",
+      "discard": "Abandonner les modifications",
+      "title": "Modifications non enregistrées",
+      "warning": "Vous avez des modifications non enregistrées. Si vous continuez, vos modifications seront perdues."
+    }
+  },
+  "date": {
+    "daysAgo": "Il y a {n} jours",
+    "fewSecondsAgo": "Il y a quelques secondes",
+    "hoursAgo": "Il y a {n} heures",
+    "inDays": "Dans {n} jours",
+    "inFewSeconds": "Dans quelques secondes",
+    "inHours": "Dans {n} heures",
+    "inMinutes": "Dans {n} minutes",
+    "minutesAgo": "Il y a {n} minutes",
+    "oneDayAgo": "Il y a un jour",
+    "today": "Aujourd'hui",
+    "todayAt": "Aujourd'hui, {time}",
+    "tomorrow": "Demain",
+    "yesterdayAt": "Hier, {time}"
+  },
+  "errors": {
+    "accountError": "Erreur de compte, veuillez vous reconnecter",
+    "accountNotActive": "Compte non actif",
+    "alreadyLoggedIn": "Vous êtes déjà connecté",
+    "featureUnavailable": "Cette fonctionnalité n'est pas disponible",
+    "generic": "Une erreur s'est produite.",
+    "loginPolicyRequired": "Vous devez d'abord accepter une politique avant de pouvoir utiliser l'application.",
+    "loginSuccess": "Connexion réussie - bienvenue !",
+    "networkError": "Connexion échouée - serveur inaccessible",
+    "noPermission": "Vous n'avez pas la permission de faire cela",
+    "sessionExpired": "Session expirée - veuillez vous reconnecter"
+  },
+  "navbar": {
+    "autoMode": "Mode automatique",
+    "darkMode": "Mode sombre",
+    "language": "Langue",
+    "lightMode": "Mode clair",
+    "logout": "Se déconnecter",
+    "myProfile": "Mon profil"
+  },
+  "nav": {
+    "accessControl": "Contrôle d'accès",
+    "connectionTemplates": "Modèles",
+    "emailActions": "Actions",
+    "emailTemplates": "Modèles",
+    "emailsSent": "Envoyés",
+    "infrastructure": "Infrastructure",
+    "proxmox": "Proxmox VE",
+    "proxmoxNodes": "Nœuds",
+    "proxmoxStats": "Statistiques",
+    "settings": "Paramètres",
+    "system": "Système",
+    "vmTemplates": "Modèles de VM"
+  },
+  "objectTypes": {
+    "activity": {
+      "plural": "Activités",
+      "singular": "Activité"
+    },
+    "application": {
+      "plural": "Applications",
+      "singular": "Application"
+    },
+    "changelog": {
+      "plural": "Changelogs",
+      "singular": "Changelog"
+    },
+    "course": {
+      "plural": "Environnements",
+      "singular": "Environnement"
+    },
+    "dashboard": {
+      "plural": "Tableaux de bord",
+      "singular": "Tableau de bord"
+    },
+    "document": {
+      "plural": "Documents",
+      "singular": "Document"
+    },
+    "event": {
+      "plural": "Événements",
+      "singular": "Événement"
+    },
+    "eventMembership": {
+      "plural": "Participations à des événements",
+      "singular": "Participation à un événement"
+    },
+    "guacamole": {
+      "plural": "Connexions",
+      "singular": "Connexion"
+    },
+    "guacamoleConnectionProfile": {
+      "plural": "Modèles de connexion",
+      "singular": "Modèle de connexion"
+    },
+    "mail": {
+      "plural": "E-mails",
+      "singular": "E-mail"
+    },
+    "mailAction": {
+      "plural": "Actions e-mail",
+      "singular": "Action e-mail"
+    },
+    "mailTemplate": {
+      "plural": "Modèles d'e-mail",
+      "singular": "Modèle d'e-mail"
+    },
+    "member": {
+      "plural": "Membres",
+      "singular": "Membre"
+    },
+    "os": {
+      "plural": "Systèmes d'exploitation",
+      "singular": "Système d'exploitation"
+    },
+    "participant": {
+      "plural": "Participants",
+      "singular": "Participant"
+    },
+    "permission": {
+      "plural": "Permissions",
+      "singular": "Permission"
+    },
+    "policy": {
+      "plural": "Politiques",
+      "singular": "Politique"
+    },
+    "policyMembership": {
+      "plural": "Consentements à des politiques",
+      "singular": "Consentement à une politique"
+    },
+    "proxmox": {
+      "plural": "Proxmox VE",
+      "singular": "Proxmox VE"
+    },
+    "role": {
+      "plural": "Rôles",
+      "singular": "Rôle"
+    },
+    "scimClient": {
+      "plural": "Clients SCIM",
+      "singular": "Client SCIM"
+    },
+    "scimProvider": {
+      "plural": "Fournisseurs SCIM",
+      "singular": "Fournisseur SCIM"
+    },
+    "subtask": {
+      "plural": "Sous-tâches",
+      "singular": "Sous-tâche"
+    },
+    "systemSetting": {
+      "plural": "Paramètres système",
+      "singular": "Paramètre système"
+    },
+    "tag": {
+      "plural": "Tags",
+      "singular": "Tag"
+    },
+    "task": {
+      "plural": "Tâches",
+      "singular": "Tâche"
+    },
+    "template": {
+      "plural": "Modèles de VM",
+      "singular": "Modèle de VM"
+    },
+    "user": {
+      "plural": "Utilisateurs",
+      "singular": "Utilisateur"
+    },
+    "vendor": {
+      "plural": "Fabricants",
+      "singular": "Fabricant"
+    },
+    "virtualMachine": {
+      "plural": "VMs",
+      "singular": "VM"
+    }
+  },
+  "permissions": {
+    "event": {
+      "actionsStart": {
+        "description": "Démarrer manuellement l'événement",
+        "label": "Démarrer l'événement",
+        "short": "Démarrer"
+      },
+      "actionsStop": {
+        "description": "Terminer manuellement l'événement",
+        "label": "Terminer l'événement",
+        "short": "Terminer"
+      }
+    },
+    "objectAdmins": {
+      "description": "Tableau de bord pour les admins",
+      "label": "Administrateurs",
+      "short": "Admins"
+    },
+    "objectCreate": {
+      "description": "Créer un objet",
+      "label": "Créer"
+    },
+    "objectDelete": {
+      "description": "Afficher, modifier et supprimer l'objet",
+      "label": "Lire & Modifier & Supprimer",
+      "short": "Supprimer"
+    },
+    "objectFull": {
+      "description": "Afficher, modifier, supprimer l'objet et toutes les actions spéciales",
+      "label": "Accès complet"
+    },
+    "objectRead": {
+      "description": "Afficher l'objet",
+      "label": "Lire"
+    },
+    "objectReset": {
+      "description": "Afficher, démarrer, arrêter, éteindre, réinitialiser et redémarrer la VM",
+      "label": "Lire & Contrôle VM",
+      "short": "Contrôle"
+    },
+    "objectSearch": {
+      "description": "Rechercher dans le répertoire des utilisateurs",
+      "label": "Rechercher"
+    },
+    "objectSend": {
+      "description": "Envoyer un e-mail",
+      "label": "Envoyer"
+    },
+    "objectSendBulk": {
+      "description": "Envoyer plusieurs e-mails à la fois",
+      "label": "Envoi en masse"
+    },
+    "objectSetPassword": {
+      "description": "Définir le mot de passe",
+      "label": "Définir le mot de passe"
+    },
+    "objectTemplatesUpdate": {
+      "description": "Modifier les modèles VM assignés",
+      "label": "Modifier les modèles VM"
+    },
+    "objectUpdate": {
+      "description": "Afficher et modifier l'objet",
+      "label": "Lire & Modifier",
+      "short": "Modifier"
+    },
+    "objectUsersRead": {
+      "description": "Voir les utilisateurs",
+      "label": "Voir les utilisateurs"
+    },
+    "objectVerwaltende": {
+      "description": "Tableau de bord pour les gestionnaires",
+      "label": "Gestionnaires"
+    },
+    "vm": {
+      "actionsHibernate": {
+        "description": "Mettre la machine virtuelle en veille prolongée",
+        "label": "Mettre en veille la VM",
+        "short": "Veille"
+      },
+      "actionsPause": {
+        "description": "Suspendre la machine virtuelle",
+        "label": "Suspendre la VM",
+        "short": "Suspendre"
+      },
+      "actionsReboot": {
+        "description": "Redémarrer la machine virtuelle",
+        "label": "Redémarrer la VM",
+        "short": "Redémarrer"
+      },
+      "actionsReset": {
+        "description": "Réinitialisation matérielle de la machine virtuelle",
+        "label": "Réinitialiser la VM",
+        "short": "Réinitialiser"
+      },
+      "actionsResume": {
+        "description": "Reprendre une VM suspendue ou en veille",
+        "label": "Reprendre la VM",
+        "short": "Reprendre"
+      },
+      "actionsShutdown": {
+        "description": "Éteindre proprement la machine virtuelle",
+        "label": "Éteindre la VM",
+        "short": "Éteindre"
+      },
+      "actionsStart": {
+        "description": "Démarrer la machine virtuelle",
+        "label": "Démarrer la VM",
+        "short": "Démarrer"
+      },
+      "actionsStop": {
+        "description": "Arrêter la machine virtuelle",
+        "label": "Arrêter la VM",
+        "short": "Arrêter"
+      }
+    }
+  },
+  "routes": {
+    "login": "Connexion",
+    "oidcCallback": "Callback OIDC",
+    "profile": "Profil",
+    "proxmoxNodeDetail": "Nœud - Proxmox VE",
+    "proxmoxNodeList": "Nœuds - Proxmox VE",
+    "proxmoxStats": "Statistiques - Proxmox VE",
+    "settingsList": "Paramètres",
+    "subtasksDetail": "Sous-tâche",
+    "tagsByKey": "Tags par nom",
+    "tagsByKeyValue": "Tags par nom/valeur"
+  },
+  "status": {
+    "active": "Actif",
+    "archived": "Archivé",
+    "archiving": "En archivage",
+    "available": "Disponible",
+    "banned": "Bloqué",
+    "cloning": "Clonage",
+    "deleted": "Supprimé",
+    "deleting": "Suppression",
+    "deploying": "Déploiement",
+    "emailPending": "E-mail en attente",
+    "error": "Erreur",
+    "errorArchiving": "Erreur (Archivage)",
+    "errorCore": "Erreur (Core)",
+    "errorDeployment": "Erreur (Déploiement)",
+    "external": "Externe",
+    "failed": "Échoué",
+    "inactive": "Inactif",
+    "internal": "Interne",
+    "manual": "Manuel",
+    "paused": "En pause",
+    "planned": "Planifié",
+    "processing": "En cours",
+    "queued": "En attente",
+    "running": "En cours",
+    "sent": "Envoyé",
+    "starting": "Démarrage",
+    "stopped": "Arrêté",
+    "stopping": "Arrêt",
+    "success": "Réussi",
+    "system": "Système",
+    "unknown": "Inconnu"
+  },
+  "validation": {
+    "arrayRequired": "La valeur doit être un tableau JSON valide.",
+    "booleanRequired": "La valeur doit être true ou false.",
+    "floatRequired": "La valeur doit être un nombre à virgule flottante.",
+    "integerRequired": "La valeur doit être un nombre entier.",
+    "invalidJson": "Format JSON invalide",
+    "invalidJsonArray": "Format JSON invalide pour le tableau",
+    "jsonSerializationFailed": "Les données n'ont pas pu être sérialisées en JSON : {error}",
+    "noDataForExport": "Aucune donnée disponible pour l'export JSON",
+    "nullOrEmpty": "La valeur ne doit pas être nulle ou vide.",
+    "objectRequired": "La valeur doit être un objet JSON valide.",
+    "slugFormat": "Autorisé : 4 à 8 caractères (a-z, 0-9, -, _)",
+    "stringLength": "La valeur doit contenir entre 1 et 250 caractères.",
+    "stringRequired": "La valeur ne doit pas être vide et doit contenir un texte de max. 250 caractères."
+  },
+  "views": {
+    "activities": {
+      "detail": {
+        "clientIp": "Adresse IP du client",
+        "method": "Méthode",
+        "parameter": "Paramètre",
+        "requestHeaders": "En-têtes de requête",
+        "requestParams": "Paramètres de requête",
+        "requestPermission": "Autorisation demandée",
+        "responseHeaders": "En-têtes de réponse",
+        "timestamp": "Horodatage"
+      },
+      "list": {
+        "ipAddress": "Adresse IP",
+        "method": "Méthode"
+      }
+    },
+    "applications": {
+      "detail": {
+        "assignTemplate": "Ajouter un modèle VM",
+        "assignVm": "Ajouter une VM",
+        "searchTemplate": "Rechercher un modèle VM existant",
+        "searchVm": "Rechercher une VM existante",
+        "tagsHelp": "Tags de l'application"
+      },
+      "form": {
+        "createVendorTooltip": "Créer un nouveau fabricant",
+        "descriptionHelp": "Une description optionnelle de l'application",
+        "keyHelp": "Clé (slug) de l'application",
+        "nameHelp": "Nom canonique décrivant l'application plus en détail",
+        "namePlaceholder": "GitLab Runner"
+      }
+    },
+    "auth": {
+      "login": {
+        "appLoadErrorHelp": "Vérifiez votre connexion Internet. Si l'erreur persiste, il pourrait y avoir un problème avec l'application. Dans ce cas, veuillez contacter le support.",
+        "appLoading": "Chargement de l'application…",
+        "authDisabled": "Connexion temporairement désactivée.",
+        "csrfMismatch": "Jeton de sécurité CSRF invalide. Veuillez vous reconnecter.",
+        "forgotPassword": "Mot de passe oublié ?",
+        "incorrectCredentials": "Nom d'utilisateur / mot de passe incorrect. Veuillez vous reconnecter.",
+        "loading": "Chargement",
+        "missingToken": "Jeton de connexion manquant. Veuillez vous reconnecter.",
+        "password": "Mot de passe",
+        "redirectInvalid": "URL de redirection incorrecte. Veuillez vous reconnecter.",
+        "retry": "Réessayer",
+        "submit": "Se connecter",
+        "systemUser": "Connexion en tant qu'utilisateur système actuellement non autorisée.",
+        "unknownError": "Erreur inconnue. Veuillez vous reconnecter ou contacter le support.",
+        "userNotActive": "Compte non actif, connexion actuellement impossible.",
+        "username": "Nom d'utilisateur",
+        "usernamePlaceholder": "jdupont"
+      }
+    },
+    "changelogs": {
+      "list": {
+        "changelogs": "Changelogs"
+      }
+    },
+    "connections": {
+      "clone": {
+        "alreadyAssigned": "Déjà attribué",
+        "alreadyExists": "déjà existant",
+        "connectionTemplateClone": "Copier le modèle de connexion",
+        "copyAborted": "Le processus de copie a été annulé.",
+        "copyInfoBold": "Copie d'un modèle de connexion existant.",
+        "copyInfoText": "Sélectionnez une nouvelle cible et ajustez le protocole, le port ou les identifiants si nécessaire.",
+        "duplicateProtocolWarning": "Un modèle de connexion avec ce protocole existe déjà pour cette cible",
+        "exampleUsername": "ex. administrator",
+        "invalidFormat": "Format invalide",
+        "keepSourcePassword": "Conserver le mot de passe source",
+        "leaveEmptyForSourcePassword": "Laisser vide pour conserver le mot de passe source",
+        "localUserWithinVm": "Utilisateur local au sein de la VM",
+        "missingSourceData": "Données source manquantes ou invalides : {fields}",
+        "passwordHint": "Remarque : Si vous laissez le mot de passe vide, le mot de passe source sera utilisé.",
+        "portCanBeAdjusted": "Le port peut être ajusté",
+        "protocolAlreadyAssigned": "Ce protocole est déjà attribué à cet objet",
+        "protocolAndPort": "Protocole & Port",
+        "searchByName": "Rechercher par nom... (min. 3 caractères)",
+        "selectTarget": "Sélectionner la cible (VM ou modèle VM)",
+        "sourceDataError": "Données source incorrectes – copie annulée. Veuillez relancer le processus depuis le modèle de connexion.",
+        "vmCredentials": "Identifiants de la VM"
+      },
+      "delete": {
+        "cascadeConfirmLabel": "Supprimer également ces connexions",
+        "cascadeStepError": "La connexion « {name} » n'a pas pu être supprimée. Opération annulée.",
+        "relatedLabel": "Connexions concernées :",
+        "relatedWarning": "Ce modèle de connexion est actuellement utilisé par une connexion. Le modèle ne peut pas être supprimé tant qu'elle existe. | Ce modèle de connexion est actuellement utilisé par {count} connexions. Le modèle ne peut pas être supprimé tant qu'elles existent."
+      },
+      "import": {
+        "noProfilesAvailable": "Cette VM/modèle ne possède aucun modèle de connexion à importer.",
+        "pickProfile": "Sélectionner un modèle de connexion :",
+        "protocolCollision": "Le protocole source [{protocol}] est déjà utilisé sur cette cible. Veuillez choisir un autre protocole ci-dessous ou un autre modèle source.",
+        "searchPlaceholder": "Rechercher la VM ou le modèle source par nom…",
+        "selectSource": "Sélectionner la source",
+        "sourceLoadError": "Le modèle source n'a pas pu être chargé",
+        "submitLabel": "Importer",
+        "success": "Modèle de connexion importé",
+        "title": "Importer depuis un modèle de connexion existant",
+        "tooltip": "Utiliser un modèle de connexion existant comme source"
+      },
+      "detail": {
+        "assignedVmOrTemplate": "VM ou modèle VM assigné(e) à ce modèle de connexion",
+        "connectionAdd": "Ajouter une connexion",
+        "connectionTemplate": "Modèle de connexion",
+        "connections": "Connexions",
+        "copy": "Copier",
+        "info": "Info",
+        "nameHelp": "Nom canonique décrivant précisément la connexion",
+        "namePlaceholder": "RDP Webserver 01",
+        "passwordHelp": "Mot de passe de ce modèle de connexion",
+        "permissions": "Autorisations",
+        "portHelp": "Port de ce modèle de connexion (3389, 22, ...)",
+        "protocolHelp": "Protocole de ce modèle de connexion (RDP, SSH, ...)",
+        "selectUserHelp": "Sélectionnez l'utilisateur qui recevra cette connexion",
+        "tagsHelp": "Tags de la connexion",
+        "uniqueIdentification": "Identification unique du modèle de connexion, composée du protocole, nom d'utilisateur, nom de la VM (modèle) et du port",
+        "user": "Utilisateur",
+        "usernameHelp": "Nom d'utilisateur de ce modèle de connexion",
+        "vmOrTemplate": "VM ou modèle VM",
+        "nameTooltip": "Ce nom est affiché à l'utilisateur tel quel – il doit donc être significatif",
+        "labelTooltip": "Les modèles de connexion n'ont pas de nom, seulement un label généré automatiquement",
+        "deleteDisabledTooltip": "Toutes les connexions doivent d'abord être supprimées",
+        "vmTemplate": "Modèle de VM",
+        "templateNotification": "Les modèles de connexion attribués à un modèle de VM ne peuvent pas avoir de connexions utilisateur, car les modèles de VM sont des images statiques et non exécutables – une connexion technique n'est donc pas possible."
+      },
+      "form": {
+        "defaultPortCanBeAdjusted": "Le port par défaut peut être ajusté",
+        "exampleUsername": "ex. administrator",
+        "hiddenAfterSave": "Ne sera plus affiché après l'enregistrement",
+        "localUserWithinVm": "Utilisateur local au sein de la VM",
+        "protocolAlreadyAssigned": "Ce protocole est déjà attribué à cet objet",
+        "searchByName": "Rechercher par nom... (min. 3 caractères)"
+      },
+      "list": {
+        "connectionTemplates": "Modèles de connexion"
+      }
+    },
+    "courses": {
+      "detail": {
+        "assignTemplate": "Ajouter un modèle VM",
+        "cloneNameLabel": "Nom du nouvel environnement",
+        "cloneNotice": "Les affectations aux modèles VM sont automatiquement reprises lors de la copie.",
+        "noMoodleCourse": "Aucun cours Moodle lié",
+        "searchTemplate": "Rechercher un modèle VM existant",
+        "tagsHelp": "Tags de l'environnement"
+      },
+      "form": {
+        "descriptionHelp": "Une description optionnelle de l'environnement",
+        "moodleCourse": "Cours modèle Moodle",
+        "moodleCourseHelp": "Ce cours Moodle sera dupliqué comme modèle au démarrage de l'événement",
+        "nameHelp": "Nom canonique décrivant l'environnement plus en détail",
+        "namePlaceholder": "Labo Réseaux"
+      }
+    },
+    "dashboard": {
+      "activated": "activés",
+      "connections": "Connexions",
+      "courses": "Environnements",
+      "docsAndHelp": "Documentation & Aide",
+      "docsText1": "Des instructions détaillées et des informations complémentaires sont disponibles dans notre",
+      "docsText2": "Pour toute question, suggestion, critique ou problème technique avec la plateforme, vous pouvez nous contacter via le",
+      "errors": "Erreurs",
+      "events": "Événements",
+      "faultyObjects": "objets défectueux",
+      "feedbackNote": "Nous attendons vos retours avec impatience !",
+      "loadError": "Les statistiques n'ont pas pu être chargées",
+      "memory": "Mémoire",
+      "own": "propres",
+      "proxmoxServers": "Serveurs Proxmox VE",
+      "running": "en cours",
+      "statistics": "Statistiques",
+      "storageLocal": "Stockage (local)",
+      "supportCenter": "Centre de support",
+      "users": "Utilisateurs",
+      "virtualMachines": "Machines virtuelles",
+      "welcomeParagraph1": "Avec {appLabel}, vous pouvez fournir et gérer des environnements d'apprentissage individuels, basés sur le navigateur, pour les étudiants dans le cadre de vos cours et exercices.",
+      "welcomeParagraph2": "La plateforme repose sur des machines virtuelles (VMs) créées à partir de modèles librement personnalisables. Ces modèles constituent la base de vos contenus pédagogiques et doivent d'abord être sélectionnés et adaptés à vos exigences didactiques.",
+      "welcomeParagraph3": "À partir de ces modèles, des environnements peuvent être définis. Un environnement représente un espace d'apprentissage configuré et sert de point de départ pour un ou plusieurs événements.",
+      "welcomeParagraph4": "Les événements sont créés sur la base d'un environnement. Les étudiants assignés reçoivent leur propre VM accessible via le navigateur – une copie individuelle du modèle initialement utilisé. Ainsi, un environnement que vous avez défini peut être réutilisé pour plusieurs événements.",
+      "welcomeParagraph5": "Les modèles, environnements et événements peuvent également être partagés avec des collègues. Cela permet une utilisation commune des environnements ou une personnalisation supplémentaire des modèles ou environnements.",
+      "welcomeTitle": "Bienvenue sur la plateforme de gestion des cours {appLabel}"
+    },
+    "events": {
+      "create": {
+        "errorDuplicate": "Ce nom ou slug est déjà utilisé. Veuillez en choisir un autre.",
+        "errorInvalidSlug": "Nom court (slug) invalide. Autorisé : 4 à 8 caractères (a-z, 0-9, -, _)"
+      },
+      "detail": {
+        "actions": {
+          "connectionsCreate": "Créer les connexions",
+          "connectionsDelete": "Supprimer les connexions",
+          "extendShorten": "Prolonger/Raccourcir",
+          "rollout": "Déployer",
+          "stop": "Terminer",
+          "vmsHibernate": "Mettre en veille les VMs",
+          "vmsMigrate": "Migrer les VMs",
+          "vmsPause": "Suspendre les VMs",
+          "vmsReboot": "Redémarrer les VMs",
+          "vmsReset": "Réinitialiser les VMs",
+          "vmsResume": "Reprendre les VMs",
+          "vmsShutdown": "Éteindre les VMs",
+          "vmsStart": "Démarrer les VMs",
+          "vmsStop": "Arrêter les VMs"
+        },
+        "bulkAction": {
+          "defaultTitle": "Exécuter l'action",
+          "error": "L'action en masse n'a pas pu être exécutée.",
+          "skipped": "L'action a été ignorée car tous les objets ont déjà l'état souhaité.",
+          "started": "L'action en masse a été lancée.\nObjets concernés : {enqueued}\nObjets ignorés : {skipped}",
+          "texts": {
+            "createConnections": "Toutes les connexions manquantes pour les machines virtuelles concernées seront créées. Les connexions existantes resteront inchangées.",
+            "deleteConnections": "Toutes les connexions existantes de toutes les machines virtuelles seront supprimées.",
+            "hibernateVMs": "Toutes les machines virtuelles en cours d'exécution seront mises en veille prolongée. Les machines déjà en veille seront ignorées.",
+            "migrateVMs": "Toutes les machines virtuelles seront migrées vers le nœud cible spécifié.",
+            "pauseVMs": "Toutes les machines virtuelles en cours d'exécution seront suspendues. Les machines déjà suspendues seront ignorées.",
+            "rebootVMs": "Toutes les machines virtuelles en cours d'exécution seront redémarrées.",
+            "resetVMs": "Toutes les machines virtuelles en cours d'exécution seront réinitialisées (arrêt forcé et redémarrage). Les machines déjà arrêtées seront ignorées.",
+            "resumeVMs": "Toutes les machines virtuelles suspendues seront reprises. Les machines déjà en cours d'exécution seront ignorées.",
+            "shutdownVMs": "Toutes les machines virtuelles encore en cours d'exécution seront éteintes. Les machines déjà arrêtées resteront inchangées.",
+            "startVMs": "Toutes les machines virtuelles qui ne sont pas en cours d'exécution seront démarrées. Les machines déjà en cours d'exécution seront ignorées.",
+            "stopVMs": "Toutes les machines virtuelles en cours d'exécution seront arrêtées. Les machines déjà arrêtées ne seront pas modifiées."
+          },
+          "titles": {
+            "createConnections": "Créer les connexions",
+            "deleteConnections": "Supprimer les connexions",
+            "rebootVMs": "Redémarrer les machines virtuelles",
+            "resetVMs": "Réinitialiser les machines virtuelles",
+            "shutdownVMs": "Éteindre les machines virtuelles",
+            "startVMs": "Démarrer les machines virtuelles",
+            "stopVMs": "Arrêter les machines virtuelles"
+          }
+        },
+        "clone": {
+          "error": "L'événement n'a pas pu être copié :",
+          "inProgress": "Copie en cours, veuillez patienter...",
+          "newName": "Nom du nouvel événement",
+          "newSlug": "Nom court du nouvel événement",
+          "participantsIncluded": "Les participants seront automatiquement inclus lors de la copie.",
+          "success": "Événement copié avec succès",
+          "tooManyUsers": "Plus de 200 participants :\nSeuls les 200 premiers seront copiés."
+        },
+        "columns": {
+          "createdBy": "Créé par",
+          "os": "Système d'exploitation",
+          "person": "Personne",
+          "recipient": "Destinataire",
+          "role": "Rôle",
+          "subject": "Objet",
+          "triggeredBy": "Déclenché par"
+        },
+        "deleteTooltip": {
+          "cannotDeleteDeploying": "L'événement ne peut pas être supprimé pendant le déploiement",
+          "cannotDeleteStatus": "L'événement ne peut pas être supprimé dans ce statut",
+          "mustArchiveFirst": "L'événement doit d'abord être entièrement archivé",
+          "mustEndFirst": "L'événement doit d'abord être terminé"
+        },
+        "extend": {
+          "adjust": "Ajuster",
+          "error": "L'événement n'a pas pu être prolongé/raccourci :",
+          "newEndDate": "Nouvelle date de fin",
+          "newEndDateHelp": "Date à laquelle l'événement doit se terminer",
+          "success": "Événement prolongé/raccourci avec succès",
+          "title": "Prolonger/Raccourcir l'événement",
+          "warning": "La date de fin d'un événement peut être ajustée ici – une prolongation comme un raccourcissement est possible. La date de fin actuellement définie est pré-remplie dans le sélecteur de date. Si le champ est vide, aucune date de fin n'a encore été définie. Important : dès que la date de fin est atteinte, l'événement sera automatiquement terminé. Si vous définissez la date de fin à aujourd'hui, l'événement se terminera le jour même."
+        },
+        "import": {
+          "invalidEmail": "E-mail invalide",
+          "title": "Importer des participants",
+          "unknownError": "Erreur inconnue",
+          "userNotFound": "Utilisateur non trouvé"
+        },
+        "moodleCourse": "Cours Moodle (instance)",
+        "noDeploymentStatus": "Aucun message de statut disponible",
+        "participants": {
+          "addTitle": "Ajouter des participants",
+          "addedCount": "{n} participants ajoutés",
+          "addedPartial": "{added} sur {total} participants ajoutés",
+          "addedSkipped": "{added} participants ajoutés, {skipped} ignorés",
+          "areYouSure": "Êtes-vous sûr ?",
+          "bulkRemoveDescription": "Les participants sélectionnés seront retirés de l'événement {eventName}.",
+          "confirmAction": "Confirmer l'action",
+          "removeConfirm": "Le participant {username} sera retiré de l'événement {eventName}.",
+          "removeCount": "Retirer {n}",
+          "removedCount": "{n} participants retirés",
+          "removedPartial": "{removed} sur {total} participants retirés",
+          "searchLabel": "Rechercher une personne",
+          "selectRole": "Sélectionner un rôle"
+        },
+        "rollout": {
+          "error": "L'événement n'a pas pu être déployé :",
+          "success": "L'événement est en cours de déploiement"
+        },
+        "stopEvent": {
+          "error": "L'événement n'a pas pu être terminé :",
+          "success": "L'événement est en cours d'arrêt"
+        },
+        "tagsHelp": "Tags de l'événement",
+        "tasks": {
+          "infoNotice": "Les tâches sont des travaux générés automatiquement par le système qui effectuent le travail réel (asynchrone) en arrière-plan – par exemple, la création/suppression de machines virtuelles ou la configuration de connexions."
+        },
+        "templates": {
+          "addTitle": "Ajouter un modèle VM",
+          "cannotRemoveWarning": "Les modèles VM ajoutés manuellement ne peuvent pas être retirés de l'événement.",
+          "infoNotice": "Il est recommandé d'utiliser des environnements au lieu d'attribuer des modèles VM directement à un événement. Cette fonctionnalité est principalement disponible comme solution de contournement. Les modèles VM ajoutés manuellement ne peuvent pas être retirés ultérieurement de l'événement – même si l'événement est uniquement planifié. Après le déploiement d'un événement, les modèles VM présents dans l'environnement associé à ce moment sont également affichés ici.",
+          "selectTemplate": "Sélectionner un modèle VM"
+        },
+        "unknownAction": "Action inconnue ({action})",
+        "warnings": {
+          "addTemplateTriggersCreation": "L'ajout d'un modèle VM déclenche immédiatement la création des machines virtuelles et connexions pour les participants.",
+          "addUserMoodleEnrollment": "Le participant sera également inscrit au cours Moodle.",
+          "addUserTriggersCreation": "L'ajout d'un participant déclenche immédiatement la création de ses machines virtuelles et connexions.",
+          "eventAlreadyActive": "Cet événement est déjà actif.",
+          "removeUserDeletesVMs": "Le retrait d'un participant d'un événement en cours supprime toutes les VMs et connexions du participant.",
+          "removeUserMoodleUnenrollment": "Le participant sera également désinscrit du cours Moodle.",
+          "removeUsersDeletesVMs": "Le retrait de participants d'un événement en cours supprime toutes les VMs et connexions des participants."
+        }
+      },
+      "form": {
+        "course": "Environnement",
+        "courseHelp": "Sélectionnez l'environnement",
+        "dateEnd": "Fin",
+        "dateEndArchiveTooltip": "Toutes les connexions et VMs seront archivées après l'événement et la période de transition",
+        "dateEndHelp": "Date à laquelle l'événement se termine",
+        "dateEndHelpWithPrep": "Date à laquelle l'événement se termine. L'archivage a lieu {days} jours après.",
+        "dateEndPlaceholder": "Laisser vide pour aucune date de fin",
+        "dateEndTooltip": "Toutes les connexions et VMs seront archivées après l'événement et la période de transition.",
+        "datePickerPlaceholder": "Sélectionner une date",
+        "dateStart": "Début",
+        "dateStartHelp": "Date à laquelle l'événement commence",
+        "dateStartHelpWithPrep": "Date à laquelle l'événement commence. Le déploiement démarre {days} jours avant.",
+        "dateStartTooltip": "Au démarrage de l'événement, les VMs seront automatiquement déployées à temps.",
+        "descriptionHelp": "Une description optionnelle de l'événement",
+        "nameHelp": "Nom canonique décrivant l'événement plus en détail",
+        "namePlaceholder": "Cours Linux WS25",
+        "noEndDate": "Pas de date de fin",
+        "preparationDays": "jours de période de préparation",
+        "slug": "Nom court",
+        "slugHelp": "Nom court (slug), utilisé dans les noms de VM/connexion résultants",
+        "slugPlaceholder": "Nom court (slug)",
+        "slugTooltip": "Veuillez entrer 4 à 8 caractères : lettres, chiffres, - ou _",
+        "transitionDays": "jours de période de transition"
+      }
+    },
+    "guacamole": {
+      "detail": {
+        "connectionRedeployed": "Connexion redéployée",
+        "connectionTemplate": "Modèle de connexion",
+        "connectionTemplateHelp": "Le modèle de connexion de cette connexion",
+        "connectionUpdated": "Connexion mise à jour",
+        "event": "Événement",
+        "eventHelp": "L'événement via lequel cette connexion a été créée.",
+        "info": "Info",
+        "nameHelp": "Nom canonique décrivant précisément la connexion",
+        "open": "Ouvrir",
+        "permissions": "Autorisations",
+        "redeployConnection": "Redéployer la connexion",
+        "reprovision": "Reprovision",
+        "tagsHelp": "Tags de la connexion",
+        "updateConnection": "Mettre à jour la connexion",
+        "user": "Utilisateur",
+        "userHelp": "Utilisateur de cette connexion",
+        "vm": "VM",
+        "vmHelp": "Machine virtuelle de cette connexion",
+        "reprovisionError": "La connexion n'a pas pu être redéployée :",
+        "openTooltip": "Ouvre la connexion directement dans Guacamole",
+        "updateModalText": "Cette fonction permet de mettre à jour une connexion existante dans le logiciel de gestion. L'adresse IPv4 actuelle de la machine virtuelle est d'abord récupérée et enregistrée. Ensuite, la connexion est mise à jour avec la nouvelle adresse IPv4.",
+        "reprovisionModalText": "Cette fonction permet de réparer une connexion existante au sein du logiciel de gestion. L'adresse IPv4 actuelle de la machine virtuelle est d'abord récupérée et enregistrée. Ensuite, la connexion est recréée avec la nouvelle adresse IPv4."
+      },
+      "form": {
+        "connectionTemplate": "Modèle de connexion",
+        "nameHelp": "Nom canonique décrivant précisément la connexion",
+        "namePlaceholder": "RDP Webserver 01",
+        "noConnectionProfiles": "Aucun modèle de connexion n'existe pour cette VM.",
+        "selectTemplateHelp": "Sélectionnez le modèle de connexion que l'utilisateur doit recevoir",
+        "selectUserHelp": "Sélectionnez l'utilisateur qui recevra cette connexion",
+        "user": "Utilisateur",
+        "vmHelp": "Sélectionnez la VM pour laquelle une connexion doit être créée"
+      },
+      "list": {
+        "connections": "Connexions",
+        "guacamoleDeleted": "Connexion supprimée"
+      }
+    },
+    "mailActions": {
+      "detail": {
+        "assignModalTitle": "Attribuer une action e-mail à un modèle d'e-mail",
+        "fields": {
+          "descriptionHelp": "Une description optionnelle de l'action e-mail",
+          "nameHelp": "Nom canonique décrivant l'action e-mail plus en détail",
+          "slugHelp": "Un identifiant court généré en interne désignant cette action e-mail"
+        },
+        "invalidVariablesWarning": "Avertissement : variables invalides",
+        "objectModel": "Action e-mail",
+        "selectTemplate": "Sélectionner le modèle d'e-mail",
+        "tooltipHasTemplate": "L'action a un modèle attribué",
+        "tooltipNoTemplate": "L'action n'a pas de modèle attribué"
+      }
+    },
+    "mailTemplates": {
+      "detail": {
+        "protectionChanged": "Protection modifiée",
+        "sentMails": "E-mails envoyés",
+        "tagsHelp": "Tags du modèle d'e-mail",
+        "tooltipInUse": "Modèle en utilisation",
+        "tooltipNotInUse": "Modèle actuellement non utilisé",
+        "tooltipNotProtected": "Modèle actuellement non protégé",
+        "tooltipProtected": "Modèle protégé contre la modification"
+      },
+      "form": {
+        "assignedAction": "Action attribuée",
+        "assignedActionHelp": "L'action système pour laquelle ce modèle d'e-mail est utilisé pour envoyer des e-mails",
+        "content": "Contenu",
+        "contentHelp": "Le contenu du modèle. Variables disponibles : {'{{'}user.name{'}}'}, {'{{'}user.email{'}}'}, {'{{'}project.name{'}}'}",
+        "descriptionHelp": "Une description optionnelle du modèle d'e-mail",
+        "invalidPlaceholders": "Veuillez corriger les variables de remplacement invalides",
+        "language": "Langue",
+        "languageHelp": "Langue du modèle d'e-mail",
+        "nameHelp": "Nom canonique décrivant le modèle d'e-mail plus en détail",
+        "namePlaceholder": "Bienvenue Participant",
+        "replyToHelp": "L'adresse e-mail à laquelle les réponses sont envoyées - si vide, la valeur par défaut du système est utilisée",
+        "subjectHelp": "L'objet des e-mails envoyés"
+      },
+      "list": {
+        "inUse": "En utilisation"
+      }
+    },
+    "mails": {
+      "columns": {
+        "recipient": "Destinataire",
+        "subject": "Objet"
+      },
+      "create": {
+        "error": "L'e-mail n'a pas pu être envoyé",
+        "success": "E-mail envoyé avec succès"
+      },
+      "form": {
+        "fields": {
+          "fromMailHelp": "L'adresse e-mail de l'expéditeur de l'e-mail envoyé",
+          "fromNameHelp": "Le nom de l'expéditeur de l'e-mail envoyé",
+          "replyToHelp": "L'adresse de réponse de l'e-mail envoyé",
+          "subjectHelp": "L'objet de l'e-mail envoyé"
+        },
+        "send": "Envoyer",
+        "steps": {
+          "selectTemplate": "Sélectionner le modèle d'e-mail",
+          "selectUser": "Sélectionner l'utilisateur",
+          "settings": "Paramètres de l'e-mail"
+        }
+      },
+      "detail": {
+        "columns": {
+          "triggeredBy": "Déclenché par"
+        },
+        "event": "Événement",
+        "fields": {
+          "fromMailHelp": "L'adresse e-mail de l'expéditeur de l'e-mail envoyé",
+          "fromNameHelp": "Le nom de l'expéditeur de l'e-mail envoyé",
+          "recipientHelp": "Le destinataire de l'e-mail envoyé",
+          "replyToHelp": "L'adresse de réponse de l'e-mail envoyé",
+          "subjectHelp": "L'objet de l'e-mail envoyé",
+          "template": "Modèle d'e-mail",
+          "templateHelp": "Le modèle d'e-mail utilisé pour cet e-mail envoyé"
+        },
+        "manual": "Manuel",
+        "notFound": "Mail introuvable",
+        "title": "E-mail envoyé"
+      },
+      "fields": {
+        "fromMail": "E-mail de l'expéditeur",
+        "fromName": "Nom de l'expéditeur",
+        "replyTo": "Répondre à l'e-mail"
+      },
+      "filters": {
+        "failed": "Échoué",
+        "queued": "En attente"
+      }
+    },
+    "os": {
+      "detail": {
+        "tagsHelp": "Tags du système d'exploitation",
+        "templateDeleted": "Modèle de VM supprimé",
+        "vmDeleted": "VM supprimée"
+      },
+      "form": {
+        "createVendorTooltip": "Créer un nouveau fabricant",
+        "descriptionHelp": "Une description optionnelle du système d'exploitation",
+        "keyHelp": "Clé (slug) du système d'exploitation",
+        "nameHelp": "Nom canonique décrivant le système d'exploitation plus en détail",
+        "namePlaceholder": "Ubuntu 24.04 LTS"
+      }
+    },
+    "policies": {
+      "agree": {
+        "confirmError": "Confirmation échouée",
+        "confirmSuccess": "Politique confirmée avec succès !",
+        "logout": "Logout",
+        "logoutError": "Déconnexion échouée",
+        "logoutSuccess": "Déconnexion réussie",
+        "morePoliciesPending": "D'autres politiques en attente sont disponibles",
+        "mustAgree": "Acceptation obligatoire",
+        "scrollToEnd": "Défiler jusqu'à la fin"
+      },
+      "detail": {
+        "activate": "Activer",
+        "activateTooltip": "Désactiver la politique",
+        "areYouSure": "Êtes-vous sûr ?",
+        "confirmAction": "Confirmer l'action",
+        "consents": "Consentements",
+        "deactivate": "Désactiver",
+        "deactivateTooltip": "Désactiver la politique",
+        "disableConfirmInfo": "Information de confirmation de désactivation",
+        "disableConfirmText": "La politique {name} sera immédiatement désactivée.",
+        "enableConfirmInfo": "Information de confirmation d'activation",
+        "enableConfirmText": "La politique {name} sera immédiatement activée.",
+        "tagsHelp": "Tags de la politique",
+        "usersWithConsent": "Utilisateurs ayant donné leur consentement"
+      },
+      "form": {
+        "content": "Contenu",
+        "contentHelp": "Les utilisateurs voient le contenu de la politique exactement tel qu'il a été saisi (supporte Markdown)",
+        "descriptionHelp": "Une description optionnelle de la politique",
+        "editPlaceholder": "Politique 01 Protection des données",
+        "nameHelp": "Nom canonique décrivant la politique plus en détail",
+        "namePlaceholder": "Protection des données v1.0"
+      }
+    },
+    "proxmox": {
+      "nodeDetail": {
+        "chartsInfo": "Deux diagrammes sont toujours affichés : un pour l'utilisation actuelle du CPU et de la mémoire vive et un pour l'utilisation du réseau. De plus, un diagramme supplémentaire avec jusqu'à huit métriques individuellement sélectionnables peut être affiché.",
+        "columns": {
+          "end": "Fin",
+          "start": "Début"
+        },
+        "customChart": "Graphique personnalisé",
+        "fqdnHelp": "Fully Qualified Domain Name (nom complet et unique)",
+        "hostname": "Hostname",
+        "hostnameHelp": "Hostname du node Proxmox VE",
+        "ipv4Address": "IPv4 Adresse",
+        "ipv4AddressHelp": "Adresse IPv4 interne du node Proxmox VE",
+        "loadError": "Proxmox VE Node(s) n'ont pas pu être chargés",
+        "nodeIdHelp": "ID interne du node Proxmox VE dans le cluster",
+        "title": "Proxmox VE - Node : {id}"
+      },
+      "nodeList": {
+        "cores": "Cœurs",
+        "cpu": "CPU",
+        "memory": "Mémoire",
+        "proxmoxVeNodes": "Proxmox VE - Nœuds",
+        "storageLokal": "Stockage (local)"
+      },
+      "nodesStats": {
+        "chartTitle": "Proxmox VE Node : {fqdn}",
+        "chartsInfo": "Deux diagrammes sont toujours affichés : un pour l'utilisation actuelle du CPU et de la mémoire vive et un pour l'utilisation du réseau. De plus, un diagramme supplémentaire avec jusqu'à huit métriques individuellement sélectionnables peut être affiché.",
+        "error": "Erreur : {code}",
+        "proxmoxVeStatistics": "Proxmox VE - Statistiques"
+      }
+    },
+    "rateLimit": {
+      "title": "Trop de requêtes",
+      "close": "OK",
+      "seconds": "{count} seconde | {count} secondes",
+      "minutes": "{count} minute | {count} minutes",
+      "endpoints": {
+        "generic": {
+          "duration": "Vous avez envoyé trop de requêtes. Veuillez réessayer dans {duration}.",
+          "time": "Vous avez envoyé trop de requêtes.\nVeuillez réessayer à partir de {time}."
+        },
+        "auth": {
+          "duration": "Trop de tentatives de connexion. Veuillez réessayer dans {duration}.",
+          "time": "Trop de tentatives de connexion.\nVeuillez réessayer à partir de {time}."
+        },
+        "password": {
+          "duration": "Trop de changements de mot de passe. Veuillez réessayer dans {duration}.",
+          "time": "Trop de changements de mot de passe.\nVeuillez réessayer à partir de {time}."
+        }
+      }
+    },
+    "roles": {
+      "detail": {
+        "addMemberTitle": "Ajouter un membre",
+        "assignedPermissions": "Autorisations assignées",
+        "cloneCopyingPerms": "Copie des autorisations...",
+        "cloneCreating": "Création du rôle...",
+        "cloneDone": "Terminé",
+        "cloneErrorCount": "{count} erreur(s) survenue(s)",
+        "cloneErrorOccurred": "Erreur survenue",
+        "cloneFinished": "Terminé",
+        "cloneLoadingPerms": "Chargement des autorisations...",
+        "cloneNameLabel": "Nom du nouveau rôle",
+        "cloneNotice": "Les autorisations assignées sont automatiquement reprises lors de la copie - les membres ne le sont pas.",
+        "clonePermsSkippedDesc": "Vous n'avez pas les droits nécessaires pour copier les autorisations du rôle. Le rôle a été créé sans autorisations.",
+        "clonePermsSkippedTitle": "Autorisations non copiées",
+        "clonePreparing": "Préparation...",
+        "cloneTitle": "Copier le rôle",
+        "cloneUnknownError": "Erreur inconnue",
+        "email": "E-mail",
+        "memberAdded": "Membre ajouté",
+        "memberRemoved": "Membre retiré",
+        "members": "Membres",
+        "protectedDeleteTooltip": "Les rôles protégés ne peuvent pas être supprimés",
+        "protectedEditTooltip": "Les rôles protégés ne peuvent pas être modifiés",
+        "protectedHelp": "Les rôles système (protégés) ne peuvent plus être modifiés/supprimés",
+        "searchMember": "Rechercher un utilisateur existant",
+        "tagsHelp": "Tags du rôle",
+        "username": "Nom d'utilisateur"
+      },
+      "form": {
+        "descriptionHelp": "Une description optionnelle du rôle",
+        "keyHelp": "Les rôles doivent représenter les utilisateurs ayant les mêmes autorisations",
+        "keyPlaceholder": "exemple_role_01",
+        "keyTooltip": "Le slug est généré automatiquement à partir du nom",
+        "nameHelp": "Nom canonique décrivant le rôle plus en détail",
+        "namePlaceholder": "Enseignant",
+        "reservedNameTooltip": "Ce nom de rôle est réservé et ne peut pas être utilisé."
+      }
+    },
+    "scimClients": {
+      "create": {
+        "tokenHelp": "Jeton pour l'authentification au système cible"
+      },
+      "detail": {
+        "assignedRoles": "Assigned roles",
+        "changelogs": "Changelogs",
+        "client": "Client",
+        "descriptionHelp": "Une description optionnelle du client",
+        "endpointUrl": "Endpoint URL",
+        "endpointUrlHelp": "Endpoint SCIM du système cible",
+        "nameHelp": "Nom du client SCIM",
+        "roleAdded": "Role added",
+        "roleAssign": "Assign role",
+        "roleGroupSync": "Synchroniser les rôles/groupes",
+        "roleRemoved": "Rôle retiré",
+        "rolemappings": "Role mappings",
+        "roles": "Roles",
+        "scimClientDeleted": "SCIM client deleted",
+        "searchExistingRole": "Search for an existing role",
+        "syncRolesAsGroupsHelp": "Synchroniser les rôles internes en tant que groupes vers le système cible",
+        "usermappings": "User mappings"
+      },
+      "edit": {
+        "descriptionKeepExisting": "Optionnel. Laisser vide pour conserver la description existante",
+        "tokenKeepExisting": "Laisser vide pour ne pas modifier le jeton"
+      },
+      "form": {
+        "bearerToken": "Bearer token",
+        "descriptionHelp": "Une description optionnelle du client",
+        "enableDisableHelp": "Activer ou désactiver le client",
+        "enabled": "Enabled",
+        "endpointUrl": "Endpoint URL",
+        "endpointUrlHelp": "L'URL de l'endpoint SCIM du système cible",
+        "externalLms": "External LMS",
+        "httpsexamplecomscimv": "https://example.com/scim/v2",
+        "nameHelp": "Nom du client SCIM",
+        "roleGroupSync": "Synchroniser les rôles/groupes",
+        "syncRolesAsGroupsHelp": "Synchroniser les rôles internes en tant que groupes vers le système cible",
+        "tokenPlaceholder": "Saisir le jeton"
+      },
+      "list": {
+        "scimClientDeleted": "SCIM client deleted",
+        "scimClients": "SCIM Clients"
+      }
+    },
+    "scimProviders": {
+      "detail": {
+        "assignedRoles": "Assigned roles",
+        "changelogs": "Changelogs",
+        "defaultUserStatus": "Statut utilisateur par défaut",
+        "defaultUserStatusHelp": "Statut par défaut pour les utilisateurs créés via ce fournisseur",
+        "descriptionHelp": "Une description optionnelle du fournisseur",
+        "nameHelp": "Nom du fournisseur SCIM",
+        "provider": "Provider",
+        "roleAdded": "Role added",
+        "roleAssign": "Assign role",
+        "roleRemoved": "Rôle retiré",
+        "roles": "Roles",
+        "scimProviderDeleted": "SCIM provider deleted",
+        "searchExistingRole": "Search for an existing role",
+        "tokenCouldNotRotated": "Token could not be rotated",
+        "tokenRotate": "Rotate token",
+        "tokenRotated": "Token rotated"
+      },
+      "edit": {
+        "descriptionKeepExisting": "Optionnel. Laisser vide pour conserver la description existante"
+      },
+      "form": {
+        "defaultUserStatus": "Statut utilisateur par défaut",
+        "defaultUserStatusHelp": "Statut par défaut pour les utilisateurs créés via ce fournisseur",
+        "descriptionHelp": "Une description optionnelle du fournisseur",
+        "enableDisableHelp": "Activer ou désactiver le fournisseur",
+        "enabled": "Enabled",
+        "name": "Authentik",
+        "nameHelp": "Nom du fournisseur SCIM"
+      },
+      "list": {
+        "scimProviderDeleted": "SCIM provider deleted",
+        "scimProviders": "SCIM Providers"
+      }
+    },
+    "system": {
+      "settings": {
+        "change": "Modifier",
+        "changedAt": "Modifié le",
+        "changedBy": "Modifié par",
+        "dataType": "Type de données",
+        "editError": "Erreur de modification",
+        "editTitle": "Modifier",
+        "exportError": "Erreur d'exportation",
+        "infoNotice": "Ce sont les paramètres globaux du logiciel de gestion qui contrôlent le comportement de différentes actions à l'échelle du système.",
+        "lastChange": "Dernière modification",
+        "setting": "Paramètre",
+        "valueHelp": "Valeur",
+        "viewTitle": "Voir le paramètre",
+        "visibility": "Visibilité",
+        "warningBold": "Cette modification prend effet immédiatement.",
+        "warningText": "Les modifications affectent immédiatement tous les utilisateurs. Seul le type de données de la nouvelle valeur est vérifié. Une modification incorrecte peut rendre l'application non fonctionnelle. Veuillez procéder avec précaution."
+      }
+    },
+    "tags": {
+      "list": {
+        "nameHelp": "Rechercher par nom de tag",
+        "nameLabel": "Nom*",
+        "noteLabel": "Remarque : ",
+        "noteText": "La recherche n'est pas sensible à la casse",
+        "titleKey": "Tags avec le nom : {key}",
+        "titleKeyValue": "Tags avec le nom/valeur : {key} : {value}",
+        "valueHelp": "Rechercher par valeur de tag"
+      }
+    },
+    "tasks": {
+      "columns": {
+        "triggeredBy": "Déclenché par"
+      },
+      "detail": {
+        "event": "Événement",
+        "eventHelp": "Événement du task",
+        "mailTaskCannotRetry": "Les tâches d'e-mail ne peuvent pas être relancées",
+        "nameHelp": "Nom du task",
+        "statusHelp": "Statut actuel du task",
+        "subTaskRetryError": "Erreur de relance du subtask",
+        "subTaskRetrying": "Le subtask \"{name}\" est en cours de nouvelle tentative.",
+        "subTasks": "Subtasks",
+        "taskTooOld": "Tâche trop ancienne pour être relancée (> 1 jour)."
+      },
+      "list": {
+        "infoNotice": "Les tasks sont des tâches générées automatiquement par le système qui effectuent le travail réel (asynchrone) en arrière-plan – par exemple, la création/suppression de machines virtuelles ou la configuration de connexions."
+      },
+      "subTaskDetail": {
+        "action": "Action",
+        "actionHelp": "Action effectuée par ce subtask",
+        "attempt": "Tentative",
+        "attemptHelp": "Nombre de la tentative actuelle pour exécuter ce subtask",
+        "nameHelp": "Nom du subtask",
+        "notFound": "Subtask introuvable",
+        "objectHelp": "Objet auquel ce subtask se rapporte",
+        "parentTask": "Task parent",
+        "parentTaskHelp": "Task qui a créé ce subtask",
+        "redisJobId": "Redis Job ID",
+        "redisJobIdHelp": "L'identifiant interne du job dans la base de données Redis",
+        "relatedTasks": "Tasks liés",
+        "responseCode": "Code de réponse",
+        "responseCodeHelp": "Le code de statut de la réponse",
+        "responseMessage": "Message de réponse",
+        "responseMessageHelp": "Le message de la réponse",
+        "retryError": "Erreur de relance",
+        "retrying": "Le task est en cours de relance.",
+        "statusHelp": "Statut actuel du subtask"
+      }
+    },
+    "templates": {
+      "create": {
+        "selectSourceVm": "Veuillez d'abord sélectionner votre VM source.",
+        "showVm": "Afficher la VM",
+        "sourceVm": "VM source",
+        "sourceVmHelp": "Sélectionnez la VM source",
+        "sourceVmNotFound": "La VM n'a pas pu être trouvée",
+        "valuesPrefilledInfo": "Les valeurs « Mémoire vive », « Description » et « CPU » ont été pré-remplies à partir des valeurs de la VM. Vous pouvez les ajuster si nécessaire.",
+        "vmMustBeStopped": "Les modèles VM ne peuvent être créés qu'à partir de machines virtuelles actuellement éteintes. Veuillez d'abord arrêter la VM.",
+        "vmNotStopped": "La VM source n'est pas dans le statut « Stopped » (statut actuel : {status})."
+      },
+      "detail": {
+        "applicationAdded": "Application ajoutée",
+        "applicationRemoved": "Application retirée du modèle VM",
+        "areYouReallySure": "Êtes-vous vraiment sûr ?",
+        "areYouSure": "Êtes-vous sûr ?",
+        "assignApplication": "Attribuer une application",
+        "assignCourse": "Attribuer un environnement",
+        "cannotBeUndone": "Cette action est irréversible.",
+        "confirmAction": "Confirmer l'action",
+        "courseAdded": "Environnement ajouté",
+        "courseRemoved": "Modèle de VM retiré de l'environnement",
+        "createVm": "Créer une VM",
+        "deleteInProgress": "Le modèle VM est en cours de suppression en arrière-plan",
+        "descriptionHelp": "Une description optionnelle du modèle VM",
+        "disk": "Disque dur",
+        "loadError": "Le modèle n'a pas pu être trouvé",
+        "noReadPermission": "Pas de permission de lecture",
+        "protectionChanged": "Protection du modèle modifiée",
+        "protocol": "Protocole",
+        "proxmoxNotFound": "Modèle de VM introuvable sur Proxmox - action impossible",
+        "searchApplication": "Rechercher une application existante",
+        "searchCourse": "Rechercher un environnement existant",
+        "tagsHelp": "Tags du modèle VM",
+        "templateProtected": "Modèle de VM protégé",
+        "triggeredBy": "Déclenché par",
+        "username": "Nom d'utilisateur",
+        "vendor": "Fabricant",
+        "virtualMachines": "Machines virtuelles",
+        "vmDeleteInProgress": "La VM est en cours de suppression en arrière-plan",
+        "vmWillBeDeleted": "La VM {name} sera supprimée."
+      },
+      "form": {
+        "cpuCores": "Cœurs CPU",
+        "cpuCoresHelp": "Nombre de cœurs CPU du modèle VM",
+        "descriptionHelp": "Une description optionnelle du modèle VM (supporte Markdown)",
+        "nameHelp": "Nom canonique décrivant le modèle VM plus en détail",
+        "namePlaceholder": "Webserver Template",
+        "os": "Système d'exploitation",
+        "osHelp": "Système d'exploitation du modèle VM",
+        "ram": "Mémoire vive (Go)",
+        "ramHelp": "Mémoire vive allouée du modèle VM (en Go)"
+      },
+      "import": {
+        "adjustIfNeeded": "Vous pouvez les ajuster si nécessaire.",
+        "enterProxmoxId": "Veuillez d'abord saisir l'ID Proxmox du modèle VM.",
+        "importButton": "Importer le modèle VM",
+        "loadInfoButton": "Charger les infos du modèle",
+        "osMustBeSet": "Cependant, un système d'exploitation doit encore être spécifié.",
+        "osRequired": "Cette valeur doit être spécifiée",
+        "proxmoxId": "ID Proxmox",
+        "proxmoxIdHelp": "Veuillez saisir l'ID Proxmox correspondant du modèle",
+        "updateError": "Les ajustements n'ont pas pu être appliqués – veuillez modifier le modèle à nouveau",
+        "valuesPrefilledInfo": "Les valeurs « Mémoire vive », « Description », « CPU » et « Nom » ont été pré-remplies à partir des valeurs de la VM."
+      }
+    },
+    "userProfile": {
+      "actionChanged": "modifié",
+      "actionCreated": "créé",
+      "actionDeleted": "supprimé",
+      "activity": "Activité",
+      "changePassword": "Changer le mot de passe",
+      "currentPassword": "Mot de passe actuel",
+      "email": "E-mail",
+      "externalAccount": "Compte externe",
+      "general": "Général",
+      "internalId": "ID interne",
+      "ipAddress": "Adresse IP",
+      "loadError": "Impossible de charger le profil",
+      "localAccount": "Compte local",
+      "newPassword": "Nouveau mot de passe",
+      "newPasswordConfirm": "Confirmer le nouveau mot de passe",
+      "noRolesAssigned": "Aucun rôle attribué",
+      "passwordChanged": "Mot de passe modifié avec succès",
+      "passwordChangeRateLimited": "Action bloquée — disponible à nouveau à partir de {time}",
+      "recentActivities": "Activités récentes",
+      "required": "Obligatoire",
+      "roles": "Rôles",
+      "timestamp": "Horodatage",
+      "username": "Nom d'utilisateur"
+    },
+    "users": {
+      "detail": {
+        "accountStatus": "Statut du compte",
+        "addConnectionTitle": "Ajouter une connexion",
+        "areYouSure": "Êtes-vous sûr ?",
+        "assignRoleTitle": "Attribuer un rôle",
+        "authExternal": "Authentifié en externe – modification impossible",
+        "authInternal": "Authentifié en interne",
+        "confirmActionTitle": "Confirmer l'action",
+        "confirmationCheckvalue": "Confirmation",
+        "connectionNameHelp": "Nom canonique décrivant précisément la connexion",
+        "connectionNamePlaceholder": "Ma connexion Guacamole exemple",
+        "connectionNameTooltip": "Ce nom sera affiché tel quel à l'utilisateur – il doit donc être explicite",
+        "connectionTemplate": "Modèle de connexion",
+        "connectionTemplateHelp": "Sélectionnez le modèle de connexion que l'utilisateur doit recevoir",
+        "connectionTemplateTooltip": "Seuls les modèles de connexion attribués à de vraies VMs sont affichés – pas les modèles VM",
+        "course": "Environnement",
+        "createdBy": "Créé par",
+        "directPermissionsDescription": "Cette matrice de permissions ne montre que les permissions directement attribuées à cet utilisateur. Les permissions que l'utilisateur reçoit via les rôles attribués ci-dessus ne sont pas affichées ici mais peuvent être consultées sur le rôle respectif.",
+        "directPermissionsTitle": "Permissions directement attribuées",
+        "externalAccountDisabled": "Compte externe - action impossible",
+        "ipAddress": "Adresse IP",
+        "lock": "Bloquer",
+        "lockInfo": "La personne ne pourra plus accéder à ses ressources.",
+        "method": "Méthode",
+        "newPassword": "Nouveau mot de passe",
+        "newPasswordConfirm": "Confirmer le nouveau mot de passe",
+        "passwordsMismatch": "Les mots de passe ne correspondent pas",
+        "role": "Rôle",
+        "rolesAndPermissions": "Rôles & Permissions",
+        "searchRoleLabel": "Rechercher un rôle existant",
+        "setBtn": "Définir",
+        "setPasswordBtn": "Définir le mot de passe",
+        "setPasswordTitle": "Définir le mot de passe",
+        "slug": "Nom court (Slug)",
+        "subject": "Objet",
+        "tagsHelp": "Tags de la personne",
+        "unlock": "Débloquer",
+        "unlockInfo": "La personne pourra à nouveau accéder immédiatement à vos ressources.",
+        "userWillBeEdited": "La personne suivante sera modifiée :",
+        "userWillBeLocked": "La personne suivante sera bloquée :",
+        "userWillBeUnlocked": "La personne suivante sera débloquée :"
+      },
+      "form": {
+        "access": "Accès",
+        "canonicalNameHelp": "Nom canonique",
+        "emailAddress": "Adresse e-mail",
+        "emailShort": "E-mail",
+        "externalUserHelp": "Les utilisateurs externes n'ont pas besoin de mot de passe car l'authentification est gérée en externe",
+        "externalUserSwitch": "Utilisateur externe (LDAP/OIDC) ?",
+        "language": "Langue",
+        "locale": "Locale",
+        "password": "Mot de passe",
+        "passwordConfirm": "Confirmer le mot de passe",
+        "required": "Requis",
+        "username": "Nom d'utilisateur"
+      },
+      "import": {
+        "email": "E-mail",
+        "firstname": "Prénom",
+        "invalidEmail": "E-mail invalide",
+        "lastname": "Nom de famille",
+        "unknownError": "Erreur inconnue",
+        "username": "Nom d'utilisateur"
+      },
+      "locale": {
+        "english": "Anglais",
+        "french": "Français",
+        "german": "Allemand",
+        "spanish": "Espagnol"
+      }
+    },
+    "vendors": {
+      "detail": {
+        "applicationDeleted": "Application supprimée",
+        "osDeleted": "Système d'exploitation supprimé",
+        "tagsHelp": "Tags du fabricant"
+      },
+      "form": {
+        "descriptionHelp": "Une description optionnelle du fabricant",
+        "nameHelp": "Nom canonique décrivant le fabricant plus en détail",
+        "namePlaceholder": "Canonical"
+      }
+    },
+    "vms": {
+      "cpuCoresHelp": "Nombre de cœurs CPU de la machine virtuelle",
+      "cpuCoresLabel": "Cœurs CPU",
+      "create": {
+        "autoCreateConnections": "Créer automatiquement les connexion(s)",
+        "connectionTemplateFound": "Le modèle VM sélectionné possède des modèle(s) de connexion, vous pouvez maintenant créer directement une connexion (optionnel)",
+        "connectionsHelp": "Vous pouvez optionnellement créer une connexion directement ici",
+        "connectionsLabel": "Connexions",
+        "noConnectionPermission": "Vous n'avez pas la permission de consulter les modèles de connexion. Il n'a pas pu être vérifié si ce modèle VM possède des modèles de connexion. Vous pouvez quand même créer une connexion ici, mais sans garantie de succès.",
+        "noConnectionTemplate": "Le modèle VM sélectionné ne possède aucun modèle de connexion, aucune connexion ne peut donc être créée maintenant. Un modèle de connexion doit d'abord être créé pour le modèle VM.",
+        "selectTemplateFirst": "Veuillez d'abord sélectionner votre modèle VM.",
+        "templateHelp": "Sélectionnez le modèle VM",
+        "templateLabel": "Modèle de VM",
+        "templateNotFound": "Le modèle n'a pas pu être trouvé",
+        "templateNotFoundOnProxmox": "Le modèle VM sélectionné n'a pas été trouvé sur Proxmox - action actuellement impossible ! Veuillez contacter un administrateur/support ou sélectionner un autre modèle VM.",
+        "valuesPrefilled": "Les valeurs « Mémoire vive », « Description » et « CPU » ont été pré-remplies à partir des valeurs du modèle VM. Vous pouvez les ajuster si nécessaire."
+      },
+      "descriptionHelp": "Une description optionnelle de la machine virtuelle",
+      "descriptionHelpMarkdown": "Une description optionnelle de la machine virtuelle (supporte Markdown)",
+      "detail": {
+        "actionError": "L'action \"{action}\" pour {name} a échoué",
+        "actionSuccess": "L'action \"{action}\" pour {name} a été déclenchée",
+        "actions": {
+          "alreadyStopped": "La VM est déjà arrêtée",
+          "createTemplate": "Créer un modèle VM",
+          "createTemplateTooltip": "Créer un nouveau modèle à partir de cette VM",
+          "mustBeRunning": "La VM doit être en cours d'exécution",
+          "mustBeStopped": "La VM doit être arrêtée",
+          "reboot": "Redémarrer",
+          "reset": "Réinitialiser",
+          "resetTooltip": "Réinitialisation matérielle de la VM (comme couper/remettre le courant)",
+          "shutdown": "Éteindre",
+          "shutdownTooltip": "Éteindre proprement la VM",
+          "start": "Démarrer",
+          "stop": "Arrêter",
+          "stopTooltip": "Éteindre immédiatement la VM (perte de données possible)",
+          "updateIp": "Mettre à jour l'IP",
+          "updateIpTooltip": "Récupérer l'adresse IPv4 de la VM"
+        },
+        "confirm": {
+          "reboot": "Voulez-vous redémarrer la VM \"{name}\" ?",
+          "reset": "Voulez-vous réinitialiser la VM \"{name}\" ? Cela revient à couper/remettre le courant et peut entraîner une perte de données.",
+          "shutdown": "Voulez-vous éteindre proprement la VM \"{name}\" ?",
+          "start": "Voulez-vous démarrer la VM \"{name}\" ?",
+          "stop": "Voulez-vous éteindre immédiatement la VM \"{name}\" ? Cela peut entraîner une perte de données."
+        },
+        "addConnection": "Ajouter une connexion",
+        "applications": "Applications",
+        "assignApp": "Attribuer une application",
+        "connectionForUser": "Connexion : {connection} pour l'utilisateur {user}",
+        "connectionNameHelp": "Nom canonique décrivant précisément la connexion",
+        "connectionNamePlaceholder": "Ma connexion Guacamole exemple",
+        "connectionNameTooltip": "Ce nom sera affiché tel quel à l'utilisateur – il doit donc être explicite",
+        "connectionTemplateColumn": "Modèle de connexion (Label)",
+        "connectionTemplateHelp": "Sélectionnez le modèle de connexion que l'utilisateur doit recevoir",
+        "connectionTemplateLabel": "Modèle de connexion",
+        "connectionTemplates": "Modèles de connexion",
+        "connections": "Connexions",
+        "customChart": "Graphique personnalisé",
+        "disk": "Disque dur",
+        "event": "Événement",
+        "ipv4Address": "Adresse IPv4",
+        "ipv4UpdateError": "L'IPv4 n'a pas pu être mis à jour",
+        "ipv4UpdateSuccess": "IPv4 mis à jour",
+        "noReadPermission": "Pas de permission de lecture",
+        "objectModel": "Machine virtuelle (VM)",
+        "protectionChanged": "Protection de la VM modifiée",
+        "protocol": "Protocole",
+        "searchAppLabel": "Rechercher une application existante",
+        "statisticsLoadError": "Les statistiques n'ont pas pu être chargées :",
+        "statisticsNote": "Deux diagrammes sont toujours affichés : un pour l'utilisation actuelle du CPU et de la mémoire vive et un pour l'utilisation du réseau. De plus, un diagramme supplémentaire avec jusqu'à huit métriques individuellement sélectionnables peut être affiché.",
+        "tagsHelp": "Tags de la machine virtuelle",
+        "triggeredBy": "Déclenché par",
+        "user": "Utilisateur",
+        "userHelp": "Sélectionnez l'utilisateur qui recevra cette connexion",
+        "userLabel": "Utilisateur",
+        "username": "Nom d'utilisateur",
+        "vendor": "Fabricant",
+        "vmTemplate": "Modèle de VM",
+        "deleteProtectedError": "La VM est protégée sur Proxmox. Veuillez d'abord faire retirer la protection par un administrateur sur Proxmox, puis la VM pourra être supprimée ici."
+      },
+      "edit": {
+        "autoRestartHelp": "Les modifications du CPU/de la mémoire vive nécessitent un redémarrage de la machine virtuelle. Cela se fera automatiquement !",
+        "autoRestartLabel": "Redémarrage automatique",
+        "cpuTooltip": "Les modifications de la configuration CPU nécessitent un redémarrage (s'applique uniquement aux VMs en cours d'exécution)",
+        "ramTooltip": "Les modifications de la mémoire vive nécessitent un redémarrage (s'applique uniquement aux VMs en cours d'exécution)"
+      },
+      "list": {
+        "areYouSure": "Êtes-vous vraiment sûr ?",
+        "cannotBeUndone": "Cette action est irréversible.",
+        "confirmAction": "Confirmer l'action"
+      },
+      "nameHelp": "Nom canonique décrivant la machine virtuelle plus en détail",
+      "namePlaceholder": "Webserver 01",
+      "osHelp": "Système d'exploitation de la machine virtuelle",
+      "osLabel": "Système d'exploitation",
+      "ramHelp": "Mémoire vive allouée de la machine virtuelle (en Go)",
+      "ramLabel": "Mémoire vive (Go)"
+    }
+  },
+  "tooltips": {
+    "emailSendStatus": {
+      "error": "L'envoi de l'e-mail a échoué",
+      "queued": "E-mail actuellement en file d'attente",
+      "sent": "E-mail envoyé avec succès"
+    },
+    "eventCreateType": {
+      "event": "Créé par un événement",
+      "manual": "Créé manuellement"
+    },
+    "mailCreateType": {
+      "event": "Envoyé par un événement",
+      "manual": "Envoyé manuellement"
+    },
+    "systemSettingVisibility": {
+      "admins": "Admins",
+      "authenticated": "Authentifié",
+      "internal": "Interne",
+      "public": "Public"
+    },
+    "taskStatus": {
+      "failed": "Échoué",
+      "processing": "En cours",
+      "queued": "En file d'attente",
+      "success": "Réussi"
+    },
+    "templateStatus": {
+      "available": "Disponible",
+      "deleted": "Supprimé",
+      "deleting": "En cours de suppression",
+      "error": "Erreur",
+      "queued": "En file d'attente"
+    },
+    "userAuthBackend": {
+      "external": "Authentifié en externe",
+      "internal": "Authentifié en interne"
+    }
+  },
+  "visibility": {
+    "admins": "Admins",
+    "authenticated": "Authentifié",
+    "internal": "Interne",
+    "public": "Public"
+  }
+}

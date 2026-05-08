@@ -1,0 +1,74 @@
+---
+id: auth
+sidebar_label: Login
+sidebar_position: 10
+status: finished
+tags:
+  - authentication
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Login
+
+To log in to **OpenVLE**, please open the individual portal URL of your installation.  
+You typically receive this URL from your **IT department**, your **organization**, or via a corresponding **invitation email**.
+
+If you are not yet logged in, you will be automatically redirected to the login page.
+
+---
+
+## Login with an External Account
+
+Users with an **external account** log in with their usual credentials:
+
+- **Username:** your central username
+- **Password:** your personal password
+
+These credentials are managed externally.  
+If you experience login issues, please contact your IT department or technical support.
+
+---
+
+## Login with a Local Account
+
+If you do not have an external account (e.g., external persons or test users), you can log in with a **local account**.  
+This consists of a separate **username** and **password** that were individually assigned to you.  
+Local accounts are managed exclusively within **OpenVLE**.
+
+---
+
+## Example or Use Case
+
+<Example title="Login via the login page">
+  After opening your individual OpenVLE portal URL, the login screen appears.
+  Enter your **username** and **password** and click **Login**. Upon successful
+  authentication, you are automatically taken to the **Dashboard**.
+</Example>
+
+{/* TODO: Screenshot ![Example login page view](/screens/auth/login.png) */}
+
+---
+
+## Notes / Special Considerations
+
+- Passwords are transmitted and stored securely encrypted.
+- After multiple incorrect attempts, access may be temporarily locked.
+- Local user accounts are independent of the central login system.
+- After logging in, your session remains active until you manually log out or close the browser.
+- For security reasons, it is recommended to manually log out after use — especially on public devices.
+
+---
+
+## Related Topics
+
+<RelatedLinks
+  items={[
+    { label: 'User Management', href: '../access-control/users' },
+    { label: 'Access Control', href: '../access-control' },
+    { label: 'Dashboard', href: '../dashboard' },
+  ]}
+/>

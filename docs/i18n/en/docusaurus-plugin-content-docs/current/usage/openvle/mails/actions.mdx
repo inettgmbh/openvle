@@ -1,0 +1,215 @@
+---
+id: actions
+sidebar_label: Actions
+sidebar_position: 5
+status: finished
+tags:
+  - mails
+  - actions
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Email actions
+
+In the **Actions** section, you will find an overview of all system-internal events where OpenVLE can automatically send emails.  
+Each action represents a specific event in the system -- such as the creation of a virtual machine, the start of an event, or the end of an event.  
+By assigning an email template to an action, you define which message is sent in that case.
+
+If no email template is assigned to an action, **no email** is sent when that action occurs.
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Emails → Actions"
+  alternative="Linked from email templates"
+/>
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'Display all email actions available in the system',
+    'Assign or change the email template used per action',
+    'Quick overview of which actions currently send emails',
+    'Edit assigned templates directly from the action view',
+  ]}
+/>
+
+---
+
+## Important fields at a glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Display name of the action in the interface. Describes when the action is triggered, e.g. "Event is being deployed".',
+    },
+    {
+      name: 'Description',
+      description:
+        'Brief description or version information of the action, including the permitted email variables.',
+    },
+    {
+      name: 'Slug',
+      description:
+        'Internal name of the action, e.g. "events_post_deployment_success". Used system-internally.',
+    },
+  ]}
+/>
+
+---
+
+## Currently available email actions
+
+:::info
+The following actions within **OpenVLE** currently trigger automatic emails.
+:::
+
+### Events
+
+<div style={{ overflowX: 'auto' }} className="compact-table">
+
+| Name                                      | Slug                             | Description                                                                                                                                                   |
+| ----------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Event successfully deployed               | events_post_deployment_success   | Notifies **all participants (instructors and students)** that the event has been successfully deployed and is now available.                                  |
+| Event could not be archived               | events_post_decommission_failed  | Informs **the event admins** that the archival of the event has failed and manual intervention may be required.                                               |
+| Event could not be deployed               | events_post_deployment_failed    | Notifies **the event admins** that the deployment of the event has failed. May contain technical details or troubleshooting hints.                            |
+| Event is being archived                   | events_decommission_started      | Informs **all participants (instructors and students)** that the event is currently being archived and will no longer be accessible.                          |
+| Event will start soon                     | events_pre_start                 | Sends a reminder to **all participants (instructors and students)** that the event will start shortly. May contain credentials or organizational information. |
+| Event is being deployed                   | events_deployment_started        | Informs **the event admins** that the deployment of the event has begun. Serves for deployment status tracking.                                               |
+| Event will be archived soon (instructors) | events_pre_end_admin             | Notifies **only the instructors** that the event will be archived soon, with the option to make last changes or downloads beforehand.                         |
+| Event will be archived soon (students)    | events_pre_end_student           | Informs **only the students** that the event will be archived soon and that materials or results should be saved beforehand.                                  |
+| Event was successfully archived           | events_post_decommission_success | Confirms to **the event admins** that the archival was completed successfully.                                                                                |
+| Event was deleted                         | events_delete                    | Notifies **the event admins** that the event has been completely deleted. May contain confirmation or log information.                                        |
+
+</div>
+
+### Virtual Machines
+
+<div style={{ overflowX: 'auto' }} className="compact-table">
+
+| Name                                     | Slug              | Description                                                                                              |
+| ---------------------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------- |
+| VirtualMachine could not be deployed     | vm_create_failed  | Informs that a virtual machine could not be created during deployment. Contains technical error details. |
+| VirtualMachine could not be deleted      | vm_delete_failed  | Notifies that the deletion of a virtual machine has failed. May contain hints for manual cleanup.        |
+| VirtualMachine is being deleted          | vm_delete_started | Sends a status message that the deletion process of a virtual machine has been started.                  |
+| VirtualMachine was successfully deployed | vm_create_success | Notifies that the virtual machine was successfully created and is ready for use.                         |
+
+</div>
+
+---
+
+## Assigning an email template
+
+1. Open the **Emails → Actions** section from the main menu.
+2. Find the desired action in the list.
+3. Open the action.
+4. Switch to the **Email templates** tab and click **Assign**.
+5. Find the desired email template and select it.
+6. Save the assignment.
+
+:::info
+When an action has **one** email template assigned, this is indicated in the detail view of the email template by a **green icon** in the upper right corner.
+:::
+
+---
+
+## Removing an email template
+
+1. Open the **Emails → Actions** section from the main menu.
+2. Find the desired action in the list.
+3. Open the action.
+4. Switch to the **Email templates** tab.
+5. Click **Remove** on the email template you want to unassign, or open the context menu and select **Remove**.
+6. Confirm the action in the displayed dialog.
+
+:::info
+When an action has **no** email template assigned, this is indicated in the detail view of the email template by a **red icon** in the upper right corner.
+:::
+
+---
+
+## Example or use case
+
+<Example title="Email action for deployed virtual machines">
+  After the creation of a new virtual machine, an email should be sent
+  automatically. Open the action *"VirtualMachine was successfully deployed"* in
+  the **Emails → Actions** section and assign the template *"VirtualMachine was
+  successfully deployed"* to it. From now on, this email will be automatically
+  sent whenever a new virtual machine is created.
+</Example>
+
+{/* TODO: Add screenshot -- Action management example */}
+
+---
+
+## Notes / special considerations
+
+- Actions are predefined by the system and cannot be manually created or deleted.
+- If no template is assigned to an action, no email dispatch takes place.
+- Changes to the assigned template take effect immediately for future events.
+- Actions are typically grouped by area (e.g. users, environments, events, system).
+- Some actions are purely internal and serve for logging, without a dispatch function.
+
+---
+
+## Relationships to other objects
+
+<ObjectRelations
+  showChangelogs={false}
+  showPermissions={false}
+  showTags={false}
+  items={[
+    {
+      object: 'Email templates',
+      description:
+        'Any number of email templates can be assigned to an action.',
+      behavior: 'No automations.',
+    },
+  ]}
+/>
+
+---
+
+## Required permissions
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    {
+      action: 'View email templates',
+      permission: 'mailtemplates_read',
+      scoped: true,
+    },
+    {
+      action: 'Edit email templates',
+      permission: 'mailtemplates_update',
+      scoped: false,
+    },
+  ]}
+/>
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Sent emails', href: './sent' },
+    { label: 'Email templates', href: './templates' },
+    { label: 'System settings', href: '../system/settings' },
+  ]}
+/>

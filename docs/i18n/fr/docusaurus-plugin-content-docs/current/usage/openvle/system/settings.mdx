@@ -1,0 +1,146 @@
+---
+id: settings
+sidebar_label: Paramètres
+sidebar_position: 20
+status: finished
+tags:
+  - system
+  - settings
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Paramètres
+
+Dans la section **Paramètres**, vous gérez les paramètres et configurations système globaux qui contrôlent le comportement d'OpenVLE.  
+Les administratrices et administrateurs peuvent y définir des options fondamentales, telles que le comportement du système ou les intégrations avec des services externes.
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint path="Système → Paramètres" />
+
+---
+
+## Aperçu des fonctionnalités
+
+<FeatureList
+  items={[
+    'Personnalisation des paramètres système globaux et des valeurs par défaut',
+    'Gestion des configurations SMTP, API et SSO',
+    'Contrôle du comportement du système, par ex. options de journalisation ou stockage des données',
+    "Modification des paramètres centraux d'interface utilisateur ou de branding (titre, informations de contact)",
+  ]}
+/>
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Paramètre',
+      description:
+        "Identifiant du paramètre, par ex. « smtp.host » ou « default.policy ». Utilisé pour l'identification au niveau du système. Cette valeur ne peut pas être modifiée.",
+    },
+    {
+      name: 'Valeur',
+      description:
+        'La valeur effective du paramètre. Peut contenir du texte, un nombre, un booléen ou du JSON – selon le paramètre concerné.',
+    },
+    {
+      name: 'Description',
+      description:
+        "Brève description de la signification du paramètre. Explique l'objectif et les conséquences possibles d'une modification. Cette valeur ne peut pas être modifiée.",
+    },
+    {
+      name: 'Type de données',
+      description:
+        "Indique le type attendu de la valeur. Les types de données pris en charge sont **string**, **integer**, **float**, **boolean** et **json**. Le type de données est validé lors de l'enregistrement. Cette valeur ne peut pas être modifiée.",
+    },
+    {
+      name: 'Visibilité',
+      description:
+        'Définit qui peut voir le paramètre. Les valeurs autorisées sont **admins**, **authenticated**, **internal** ou **public**. Cette valeur ne peut pas être modifiée.',
+    },
+  ]}
+/>
+
+---
+
+## Modifier un paramètre
+
+1. Ouvrez dans le menu principal la section **Système → Paramètres**.
+2. Recherchez le paramètre souhaité dans la liste.
+3. Cliquez sur **Modifier**.
+4. Le formulaire affiche toutes les données actuelles du paramètre.
+5. Ajustez la valeur selon vos besoins.
+6. Enregistrez les modifications.
+7. Les modifications prennent généralement effet **immédiatement**.
+
+:::warning
+Les paramètres avec la visibilité `internal` ne peuvent **pas** être modifiés.
+:::
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Modifier le serveur SMTP">
+  Une administratrice souhaite modifier le serveur de messagerie par défaut pour
+  les notifications. Dans la section **Système → Paramètres**, elle recherche
+  l'entrée avec la clé *smtp.host* et y saisit le nouveau nom d'hôte – par ex.
+  `mail.example.com`. Après l'enregistrement, tous les futurs e-mails seront
+  envoyés via ce serveur.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran – Exemple serveur SMTP */}
+
+---
+
+## Remarques / Particularités
+
+- Les modifications des paramètres prennent effet immédiatement sur l'ensemble du système.
+- Les valeurs sensibles comme les clés API ou les mots de passe sont partiellement masquées pour des raisons de sécurité.
+- Des modifications incorrectes peuvent provoquer un comportement inattendu – veuillez procéder avec prudence.
+- Certaines configurations nécessitent un redémarrage des services ou des workers après modification. Cela est indiqué dans la description du paramètre.
+- Les valeurs sont stockées de manière persistante et sont conservées même après des mises à jour ou des redémarrages.
+
+---
+
+## Permissions requises
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    {
+      action: 'Afficher les paramètres système',
+      permission: 'system_read',
+      scoped: false,
+    },
+    {
+      action: 'Mettre à jour les paramètres système',
+      permission: 'system_update',
+      scoped: false,
+    },
+  ]}
+/>
+
+---
+
+## Sujets associés
+
+<RelatedLinks
+  items={[
+    { label: 'Tâches', href: './tasks' },
+    { label: 'Activités', href: './activities' },
+    { label: 'Machines virtuelles', href: '../vms' },
+  ]}
+/>

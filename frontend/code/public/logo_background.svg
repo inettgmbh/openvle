@@ -1,0 +1,22 @@
+<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="100%" height="100%" fill="#0e0e0e" />
+
+    <!-- Mountains -->
+    <path d="M0 300 L200 150 L400 300 L600 200 L800 300 L800 400 L0 400 Z" fill="#252525" />
+    <path d="M100 350 L300 200 L500 350 L700 250 L800 300 L800 400 L0 400 Z" fill="#1b1b1b" />
+
+    <!-- Foreground Hills -->
+    <path d="M0 400 L150 300 L300 400 Z" fill="#0a0a0a" />
+    <path d="M500 400 L650 350 L800 400 Z" fill="#0a0a0a" />
+
+    <!-- Stars -->
+    <circle cx="100" cy="50" r="2" fill="#ffffff" />
+    <circle cx="200" cy="80" r="2" fill="#ffffff" />
+    <circle cx="300" cy="30" r="2" fill="#ffffff" />
+    <circle cx="400" cy="70" r="2" fill="#ffffff" />
+    <circle cx="500" cy="40" r="2" fill="#ffffff" />
+    <circle cx="600" cy="90" r="2" fill="#ffffff" />
+    <circle cx="700" cy="60" r="2" fill="#ffffff" />
+</svg>
+  

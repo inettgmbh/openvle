@@ -1,0 +1,195 @@
+---
+id: roles
+sidebar_label: Rôles
+sidebar_position: 100
+status: finished
+tags:
+  - access-control
+  - roles
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Rôles
+
+Dans OpenVLE, les rôles servent à regrouper et à gérer de manière centralisée les permissions à l'échelle du système.  
+Les rôles simplifient l'attribution de droits à des groupes d'utilisateurs et garantissent que des utilisateurs similaires (par ex. enseignants, administrateurs, participants) reçoivent automatiquement les droits d'accès appropriés.
+
+{/* TODO: Ajouter une capture d'écran – Aperçu des rôles */}
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Contrôle d'accès → Rôles"
+  alternative="Accessible via les vues Utilisateurs ou Permissions"
+/>
+
+---
+
+## Aperçu des fonctionnalités
+
+<FeatureList
+  items={[
+    "Créer et gérer des rôles pour différents groupes d'utilisateurs",
+    "Attribuer et retirer des permissions au sein d'un rôle",
+    'Afficher quels utilisateurs sont assignés à un rôle',
+    'Copier des rôles existants pour créer plus rapidement des ensembles de permissions similaires',
+    "Supprimer les rôles qui ne sont plus nécessaires (à condition qu'ils ne soient pas en cours d'utilisation)",
+  ]}
+/>
+
+{/* TODO: Ajouter une capture d'écran – Exemple d'une vue détaillée de rôle */}
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        "Le nom du rôle, par ex. « Responsable d'environnement » ou « Support 1er niveau ». Affiché dans les listes et les associations.",
+    },
+    {
+      name: 'Key (Slug)',
+      description:
+        "Nom abrégé du rôle. Utilisé en interne au sein d'OpenVLE, par ex. pour les attributions d'API ou de permissions.",
+    },
+    {
+      name: 'Description',
+      description:
+        'Brève explication des tâches ou responsabilités de ce rôle, par ex. « Responsable de la création et de la gestion des environnements de cours ».',
+    },
+  ]}
+/>
+
+---
+
+## Créer un rôle
+
+1. Ouvrez dans le menu principal la section **Contrôle d'accès → Rôles**.
+2. Cliquez sur **Ajouter** pour créer un nouveau rôle.
+3. Saisissez un **nom** explicite et une **description facultative**.
+4. Enregistrez le rôle pour le rendre disponible.
+5. Attribuez au rôle les **permissions** souhaitées.
+6. Assignez ensuite des **utilisateurs** à ce rôle.
+
+---
+
+## Modifier un rôle
+
+1. Ouvrez dans le menu principal la section **Contrôle d'accès → Rôles**.
+2. Recherchez le rôle souhaité dans la liste.
+3. Cliquez sur **Modifier**, ou ouvrez le menu contextuel du rôle et sélectionnez **Modifier**.
+4. Le formulaire affiche toutes les données actuelles du rôle.
+5. Ajustez les champs souhaités, par exemple **Nom** ou **Description**.
+6. Enregistrez les modifications.
+
+:::note
+Les modifications apportées aux rôles prennent effet immédiatement pour tous les utilisateurs assignés à ce rôle.  
+Vérifiez donc soigneusement les modifications de permissions avant de les appliquer.
+:::
+
+---
+
+## Supprimer un rôle
+
+1. Ouvrez dans le menu principal la section **Contrôle d'accès → Rôles**.
+2. Recherchez le rôle souhaité dans la liste.
+3. Cliquez sur **Supprimer**, ou ouvrez le menu contextuel du rôle et sélectionnez **Supprimer**.
+4. Confirmez la suppression dans la boîte de dialogue affichée.
+5. Le rôle est alors définitivement supprimé.
+
+:::warning
+Un rôle ne peut être supprimé que si **aucun utilisateur ne lui est plus assigné**.  
+Si des utilisateurs sont associés à ce rôle, retirez d'abord les assignations avant de supprimer le rôle.
+:::
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Créer un rôle pour les responsables d'environnement">
+  Une administratrice souhaite accorder à tous les responsables d'environnement
+  des droits identiques sans avoir à configurer chaque utilisateur
+  individuellement. Elle crée le rôle **Responsable d'environnement**, y ajoute
+  les permissions pour afficher et modifier les environnements, les modèles de
+  VM et les VM, puis attribue ce rôle à tous les utilisateurs concernés.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran – Exemple de création d'un rôle */}
+
+---
+
+## Remarques / Particularités
+
+- Les rôles ne peuvent contenir que des permissions globales.
+- Les rôles système (par ex. Administrateur) ne peuvent pas être supprimés ni modifiés dans leur noyau.
+- Les rôles actuellement assignés à des utilisateurs ne peuvent être supprimés qu'après avoir retiré les assignations.
+- Les modifications apportées à un rôle s'appliquent automatiquement à tous les utilisateurs associés.
+- Lors de la copie d'un rôle, toutes les permissions sont reprises, mais pas les assignations d'utilisateurs.
+
+---
+
+## Relations avec d'autres objets
+
+<ObjectRelations
+  showPermissions={false}
+  items={[
+    {
+      object: 'Utilisateurs',
+      description:
+        "Un nombre illimité d'utilisateurs peut être assigné à un rôle.",
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'Permissions',
+      description:
+        'Un nombre illimité de permissions peut être attribué à un rôle.',
+      behavior: 'Aucune automatisation.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    { action: 'Afficher les rôles', permission: 'roles_read' },
+    { action: 'Créer des rôles', permission: 'roles_create' },
+    { action: 'Modifier des rôles', permission: 'roles_update' },
+    { action: 'Supprimer des rôles', permission: 'roles_delete' },
+    {
+      action: 'Attribuer des permissions',
+      permission: 'objectpermissions_create',
+    },
+    {
+      action: 'Retirer des permissions',
+      permission: 'objectpermissions_delete',
+    },
+  ]}
+/>
+
+---
+
+## Sujets associés
+
+<RelatedLinks
+  items={[
+    { label: 'Gestion des utilisateurs', href: './users' },
+    { label: 'Permissions', href: './permissions' },
+    { label: 'Politiques', href: './policies' },
+  ]}
+/>

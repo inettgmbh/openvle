@@ -1,0 +1,145 @@
+---
+id: settings
+sidebar_label: Settings
+sidebar_position: 20
+status: finished
+tags:
+  - system
+  - settings
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Settings
+
+In the **Settings** section, you manage system-wide parameters and configurations that control the behavior of OpenVLE.  
+Here, administrators can define fundamental options such as system behavior or integrations with external services.
+
+---
+
+## Where can I find this section?
+
+<NavigationHint path="System → Settings" />
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'Customization of global system settings and default values',
+    'Management of SMTP, API, and SSO configurations',
+    'Control of system behavior, e.g., logging options or data storage',
+    'Editing of central UI or branding settings (title, contact information)',
+  ]}
+/>
+
+---
+
+## Important fields at a glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Setting',
+      description:
+        'Identifier of the setting, e.g., "smtp.host" or "default.policy". Used for system-wide identification. This value cannot be changed.',
+    },
+    {
+      name: 'Value',
+      description:
+        'The actual value of the setting. Can contain text, number, boolean, or JSON – depending on the respective parameter.',
+    },
+    {
+      name: 'Description',
+      description:
+        'Brief description of the meaning of the setting. Explains the purpose and possible effects of a change. This value cannot be changed.',
+    },
+    {
+      name: 'Data type',
+      description:
+        'Indicates the expected type of the value. Supported data types are **string**, **integer**, **float**, **boolean**, and **json**. The data type is validated on save. This value cannot be changed.',
+    },
+    {
+      name: 'Visibility',
+      description:
+        'Determines who can see the setting. Allowed values are **admins**, **authenticated**, **internal**, or **public**. This value cannot be changed.',
+    },
+  ]}
+/>
+
+---
+
+## Editing a setting
+
+1. Open the **System → Settings** section from the main menu.
+2. Search the list for the desired setting.
+3. Click **Edit**.
+4. The form displays all current data of the setting.
+5. Adjust the value as needed.
+6. Save the changes.
+7. Changes typically take effect **immediately**.
+
+:::warning
+Settings with the visibility `internal` **cannot** be edited.
+:::
+
+---
+
+## Example or use case
+
+<Example title="Changing the SMTP server">
+  An administrator wants to update the default mail server for notifications. In
+  the **System → Settings** section, she searches for the entry with the key
+  *smtp.host* and enters the new hostname – e.g., `mail.example.com`. After
+  saving, all future emails will be sent through this server.
+</Example>
+
+{/* TODO: Add screenshot – Example SMTP server */}
+
+---
+
+## Notes / Special considerations
+
+- Changes to settings take effect immediately across the entire system.
+- Sensitive values such as API keys or passwords are partially masked for security reasons.
+- Incorrect changes can cause unexpected behavior – please proceed with caution.
+- Some configurations require a restart of services or workers after modification. This is indicated in the description of the setting.
+- Values are stored persistently and are retained even after updates or restarts.
+
+---
+
+## Required permissions
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    {
+      action: 'View system settings',
+      permission: 'system_read',
+      scoped: false,
+    },
+    {
+      action: 'Update system settings',
+      permission: 'system_update',
+      scoped: false,
+    },
+  ]}
+/>
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Tasks', href: './tasks' },
+    { label: 'Activities', href: './activities' },
+    { label: 'Virtual machines', href: '../vms' },
+  ]}
+/>

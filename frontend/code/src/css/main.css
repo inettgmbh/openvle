@@ -1,0 +1,29 @@
+@import '_checkbox-radio-switch.css';
+@import '_progress.css';
+@import '_scrollbars.css';
+@import '_table.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Usage: class="truncate-lines" style="--lines: 3" */
+.truncate-lines {
+  --lines: 2;
+  display: -webkit-box;
+  -webkit-line-clamp: var(--lines);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Usage: class="truncate-chars" style="--chars: 25" */
+.truncate-chars {
+  --chars: 20;
+  display: block;
+  max-width: calc(var(--chars) * 1ch);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 1rem;
+}

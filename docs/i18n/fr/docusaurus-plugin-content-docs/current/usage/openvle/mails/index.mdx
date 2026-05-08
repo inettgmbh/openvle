@@ -1,0 +1,77 @@
+---
+id: mails
+sidebar_label: E-mails
+sidebar_position: 30
+status: finished
+tags:
+  - mails
+  - communication
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# E-mails
+
+OpenVLE peut envoyer automatiquement des e-mails aux utilisateurs, par exemple lors de la création de VM ou au démarrage d'événements.  
+Dans la section E-mails, vous trouverez aussi bien tous les messages envoyés que les modèles d'e-mail utilisés pour les messages système, ainsi que toutes les actions e-mail existantes.
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="E-mails"
+  alternative="Accessible via les notifications système ou via les objets avec envoi de mails (par ex. événements)"
+/>
+
+---
+
+## Fonctionnalités en un coup d'oeil
+
+<FeatureList
+  items={[
+    "Vue d'ensemble de tous les e-mails envoyés avec statut, destinataire et horodatage d'envoi",
+    "Consultation de l'objet, du contenu et des erreurs d'envoi",
+    "Gestion des modèles d'e-mail pour les actions système",
+    "Filtrage par date, destinataire ou statut d'envoi",
+  ]}
+/>
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Envoi d'e-mail au démarrage d'un événement">
+  Un événement est démarré dans OpenVLE. Un e-mail contenant les informations
+  est automatiquement envoyé à tous les participants. Dans la vue d'ensemble des
+  e-mails, il est possible de vérifier si tous les messages ont été délivrés
+  avec succès et quel modèle a été utilisé.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran -- Exemple de vue d'ensemble des e-mails */}
+
+---
+
+## Remarques / Particularités
+
+- Les e-mails sont envoyés de manière asynchrone via des tâches en arrière-plan (tasks).
+- Les envois échoués peuvent être renvoyés depuis la vue d'ensemble.
+- Chaque e-mail est associé au modèle correspondant -- les modifications apportées aux modèles ne s'appliquent qu'aux futurs e-mails.
+- Le texte de l'e-mail peut contenir des espaces réservés dynamiques (par ex. `{user.name}`, `{event.name}`) qui sont remplacés lors de l'envoi.
+- Le serveur SMTP peut être configuré individuellement, voir [Administration -> Installation -> Configuration](/docs/admin/install/configuration).
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: 'E-mails envoyés', href: './sent' },
+    { label: "Modèles d'e-mail", href: './templates' },
+    { label: 'Actions e-mail', href: './actions' },
+    { label: 'Paramètres', href: '../system/settings' },
+  ]}
+/>

@@ -1,0 +1,75 @@
+---
+id: auth
+sidebar_label: Anmeldung
+sidebar_position: 10
+status: finished
+tags:
+  - authentication
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Anmeldung
+
+Um dich bei **OpenVLE** anzumelden, öffne bitte die individuelle Portal-Adresse deiner Installation.  
+Diese URL erhältst du in der Regel von deiner **IT-Abteilung**, deiner **Organisation** oder über eine entsprechende **Einladungs-E-Mail**.
+
+Wenn du noch nicht eingeloggt bist, wirst du automatisch zur Anmeldeseite weitergeleitet.
+
+---
+
+## Anmeldung mit externem Account
+
+Benutzerinnen und Benutzer mit einem **externen Account** melden sich mit ihren gewohnten Zugangsdaten an:
+
+- **Benutzername:** dein zentraler Benutzername
+- **Passwort:** dein persönliches Passwort
+
+Diese Daten werden extern verwaltet.  
+Bei Problemen mit dem Login wende dich bitte an deine IT-Abteilung oder den technischen Support.
+
+---
+
+## Anmeldung mit lokalem Zugang
+
+Falls du keinen externen Account besitzt (z. B. externe Personen oder Testnutzerinnen/Testnutzer), kannst du dich mit einem **lokalen Zugang** anmelden.  
+Dieser besteht aus einem separaten **Benutzernamen** und **Passwort**, die dir individuell zugewiesen wurden.  
+Lokale Konten werden ausschließlich innerhalb von **OpenVLE** verwaltet.
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Anmeldung über die Login-Seite">
+  Nach dem Aufruf deiner individuellen OpenVLE-Portaladresse erscheint die
+  Anmeldemaske. Gib deinen **Benutzernamen** und dein **Passwort** ein und
+  klicke auf **Anmelden**. Bei erfolgreicher Anmeldung gelangst du automatisch
+  auf das **Dashboard**.
+</Example>
+
+{/* TODO: Screenshot ![Beispielansicht Login-Seite](/screens/auth/login.png) */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Passwörter werden sicher verschlüsselt übertragen und gespeichert.
+- Nach mehrfach falscher Eingabe kann der Zugang vorübergehend gesperrt werden.
+- Lokale Benutzerkonten sind unabhängig vom zentralen Login-System.
+- Nach der Anmeldung bleibt deine Sitzung aktiv, bis du dich manuell abmeldest oder der Browser geschlossen wird.
+- Aus Sicherheitsgründen empfiehlt es sich, dich nach der Nutzung manuell abzumelden – insbesondere bei öffentlichen Geräten.
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Benutzerverwaltung', href: '../access-control/users' },
+    { label: 'Zugriffskontrolle', href: '../access-control' },
+    { label: 'Dashboard', href: '../dashboard' },
+  ]}
+/>

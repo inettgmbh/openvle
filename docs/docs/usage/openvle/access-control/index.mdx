@@ -1,0 +1,145 @@
+---
+id: access-control
+sidebar_label: Zugriffskontrolle
+sidebar_position: 110
+status: finished
+tags:
+  - access-control
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Zugriffskontrolle
+
+OpenVLE verfügt über eine flexible und leistungsfähige Benutzerverwaltung, die das Fundament für das gesamte Rollen- und Rechtekonzept bildet.  
+Sie ermöglicht eine fein abgestufte Steuerung des Zugriffs auf Funktionen, Objekte und Inhalte innerhalb des Systems.
+
+{/* TODO: Screenshot hinzufügen – Übersicht Zugriffskontrolle */}
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="Zugriffskontrolle"
+  alternative="Über Benutzer, Rollen oder Berechtigungen verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Verwaltung aller Benutzerkonten innerhalb von OpenVLE',
+    'Erstellen und Zuweisen von Rollen mit definierten Berechtigungen',
+    'Feingranulare Rechtevergabe auf Objektebene (z. B. einzelne VMs oder einzelne VM-Vorlagen)',
+    'Zuweisung von Berechtigungen auf Modellebene (z. B. alle Umgebungen oder alle Veranstaltungen)',
+    'Manuelle Verwaltung lokaler Benutzerkonten zusätzlich zu zentralen Konten',
+    'Überprüfung und Anpassung individueller Berechtigungen',
+    'Vererbung von Berechtigungen bei erstellten Objekten',
+  ]}
+/>
+
+{/* TODO: Screenshot hinzufügen – Beispiel: Rollenübersicht */}
+
+---
+
+## Authentifizierung
+
+Benutzerinnen und Benutzer können sich in **OpenVLE** auf zwei Arten anmelden:
+
+- **Externe Authentifizierung (LDAP / Windows AD / OpenID Connect):**  
+  In der Regel erfolgt die Anmeldung über einen externen Identity Provider (IdP).  
+  Dabei werden die Zugangsdaten zentral verwaltet, und Benutzerkonten werden bei der ersten Anmeldung automatisch in OpenVLE angelegt.
+
+- **Lokaler Account:**  
+  Alternativ können lokale Benutzerkonten direkt in OpenVLE erstellt werden – beispielsweise für externe Personen, Testszenarien oder Sonderfälle.
+
+> 💡 **Hinweis:**  
+> Lokale Konten eignen sich besonders für **temporäre Zugänge**, **Schulungsteilnehmer** oder **Servicekonten**, die keinen zentralen Login besitzen.
+
+---
+
+## Rollen und Berechtigungen
+
+In **OpenVLE** werden Zugriffsrechte über **Rollen** und **Berechtigungen** gesteuert:
+
+- **Rollen:**  
+  Rollen fassen mehrere Berechtigungen zu logischen Gruppen zusammen (z. B. _Administrator_, _Dozent_ oder _Teilnehmer_).  
+  Ein Benutzer kann gleichzeitig mehreren Rollen angehören.
+
+- **Direkte Berechtigungen:**  
+  Berechtigungen können auch unabhängig von Rollen einzelnen Benutzern direkt zugewiesen werden – beispielsweise für Sonderrechte oder besonders feingranulare Zugriffskontrolle.
+
+> 💡 **Hinweis:**  
+> Die Kombination aus **Rollen** und **individuellen Berechtigungen** ermöglicht ein flexibles und zugleich sicheres Berechtigungsmodell, das sowohl einfache als auch komplexe Zugriffsszenarien abbilden kann.
+
+---
+
+## Arten von Berechtigungen
+
+Das Berechtigungssystem in **OpenVLE** unterscheidet zwischen zwei Ebenen:
+
+- **Objektspezifische Berechtigungen:**  
+  Der Zugriff wird gezielt auf **ein bestimmtes Objekt** gewährt – beispielsweise auf eine einzelne **VM-Vorlage**, **virtuelle Maschine** oder **Veranstaltung**.
+
+- **Modelspezifische Berechtigungen:**  
+  Der Zugriff gilt **pauschal für alle Objekte eines bestimmten Typs** – etwa für **alle Veranstaltungen** oder **alle Vorlagen**.
+
+So kann ein Benutzer beispielsweise nur auf **eine einzelne virtuelle Maschine** zugreifen oder – bei modelspezifischer Berechtigung – auf **alle virtuellen Maschinen** innerhalb des Systems.
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Benutzer erhält Zugriff auf bestimmte virtuelle Maschinen">
+  Ein Dozent soll nur auf virtuelle Maschinen zugreifen können, die zu **seinen
+  Veranstaltungen** gehören. Dazu wird dem Benutzer die Rolle **Dozent**
+  zugewiesen, die allgemeine Berechtigungen zum Anzeigen von virtuellen
+  Maschinen enthält. Zusätzlich erhält der Dozent **objektspezifische
+  Berechtigungen** für genau die virtuellen Maschinen, die seiner Veranstaltung
+  zugeordnet sind. Auf andere VMs hat er keinen Zugriff.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel Rollenzuweisung */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- **Berechtigungen wirken sofort:**  
+  Änderungen an Rollen oder Objektberechtigungen werden unmittelbar nach dem Speichern aktiv – ein erneutes Anmelden des Benutzers ist nicht erforderlich.
+
+- **Vererbungsverhalten:**  
+  Rollenberechtigungen gelten global, während Objektberechtigungen nur für das jeweilige Objekt wirken.  
+  Objektberechtigungen können bestehende Rollenberechtigungen erweitern, aber nicht einschränken.
+
+- **Priorität bei Konflikten:**  
+  Wenn ein Benutzer über mehrere Rollen verfügt, werden deren Berechtigungen zusammengeführt („Union-Prinzip“).  
+  Ein expliziter Entzug von Berechtigungen ist nicht möglich – fehlende Rechte müssen durch Entfernen der entsprechenden Rolle oder Berechtigung erfolgen.
+
+- **Sichtbarkeit von Tabs:**  
+  Einige Bereiche oder Tabs (z. B. **Berechtigungen**, **Verbindungen**, **VM-Vorlagen**) werden nur angezeigt, wenn der Benutzer über die erforderlichen Berechtigungen verfügt.
+
+- **Transparenz für Administratoren:**  
+  Administratoren können über den Bereich **Zugriffskontrolle → Berechtigungen** jederzeit nachvollziehen, welche Benutzer welche Rechte besitzen.
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Benutzerverwaltung', href: './users' },
+    { label: 'Rollen', href: './roles' },
+    { label: 'Berechtigungen', href: './permissions' },
+    { label: 'Richtlinien', href: './policies' },
+  ]}
+/>

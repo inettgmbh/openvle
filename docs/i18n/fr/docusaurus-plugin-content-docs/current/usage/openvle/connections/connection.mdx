@@ -1,0 +1,225 @@
+---
+id: connection
+sidebar_label: Connexions
+sidebar_position: 10
+status: finished
+tags:
+  - connections
+  - guacamole
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Connexions
+
+Dans **OpenVLE**, les connexions définissent **quels utilisateurs** peuvent se connecter à quelles **machines virtuelles**.  
+Ces connexions sont fournies via **Apache Guacamole** et permettent l'accès à distance directement dans le navigateur, sans installation de logiciel supplémentaire.
+
+Chaque connexion contient des informations telles que la **machine virtuelle**, le **modèle de connexion** et l'**utilisateur**.  
+Les administrateurs peuvent créer, supprimer ou surveiller les connexions ici.
+
+{/* TODO: Ajouter une capture d'écran -- Vue d'ensemble des connexions Guacamole */}
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Connexions → Connexions"
+  alternative="Accessible via les machines virtuelles ou les modèles de VM"
+/>
+
+---
+
+## Fonctionnalités en un coup d'oeil
+
+<FeatureList
+  items={[
+    'Affichage des connexions Guacamole existantes',
+    'Création de nouvelles connexions pour les utilisateurs basées sur des modèles de connexion',
+    'Utilisation de modèles de connexion comme base',
+    'Suppression des connexions obsolètes ou inutilisées',
+  ]}
+/>
+
+{/* TODO: Ajouter une capture d'écran -- Vue détaillée d'une connexion */}
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        "Nom d'affichage de la connexion. Affiché dans les listes et les dialogues -- c'est également le nom de la connexion dans Apache Guacamole, visible par les utilisateurs lors de la connexion.",
+    },
+    {
+      name: 'Utilisateur',
+      description:
+        'Compte utilisateur auquel cette connexion est attribuée. Seul cet utilisateur peut accéder à la VM via Apache Guacamole.',
+    },
+    {
+      name: 'Machine virtuelle (VM)',
+      description:
+        "Référence à la VM à laquelle l'utilisateur peut se connecter via cette connexion.",
+    },
+    {
+      name: 'Modèle de connexion',
+      description:
+        "Modèle de connexion utilisé, qui définit le protocole, le port et les identifiants d'accès.",
+    },
+    {
+      name: 'Événement',
+      description:
+        "(Optionnel) Événement associé, si la connexion a été créée automatiquement dans le cadre d'un événement.",
+    },
+  ]}
+/>
+
+---
+
+## Créer une connexion
+
+1. Ouvrez dans le menu principal la section **Connexions → Connexions**.
+2. Cliquez sur **Ajouter** pour créer une nouvelle connexion.
+3. Sélectionnez le **modèle de connexion** souhaité.
+4. Sélectionnez l'**utilisateur** qui doit recevoir l'accès à la connexion.
+5. Enregistrez la connexion.
+6. L'utilisateur peut ensuite se connecter immédiatement à la VM associée via **Apache Guacamole**.
+
+---
+
+## Supprimer une connexion
+
+1. Ouvrez dans le menu principal la section **Connexions → Connexions**.
+2. Recherchez la connexion souhaitée dans la liste.
+3. Cliquez sur **Supprimer**, ou ouvrez le menu contextuel et sélectionnez **Supprimer**.
+4. Confirmez la suppression dans le dialogue affiché.
+5. La connexion est alors définitivement supprimée.
+
+:::danger
+Après la suppression, l'utilisateur perd **immédiatement** l'accès à la machine virtuelle dans Apache Guacamole.
+:::
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Créer une connexion SSH vers une VM Linux">
+  Une administratrice souhaite donner aux développeurs l'accès à une VM Linux.
+  Elle ouvre la section **Connexions**, crée pour chaque utilisateur une
+  nouvelle connexion basée sur un **modèle de connexion** approprié de la VM
+  souhaitée. Les utilisateurs peuvent ensuite démarrer la connexion directement
+  via le navigateur -- de manière sécurisée et sans logiciel SSH local.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran -- Exemple d'une connexion SSH */}
+
+---
+
+## Remarques / Particularités
+
+- Chaque connexion est basée sur un **modèle de connexion**.
+- Les modifications d'une connexion prennent effet **immédiatement**.
+- Les données sensibles (par ex. mots de passe) ne peuvent **pas être consultées à nouveau**.
+- Les sessions actives peuvent être consultées via le **serveur Apache Guacamole** et terminées si nécessaire.
+- Seuls les **administrateurs** peuvent créer ou supprimer des connexions.
+- Les connexions sont **spécifiques à un utilisateur** et ne peuvent pas être attribuées à plusieurs reprises.
+
+---
+
+## Relations avec d'autres objets
+
+<ObjectRelations
+  showChangelogs={false}
+  showPermissions={false}
+  showTasks={true}
+  items={[
+    {
+      object: 'Machine virtuelle (VM)',
+      description: 'Chaque connexion est attribuée à exactement une VM.',
+      behavior:
+        'Lors de la suppression de la VM, toutes les connexions associées sont automatiquement supprimées.',
+    },
+    {
+      object: 'Modèle de connexion',
+      description:
+        'Chaque connexion est basée sur exactement un modèle de connexion.',
+      behavior:
+        'Aucune modification automatique lors de la mise à jour ou de la suppression du modèle.',
+    },
+    {
+      object: 'Utilisateur',
+      description:
+        'Chaque connexion est attribuée à exactement un utilisateur.',
+      behavior:
+        "Lors de la suppression de l'utilisateur, toutes les connexions associées sont automatiquement supprimées.",
+    },
+    {
+      object: 'Événement',
+      description:
+        '(Optionnel) Une connexion peut être attribuée à un événement.',
+      behavior:
+        "Lors de la suppression de l'événement, toutes les connexions associées sont automatiquement supprimées.",
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises
+
+<Permissions
+  data={[
+    {
+      action: 'Afficher les connexions',
+      permission: 'guacamoles_read',
+      scoped: true,
+    },
+    {
+      action: 'Créer des connexions',
+      permission: 'guacamoles_create',
+    },
+    {
+      action: 'Supprimer des connexions',
+      permission: 'guacamoles_delete',
+      scoped: true,
+    },
+    {
+      action: 'Afficher les modèles de connexion',
+      permission: 'guacamole_connection_profiles_read',
+      scoped: true,
+    },
+    {
+      action: 'Créer des modèles de connexion',
+      permission: 'guacamole_connection_profiles_create',
+    },
+    {
+      action: 'Supprimer des modèles de connexion',
+      permission: 'guacamole_connection_profiles_delete',
+      scoped: true,
+    },
+    { action: 'Afficher les machines virtuelles', permission: 'vms_read' },
+  ]}
+/>
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: "Connexions (Vue d'ensemble)", href: './' },
+    { label: 'Modèles de connexion', href: './templates' },
+    { label: 'Machines virtuelles', href: '../vms' },
+    { label: 'Modèles de VM', href: '../vm-templates' },
+  ]}
+/>

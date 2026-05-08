@@ -1,0 +1,205 @@
+---
+id: applications
+sidebar_label: Applications
+sidebar_position: 120
+status: finished
+tags:
+  - infrastructure
+  - applications
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Applications
+
+Dans la section **Applications**, vous gérez les composants logiciels utilisés dans les modèles de VM, les machines virtuelles ou les environnements.  
+Vous gardez ainsi une vue d'ensemble des versions logicielles utilisées dans votre infrastructure OpenVLE et pouvez les documenter de manière systématique.
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Infrastructure → Applications"
+  alternative="Accessible via les fabricants, les machines virtuelles ou les modèles de VM"
+/>
+
+---
+
+## Fonctionnalités en un coup d'oeil
+
+<FeatureList
+  items={[
+    "Affichage, création, modification et suppression d'applications",
+    "Attribution d'une application à un fabricant",
+    'Saisie des informations de version et des descriptions',
+    "Association d'applications aux modèles de VM ou aux environnements",
+    "Aide à l'inventaire des logiciels déployés",
+  ]}
+/>
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        "Le nom de l'application, par ex. « LibreOffice » ou « Visual Studio Code ». Affiché dans les listes et les associations.",
+    },
+    {
+      name: 'Fabricant',
+      description:
+        "Relation avec le fabricant qui fournit l'application. Permet une attribution cohérente et le filtrage au sein de l'infrastructure.",
+    },
+    {
+      name: 'Description',
+      description:
+        "Courte description ou indication de version de l'application, par ex. « Suite bureautique pour le traitement de texte, les tableurs et les présentations ».",
+    },
+  ]}
+/>
+
+---
+
+## Créer une application
+
+1. Ouvrez dans le menu principal la section **Infrastructure → Applications**.
+2. Cliquez sur **Ajouter** pour créer une nouvelle application.
+3. Indiquez un **nom**, un **fabricant** et une **description** pour l'application.
+4. Enregistrez l'application.
+5. Basculez ensuite dans l'onglet **VM** ou **Modèles de VM** pour ajouter ou retirer les modèles de VM nécessaires de l'application.
+
+:::info
+Le fabricant requis doit exister avant la création de l'application.
+:::
+
+---
+
+## Modifier une application
+
+1. Ouvrez dans le menu principal la section **Infrastructure → Applications**.
+2. Recherchez l'application souhaitée dans la liste.
+3. Cliquez sur **Modifier**, ou ouvrez le menu contextuel de l'application et sélectionnez **Modifier**.
+4. Le formulaire affiche toutes les données actuelles de l'application.
+5. Adaptez les champs souhaités, par exemple le **nom** ou la **description**.
+6. Enregistrez les modifications.
+
+:::note
+Si une version logicielle a été mise à jour, par ex. de _Office 2016_ à _Office 2019_, il est recommandé de créer une **nouvelle application**.  
+Cela évite que les VM et modèles de VM déjà attribués soient affectés par ce changement de version.  
+Sinon, il apparaîtrait dans OpenVLE que tous les systèmes attribués ont été mis à jour vers la nouvelle version.
+:::
+
+---
+
+## Supprimer une application
+
+1. Ouvrez dans le menu principal la section **Infrastructure → Applications**.
+2. Recherchez l'application souhaitée dans la liste.
+3. Cliquez sur **Supprimer**, ou ouvrez le menu contextuel de l'application et sélectionnez **Supprimer**.
+4. Confirmez la suppression dans le dialogue affiché.
+5. L'application est alors définitivement supprimée.
+
+:::note
+Lors de la suppression d'une application, toutes les attributions aux VM et modèles de VM sont retirées.  
+Les VM et modèles de VM concernés restent cependant inchangés.
+:::
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Créer une nouvelle application pour les modèles de VM">
+  Une administratrice souhaite documenter une application pour toutes les machines de formation.  
+  Elle ouvre la section **Infrastructure → Applications**, clique sur **Ajouter** et saisit les données :  
+  - Nom : *LibreOffice*  
+  - Fabricant : *The Document Foundation*  
+  - Description : *Suite bureautique pour le traitement de texte, les tableurs et les présentations*
+
+Elle attribue ensuite l'application aux modèles de VM pertinents pour garantir un inventaire propre.
+
+</Example>
+
+---
+
+## Remarques / Particularités
+
+- Les applications servent exclusivement à la **documentation** et à l'**attribution** -- elles ne sont pas installées automatiquement.
+- Une application peut être attribuée à plusieurs modèles de VM ou machines virtuelles.
+- Lorsqu'une application est supprimée, les attributions existantes dans les VM ou modèles de VM sont également retirées.
+- Les fabricants doivent déjà exister avant la création d'une application.
+
+---
+
+## Relations avec d'autres objets
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Fabricant',
+      description:
+        'Exactement un fabricant peut être attribué à une application.',
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'Modèles de VM',
+      description:
+        'Un nombre illimité de modèles de VM peut être attribué à une application.',
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'VM',
+      description:
+        'Un nombre illimité de VM peut être attribué à une application.',
+      behavior: 'Aucune automatisation.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises
+
+<Permissions
+  data={[
+    {
+      action: 'Afficher les applications',
+      permission: 'applications_read',
+      scoped: true,
+    },
+    { action: 'Créer des applications', permission: 'applications_create' },
+    {
+      action: 'Modifier les applications',
+      permission: 'applications_update',
+      scoped: true,
+    },
+    {
+      action: 'Supprimer les applications',
+      permission: 'applications_delete',
+      scoped: true,
+    },
+    { action: 'Afficher les fabricants', permission: 'vendors_read' },
+  ]}
+/>
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: "Systèmes d'exploitation", href: './os' },
+    { label: 'Fabricants', href: './vendors' },
+    { label: 'Machines virtuelles', href: '../vms' },
+    { label: 'Modèles de VM', href: '../vm-templates' },
+  ]}
+/>

@@ -1,0 +1,145 @@
+---
+id: access-control
+sidebar_label: Access Control
+sidebar_position: 110
+status: finished
+tags:
+  - access-control
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Access Control
+
+OpenVLE features a flexible and powerful user management system that forms the foundation for the entire roles and permissions concept.  
+It enables fine-grained control over access to functions, objects, and content within the system.
+
+{/* TODO: Add screenshot – Access control overview */}
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Access Control"
+  alternative="Linked via Users, Roles, or Permissions"
+/>
+
+---
+
+## Features at a Glance
+
+<FeatureList
+  items={[
+    'Manage all user accounts within OpenVLE',
+    'Create and assign roles with defined permissions',
+    'Fine-grained permission assignment at object level (e.g., individual VMs or individual VM templates)',
+    'Assign permissions at model level (e.g., all environments or all events)',
+    'Manual management of local user accounts in addition to centralized accounts',
+    'Review and adjust individual permissions',
+    'Permission inheritance for created objects',
+  ]}
+/>
+
+{/* TODO: Add screenshot – Example: Role overview */}
+
+---
+
+## Authentication
+
+Users can sign in to **OpenVLE** in two ways:
+
+- **External authentication (LDAP / Windows AD / OpenID Connect):**  
+  Typically, sign-in is handled through an external Identity Provider (IdP).  
+  Credentials are managed centrally, and user accounts are automatically created in OpenVLE upon first login.
+
+- **Local account:**  
+  Alternatively, local user accounts can be created directly in OpenVLE — for example, for external persons, test scenarios, or special cases.
+
+> **Note:**  
+> Local accounts are particularly suited for **temporary access**, **training participants**, or **service accounts** that do not have a centralized login.
+
+---
+
+## Roles and Permissions
+
+In **OpenVLE**, access rights are controlled via **roles** and **permissions**:
+
+- **Roles:**  
+  Roles group multiple permissions into logical units (e.g., _Administrator_, _Instructor_, or _Participant_).  
+  A user can belong to multiple roles simultaneously.
+
+- **Direct permissions:**  
+  Permissions can also be assigned directly to individual users independently of roles — for example, for special privileges or particularly fine-grained access control.
+
+> **Note:**  
+> The combination of **roles** and **individual permissions** enables a flexible yet secure permission model that can accommodate both simple and complex access scenarios.
+
+---
+
+## Types of Permissions
+
+The permission system in **OpenVLE** distinguishes between two levels:
+
+- **Object-specific permissions:**  
+  Access is granted specifically to **a particular object** — for example, to a single **VM template**, **virtual machine**, or **event**.
+
+- **Model-specific permissions:**  
+  Access applies **universally to all objects of a particular type** — such as **all events** or **all templates**.
+
+This way, a user can access only **a single virtual machine**, or — with model-specific permissions — **all virtual machines** within the system.
+
+---
+
+## Example or Use Case
+
+<Example title="User receives access to specific virtual machines">
+  An instructor should only be able to access virtual machines belonging to
+  **their events**. To achieve this, the user is assigned the **Instructor**
+  role, which includes general permissions for viewing virtual machines.
+  Additionally, the instructor receives **object-specific permissions** for
+  exactly the virtual machines assigned to their event. They have no access to
+  other VMs.
+</Example>
+
+{/* TODO: Add screenshot – Example role assignment */}
+
+---
+
+## Notes / Special Considerations
+
+- **Permissions take effect immediately:**  
+  Changes to roles or object permissions become active immediately after saving — the user does not need to log in again.
+
+- **Inheritance behavior:**  
+  Role permissions apply globally, while object permissions only apply to the respective object.  
+  Object permissions can extend existing role permissions but cannot restrict them.
+
+- **Priority in case of conflicts:**  
+  If a user has multiple roles, their permissions are merged ("union principle").  
+  An explicit revocation of permissions is not possible — missing rights must be addressed by removing the corresponding role or permission.
+
+- **Tab visibility:**  
+  Some sections or tabs (e.g., **Permissions**, **Connections**, **VM Templates**) are only displayed if the user has the required permissions.
+
+- **Transparency for administrators:**  
+  Administrators can review which users have which permissions at any time via the **Access Control -> Permissions** section.
+
+---
+
+## Related Topics
+
+<RelatedLinks
+  items={[
+    { label: 'User Management', href: './users' },
+    { label: 'Roles', href: './roles' },
+    { label: 'Permissions', href: './permissions' },
+    { label: 'Policies', href: './policies' },
+  ]}
+/>

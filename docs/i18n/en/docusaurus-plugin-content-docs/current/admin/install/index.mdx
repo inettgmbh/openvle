@@ -1,0 +1,31 @@
+---
+id: installation
+sidebar_label: Installation
+sidebar_position: 10
+status: finished
+tags:
+  - installation
+---
+
+# Installation {#installation}
+
+OpenVLE runs as a Docker Compose stack — a single repository contains all required services (backend, frontend, worker, databases). Before installing OpenVLE, the external dependencies (Proxmox VE, optionally Guacamole) must be set up.
+
+Before you begin, make sure your server meets the [requirements](requirements) and Docker is installed.
+
+## Installation Order
+
+1. [Requirements](requirements) — System prerequisites and Docker installation
+2. [Proxmox VE Integration](proxmoxve) — Set up VM infrastructure **(required)**
+3. [Apache Guacamole Integration](guacamole) — Set up remote desktop access _(optional, recommended)_
+4. [OpenVLE](openvle) — Set up and configure the application via Docker Compose
+5. [Configuration Reference](configuration) — Complete reference of all environment variables
+6. [Reverse Proxy](reverse-proxy) — Configure SSL termination and routing
+7. [Moodle Integration](moodle) — Connect to Moodle _(optional)_
+
+:::info Note on Optional Components
+
+- **Proxmox VE** is required. Without proper Proxmox configuration, OpenVLE will start but all actions involving VMs and VM templates will fail.
+- **Apache Guacamole** is optional but recommended. Without Guacamole, OpenVLE can be used to manage VMs and VM templates, but without web-based remote desktop access.
+- **Moodle integration** is entirely optional. If not used, the Moodle-related elements will not be displayed in the user interface.
+  :::

@@ -1,0 +1,77 @@
+import Admonition from '@theme/Admonition'
+import { translate } from '@docusaurus/Translate'
+
+export function ObjectRelations({
+  items = [],
+  info,
+  showChangelogs = true,
+  showTags = true,
+  showPermissions = true,
+  showTasks = false,
+}) {
+  const standardRelations = [
+    showChangelogs && {
+      object: 'Changelogs',
+      description: translate({ id: 'component.objectRelations.changelogs.description', message: 'Alle Änderungen am Objekt werden automatisch protokolliert.' }),
+      behavior: translate({ id: 'component.objectRelations.autoRemove', message: 'Automatisches Entfernen beim Löschen des Objekts.' }),
+    },
+    showPermissions && {
+      object: translate({ id: 'component.objectRelations.permissions.name', message: 'Berechtigungen' }),
+      description: translate({ id: 'component.objectRelations.permissions.description', message: 'Objektspezifische Berechtigungen können direkt am Objekt vergeben werden.' }),
+      behavior: translate({ id: 'component.objectRelations.autoRemove', message: 'Automatisches Entfernen beim Löschen des Objekts.' }),
+    },
+    showTags && {
+      object: 'Tags',
+      description: translate({ id: 'component.objectRelations.tags.description', message: 'Objekte können mit beliebig vielen Tags versehen werden, um sie zu kategorisieren oder zu filtern.' }),
+      behavior: translate({ id: 'component.objectRelations.autoRemove', message: 'Automatisches Entfernen beim Löschen des Objekts.' }),
+    },
+    showTasks && {
+      object: 'Tasks',
+      description: translate({ id: 'component.objectRelations.tasks.description', message: 'Systeminterne Aufgaben, die bei Aktionen (z. B. Starten, Stoppen oder Klonen) automatisch erstellt und überwacht werden.' }),
+      behavior: translate({ id: 'component.objectRelations.tasks.behavior', message: 'Automatische Erstellung bei bestimmten Prozessen oder Aktionen.' }),
+    },
+  ].filter(Boolean)
+
+const mergedItems = [...items, ...standardRelations]
+
+const sortedItems = mergedItems.sort((a, b) =>
+a.object.localeCompare(b.object, undefined, { sensitivity: 'base' })
+)
+
+return (
+
+<>
+<p>
+{translate({ id: 'component.objectRelations.intro', message: 'Viele Objekte in OpenVLE stehen in Beziehung zu anderen Elementen innerhalb des Systems. Die folgende Übersicht zeigt, welche Verknüpfungen bestehen und ob diese bestimmte Automatisierungen auslösen.' })}
+</p>
+
+      {info && (
+        <Admonition type="info">
+          {info}
+        </Admonition>
+      )}
+
+      <table>
+        <thead>
+          <tr>
+            <th>{translate({ id: 'component.objectRelations.header.object', message: 'Objekt' })}</th>
+            <th>{translate({ id: 'component.objectRelations.header.description', message: 'Beschreibung' })}</th>
+            <th>{translate({ id: 'component.objectRelations.header.behavior', message: 'Automatisches Verhalten' })}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sortedItems.map(({ object, description, behavior }) => (
+            <tr key={object}>
+              <td>
+                <strong>{object}</strong>
+              </td>
+              <td>{description}</td>
+              <td>{behavior}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+
+)
+}

@@ -1,0 +1,83 @@
+---
+id: infrastructure
+sidebar_label: Infrastructure
+sidebar_position: 40
+status: finished
+tags:
+  - infrastructure
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Infrastructure
+
+La section **Infrastructure** offre une vue d'ensemble centralisée de toutes les données relatives aux fabricants et aux systèmes dans OpenVLE.  
+Vous y gérez les **fabricants**, les **applications** et les **systèmes d'exploitation** utilisés dans les machines virtuelles (VM) ou les modèles de VM.  
+Ces informations servent à la saisie structurée, à la documentation et à la traçabilité au sein du logiciel de gestion.
+
+{/* TODO: Ajouter une capture d'écran -- Vue d'ensemble de l'infrastructure */}
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint path="Infrastructure" />
+
+---
+
+## Fonctionnalités en un coup d'oeil
+
+<FeatureList
+  items={[
+    "Gestion des données fabricants et attribution aux systèmes d'exploitation et applications",
+    "Gestion des systèmes d'exploitation avec version et architecture",
+    'Gestion des applications avec nom, version et description',
+    "Attribution des applications et systèmes d'exploitation aux VM ou modèles de VM",
+    "Aide à l'inventaire et à la documentation des logiciels déployés",
+  ]}
+/>
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Attribution traçable de logiciels à une VM">
+  Une administratrice souhaite documenter quels logiciels sont installés sur une
+  VM de formation. Elle ouvre la section **Infrastructure → Applications**, y
+  crée l'application « LibreOffice 7.6 » et l'attribue ensuite au modèle de VM «
+  Debian12-Formation ». Il est ainsi possible de vérifier à tout moment quels
+  logiciels sont présents sur quelles VM ou modèles de VM.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran -- Exemple : attribution d'une application */}
+
+---
+
+## Remarques / Particularités
+
+:::info
+Les fonctionnalités présentées ici servent exclusivement à l'**inventaire** des VM et modèles de VM.  
+**Aucune installation automatique** d'applications n'est effectuée au sein des systèmes.
+
+Si vous avez besoin d'applications dans une VM ou un modèle de VM, vous devez continuer à les installer manuellement.  
+Ce n'est qu'après avoir terminé la configuration que la VM ou le modèle de VM devrait être attribué aux entrées correspondantes dans OpenVLE.
+:::
+
+Cette séparation entre inventaire et installation garantit une traçabilité claire et évite les modifications involontaires sur les systèmes productifs.
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: 'Applications', href: './applications' },
+    { label: "Systèmes d'exploitation", href: './os' },
+    { label: 'Fabricants', href: './vendors' },
+    { label: 'Machines virtuelles', href: '../vms' },
+    { label: 'Modèles de VM', href: '../vm-templates' },
+  ]}
+/>

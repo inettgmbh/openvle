@@ -1,0 +1,196 @@
+---
+id: permissions
+sidebar_label: Berechtigungen
+sidebar_position: 40
+status: finished
+tags:
+  - access-control
+  - permissions
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Berechtigungen
+
+Berechtigungen regeln in OpenVLE den Zugriff auf Funktionen und Inhalte.  
+Du bestimmst, welche Benutzer oder Rollen bestimmte Aktionen wie **Lesen**, **Erstellen**, **Bearbeiten** oder **Löschen** durchführen dürfen.  
+In diesem Bereich kannst du bestehende Berechtigungen verwalten.
+
+{/* TODO: Screenshot hinzufügen – Berechtigungsübersicht */}
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="Zugriffskontrolle → Berechtigungen"
+  alternative="Über Benutzer- oder Rollenansichten verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeigen und Verwalten vorhandener Berechtigungen',
+    'Filtern und Suchen nach Berechtigungsnamen oder zugeordneten Rollen',
+    'Überprüfung, welche Rollen oder Benutzer eine bestimmte Berechtigung besitzen',
+  ]}
+/>
+
+{/* TODO: Screenshot hinzufügen – Detailansicht einer Berechtigung */}
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Der Name der Berechtigung, z. B. „Aktivitäten lesen“ oder „Hersteller erstellen“. Wird in Listen und Verknüpfungen angezeigt.',
+    },
+    {
+      name: 'Key (Slug)',
+      description:
+        'Kurzname der Berechtigung. Wird intern innerhalb von OpenVLE verwendet.',
+    },
+  ]}
+/>
+
+---
+
+## Hinzufügen von Objektberechtigungen für einen Benutzer
+
+Für verschiedene Objektmodelle können **direkte Objektberechtigungen** vergeben werden.  
+Das bedeutet, dass der Benutzer eine Berechtigung **nur für ein bestimmtes Objekt** erhält – nicht für alle Objekte desselben Typs.
+
+1. Suche und öffne das gewünschte Objekt.
+2. Wechsle in den Tab **Berechtigungen**.  
+   Wenn dieser Tab nicht vorhanden ist, fehlen dir entweder die erforderlichen Berechtigungen zum Anlegen von Objektberechtigungen oder das entsprechende Objektmodell unterstützt keine Objektberechtigungen.
+3. Klicke auf den **grünen Plus-Button**.
+4. In der Eingabemaske kannst du nun den gewünschten Benutzer suchen und die passende Berechtigung auswählen.  
+   Folgende Berechtigungen stehen standardmäßig zur Verfügung:
+
+   - **Lesen**
+   - **Lesen & Ändern**
+   - **Vollzugriff**
+
+   Bei **virtuellen Maschinen (VMs)** steht zusätzlich die Berechtigung **Lesen & VM-Steuerung** zur Verfügung,  
+   welche dem Benutzer zusätzlich Aktionen wie **Starten**, **Stoppen** oder **Neustarten** der VM erlaubt.
+
+5. Speichere die Berechtigung.
+
+---
+
+## Entfernen von Objektberechtigungen von einem Benutzer
+
+1. Öffne das betreffende Objekt.
+2. Wechsle in den Tab **Berechtigungen**.
+3. Klicke in der Liste der vorhandenen Berechtigungen bei der gewünschten Zeile auf **Entfernen** oder öffne das Kontextmenü und wähle **Löschen**.
+4. Bestätige den Vorgang im angezeigten Dialog.
+
+:::note
+Das Entfernen einer Objektberechtigung wirkt **sofort** – der Benutzer verliert unmittelbar den Zugriff auf das jeweilige Objekt.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Berechtigung der Rolle Umgebungsleiter zuweisen">
+  Eine Administratorin möchte festlegen, dass nur Dozenten neue Umgebungen
+  anlegen dürfen. Dazu erstellt sie eine neue Rolle **Umgebungsleiter** und
+  weist dieser die Berechtigung <code>courses_create</code> zu. Damit können nur
+  Mitglieder dieser Rolle neue Umgebungen erstellen, andere Benutzer jedoch
+  nicht.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel: Berechtigungserstellung */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Berechtigungen folgen dem **CRUD-Prinzip** (Create, Read, Update, Delete).
+- Berechtigungen können sowohl **global** als auch **objektbezogen (scoped)** zugewiesen werden.
+- Änderungen an einer Berechtigung wirken sich unmittelbar auf alle Rollen und Benutzer aus, die sie verwenden.
+- Neue Berechtigungen sollten nur von Administratoren angelegt werden, da sie direkten Einfluss auf den Systemzugriff haben.
+- Über den Tab **Benutzer** und **Rollen** kannst du einsehen, wo die Berechtigung zugewiesen ist.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  showChangelogs={false}
+  showPermissions={false}
+  showTags={false}
+  items={[
+    {
+      object: 'Rollen',
+      description:
+        'Eine Berechtigung kann beliebig vielen Rollen zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'Benutzer',
+      description:
+        'Eine Berechtigung kann beliebig vielen Benutzern zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    {
+      action: 'Berechtigungen anzeigen',
+      permission: 'permissions_read',
+      scoped: false,
+    },
+    {
+      action: 'Berechtigungen anlegen',
+      permission: 'permissions_create',
+      deprecated: true,
+    },
+    {
+      action: 'Berechtigungen bearbeiten',
+      permission: 'permissions_update',
+      scoped: false,
+      deprecated: true,
+    },
+    {
+      action: 'Berechtigungen löschen',
+      permission: 'permissions_delete',
+      scoped: false,
+      deprecated: true,
+    },
+    { action: 'Rollen anzeigen', permission: 'roles_read' },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Benutzerverwaltung', href: './users' },
+    { label: 'Rollen', href: './roles' },
+    { label: 'Richtlinien', href: './policies' },
+  ]}
+/>

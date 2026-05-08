@@ -1,0 +1,454 @@
+---
+id: templates
+sidebar_label: VM-Vorlagen
+sidebar_position: 105
+status: finished
+tags:
+  - infrastructure
+  - templates
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+# VM-Vorlagen
+
+VM-Vorlagen dienen in OpenVLE als Grundlage für die Erstellung virtueller Maschinen.  
+Sie enthalten eine vorinstallierte Systemumgebung mit allen notwendigen Tools und Diensten und werden meist im Rahmen von Umgebungen oder Veranstaltungen eingesetzt.  
+Durch Vorlagen lassen sich neue VMs schnell und konsistent bereitstellen.
+
+{/* TODO: Screenshot hinzufügen – Übersicht der VM-Vorlagen */}
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="VM-Vorlagen"
+  alternative="Über Virtuelle Maschinen oder Verbindungen verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeigen, Erstellen, Bearbeiten und Löschen von VM-Vorlagen',
+    'Importieren bestehender Templates aus Proxmox VE',
+    'Verknüpfen von Vorlagen mit Betriebssystemen und Anwendungen',
+    'Festlegen technischer Parameter wie CPU, RAM und Datenträgergröße',
+    'Zuweisen von Metadaten (Tags) und Beschreibungen für eine bessere Organisation',
+  ]}
+/>
+
+{/* TODO: Screenshot hinzufügen – Detailansicht einer Vorlage */}
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Name der VM-Vorlage. Wird in der gesamten Oberfläche angezeigt und sollte eindeutig sowie aussagekräftig gewählt werden, z. B. „Debian12-Base“ oder „Windows10-Schulung“.',
+    },
+    {
+      name: 'Betriebssystem',
+      description:
+        'Das zugrunde liegende Betriebssystem der Vorlage. Dieses wird für die automatische Konfiguration und Filterung im System verwendet.',
+    },
+    {
+      name: 'CPU',
+      description:
+        'Anzahl der vCPUs, die VMs auf Basis dieser Vorlage erhalten. Der Wert bestimmt die Rechenleistung jeder erstellten Maschine.',
+    },
+    {
+      name: 'Arbeitsspeicher',
+      description:
+        'Arbeitsspeicher (RAM) in Gigabyte, der neuen VMs zugewiesen wird. Beeinflusst direkt die Performance der Maschinen.',
+    },
+    {
+      name: 'Proxmox VE Infos',
+      description:
+        'Systeminterne Zuordnungen zu Proxmox VE, bestehend aus der **VMID** (eindeutige ID auf dem Host) und dem **Node-Namen** (Hostsystem innerhalb des Clusters). Diese Felder werden automatisch gepflegt und sind schreibgeschützt.',
+    },
+    {
+      name: 'Beschreibung',
+      description:
+        'Freitextfeld zur Dokumentation oder Kommentierung der VM-Vorlage. Unterstützt Markdown-Syntax (z. B. für Listen oder Hervorhebungen).',
+    },
+  ]}
+/>
+
+---
+
+## Importieren einer VM-Vorlage
+
+Bereits auf dem Proxmox VE-Server vorhandene VM-Vorlagen können in OpenVLE importiert werden. Dadurch lassen sich bestehende Vorlagen direkt innerhalb von OpenVLE weiterverwenden.  
+Hierfür muss unter `VM-Vorlagen → Importieren` die **Proxmox VMID** der gewünschten Vorlage angegeben werden.
+
+Anschließend werden die Vorlageninformationen automatisch vom Proxmox VE-Server geladen.  
+Diese importierten Daten können bei Bedarf angepasst werden – eine Anpassung ist jedoch in der Regel nicht erforderlich, **außer beim Feld „Betriebssystem“**.  
+Da der Proxmox VE-Server diese Information nicht exakt auslesen kann, muss sie manuell einmalig angegeben werden.
+
+:::info
+OpenVLE kann nur die VM-Vorlagen vom Proxmox VE-Server auslesen, für die der OpenVLE-API-Token im Proxmox VE-Cluster über entsprechende Berechtigungen verfügt.  
+Wenn die Berechtigungen des API-Tokens gemäß der Dokumentation eingerichtet wurden, kann OpenVLE nur VM-Vorlagen (und VMs) innerhalb des zugehörigen Proxmox-Pools einsehen.  
+Daher ist es zwingend erforderlich, die VM-Vorlagen im Proxmox VE-Server diesem Pool zuzuordnen.  
+Andernfalls führt der Import zu einem **„VM-Vorlage nicht gefunden“**-Fehler.
+:::
+
+---
+
+## Erstellen einer VM-Vorlage {#create-template}
+
+:::warning
+Die VM, die als Basis für die VM-Vorlage dienen soll, muss **ausgeschaltet** sein. Nur ausgeschaltete VMs können zu einer VM-Vorlage kopiert werden. Fahre die VM bei Bedarf vorher über OpenVLE herunter.
+:::
+
+1. Öffne im Hauptmenü den Bereich **VM-Vorlagen**.
+2. Klicke auf **Hinzufügen**, um eine neue VM-Vorlage zu erstellen.
+3. Wähle die gewünschte **VM** als Basis.
+4. Gib einen **Namen** für die VM-Vorlage an.
+5. Die restlichen Felder werden automatisch auf Basis der gewählten VM vorausgefüllt. Bei Bedarf können diese angepasst werden.
+6. Speichere die VM-Vorlage.
+7. Die VM-Vorlage wird nun im Hintergrund automatisch erstellt.
+8. Verwende diese VM-Vorlage, um neue virtuelle Maschinen zu erstellen oder Veranstaltungen vorzubereiten.
+
+:::info
+Beim Erstellen einer VM-Vorlage werden folgende Zuordnungen automatisch angelegt oder vererbt:
+
+- **Anwendungen ↔ VM**: Alle der VM zugewiesenen Anwendungen werden automatisch auch der neuen VM-Vorlage zugewiesen.
+- **Verbindungsvorlagen ↔ VM**: Alle Verbindungsvorlagen der VM werden kopiert und der VM-Vorlage zugewiesen.  
+  :::
+
+---
+
+## Bearbeiten einer VM-Vorlage
+
+1. Öffne im Hauptmenü den Bereich **VM-Vorlagen**.
+2. Suche in der Liste nach der gewünschten VM-Vorlage.
+3. Klicke auf **Bearbeiten** oder öffne das Kontextmenü der VM-Vorlage und wähle **Bearbeiten**.
+4. Im Formular werden alle aktuellen VM-Vorlagen-Daten angezeigt.
+5. Passe die gewünschten Felder an – z. B. Name, Beschreibung, CPU, Arbeitsspeicher oder Betriebssystem.
+6. Speichere die Änderungen.
+7. Die Aktualisierung wird im Hintergrund übernommen.
+
+:::note
+Änderungen an **VM-Vorlagen** wirken sich **nicht** auf bereits erstellte **VMs** aus.
+:::
+
+---
+
+## Löschen einer VM-Vorlage
+
+1. Öffne im Hauptmenü den Bereich **VM-Vorlagen**.
+2. Suche in der Liste nach der gewünschten VM-Vorlage.
+3. Klicke auf **Löschen** oder öffne das Kontextmenü der VM-Vorlage und wähle **Löschen**.
+4. Bestätige den Löschvorgang im angezeigten Dialog.
+5. Die VM-Vorlage wird daraufhin dauerhaft entfernt.
+6. Nach Abschluss des Vorgangs verschwindet die VM-Vorlage aus der Übersicht.
+
+:::danger
+Beim Löschen einer VM-Vorlage werden auch alle damit verknüpften Verbindungsvorlagen **automatisch gelöscht**.  
+Dieser Vorgang kann nicht rückgängig gemacht werden.
+:::
+
+---
+
+## Anforderungen an VM-Vorlagen
+
+Damit OpenVLE korrekt mit den einzelnen virtuellen Maschinen kommunizieren kann, müssen bei der Erstellung von VM-Vorlagen einige Voraussetzungen erfüllt sein.
+
+Für alle Vorlagen, unabhängig vom Betriebssystem, gilt:
+
+- **Qemu Guest Agent** muss installiert und aktiviert sein (innerhalb der VM und auf dem PVE-Host).
+- **Cloud-Init** muss installiert und aktiviert sein, damit OpenVLE Automatisierungen wie Anmeldungen und Netzwerkkonfigurationen steuern kann.
+
+:::tip
+Die meisten Anforderungen müssen nur einmal für die jeweilige **Master-Vorlage** pro Betriebssystem umgesetzt werden.  
+Alle weiteren VMs oder Vorlagen, die darauf basieren, übernehmen die Einstellungen automatisch.
+:::
+
+:::warning
+**Die folgenden Schritte sind noch nicht vollständig dokumentiert.**  
+Die Anleitungen für Linux sind weitgehend getestet, während die Windows-Konfiguration noch erweitert wird.
+:::
+
+---
+
+### Einmalige Einrichtung
+
+Diese Schritte müssen nur einmal pro Betriebssystem und Master-Vorlage durchgeführt werden:
+
+<Tabs groupId="operating-systems" queryString="current-os">
+  <TabItem value="debian-ubuntu" label="Debian/Ubuntu" default>
+
+    ```bash
+    sudo apt update
+    sudo apt install qemu-guest-agent cloud-init
+    ```
+
+  </TabItem>
+  <TabItem value="arch" label="Arch Linux">
+
+    ```bash
+    sudo pacman -Syu
+    sudo pacman -S qemu-guest-agent cloud-init
+    ```
+
+  </TabItem>
+  <TabItem value="rhel-centos-fedora" label="RHEL/CentOS/Fedora">
+
+    ```bash
+    sudo dnf update
+    sudo dnf install qemu-guest-agent cloud-init
+    ```
+
+  </TabItem>
+  <TabItem value="opensuse" label="OpenSUSE">
+
+    ```bash
+    sudo zypper refresh
+    sudo zypper install qemu-guest-agent cloud-init
+    ```
+
+  </TabItem>
+  <TabItem value="windows" label="Windows">
+    - VirtIO-Treiber installieren und konfigurieren  
+    - Qemu Guest Agent installieren und aktivieren  
+    - Cloudbase-Init installieren und aktivieren  
+    - BitLocker deaktivieren (`manage-bde -off C:`)  
+    - Überflüssige Windows Store Apps entfernen  
+  </TabItem>
+  <TabItem value="other" label="Andere">
+    Die Pakete `qemu-guest-agent` und `cloud-init` müssen installiert und
+    konfiguriert sein. Bitte konsultiere die offizielle Dokumentation des
+    Betriebssystems, um die entsprechenden Befehle zur
+    Installation und Aktualisierung zu finden.
+  </TabItem>
+</Tabs>
+
+---
+
+### Vorbereitung vor der Konvertierung
+
+Diese Schritte müssen **jedes Mal** durchgeführt werden, bevor eine VM in eine Vorlage umgewandelt wird:
+
+<Tabs groupId="operating-systems" queryString="current-os">
+  <TabItem value="debian-ubuntu" label="Debian/Ubuntu" default>
+
+    ```bash
+    su root
+    rm -rf /etc/cloud/cloud-init.disabled /tmp/* /var/tmp/*
+    apt clean && apt autoclean
+    cloud-init clean
+    truncate -s 0 /etc/machine-id /var/lib/dbus/machine-id
+    find /var/log -type f -exec truncate -s 0 {} \;
+    find /var/log -type f -regex ".*\.log\.[0-9]*\(\.gz\)?$" -delete
+    find /var/log -type f -name "*.log.*.gz" -delete
+    find / -name *.bash_history -exec rm -f {} \;
+    find / -name *.sh_history -exec rm -f {} \;
+    find / -name *.zsh_history -exec rm -f {} \;
+    find / -name known_hosts -exec rm -f {} \;
+    history -c
+    ```
+
+  </TabItem>
+  <TabItem value="arch" label="Arch Linux">
+
+      ```bash
+      su root
+      rm -rf /etc/cloud/cloud-init.disabled /tmp/* /var/tmp/*
+      pacman -Sc && pacman -Scc
+      cloud-init clean
+      truncate -s 0 /etc/machine-id /var/lib/dbus/machine-id
+      find /var/log -type f -exec truncate -s 0 {} \;
+      find /var/log -type f -regex ".*\.log\.[0-9]*\(\.gz\)?$" -delete
+      find /var/log -type f -name "*.log.*.gz" -delete
+      find / -name *.bash_history -exec rm -f {} \;
+      find / -name *.sh_history -exec rm -f {} \;
+      find / -name *.zsh_history -exec rm -f {} \;
+      find / -name known_hosts -exec rm -f {} \;
+      history -c
+      ```
+
+  </TabItem>
+  <TabItem value="rhel-centos-fedora" label="RHEL/CentOS/Fedora">
+
+    ```bash
+    su root
+    rm -rf /etc/cloud/cloud-init.disabled /tmp/* /var/tmp/*
+    dnf clean all && dnf autoremove
+    cloud-init clean
+    truncate -s 0 /etc/machine-id /var/lib/dbus/machine-id
+    find /var/log -type f -exec truncate -s 0 {} \;
+    find /var/log -type f -regex ".*\.log\.[0-9]*\(\.gz\)?$" -delete
+    find /var/log -type f -name "*.log.*.gz" -delete
+    find / -name *.bash_history -exec rm -f {} \;
+    find / -name *.sh_history -exec rm -f {} \;
+    find / -name *.zsh_history -exec rm -f {} \;
+    find / -name known_hosts -exec rm -f {} \;
+    history -c
+    ```
+
+  </TabItem>
+  <TabItem value="opensuse" label="OpenSUSE">
+
+    ```bash
+    su root
+    rm -rf /etc/cloud/cloud-init.disabled /tmp/* /var/tmp/*
+    zypper clean && zypper clean --all
+    cloud-init clean
+    truncate -s 0 /etc/machine-id /var/lib/dbus/machine-id
+    find /var/log -type f -exec truncate -s 0 {} \;
+    find /var/log -type f -regex ".*\.log\.[0-9]*\(\.gz\)?$" -delete
+    find /var/log -type f -name "*.log.*.gz" -delete
+    find / -name *.bash_history -exec rm -f {} \;
+    find / -name *.sh_history -exec rm -f {} \;
+    find / -name *.zsh_history -exec rm -f {} \;
+    find / -name known_hosts -exec rm -f {} \;
+    history -c
+    ```
+
+  </TabItem>
+  <TabItem value="windows" label="Windows">
+
+    ```powershell
+    wevtutil cl System
+    wevtutil cl Application
+    wevtutil cl Security
+    Clear-History
+    ```
+
+  </TabItem>
+  <TabItem value="other" label="Andere">
+  Das Paket `cloud-init` muss zurückgesetzt werden, sodass es beim nächsten Start korrekt durchläuft.  
+  Zudem wird empfohlen, die Log-Einträge, die Paket-Caches, Shell-Verläufe, SSH-Keys und die Machine-ID zu löschen bzw. zu leeren.  
+  Bitte konsultiere die offizielle Dokumentation des Betriebssystems, um die entsprechenden Befehle zur Konfiguration zu finden.
+  </TabItem>
+</Tabs>
+
+Nach Abschluss dieser Schritte kann die VM heruntergefahren und in eine **VM-Vorlage konvertiert** werden.
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Master-Vorlage für Debian erstellen">
+  Eine Systemverwaltungsperson möchte eine neue Debian-Vorlage für
+  Schulungsumgebungen erstellen. Diese Person installiert innerhalb der VM den
+  Qemu Guest Agent und Cloud-Init, führt die Bereinigungsbefehle durch und
+  konvertiert die Maschine anschließend in eine Vorlage. Danach kann diese
+  Vorlage in OpenVLE verwendet werden, um schnell neue VMs für Veranstaltungen
+  oder Tests bereitzustellen.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel: Debian Master-Vorlage */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- VM-Vorlagen bilden die Grundlage für alle automatisiert erstellten virtuellen Maschinen in OpenVLE.  
+  Änderungen an einer VM-Vorlage wirken sich **nicht rückwirkend** auf bereits erstellte VMs aus.
+
+- Beim Erstellen oder Importieren einer VM-Vorlage wird im Hintergrund ein **Task** gestartet.  
+  Du kannst den Fortschritt und mögliche Fehlermeldungen im Bereich **System → Tasks** nachvollziehen.
+
+- Eine VM-Vorlage kann nur dann erfolgreich importiert oder erstellt werden, wenn der **Qemu Guest Agent** und **Cloud-Init** innerhalb des Systems korrekt eingerichtet sind.
+
+- Wenn eine VM-Vorlage gelöscht wird, werden alle damit verknüpften **Verbindungsvorlagen** automatisch entfernt.  
+  Dies kann nicht rückgängig gemacht werden.
+
+- Importierte VM-Vorlagen werden automatisch mit den zugehörigen **Proxmox VE-Informationen** verknüpft (Node, VMID).  
+  Diese Felder sind schreibgeschützt und dienen der Synchronisierung mit dem Cluster.
+
+- Änderungen an CPU, RAM oder Betriebssystem wirken sich erst auf neu erstellte virtuelle Maschinen aus, die auf Basis der aktualisierten VM-Vorlage erstellt werden.
+
+- VM-Vorlagen, die in **Proxmox VE** außerhalb des dem OpenVLE-API-Token zugewiesenen Pools liegen, können **nicht importiert** werden.  
+  Stelle daher sicher, dass alle relevanten Vorlagen korrekt zugeordnet sind.
+
+- Für eine einheitliche Verwaltung empfiehlt es sich, pro Betriebssystem eine **Master-Vorlage** zu pflegen, die regelmäßig aktualisiert wird (z. B. mit Sicherheitspatches oder Software-Updates).  
+  Neue VM-Vorlagen können anschließend aus dieser Master-Vorlage abgeleitet werden.
+
+- Bei der Konvertierung einer VM in eine VM-Vorlage wird empfohlen, vorher ein **Bereinigungsskript** (siehe Abschnitt _Vorbereitung vor der Konvertierung_) auszuführen, um Maschinenkennungen, Logdateien und SSH-Schlüssel zu entfernen.
+
+- Die Anzeige der VM-Vorlagen aktualisiert sich regelmäßig automatisch, solange der Bereich geöffnet ist.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  showTasks={true}
+  items={[
+    {
+      object: 'Anwendungen',
+      description:
+        'Einer VM-Vorlage können beliebig viele Anwendungen zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'Betriebssystem',
+      description:
+        'Einer VM-Vorlage kann genau ein Betriebssystem zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'Verbindungsvorlagen',
+      description:
+        'Einer VM-Vorlage können beliebig viele Verbindungsvorlagen zugewiesen werden.',
+      behavior: 'Automatisches Löschen beim Entfernen der VM-Vorlage.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  data={[
+    {
+      action: 'VM-Vorlagen anzeigen',
+      permission: 'templates_read',
+      scoped: true,
+    },
+    { action: 'VM-Vorlagen anlegen', permission: 'templates_create' },
+    {
+      action: 'VM-Vorlagen bearbeiten',
+      permission: 'templates_update',
+      scoped: true,
+    },
+    {
+      action: 'VM-Vorlagen löschen',
+      permission: 'templates_delete',
+      scoped: true,
+    },
+    { action: 'Virtuelle Maschinen anzeigen', permission: 'vms_read' },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Virtuelle Maschinen', href: '../vms' },
+    { label: 'Verbindungen', href: '../connections' },
+    { label: 'Umgebungen', href: '../courses' },
+  ]}
+/>

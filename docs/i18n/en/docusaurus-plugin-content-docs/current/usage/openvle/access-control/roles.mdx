@@ -1,0 +1,193 @@
+---
+id: roles
+sidebar_label: Roles
+sidebar_position: 100
+status: finished
+tags:
+  - access-control
+  - roles
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Roles
+
+In OpenVLE, roles serve to bundle and centrally manage system-wide permissions.  
+Roles simplify the assignment of rights to user groups and ensure that similar users (e.g., instructors, administrators, participants) automatically receive the appropriate access rights.
+
+{/* TODO: Add screenshot – Role overview */}
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Access Control -> Roles"
+  alternative="Linked via User or Permission views"
+/>
+
+---
+
+## Features at a Glance
+
+<FeatureList
+  items={[
+    'Create and manage roles for different user groups',
+    'Assign and remove permissions within a role',
+    'View which users are assigned to a role',
+    'Copy existing roles for faster creation of similar permission sets',
+    'Delete roles that are no longer needed (if not in use)',
+  ]}
+/>
+
+{/* TODO: Add screenshot – Example of a role detail view */}
+
+---
+
+## Key Fields at a Glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'The name of the role, e.g., "Environment Manager" or "1st Level Support". Displayed in lists and associations.',
+    },
+    {
+      name: 'Key (Slug)',
+      description:
+        'Short name of the role. Used internally within OpenVLE, e.g., for API or permission assignments.',
+    },
+    {
+      name: 'Description',
+      description:
+        'Brief explanation of the tasks or responsibilities of this role, e.g., "Responsible for creating and managing course environments".',
+    },
+  ]}
+/>
+
+---
+
+## Creating a Role
+
+1. Open the **Access Control -> Roles** section in the main menu.
+2. Click **Add** to create a new role.
+3. Enter a meaningful **name** and an **optional description**.
+4. Save the role to make it available.
+5. Assign the desired **permissions** to the role.
+6. Then assign **users** to this role.
+
+---
+
+## Editing a Role
+
+1. Open the **Access Control -> Roles** section in the main menu.
+2. Search for the desired role in the list.
+3. Click **Edit**, or open the role's context menu and select **Edit**.
+4. The form displays all current role data.
+5. Adjust the desired fields — for example, **Name** or **Description**.
+6. Save the changes.
+
+:::note
+Changes to roles take effect immediately for all users assigned to that role.  
+Therefore, review permission changes carefully before applying them.
+:::
+
+---
+
+## Deleting a Role
+
+1. Open the **Access Control -> Roles** section in the main menu.
+2. Search for the desired role in the list.
+3. Click **Delete**, or open the role's context menu and select **Delete**.
+4. Confirm the deletion in the displayed dialog.
+5. The role will then be permanently removed.
+
+:::warning
+A role can only be deleted if **no users are assigned** to it.  
+If users with this role exist, remove the assignments first before deleting the role.
+:::
+
+---
+
+## Example or Use Case
+
+<Example title="Create a role for environment managers">
+  An administrator wants to give all environment managers identical rights
+  without having to configure each user individually. They create the
+  **Environment Manager** role, add permissions for viewing and editing
+  environments, VM templates, and VMs, and then assign this role to all
+  corresponding users.
+</Example>
+
+{/* TODO: Add screenshot – Example of role creation */}
+
+---
+
+## Notes / Special Considerations
+
+- Roles can only contain global permissions.
+- System roles (e.g., Administrator) cannot be deleted or fundamentally changed.
+- Roles currently assigned to users can only be deleted after the assignments are removed.
+- Changes to a role automatically affect all associated users.
+- When copying a role, all permissions are copied, but no user assignments.
+
+---
+
+## Relationships to Other Objects
+
+<ObjectRelations
+  showPermissions={false}
+  items={[
+    {
+      object: 'Users',
+      description: 'Any number of users can be assigned to a role.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'Permissions',
+      description: 'Any number of permissions can be assigned to a role.',
+      behavior: 'No automations.',
+    },
+  ]}
+/>
+
+---
+
+## Required Permissions
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    { action: 'View roles', permission: 'roles_read' },
+    { action: 'Create roles', permission: 'roles_create' },
+    { action: 'Edit roles', permission: 'roles_update' },
+    { action: 'Delete roles', permission: 'roles_delete' },
+    {
+      action: 'Assign permissions',
+      permission: 'objectpermissions_create',
+    },
+    {
+      action: 'Remove permissions',
+      permission: 'objectpermissions_delete',
+    },
+  ]}
+/>
+
+---
+
+## Related Topics
+
+<RelatedLinks
+  items={[
+    { label: 'User Management', href: './users' },
+    { label: 'Permissions', href: './permissions' },
+    { label: 'Policies', href: './policies' },
+  ]}
+/>

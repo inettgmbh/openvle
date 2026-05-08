@@ -1,0 +1,147 @@
+---
+id: moodle
+sidebar_label: Moodle Integration (optional)
+sidebar_position: 70
+status: finished
+tags:
+  - installation
+  - moodle
+  - integration
+---
+
+# Moodle — Integration {#moodle-integration}
+
+OpenVLE can be connected to an existing Moodle instance to automatically synchronize courses and participants. This guide describes the setup and how the integration works.
+
+:::info Fully optional
+The Moodle integration is optional. When not in use, all Moodle-related elements (course mapping, participant synchronization) are hidden in the user interface. No configuration is needed — the integration is disabled by default.
+:::
+
+## Prerequisites {#prerequisites}
+
+### Moodle side {#moodle-requirements}
+
+1. **Moodle 4.x** (or higher) with the Web Services plugin enabled
+2. An **API token** with the following permissions (Web Service Functions):
+   - `core_webservice_get_site_info`
+   - `core_course_get_courses`
+   - `core_course_search_courses`
+   - `core_course_get_courses_by_field`
+   - `core_course_create_courses`
+   - `core_course_update_courses`
+   - `core_course_duplicate_course`
+   - `core_course_delete_courses`
+   - `core_course_get_categories`
+   - `core_enrol_get_enrolled_users`
+   - `enrol_manual_enrol_users`
+   - `enrol_manual_unenrol_users`
+   - `core_user_create_users`
+   - `core_user_get_users_by_field`
+3. The **Manual Enrolment Plugin** must be enabled in Moodle
+
+### Create API token {#create-api-token}
+
+1. Moodle Administration > Site Administration > Server > Web services > External services
+2. Create a new service (e.g., "OpenVLE API")
+3. Add the functions listed above to the service
+4. Under **Manage Tokens**, generate a token for an admin user
+5. Copy the token and store it as `MOODLE_TOKEN` in the backend's `.env` file
+
+## Configuration {#configuration}
+
+Enter the Moodle connection details in the backend's `.env` file. The full reference of all environment variables can be found at [Configuration](configuration?stack=backend).
+
+| Variable                               | Description                                                                             | Example                        |
+| -------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------ |
+| `MOODLE_ENABLED`                       | Enable Moodle integration                                                               | `"True"`                       |
+| `MOODLE_URL`                           | URL of the Moodle instance (without trailing slash)                                     | `"https://moodle.example.com"` |
+| `MOODLE_TOKEN`                         | Web Services API Token                                                                  | `"abc123def456"`               |
+| `MOODLE_VERIFY_SSL`                    | Verify SSL certificate                                                                  | `"True"`                       |
+| `MOODLE_TIMEOUT`                       | Timeout for API requests in seconds                                                     | `"30"`                         |
+| `MOODLE_SYNC_TIMEOUT`                  | Timeout for synchronization tasks in seconds                                            | `"10"`                         |
+| `MOODLE_USER_AUTH`                     | Authentication method for newly created Moodle users (e.g., `ldap`, `oauth2`, `manual`) | `"ldap"`                       |
+| `MOODLE_USER_MATCH_FIELD`              | Field for matching OpenVLE and Moodle users (`email` or `username`)                     | `"email"`                      |
+| `MOODLE_COURSE_VISIBLE`                | Visibility of duplicated Moodle courses                                                 | `"True"`                       |
+| `MOODLE_DELETE_COURSE_ON_EVENT_DELETE` | Delete Moodle course when the event is deleted                                          | `"False"`                      |
+
+:::info
+The variables must — like all backend variables — be enclosed in **quotation marks**.
+:::
+
+## Verification {#verification}
+
+1. **Check backend logs** for a successful Moodle connection:
+   ```bash
+   docker logs openvle-backend 2>&1 | grep -i moodle
+   ```
+2. **Retrieve Moodle courses** — verify the connection via the OpenVLE API:
+   ```
+   GET /v1/moodle/courses
+   ```
+   This endpoint should return a list of available Moodle courses.
+3. **Create a test event** with a Moodle course mapping and verify that the Moodle course is correctly duplicated during deployment.
+
+## How it works {#how-it-works}
+
+### Moodle course mapping {#course-mapping}
+
+Each OpenVLE **environment** can be linked to a Moodle course by setting the `moodleCourseId` field. This Moodle course ID serves as a template.
+
+Available Moodle courses can be searched via the API endpoint `GET /v1/moodle/courses` (requires the `moodle_read` permission).
+
+### Event start (deployment) {#event-start}
+
+When an event is started and the associated environment has a `moodleCourseId`:
+
+1. **Moodle course duplication** — The Moodle template course is duplicated. The new Moodle course receives the name and slug of the event.
+2. **User creation** — For each participant, the system checks whether they exist in Moodle (matched via `MOODLE_USER_MATCH_FIELD`). If not, the user is automatically created.
+3. **Enrolment** — All participants are enrolled in the new Moodle course:
+   - Role **Instructors** → Moodle role _Editing Teacher_ (Role ID 3)
+   - Role **Students** → Moodle role _Student_ (Role ID 5)
+
+Progress is tracked as a task/subtask in OpenVLE.
+
+### Add participant (active event) {#add-participant}
+
+When a participant is added to an **active** event with a Moodle course:
+
+1. The user is created in Moodle if needed
+2. The user is enrolled in the Moodle course
+
+### Remove participant (active event) {#remove-participant}
+
+When a participant is removed from an **active** event with a Moodle course:
+
+- The user is **unenrolled** from the Moodle course (`unenrol`)
+
+:::caution Data loss on unenrolment
+Upon unenrolment, submissions, grades, and learning progress in the Moodle course are lost. This is a limitation of the Moodle REST API, which currently does not provide a way to deactivate an enrolment without triggering a notification email (see [MDL-70582](https://tracker.moodle.org/browse/MDL-70582)).
+:::
+
+### Event end (archival) {#event-end}
+
+When an event is ended:
+
+1. All **students** are unenrolled from the Moodle course
+2. **Instructors** remain enrolled
+3. The Moodle course is set to **not visible**
+
+### Event deletion {#event-deletion}
+
+If `MOODLE_DELETE_COURSE_ON_EVENT_DELETE=True` is set, the Moodle course is also deleted when the event is deleted. By default, the Moodle course is retained.
+
+## Permissions {#permissions}
+
+The Moodle integration requires the ObjectPermission `moodle_read` to search for Moodle courses via the API. This permission must be assigned to the appropriate roles.
+
+## Troubleshooting {#troubleshooting}
+
+| Problem                                  | Solution                                                                                 |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `Failed to connect to Moodle`            | Check `MOODLE_URL` and `MOODLE_TOKEN`. Is the Moodle instance reachable?                 |
+| `Moodle API Error [invalidtoken]`        | Token is invalid or expired. Generate a new token in Moodle.                             |
+| `Moodle API Error [invalidparameter]`    | One of the passed values is invalid. Check the logs.                                     |
+| `Moodle API Error [accessexception]`     | The token does not have all required Web Service Functions. Check service configuration. |
+| `Model with name: Moodle does not exist` | ObjectPermission for "Moodle" is missing. Has the backend been updated?                  |
+| User not found in Moodle                 | Check `MOODLE_USER_MATCH_FIELD`. Do email/username match in both systems?                |
+| User creation fails                      | `MOODLE_USER_AUTH` must match the auth plugin in Moodle (e.g., `ldap`).                  |

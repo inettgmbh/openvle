@@ -1,0 +1,101 @@
+---
+id: dashboard
+sidebar_label: Tableau de bord
+sidebar_position: 20
+status: finished
+tags:
+  - dashboard
+---
+
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { Example } from '@site/src/components/Example.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Tableau de bord
+
+Après la connexion, vous accédez au **tableau de bord** — la page d'accueil centrale d'**OpenVLE**.  
+Vous y obtenez en un coup d'oeil l'accès à vos ressources, activités et systèmes les plus importants.
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Dashboard"
+  alternative="Le tableau de bord est accessible directement après la connexion ou via le menu principal."
+/>
+
+---
+
+## Aperçu des fonctionnalités
+
+<FeatureList
+  items={[
+    "Vue d'ensemble des activités personnelles ou à l'échelle du système",
+    'Accès rapide aux systèmes externes fréquemment utilisés (par ex. Confluence, système de tickets)',
+    'Affichage des machines virtuelles, environnements et modèles sous forme de tableau ou de tuiles',
+    'Indicateurs de statut pour les processus en cours, les tâches ou les événements à venir',
+    'Affichage des informations selon les rôles en fonction des permissions (utilisateur, formateur, administrateur)',
+  ]}
+/>
+
+---
+
+## Accès aux ressources
+
+Le contenu affiché sur le tableau de bord dépend de vos droits d'utilisateur :
+
+- **Ressources personnelles :** Vous ne voyez que vos objets personnels (par ex. vos propres VMs ou environnements).
+- **Ressources de l'organisation :** En tant qu'administrateur, vous voyez toutes les ressources du système.
+- **Vue globale :** Avec des rôles étendus (par ex. support système ou superutilisateur), vous avez accès à des informations avancées.
+
+> Ainsi, vous ne voyez toujours que les contenus pertinents pour votre rôle.
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Vue du tableau de bord d'un étudiant">
+  Un étudiant se connecte à OpenVLE et voit sur le tableau de bord ses
+  environnements actifs, les machines virtuelles associées et les prochaines
+  dates d'événements. Via les tuiles, il peut accéder directement à ses systèmes
+  sans avoir à ouvrir d'autres sections.
+</Example>
+
+{/* TODO: Screenshot ![Exemple de tableau de bord d'un étudiant](/screens/dashboards/student-01.png) */}
+{/* TODO: Screenshot ![Vue supplémentaire pour les étudiants](/screens/dashboards/student-02.png) */}
+
+---
+
+<Example title="Vue du tableau de bord d'une administratrice">
+  Une administratrice voit sur son tableau de bord un aperçu de tous les
+  événements en cours, des tâches à l'échelle du système et des processus
+  ouverts. Elle dispose également d'un accès direct aux sections
+  d'infrastructure telles que les **modèles**, les **VMs** ou la **gestion des
+  utilisateurs**.
+</Example>
+
+{/* TODO: Screenshot ![Exemple de tableau de bord d'une administratrice](/screens/dashboards/admin-01.png) */}
+{/* TODO: Screenshot ![Vue supplémentaire pour les administrateurs](/screens/dashboards/admin-02.png) */}
+
+---
+
+## Remarques / Particularités
+
+- Le tableau de bord est adapté individuellement aux permissions de l'utilisateur connecté.
+- Les notifications à l'échelle du système sont également affichées ici.
+- Certains modules (par ex. activités ou tâches) ne sont affichés que si les permissions correspondantes sont disponibles.
+- Pour les liens externes (par ex. système de tickets, Confluence), les droits d'accès du système cible respectif s'appliquent toujours.
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: 'Environnements', href: '../courses' },
+    { label: 'Machines virtuelles', href: '../vms' },
+    { label: 'Événements', href: '../events' },
+  ]}
+/>

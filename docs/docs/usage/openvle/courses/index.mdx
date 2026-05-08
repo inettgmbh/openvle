@@ -1,0 +1,193 @@
+---
+id: courses
+sidebar_label: Umgebungen
+sidebar_position: 70
+status: finished
+tags:
+  - courses
+  - events
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Umgebungen
+
+In OpenVLE bilden **Umgebungen** die fachliche und organisatorische Grundlage einer Veranstaltung.  
+Eine Umgebung legt fest, **welche VM-Vorlagen** verwendet werden und werden in der Regel im Rahmen einer Veranstaltung erstellt und bestimmen, welche Ressourcen den Teilnehmerinnen und Teilnehmern zur Verfügung stehen.
+
+{/* TODO: Screenshot hinzufügen – Übersicht der Umgebungen */}
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="Veranstaltungen → Umgebungen"
+  alternative="Über die Detailansicht einer Veranstaltung verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeigen aller bestehenden Umgebungen einer Veranstaltung',
+    'Erstellen neuer Umgebungen mit Kursstruktur und Zuweisung von VM-Vorlagen',
+    'Zuweisen von Teilnehmern und Rollen innerhalb einer Umgebung',
+    'Verknüpfen von VM-Vorlagen',
+    'Bearbeiten oder Löschen bestehender Umgebungen',
+  ]}
+/>
+
+{/* TODO: Screenshot hinzufügen – Detailansicht einer Umgebung */}
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Name der Umgebung. Wird in der gesamten Oberfläche angezeigt und sollte eindeutig sowie aussagekräftig gewählt werden, z. B. „Schulung IT Deutsch 2024“ oder „Modul Informatik 1“.',
+    },
+    {
+      name: 'Beschreibung',
+      description:
+        'Freitextfeld zur Dokumentation oder Kommentierung der Umgebung.',
+    },
+  ]}
+/>
+
+---
+
+## Erstellen einer Umgebung
+
+1. Öffne im Hauptmenü den Bereich **Umgebungen**.
+2. Klicke auf **Hinzufügen**, um eine neue Umgebungen zu erstellen.
+3. Gib einen **Namen** und eine **Beschreibung** für die Umgebung an.
+4. Speichere die Umgebung.
+5. In dem Tab **VM-Vorlagen** kannst du nun die benötigten VM-Vorlagen zu der Umgebung hinzufügen oder entfernen.
+6. Verwende diese Umgebung, um neue Veranstaltungen vorzubereiten.
+
+---
+
+## Bearbeiten einer Umgebung
+
+1. Öffne im Hauptmenü den Bereich **Umgebungen**.
+2. Suche in der Liste nach der gewünschten Umgebung.
+3. Klicke auf **Bearbeiten** oder öffne das Kontextmenü der Umgebung und wähle **Bearbeiten**.
+4. Im Formular werden alle aktuellen Daten der Umgebung angezeigt.
+5. Passe die gewünschten Felder an – z. B. Name oder Beschreibung.
+6. Speichere die Änderungen.
+7. In dem Tab **VM-Vorlagen** kannst du die benötigten VM-Vorlagen zu der Umgebung hinzufügen oder entfernen.
+
+:::warning
+Änderungen an einer Umgebung (einschließlich der zugewiesenen VM-Vorlagen) wirken sich auf alle **geplanten** Veranstaltungen aus, die diese Umgebung verwenden. Beim Ausrollen wird die Veranstaltung mit der aktuellen Version der Umgebung bereitgestellt.
+
+**Aktive** Veranstaltungen sind davon nicht betroffen: Beim Ausrollen wird eine direkte Beziehung zwischen der Veranstaltung und den VM-Vorlagen angelegt, sodass die Veranstaltung ab diesem Zeitpunkt von der Umgebung entkoppelt ist.
+:::
+
+---
+
+## Löschen einer Umgebung
+
+1. Öffne im Hauptmenü den Bereich **Umgebungen**.
+2. Suche in der Liste nach der gewünschten Umgebung.
+3. Klicke auf **Löschen** oder öffne das Kontextmenü der Umgebung und wähle **Löschen**.
+4. Bestätige den Löschvorgang im angezeigten Dialog.
+5. Die Umgebung wird daraufhin dauerhaft entfernt.
+
+:::danger
+Eine Umgebung kann erst gelöscht werden, wenn keine zugewiesenen Veranstaltungen mehr existieren.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Umgebung für einen IT-Grundlagenkurs erstellen">
+  Eine Administratorin möchte eine neue Schulungsumgebung für die Umgebung
+  „IT-Grundlagen“ bereitstellen. Sie erstellt im Bereich **Umgebungen** eine
+  neue Einheit und weist die VM-Vorlagen für Windows- und Linux-VMs zu. Nach dem
+  Speichern kann die Umgebung in einer neuen Veranstaltung verwendet werden.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel einer Umgebung */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Umgebungen können mehreren **Veranstaltung** zugeordnet sein.
+- Eine Umgebung kann mehrere VM-Vorlagen enthalten.
+- Änderungen an einer Umgebung wirken sich auf alle **geplanten** Veranstaltungen aus, die diese Umgebung verwenden. Bereits aktive Veranstaltungen bleiben unverändert, da beim Ausrollen eine direkte Beziehung zwischen Veranstaltung und VM-Vorlagen erstellt wird.
+- Das Löschen einer Umgebung ist erst möglich wenn keine zugewiesenen Veranstaltungen mehr existieren.
+- Nur Benutzer mit entsprechenden Berechtigungen dürfen Umgebungen bearbeiten oder löschen.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Veranstaltungen',
+      description:
+        'Eine Umgebung kann in beliebig vielen Veranstaltungen zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'VM-Vorlagen',
+      description:
+        'Einer Umgebung können beliebig viele VM-Vorlagen zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  data={[
+    { action: 'Umgebungen anzeigen', permission: 'courses_read', scoped: true },
+    { action: 'Umgebungen anlegen', permission: 'courses_create' },
+    {
+      action: 'Umgebungen bearbeiten',
+      permission: 'courses_update',
+      scoped: true,
+    },
+    {
+      action: 'Umgebungen löschen',
+      permission: 'courses_delete',
+      scoped: true,
+    },
+    {
+      action: 'Veranstaltungen anzeigen',
+      permission: 'events_read',
+      scoped: true,
+    },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Veranstaltungen', href: '../events' },
+    { label: 'Virtuelle Maschinen', href: '../vms' },
+    { label: 'VM-Vorlagen', href: '../vm-templates' },
+  ]}
+/>

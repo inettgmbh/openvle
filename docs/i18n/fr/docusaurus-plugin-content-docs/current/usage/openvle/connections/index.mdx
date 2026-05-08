@@ -1,0 +1,90 @@
+---
+id: connections
+sidebar_label: Connexions
+sidebar_position: 90
+status: finished
+tags:
+  - connections
+  - infrastructure
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Connexions
+
+Dans **OpenVLE**, les configurations de connexion definissent **comment** les utilisateurs peuvent se connecter aux machines virtuelles ou aux modeles de VM -- par exemple via **RDP** ou **SSH**.  
+Ces connexions sont gerees de maniere centralisee et permettent un acces securise via navigateur grace a **Apache Guacamole**.
+
+Dans la section **Connexions**, vous pouvez consulter les configurations existantes, creer de nouvelles connexions et les attribuer a des utilisateurs ou des machines virtuelles specifiques.
+
+{/* TODO: Ajouter une capture d'ecran -- Vue d'ensemble des connexions */}
+
+---
+
+## Ou trouver cette section ?
+
+<NavigationHint
+  path="Connexions"
+  alternative="Accessible via les machines virtuelles ou les modeles de VM"
+/>
+
+---
+
+## Fonctionnalites en un coup d'oeil
+
+<FeatureList
+  items={[
+    'Affichage de toutes les connexions existantes',
+    'Creation de nouveaux modeles de connexion (par ex. RDP, SSH)',
+    'Creation de connexions basees sur des modeles de connexion',
+    'Gestion centralisee de modeles de connexion reutilisables',
+  ]}
+/>
+
+{/* TODO: Ajouter une capture d'ecran -- Exemple : vue detaillee d'une connexion */}
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Creer une connexion RDP pour une machine virtuelle">
+  Une administratrice souhaite permettre aux utilisateurs d'acceder a une
+  nouvelle VM Windows. Dans la section **Connexions**, elle cree un nouveau
+  **modele de connexion** avec le protocole **RDP**, renseigne les identifiants
+  d'acces et l'associe a la VM correspondante. Ensuite, elle cree de nouvelles
+  connexions basees sur ce modele, attribuees a des utilisateurs individuels.
+  Ces utilisateurs peuvent desormais se connecter a la VM directement via le
+  navigateur -- de maniere securisee et sans logiciel RDP local.
+</Example>
+
+{/* TODO: Ajouter une capture d'ecran -- Exemple de connexion RDP */}
+
+---
+
+## Remarques / Particularites
+
+- Les connexions sont **gerees de maniere centralisee** dans OpenVLE et sont **independantes du compte utilisateur**.
+- Les connexions ne peuvent **pas etre modifiees**, mais uniquement **supprimees et recreees**.
+- Les **modeles de connexion** servent a standardiser les configurations recurrentes.
+- Seuls les utilisateurs disposant des **permissions** appropriees peuvent modifier les parametres de connexion ou les identifiants d'acces.
+- Les sessions actives peuvent etre surveillees via le **serveur Apache Guacamole**.
+- Les **modeles de connexion** et les **modeles de VM** sont deux types d'objets distincts, chacun ayant sa propre fonction et attribution.
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: 'Modèles de connexion', href: './templates' },
+    { label: 'Machines virtuelles', href: '../vms' },
+    { label: 'Modèles de VM', href: '../vm-templates' },
+    { label: 'Gestion des utilisateurs', href: '../access-control/users' },
+  ]}
+/>

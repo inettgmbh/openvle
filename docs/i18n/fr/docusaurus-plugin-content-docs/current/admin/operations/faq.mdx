@@ -1,0 +1,43 @@
+---
+id: faq
+sidebar_label: FAQ
+sidebar_position: 15
+status: finished
+tags:
+  - operations
+  - faq
+---
+
+# FAQ {#faq}
+
+## Comment déconnecter tous les utilisateurs en une seule fois et les forcer à se reconnecter ? {#logout-all-users}
+
+Pour cela, la valeur de `AUTH_SECRET` dans le fichier `.env` doit être modifiée et le backend doit être redémarré. Toutes les sessions utilisateur existantes sont alors immédiatement invalidées, et tous les utilisateurs doivent se reconnecter.
+
+:::note
+Si seules certaines sessions utilisateur individuelles doivent être invalidées, l'utilisateur concerné peut être bloqué. Cela entraîne également la déconnexion immédiate de l'utilisateur.
+:::
+
+## Que se passe-t-il lors d'un redémarrage planifié des conteneurs ? {#planned-restarts}
+
+En règle générale, rien de critique. Lorsque les conteneurs Docker sont arrêtés de manière ordonnée, ils terminent les tâches en cours mais n'en traitent plus de nouvelles. Docker attend que le conteneur signale que toutes les tâches sont terminées, puis l'arrête proprement.
+
+Au prochain démarrage, les tâches en attente dans la file Redis sont reprises normalement.
+
+Cependant, si les conteneurs sont arrêtés de force, des problèmes peuvent survenir avec les tâches encore en cours. Dans ce cas, OpenVLE tente de restaurer automatiquement l'état dans la mesure du possible. Le statut des tâches individuelles peut être consulté sous `System -> Tasks`.
+
+:::note
+Docker n'attend qu'un temps limité lors de l'arrêt d'un conteneur avant de le stopper de force. Le cas échéant, le délai d'attente de la commande Docker stop (par ex. avec `--time <secondes>`) devrait être augmenté.
+:::
+
+## Quelle version de Python est utilisée dans le backend ? {#current-python-version}
+
+Actuellement, le backend utilise **Python 3.10**.
+
+## Quels composants sont nécessaires au démarrage d'OpenVLE ? {#req-components}
+
+Tous les composants du stack Docker Compose sont nécessaires au démarrage d'OpenVLE : **MariaDB**, **MongoDB**, **Redis**, **Scheduler**, **tous les workers** (worker, worker-vm-clone, worker-periodic), **Backend** et **Frontend**.
+
+Les systèmes externes tels que **Proxmox VE**, **Apache Guacamole**, **serveur LDAP**, **fournisseur OIDC** ou **serveur SMTP** ne sont pas nécessaires au démarrage de l'application. Cependant, dès que des actions au sein d'OpenVLE nécessitent l'accès à ces systèmes (par ex. création de VM, envoi d'e-mails, connexion SSO), ceux-ci doivent être accessibles et correctement configurés.
+
+Un démarrage du stack est donc possible même sans les composants externes. Voir [Infrastructure — Systèmes externes](../infrastructure/#external-systems) pour un aperçu.

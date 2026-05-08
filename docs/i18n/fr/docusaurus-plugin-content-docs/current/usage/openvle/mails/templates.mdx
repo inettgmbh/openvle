@@ -1,0 +1,292 @@
+---
+id: templates
+sidebar_label: Modèles
+sidebar_position: 20
+status: finished
+tags:
+  - mails
+  - templates
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Modèles d'e-mail
+
+Les modèles d'e-mail définissent le contenu et la mise en forme des messages envoyés automatiquement par le système, par ex. les notifications concernant de nouveaux événements ou la création de VM.  
+Ils garantissent une apparence uniforme et assurent que tous les e-mails système sont formulés de manière claire et compréhensible.
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="E-mails → Modèles"
+  alternative="Accessible via la vue détaillée des e-mails envoyés ou depuis les tâches système"
+/>
+
+---
+
+## Fonctionnalités en un coup d'oeil
+
+<FeatureList
+  items={[
+    "Création et modification de modèles d'e-mail avec objet, texte et mise en page HTML",
+    "Utilisation d'espaces réservés pour du contenu dynamique (par ex. nom d'utilisateur, titre de l'événement)",
+    'Envoi de test de modèles individuels pour vérifier le contenu',
+    'Association du modèle à des événements système spécifiques (par ex. création de VM)',
+    'Affichage de tous les e-mails envoyés avec ce modèle',
+  ]}
+/>
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        "Nom d'affichage du modèle. Sert à l'identification et à l'association avec les actions système.",
+    },
+    {
+      name: 'Description',
+      description:
+        "Courte description de l'utilisation du modèle (par ex. « Notification lors de la création d'une nouvelle VM »).",
+    },
+    {
+      name: 'Objet',
+      description: "Ligne d'objet de l'e-mail.",
+    },
+    {
+      name: 'Contenu (HTML)',
+      description:
+        "Contenu principal de l'e-mail au format texte ou HTML. Peut contenir des espaces réservés dynamiques.",
+    },
+    {
+      name: 'Adresse de réponse',
+      description:
+        'Adresse e-mail à laquelle les utilisateurs peuvent répondre aux messages envoyés automatiquement.',
+    },
+    {
+      name: 'Action e-mail',
+      description:
+        'Action e-mail attribuée au modèle. Peut être vide pour ne pas utiliser le modèle.',
+    },
+  ]}
+/>
+
+---
+
+## Espaces réservés disponibles
+
+Pour que les e-mails puissent être personnalisés, différents espaces réservés sont disponibles pour le contenu des modèles d'e-mail.  
+Les espaces réservés disponibles dépendent de l'action e-mail attribuée.  
+La colonne « Disponibilité » du tableau suivant indique dans quels contextes les différents espaces réservés peuvent être utilisés.
+
+:::warning
+Veuillez noter que lors de l'envoi d'e-mails, **aucune vérification de permission supplémentaire** n'est effectuée.  
+Cela signifie que les modèles d'e-mail peuvent également **contenir des données ou des informations qui ne devraient normalement pas être visibles** pour le destinataire concerné.
+
+Cela concerne en particulier les **e-mails destinés aux étudiants**, car ceux-ci ne disposent généralement que de permissions restreintes dans OpenVLE.
+
+**Exemple :**  
+Si un modèle d'e-mail envoyé aux étudiants utilise l'espace réservé `{{ virtualmachine.ipv4 }}` ou `{{ virtualmachine.proxmoxNode }}`,  
+l'e-mail contiendra des détails techniques tels que l'**adresse IP interne** ou le **nom du serveur (Node)** de la VM fournie.  
+Ces informations ne sont normalement visibles dans OpenVLE que pour les administrateurs ou les enseignants -- les étudiants pourraient cependant les consulter via l'e-mail.
+
+Utilisez donc dans les modèles d'e-mail **uniquement des espaces réservés** destinés au groupe de destinataires concerné et non sensibles.
+:::
+
+<div style={{overflowX: 'auto'}} className="compact-table">
+  | Modèle objet   | Espace réservé                        | Description                                                                  | Disponibilité                 |
+  |----------------|---------------------------------------|------------------------------------------------------------------------------|-------------------------------|
+  | Utilisateur    | `{{ user.email }}`                    | Adresse e-mail de l'utilisateur qui reçoit le message.                       | Toujours (Événements & VM)    |
+  | Utilisateur    | `{{ user.name }}`                     | Nom complet de l'utilisateur qui reçoit le message.                          | Toujours (Événements & VM)    |
+  | Utilisateur    | `{{ user.username }}`                 | Nom d'utilisateur de l'utilisateur qui reçoit le message.                    | Toujours (Événements & VM)    |
+  | Projet         | `{{ project.name }}`                  | Nom interne du projet.                                                       | Toujours (Événements & VM)    |
+  | Projet         | `{{ project.title }}`                 | Titre public du projet.                                                      | Toujours (Événements & VM)    |
+  | SubTask        | `{{ subtask.action }}`                | Action exécutée.                                                             | Événements                    |
+  | SubTask        | `{{ subtask.attempt }}`               | Nombre de tentatives de réexécution de ce SubTask.                           | Événements                    |
+  | SubTask        | `{{ subtask.createdAt }}`             | Horodatage de création du SubTask.                                           | Événements                    |
+  | SubTask        | `{{ subtask.createdById }}`           | ID utilisateur du créateur du SubTask.                                       | Événements                    |
+  | SubTask        | `{{ subtask.id }}`                    | Identifiant unique (UUID) du SubTask.                                        | Événements                    |
+  | SubTask        | `{{ subtask.job_id }}`                | ID interne du job en arrière-plan (RQ-Job) exécutant ce SubTask.             | Événements                    |
+  | SubTask        | `{{ subtask.name }}`                  | Nom ou type du SubTask.                                                      | Événements                    |
+  | SubTask        | `{{ subtask.object_id }}`             | Identifiant (UUID) de l'objet auquel le SubTask se rapporte.                 | Événements                    |
+  | SubTask        | `{{ subtask.object_type }}`           | Type de l'objet auquel le SubTask se rapporte.                               | Événements                    |
+  | SubTask        | `{{ subtask.parent_task }}`           | Identifiant du task parent auquel le SubTask appartient.                     | Événements                    |
+  | SubTask        | `{{ subtask.response_code }}`         | Code de réponse ou de statut après l'exécution du SubTask.                   | Événements                    |
+  | SubTask        | `{{ subtask.response_message }}`      | Message de retour ou d'erreur de l'exécution du SubTask.                     | Événements                    |
+  | SubTask        | `{{ subtask.status }}`                | Statut actuel, par ex. *queued*, *running*, *failed* ou *success*.           | Événements                    |
+  | SubTask        | `{{ subtask.updatedAt }}`             | Horodatage de la dernière mise à jour ou achèvement du SubTask.              | Événements                    |
+  | SubTask        | `{{ subtask.updatedById }}`           | ID utilisateur du dernier éditeur du SubTask.                                | Événements                    |
+  | Événement      | `{{ event.course }}`                  | Cours associé auquel l'événement est attribué.                               | Événements                    |
+  | Événement      | `{{ event.createdAt }}`               | Horodatage de création de l'événement.                                       | Événements                    |
+  | Événement      | `{{ event.createdById }}`             | ID utilisateur du créateur de l'événement.                                   | Événements                    |
+  | Événement      | `{{ event.dateEnd }}`                 | Date de fin de l'événement.                                                  | Événements                    |
+  | Événement      | `{{ event.dateStart }}`               | Date de début de l'événement.                                                | Événements                    |
+  | Événement      | `{{ event.deployment_status }}`       | Statut de déploiement de l'événement, par ex. *pending* ou *ready*.          | Événements                    |
+  | Événement      | `{{ event.description }}`             | Description ou informations supplémentaires sur l'événement.                 | Événements                    |
+  | Événement      | `{{ event.guacamole }}`               | Indique si Guacamole est actif pour cet événement (par défaut : True).       | Événements                    |
+  | Événement      | `{{ event.id }}`                      | Identifiant unique (UUID) de l'événement.                                    | Événements                    |
+  | Événement      | `{{ event.name }}`                    | Nom de l'événement.                                                          | Événements                    |
+  | Événement      | `{{ event.slug }}`                    | Nom court de l'événement.                                                    | Événements                    |
+  | Événement      | `{{ event.status }}`                  | ID de statut actuel de l'événement.                                          | Événements                    |
+  | Événement      | `{{ event.updatedAt }}`               | Horodatage de la dernière mise à jour de l'événement.                        | Événements                    |
+  | Événement      | `{{ event.updatedById }}`             | ID utilisateur du dernier éditeur de l'événement.                            | Événements                    |
+  | VM             | `{{ virtualmachine.cpu }}`            | Nombre de coeurs CPU attribués à la machine virtuelle.                       | VM                            |
+  | VM             | `{{ virtualmachine.createdAt }}`      | Horodatage de création de la VM.                                             | VM                            |
+  | VM             | `{{ virtualmachine.createdById }}`    | ID utilisateur du créateur de la VM.                                         | VM                            |
+  | VM             | `{{ virtualmachine.description }}`    | Description ou objectif de la VM.                                            | VM                            |
+  | VM             | `{{ virtualmachine.disk }}`           | Taille de l'espace disque attribué en Go.                                    | VM                            |
+  | VM             | `{{ virtualmachine.event }}`          | Événement associé dans le contexte duquel la VM a été créée.                 | VM                            |
+  | VM             | `{{ virtualmachine.id }}`             | Identifiant unique (UUID) de la VM.                                          | VM                            |
+  | VM             | `{{ virtualmachine.ipv4 }}`           | Adresse IPv4 de la VM, si disponible.                                        | VM                            |
+  | VM             | `{{ virtualmachine.name }}`           | Nom de la machine virtuelle.                                                 | VM                            |
+  | VM             | `{{ virtualmachine.os }}`             | ID du système d'exploitation attribué à la VM.                               | VM                            |
+  | VM             | `{{ virtualmachine.prevent_delete }}` | Indique si la suppression de la VM est empêchée (*true/false*).              | VM                            |
+  | VM             | `{{ virtualmachine.proxmoxId }}`      | ID interne de la VM dans le cluster Proxmox.                                 | VM                            |
+  | VM             | `{{ virtualmachine.proxmoxNode }}`    | Nom du node Proxmox sur lequel la VM est exécutée.                           | VM                            |
+  | VM             | `{{ virtualmachine.ram }}`            | Mémoire vive attribuée à la VM en Mo.                                        | VM                            |
+  | VM             | `{{ virtualmachine.status }}`         | Statut actuel de la VM, par ex. *running*, *stopped* ou *error*.             | VM                            |
+  | VM             | `{{ virtualmachine.template }}`       | Modèle de VM sur lequel la machine virtuelle est basée.                      | VM                            |
+  | VM             | `{{ virtualmachine.updatedAt }}`      | Horodatage de la dernière mise à jour de la VM.                              | VM                            |
+  | VM             | `{{ virtualmachine.updatedById }}`    | ID utilisateur du dernier éditeur de la VM.                                  | VM                            |
+</div>
+
+---
+
+## Créer un modèle d'e-mail
+
+1. Ouvrez dans le menu principal la section **E-mails → Modèles**.
+2. Cliquez sur **Ajouter** pour créer un nouveau modèle d'e-mail.
+3. Indiquez un **nom**, un **objet**, une **description** et un **contenu** pour le modèle d'e-mail.
+4. Pour le **contenu**, vous pouvez également utiliser les **espaces réservés** mentionnés ci-dessus pour afficher du contenu de manière dynamique et personnalisée.
+5. Vous pouvez optionnellement afficher un **aperçu HTML** du contenu.
+6. Vous pouvez optionnellement attribuer le modèle d'e-mail à une **action e-mail** dès maintenant -- cela est cependant aussi possible ultérieurement.
+7. Enregistrez le modèle d'e-mail.
+
+---
+
+## Modifier un modèle d'e-mail
+
+1. Ouvrez dans le menu principal la section **E-mails → Modèles**.
+2. Recherchez le modèle d'e-mail souhaité dans la liste.
+3. Cliquez sur **Modifier**, ou ouvrez le menu contextuel du modèle d'e-mail et sélectionnez **Modifier**.
+4. Le formulaire affiche toutes les données actuelles du modèle d'e-mail.
+5. Adaptez les champs souhaités, par exemple le **nom**, l'**objet** ou le **contenu**.
+6. Si vous souhaitez retirer l'attribution d'un **modèle d'e-mail** à une **action e-mail**, vous pouvez simplement laisser le champ **Action e-mail** vide.
+7. Enregistrez les modifications.
+
+:::note
+Si vous souhaitez d'abord tester les modifications d'un modèle d'e-mail, il est recommandé de créer un **nouveau modèle d'e-mail** sans lui attribuer d'action e-mail.  
+Vous vous assurez ainsi que des e-mails productifs ne soient pas envoyés par erreur avec le nouveau modèle.
+:::
+
+---
+
+## Supprimer un modèle d'e-mail
+
+1. Ouvrez dans le menu principal la section **E-mails → Modèles**.
+2. Recherchez le modèle d'e-mail souhaité dans la liste.
+3. Cliquez sur **Supprimer**, ou ouvrez le menu contextuel du modèle d'e-mail et sélectionnez **Supprimer**.
+4. Confirmez la suppression dans le dialogue affiché.
+5. Le modèle d'e-mail est alors définitivement supprimé.
+
+:::warning
+Si le modèle d'e-mail était attribué à une action e-mail et qu'**aucun autre modèle d'e-mail** n'est attribué à cette action,  
+**aucun e-mail ne sera plus envoyé** pour cette action e-mail.
+:::
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Adaptation d'une notification de nouvel événement">
+  Une administratrice souhaite adapter le texte envoyé lors du démarrage d'un
+  nouvel événement. Dans la section **E-mails → Modèles**, elle ouvre le modèle
+  *Événement déployé avec succès*, ajoute une salutation personnalisée et teste
+  l'envoi avec une adresse d'exemple. Après l'enregistrement, la version
+  modifiée sera utilisée pour tous les futurs événements.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran -- Exemple : éditeur de modèle d'e-mail */}
+
+---
+
+## Remarques / Particularités
+
+- Les espaces réservés dans les modèles sont automatiquement remplacés par des valeurs réelles lors de l'envoi.
+- Les modifications ne s'appliquent qu'aux futurs e-mails -- les messages déjà envoyés restent inchangés.
+- Les modèles HTML prennent en charge le style de base, les images en ligne et le contenu dynamique.
+- Des modèles en texte brut ainsi que des modèles HTML peuvent être créés.
+- L'aperçu et l'envoi de test permettent de vérifier la mise en page et les espaces réservés avant la mise en production.
+
+---
+
+## Relations avec d'autres objets
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Action e-mail',
+      description:
+        "Exactement une action e-mail peut être attribuée à un modèle d'e-mail.",
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'E-mail envoyé',
+      description:
+        "Un nombre illimité d'e-mails envoyés peut être associé à un modèle d'e-mail.",
+      behavior: 'Aucune automatisation.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises
+
+<Permissions
+  data={[
+    {
+      action: "Afficher les modèles d'e-mail",
+      permission: 'mailtemplates_read',
+      scoped: true,
+    },
+    {
+      action: "Créer des modèles d'e-mail",
+      permission: 'mailtemplates_create',
+      scoped: false,
+    },
+    {
+      action: "Modifier les modèles d'e-mail",
+      permission: 'mailtemplates_update',
+      scoped: true,
+    },
+    {
+      action: "Supprimer les modèles d'e-mail",
+      permission: 'mailtemplates_delete',
+      scoped: true,
+    },
+  ]}
+/>
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: 'E-mails envoyés', href: './sent' },
+    { label: 'Paramètres système', href: '../system/settings' },
+    { label: 'Tasks', href: '../system/tasks' },
+  ]}
+/>

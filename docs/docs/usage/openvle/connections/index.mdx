@@ -1,0 +1,90 @@
+---
+id: connections
+sidebar_label: Verbindungen
+sidebar_position: 90
+status: finished
+tags:
+  - connections
+  - infrastructure
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Verbindungen
+
+In **OpenVLE** definieren Verbindungskonfigurationen, **wie** sich Benutzerinnen und Benutzer mit virtuellen Maschinen oder VM-Vorlagen verbinden können – beispielsweise über **RDP** oder **SSH**.  
+Diese Verbindungen werden zentral verwaltet und ermöglichen einen sicheren, webbasierten Zugriff über **Apache Guacamole**.
+
+Im Bereich **Verbindungen** kannst du bestehende Konfigurationen einsehen, neue Verbindungen anlegen und diese bestimmten Benutzern oder virtuellen Maschinen zuweisen.
+
+{/* TODO: Screenshot hinzufügen – Übersicht der Verbindungen */}
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="Verbindungen"
+  alternative="Über Virtuelle Maschinen oder VM-Vorlagen verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeigen aller bestehenden Verbindungen',
+    'Erstellen neuer Verbindungsvorlagen (z. B. RDP, SSH)',
+    'Erstellen von Verbindungen basierend auf Verbindungsvorlagen',
+    'Zentrale Verwaltung wiederverwendbarer Verbindungsvorlagen',
+  ]}
+/>
+
+{/* TODO: Screenshot hinzufügen – Beispiel: Verbindungs-Detailansicht */}
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="RDP-Verbindung für eine virtuelle Maschine anlegen">
+  Eine Administratorin möchte Benutzerinnen und Benutzern Zugriff auf eine neue
+  Windows-VM ermöglichen. Sie erstellt im Bereich **Verbindungen** eine neue
+  **Verbindungsvorlage** mit dem Protokoll **RDP**, hinterlegt die Zugangsdaten
+  und verknüpft diese mit der entsprechenden VM. Anschließend erstellt sie
+  basierend auf dieser Vorlage neue Verbindungen, die einzelnen Benutzern
+  zugewiesen werden. Diese Benutzer können sich nun direkt über den Browser mit
+  der VM verbinden – sicher und ohne lokale RDP-Software.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel RDP-Verbindung */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Verbindungen werden in OpenVLE **zentral verwaltet** und sind **unabhängig vom Benutzerkonto**.
+- Verbindungen können **nicht bearbeitet**, sondern nur **gelöscht und neu erstellt** werden.
+- **Verbindungsvorlagen** dienen der Standardisierung wiederkehrender Konfigurationen.
+- Nur Benutzer mit entsprechenden **Berechtigungen** können Verbindungseinstellungen oder Zugangsdaten ändern.
+- Aktive Sitzungen können über den **Apache Guacamole-Server** überwacht werden.
+- **Verbindungsvorlagen** und **VM-Vorlagen** sind zwei unterschiedliche Objekttypen mit jeweils eigener Funktion und Zuordnung.
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Verbindungsvorlagen', href: './templates' },
+    { label: 'Virtuelle Maschinen', href: '../vms' },
+    { label: 'VM-Vorlagen', href: '../vm-templates' },
+    { label: 'Benutzerverwaltung', href: '../access-control/users' },
+  ]}
+/>

@@ -1,0 +1,200 @@
+---
+id: os
+sidebar_label: Betriebssysteme
+sidebar_position: 130
+status: finished
+tags:
+  - infrastructure
+  - os
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Betriebssysteme
+
+Im Bereich **Betriebssysteme** verwaltest du alle Betriebssysteme, die in OpenVLE als Grundlage für virtuelle Maschinen und VM-Vorlagen dienen.  
+Hier definierst du, welche Systeme verfügbar sind, und kannst diese bestimmten Herstellern zuordnen, um die Softwarelandschaft strukturiert zu dokumentieren.
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="Infrastruktur → Betriebssysteme"
+  alternative="Über Hersteller, virtuelle Maschinen oder VM-Vorlagen verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeigen, Erstellen, Bearbeiten und Löschen von Betriebssystemeinträgen',
+    'Zuordnen eines Herstellers zu einem Betriebssystem',
+    'Erfassen von Namen, Versionen und Architekturen',
+    'Verknüpfen von Betriebssystemen mit VM-Vorlagen oder virtuelle Maschinen',
+    'Dient als Basis für die Kategorisierung und Filterung innerhalb von OpenVLE',
+  ]}
+/>
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Der Name des Betriebssystems, z. B. „Debian“, „Windows 11“ oder „macOS Ventura“. Wird im gesamten System angezeigt.',
+    },
+    {
+      name: 'Hersteller',
+      description:
+        'Beziehung zum Hersteller, der das Betriebssystem entwickelt oder vertreibt. Dient der strukturierten Zuordnung.',
+    },
+    {
+      name: 'Beschreibung',
+      description:
+        'Freitextfeld zur Beschreibung oder Version, z. B. „64-Bit, LTS Release 2024“ oder „Education Edition“.',
+    },
+  ]}
+/>
+
+---
+
+## Erstellen eines Betriebssystems
+
+1. Öffne im Hauptmenü den Bereich **Infrastruktur → Betriebssysteme**.
+2. Klicke auf **Hinzufügen**, um ein neues Betriebssystem zu erstellen.
+3. Gib einen **Namen**, einen **Hersteller** und eine **Beschreibung** für das Betriebssystem an.
+4. Speichere das Betriebssystem.
+5. Ab sofort kannst du beim Erstellen von **VMs** oder **VM-Vorlagen** das Betriebssystem auswählen.
+
+:::info
+Der erforderliche Hersteller muss vor dem Erstellen des Betriebssystems vorhanden sein.
+:::
+
+---
+
+## Bearbeiten eines Betriebssystems
+
+1. Öffne im Hauptmenü den Bereich **Infrastruktur → Betriebssysteme**.
+2. Suche in der Liste nach dem gewünschten Betriebssystem.
+3. Klicke auf **Bearbeiten**, oder öffne das Kontextmenü des Betriebssystems und wähle **Bearbeiten**.
+4. Im Formular werden alle aktuellen Daten des Betriebssystems angezeigt.
+5. Passe die gewünschten Felder an – beispielsweise **Name** oder **Beschreibung**.
+6. Speichere die Änderungen.
+
+:::note
+Wenn eine Betriebssystemversion aktualisiert wurde, z. B. von _Debian 12_ auf _Debian 13_, wird empfohlen, ein **neues Betriebssystem** anzulegen.  
+So wird verhindert, dass bereits zugewiesene VMs und VM-Vorlagen von dieser Versionsänderung betroffen sind.  
+Andernfalls erscheint es in OpenVLE so, als wären alle zugewiesenen Systeme auf die neue Version aktualisiert worden.
+:::
+
+---
+
+## Löschen eines Betriebssystems
+
+1. Öffne im Hauptmenü den Bereich **Infrastruktur → Betriebssysteme**.
+2. Suche in der Liste nach dem gewünschten Betriebssystem.
+3. Klicke auf **Löschen**, oder öffne das Kontextmenü des Betriebssystems und wähle **Löschen**.
+4. Bestätige den Löschvorgang im angezeigten Dialog.
+5. Das Betriebssystem wird daraufhin dauerhaft entfernt.
+
+:::warning
+Es können nur Betriebssysteme gelöscht werden, die keiner VM oder VM-Vorlage mehr zugewiesen sind.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Neues Betriebssystem erfassen">
+  Eine Administratorin möchte ein neues Betriebssystem für die Infrastruktur hinzufügen.  
+  Sie öffnet den Bereich **Infrastruktur → Betriebssysteme**, klickt auf **Hinzufügen** und gibt ein:
+  - Name: *Debian 12 (LTS)*  
+  - Hersteller: *Debian Project*  
+  - Beschreibung: *Standard-Linux-Distribution für Schulungsumgebungen*
+
+Anschließend weist sie dieses Betriebssystem den passenden VM-Vorlagen zu, damit alle darauf basierenden VMs korrekt klassifiziert werden.
+
+</Example>
+
+---
+
+## Hinweise / Besonderheiten
+
+- Betriebssysteme werden **nicht automatisch installiert** – sie dienen ausschließlich der **Inventarisierung**.
+- Ein Betriebssystem kann mit mehreren VM-Vorlagen oder VMs verknüpft werden.
+- Hersteller müssen vorab existieren, um sie einem Betriebssystem zuordnen zu können.
+- Eine eindeutige Namensgebung erleichtert die Filterung und spätere Auswertungen.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Hersteller',
+      description:
+        'Einem Betriebssystem kann genau ein Hersteller zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'VM-Vorlagen',
+      description:
+        'Einem Betriebssystem können beliebig viele VM-Vorlagen zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'VMs',
+      description:
+        'Einem Betriebssystem können beliebig viele VMs zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  data={[
+    { action: 'Betriebssysteme anzeigen', permission: 'os_read', scoped: true },
+    { action: 'Betriebssysteme anlegen', permission: 'os_create' },
+    {
+      action: 'Betriebssysteme bearbeiten',
+      permission: 'os_update',
+      scoped: true,
+    },
+    {
+      action: 'Betriebssysteme löschen',
+      permission: 'os_delete',
+      scoped: true,
+    },
+    { action: 'Hersteller anzeigen', permission: 'vendors_read' },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Anwendungen', href: './applications' },
+    { label: 'Hersteller', href: './vendors' },
+    { label: 'Virtuelle Maschinen', href: '../vms' },
+    { label: 'VM-Vorlagen', href: '../vm-templates' },
+  ]}
+/>

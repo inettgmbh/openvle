@@ -1,0 +1,25 @@
+.container {
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.list {
+  margin-left: 1.2rem;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.noteWrapper {
+  margin-top: 1rem;
+}
+
+.divider {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 0;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}

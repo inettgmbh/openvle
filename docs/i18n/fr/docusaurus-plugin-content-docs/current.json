@@ -1,0 +1,82 @@
+{
+  "version.label": {
+    "message": "Version 1.0",
+    "description": "The label for version current"
+  },
+  "sidebar.docsUsage.category.Verwaltungssoftware": {
+    "message": "Logiciel d'administration",
+    "description": "The label for category Verwaltungssoftware in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Benutzerverwaltung": {
+    "message": "Gestion des utilisateurs",
+    "description": "The label for category Benutzerverwaltung in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Virtuelle Maschinen": {
+    "message": "Machines virtuelles",
+    "description": "The label for category Virtuelle Maschinen in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Umgebungen": {
+    "message": "Environnements",
+    "description": "The label for category Umgebungen in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Veranstaltungen": {
+    "message": "Événements",
+    "description": "The label for category Veranstaltungen in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Guacamole": {
+    "message": "Guacamole",
+    "description": "The label for category Guacamole in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Richtlinien": {
+    "message": "Directives",
+    "description": "The label for category Richtlinien in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.E-Mails": {
+    "message": "E-mails",
+    "description": "The label for category E-Mails in sidebar docsUsage"
+  },
+  "sidebar.docsAdmins.category.Infrastruktur": {
+    "message": "Infrastructure",
+    "description": "The label for category Infrastruktur in sidebar docsAdmins"
+  },
+  "sidebar.docsAdmins.category.Installation": {
+    "message": "Installation",
+    "description": "The label for category Installation in sidebar docsAdmins"
+  },
+  "sidebar.docsAdmins.category.Updates": {
+    "message": "Mises à jour",
+    "description": "The label for category Updates in sidebar docsAdmins"
+  },
+  "sidebar.docsAdmins.category.OpenVLE - Backend": {
+    "message": "OpenVLE - Backend",
+    "description": "The label for category OpenVLE - Backend in sidebar docsAdmins"
+  },
+  "sidebar.docsAdmins.category.Betrieb und Verwaltung": {
+    "message": "Exploitation et administration",
+    "description": "The label for category Betrieb und Verwaltung in sidebar docsAdmins"
+  },
+  "sidebar.docsAdmins.category.Entwicklung": {
+    "message": "Développement",
+    "description": "The label for category Entwicklung in sidebar docsAdmins"
+  },
+  "sidebar.docsChangelogs.category.Changelogs": {
+    "message": "Changelogs",
+    "description": "The label for category Changelogs in sidebar docsChangelogs"
+  },
+  "sidebar.docsUsage.category.Infrastruktur": {
+    "message": "Infrastructure",
+    "description": "The label for category Infrastruktur in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.System": {
+    "message": "Système",
+    "description": "The label for category System in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Verbindungen": {
+    "message": "Connexions",
+    "description": "The label for category Verbindungen in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Zugriffskontrolle": {
+    "message": "Contrôle des accès",
+    "description": "The label for category Zugriffskontrolle in sidebar docsUsage"
+  }
+}

@@ -1,0 +1,227 @@
+---
+id: tags
+sidebar_label: Tags
+sidebar_position: 60
+status: finished
+tags:
+  - tags
+  - organization
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Tags
+
+Les tags sont des mots-clés permettant de catégoriser, filtrer et retrouver plus facilement des objets (par ex. environnements, modèles de VM ou machines virtuelles).  
+Ils aident à structurer de manière claire de grandes quantités de données et à regrouper les objets par thématique.
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Tags"
+  alternative="Accessible via les vues détaillées des environnements, VM, modèles de VM ou d'autres objets"
+/>
+
+---
+
+## Fonctionnalités en un coup d'oeil
+
+<FeatureList
+  items={[
+    'Création et gestion de mots-clés (tags)',
+    'Attribution de tags à des objets tels que les environnements, modèles de VM, VM ou autres objets',
+    'Filtrage et regroupement rapides',
+    "Suggestions automatiques lors de l'ajout de nouveaux tags basées sur les entrées existantes",
+  ]}
+/>
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        'Nom du tag. Affiché dans toutes les vues en liste et détaillées.',
+    },
+    {
+      name: 'Valeur',
+      description:
+        'Valeur du tag. Affichée dans toutes les vues en liste et détaillées.',
+    },
+  ]}
+/>
+
+---
+
+## Créer un tag
+
+1. Ouvrez dans le menu principal la section de l'objet souhaité.
+2. Recherchez l'objet souhaité dans la liste et ouvrez-le.
+3. Dans la vue détaillée de l'objet, il y a une section **Tags**.
+4. Cliquez sur le bouton Plus pour ajouter un nouveau tag.
+5. Indiquez un **nom** et une **valeur** pour le tag.
+6. Enregistrez le tag.
+
+---
+
+## Supprimer un tag
+
+1. Ouvrez dans le menu principal la section de l'objet souhaité.
+2. Recherchez l'objet souhaité dans la liste et ouvrez-le.
+3. Dans la vue détaillée de l'objet se trouve une section **Tags**.
+4. Cliquez sur le bouton X à côté du tag à supprimer.
+5. Confirmez la suppression dans le dialogue affiché.
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Catégorisation des environnements avec des tags">
+  Une responsable d'environnement souhaite organiser ses événements par domaines
+  thématiques. Elle crée les tags *Technique réseau*, *Bases* et *Avancé*. Elle
+  peut ensuite filtrer dans la vue d'ensemble des environnements par ces tags et
+  trouver de manière ciblée les environnements attribués à un domaine thématique
+  spécifique.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran -- Exemple de gestion des tags */}
+
+---
+
+## Remarques / Particularités
+
+- Les tags peuvent être utilisés plusieurs fois et attribués simultanément à plusieurs objets.
+- Lors de la suppression d'un objet, les tags attribués sont automatiquement retirés.
+- Les tags sont indépendants des rôles utilisateur -- tous les utilisateurs disposant des permissions appropriées peuvent les voir et les utiliser.
+- Le système de tags est universel et prend en charge la quasi-totalité des modèles d'objets dans OpenVLE.
+
+---
+
+## Relations avec d'autres objets
+
+<ObjectRelations
+  showChangelogs={false}
+  showTags={false}
+  showPermissions={false}
+  items={[
+    {
+      object: 'Applications',
+      description:
+        'Un nombre illimité de tags peut être attribué aux applications.',
+      behavior:
+        "Suppression automatique du tag lors de la suppression de l'objet associé.",
+    },
+    {
+      object: "Systèmes d'exploitation",
+      description:
+        "Un nombre illimité de tags peut être attribué aux systèmes d'exploitation.",
+      behavior:
+        "Suppression automatique du tag lors de la suppression de l'objet associé.",
+    },
+    {
+      object: 'Fabricants',
+      description:
+        'Un nombre illimité de tags peut être attribué aux fabricants.',
+      behavior:
+        "Suppression automatique du tag lors de la suppression de l'objet associé.",
+    },
+    {
+      object: "Modèles d'e-mail",
+      description:
+        "Un nombre illimité de tags peut être attribué aux modèles d'e-mail.",
+      behavior:
+        "Suppression automatique du tag lors de la suppression de l'objet associé.",
+    },
+    {
+      object: 'Événements',
+      description:
+        'Un nombre illimité de tags peut être attribué aux événements.',
+      behavior:
+        "Suppression automatique du tag lors de la suppression de l'objet associé.",
+    },
+    {
+      object: 'Connexions',
+      description:
+        'Un nombre illimité de tags peut être attribué aux connexions.',
+      behavior:
+        "Suppression automatique du tag lors de la suppression de l'objet associé.",
+    },
+    {
+      object: 'Modèles de connexion',
+      description:
+        'Un nombre illimité de tags peut être attribué aux modèles de connexion.',
+      behavior:
+        "Suppression automatique du tag lors de la suppression de l'objet associé.",
+    },
+    {
+      object: 'VM',
+      description: 'Un nombre illimité de tags peut être attribué aux VM.',
+      behavior:
+        "Suppression automatique du tag lors de la suppression de l'objet associé.",
+    },
+    {
+      object: 'Modèles de VM',
+      description:
+        'Un nombre illimité de tags peut être attribué aux modèles de VM.',
+      behavior:
+        "Suppression automatique du tag lors de la suppression de l'objet associé.",
+    },
+    {
+      object: 'Utilisateurs',
+      description:
+        'Un nombre illimité de tags peut être attribué aux utilisateurs.',
+      behavior:
+        "Suppression automatique du tag lors de la suppression de l'objet associé.",
+    },
+    {
+      object: 'Politiques',
+      description:
+        'Un nombre illimité de tags peut être attribué aux politiques.',
+      behavior:
+        "Suppression automatique du tag lors de la suppression de l'objet associé.",
+    },
+    {
+      object: 'Rôles',
+      description: 'Un nombre illimité de tags peut être attribué aux rôles.',
+      behavior:
+        "Suppression automatique du tag lors de la suppression de l'objet associé.",
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    { action: 'Afficher les tags', permission: 'tags_read', scoped: false },
+    { action: 'Créer des tags', permission: 'tags_create' },
+    { action: 'Modifier les tags', permission: 'tags_update', scoped: false },
+    { action: 'Supprimer les tags', permission: 'tags_delete', scoped: false },
+  ]}
+/>
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: 'Environnements', href: '../courses' },
+    { label: 'Modèles de VM', href: '../vm-templates' },
+    { label: 'Machines virtuelles', href: '../vms' },
+  ]}
+/>

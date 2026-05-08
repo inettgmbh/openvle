@@ -1,0 +1,11 @@
+import { translate } from '@docusaurus/Translate'
+
+export const Example = ({ title, children }) => (
+  <div style={{ borderLeft: '4px solid var(--ifm-color-success)', backgroundColor: 'var(--ifm-color-emphasis-100)', padding: '1rem', paddingBottom: '0.1rem', margin: '1rem 0' }}>
+    <strong>{translate({ id: 'component.example.label', message: 'Beispiel:' })} {title}</strong>
+    <div style={{ marginTop: '0.5rem' }}>
+      {children}
+    </div>
+  </div>
+
+)

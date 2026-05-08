@@ -1,0 +1,204 @@
+---
+id: os
+sidebar_label: Systèmes d'exploitation
+sidebar_position: 130
+status: finished
+tags:
+  - infrastructure
+  - os
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Systèmes d'exploitation
+
+Dans la section **Systèmes d'exploitation**, vous gérez tous les systèmes d'exploitation qui servent de base aux machines virtuelles et aux modèles de VM dans OpenVLE.  
+Vous définissez ici quels systèmes sont disponibles et pouvez les attribuer à des fabricants spécifiques afin de documenter le paysage logiciel de manière structurée.
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Infrastructure → Systèmes d'exploitation"
+  alternative="Accessible via les fabricants, les machines virtuelles ou les modèles de VM"
+/>
+
+---
+
+## Fonctionnalités en un coup d'oeil
+
+<FeatureList
+  items={[
+    "Affichage, création, modification et suppression d'entrées de systèmes d'exploitation",
+    "Attribution d'un fabricant à un système d'exploitation",
+    'Saisie des noms, versions et architectures',
+    "Association de systèmes d'exploitation aux modèles de VM ou aux machines virtuelles",
+    "Sert de base à la catégorisation et au filtrage au sein d'OpenVLE",
+  ]}
+/>
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        "Le nom du système d'exploitation, par ex. « Debian », « Windows 11 » ou « macOS Ventura ». Affiché dans l'ensemble du système.",
+    },
+    {
+      name: 'Fabricant',
+      description:
+        "Relation avec le fabricant qui développe ou distribue le système d'exploitation. Sert à l'attribution structurée.",
+    },
+    {
+      name: 'Description',
+      description:
+        'Champ de texte libre pour la description ou la version, par ex. « 64 bits, LTS Release 2024 » ou « Education Edition ».',
+    },
+  ]}
+/>
+
+---
+
+## Créer un système d'exploitation
+
+1. Ouvrez dans le menu principal la section **Infrastructure → Systèmes d'exploitation**.
+2. Cliquez sur **Ajouter** pour créer un nouveau système d'exploitation.
+3. Indiquez un **nom**, un **fabricant** et une **description** pour le système d'exploitation.
+4. Enregistrez le système d'exploitation.
+5. Vous pouvez désormais sélectionner ce système d'exploitation lors de la création de **VM** ou de **modèles de VM**.
+
+:::info
+Le fabricant requis doit exister avant la création du système d'exploitation.
+:::
+
+---
+
+## Modifier un système d'exploitation
+
+1. Ouvrez dans le menu principal la section **Infrastructure → Systèmes d'exploitation**.
+2. Recherchez le système d'exploitation souhaité dans la liste.
+3. Cliquez sur **Modifier**, ou ouvrez le menu contextuel du système d'exploitation et sélectionnez **Modifier**.
+4. Le formulaire affiche toutes les données actuelles du système d'exploitation.
+5. Adaptez les champs souhaités, par exemple le **nom** ou la **description**.
+6. Enregistrez les modifications.
+
+:::note
+Si une version de système d'exploitation a été mise à jour, par ex. de _Debian 12_ à _Debian 13_, il est recommandé de créer un **nouveau système d'exploitation**.  
+Cela évite que les VM et modèles de VM déjà attribués soient affectés par ce changement de version.  
+Sinon, il apparaîtrait dans OpenVLE que tous les systèmes attribués ont été mis à jour vers la nouvelle version.
+:::
+
+---
+
+## Supprimer un système d'exploitation
+
+1. Ouvrez dans le menu principal la section **Infrastructure → Systèmes d'exploitation**.
+2. Recherchez le système d'exploitation souhaité dans la liste.
+3. Cliquez sur **Supprimer**, ou ouvrez le menu contextuel du système d'exploitation et sélectionnez **Supprimer**.
+4. Confirmez la suppression dans le dialogue affiché.
+5. Le système d'exploitation est alors définitivement supprimé.
+
+:::warning
+Seuls les systèmes d'exploitation qui ne sont plus attribués à aucune VM ni aucun modèle de VM peuvent être supprimés.
+:::
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Enregistrer un nouveau système d'exploitation">
+  Une administratrice souhaite ajouter un nouveau système d'exploitation à l'infrastructure.  
+  Elle ouvre la section **Infrastructure → Systèmes d'exploitation**, clique sur **Ajouter** et saisit :
+  - Nom : *Debian 12 (LTS)*  
+  - Fabricant : *Debian Project*  
+  - Description : *Distribution Linux standard pour les environnements de formation*
+
+Elle attribue ensuite ce système d'exploitation aux modèles de VM appropriés, afin que toutes les VM basées sur ceux-ci soient correctement classifiées.
+
+</Example>
+
+---
+
+## Remarques / Particularités
+
+- Les systèmes d'exploitation ne sont **pas installés automatiquement** -- ils servent exclusivement à l'**inventaire**.
+- Un système d'exploitation peut être associé à plusieurs modèles de VM ou VM.
+- Les fabricants doivent exister au préalable pour pouvoir être attribués à un système d'exploitation.
+- Une dénomination univoque facilite le filtrage et les évaluations ultérieures.
+
+---
+
+## Relations avec d'autres objets
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Fabricant',
+      description:
+        "Exactement un fabricant peut être attribué à un système d'exploitation.",
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'Modèles de VM',
+      description:
+        "Un nombre illimité de modèles de VM peut être attribué à un système d'exploitation.",
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'VM',
+      description:
+        "Un nombre illimité de VM peut être attribué à un système d'exploitation.",
+      behavior: 'Aucune automatisation.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises
+
+<Permissions
+  data={[
+    {
+      action: "Afficher les systèmes d'exploitation",
+      permission: 'os_read',
+      scoped: true,
+    },
+    { action: "Créer des systèmes d'exploitation", permission: 'os_create' },
+    {
+      action: "Modifier les systèmes d'exploitation",
+      permission: 'os_update',
+      scoped: true,
+    },
+    {
+      action: "Supprimer les systèmes d'exploitation",
+      permission: 'os_delete',
+      scoped: true,
+    },
+    { action: 'Afficher les fabricants', permission: 'vendors_read' },
+  ]}
+/>
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: 'Applications', href: './applications' },
+    { label: 'Fabricants', href: './vendors' },
+    { label: 'Machines virtuelles', href: '../vms' },
+    { label: 'Modèles de VM', href: '../vm-templates' },
+  ]}
+/>

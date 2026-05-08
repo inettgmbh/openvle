@@ -1,0 +1,278 @@
+---
+id: users
+sidebar_label: Users
+sidebar_position: 20
+status: finished
+tags:
+  - access-control
+  - users
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Users
+
+User management is a central component of OpenVLE.  
+Here you manage all people who have access to the system — both users with an **OIDC / LDAP account** and **local accounts** (e.g., external persons or test users).
+
+{/* TODO: Add screenshot – User overview */}
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Access Control -> Users"
+  alternative="Linked via Roles or Permissions"
+/>
+
+---
+
+## Features at a Glance
+
+<FeatureList
+  items={[
+    'View, create, edit, and delete user accounts',
+    'Assign or remove roles',
+    'Grant individual permissions at object or model level',
+    'Lock and unlock user accounts',
+    'View associated connections, VMs, and activities',
+    'Track changes via changelogs',
+  ]}
+/>
+
+---
+
+## Key Fields at a Glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Full name of the user. Displayed in lists, detail views, and in communications (e.g., in emails).',
+    },
+    {
+      name: 'Username',
+      description:
+        'Unique login name of the user. Used for authentication and cannot be changed after creation.',
+    },
+    {
+      name: 'Email',
+      description:
+        'Primary email address of the user. Used for notifications, system emails, and password resets.',
+    },
+    {
+      name: 'Status',
+      description:
+        'Current state of the user account. Possible values are *active*, *inactive*, *email pending*, or *banned*.',
+    },
+    {
+      name: 'Language',
+      description:
+        'Preferred system language of the user. Determines in which language notifications and interface texts are displayed.',
+    },
+    {
+      name: 'Auth Backend',
+      description:
+        'Authentication method of the user. Can be *internal* (locally managed) or *external* (via an external Identity Provider such as LDAP or OIDC).',
+    },
+  ]}
+/>
+
+---
+
+## Creating a User
+
+1. Open the **Access Control -> Users** section in the main menu.
+2. Click **Add** to create a new user account.
+3. Enter the desired data (**Name**, **Username**, **Email**, and **Status**).  
+   If the user is an **externally authenticated user** (e.g., LDAP or OIDC), the **Access** option must be set to **Yes**.  
+   If the user is a **locally authenticated user**, the **Access** option must be set to **No**.  
+   **Generally, this setting should be left at "Yes".**
+4. Save the new user.
+5. Assign **roles** or **individual permissions** to the user.
+
+{/* TODO: Add screenshot – User form */}
+
+> **Tip:**  
+> Most users are created automatically when they first sign in with their external account.
+
+:::info
+Externally authenticated users are identified by their **username**.  
+Therefore, make sure the username exactly matches the value in the external Identity Provider (IdP).  
+Fields such as **Name** and **Email address** are automatically updated with information from the external IdP when the user signs in.
+:::
+
+:::warning
+Externally authenticated users **cannot be edited** after creation.  
+Only the **Status** (active/inactive) can be changed, and the user can be **deleted**.  
+The **username** **cannot be changed** after creation.
+:::
+
+---
+
+## Activating or Deactivating a User
+
+1. Open the **Access Control -> Users** section in the main menu.
+2. Search for the desired user in the list and open their profile.
+3. In the user's action bar, you will see either a **yellow "Ban" button** (to lock) or a **yellow "Unban" button** (to unlock).
+4. Click the respective button to lock or unlock the user's access.
+
+:::warning
+After locking, the user can **immediately no longer perform any actions** within OpenVLE — even if they are currently logged in and have an active session.
+:::
+
+:::danger
+Access to **Apache Guacamole** is currently **not automatically locked**.  
+This functionality will be delivered in a future version.
+:::
+
+---
+
+## Resetting a User's Password (Local Accounts Only)
+
+1. Open the **Access Control -> Users** section in the main menu.
+2. Search for the desired user in the list and open their profile.
+3. Click the **yellow "Set Password" button** in the action bar.
+4. Enter the new password twice.
+5. Save the changes.
+
+:::warning
+Current sessions of the user remain **unaffected** — the user is **not automatically logged out**.
+:::
+
+:::note
+Resetting the password is only possible for **locally authenticated users**.  
+For external authentication methods (e.g., LDAP or SSO), the password cannot be changed.
+:::
+
+---
+
+## Editing a User (Local Accounts Only)
+
+1. Open the **Access Control -> Users** section in the main menu.
+2. Search for the desired user in the list.
+3. Click **Edit**, or open the user's context menu and select **Edit**.
+4. The form displays all current user data.
+5. Adjust the desired fields — for example, **Name** or **Email**.
+6. Save the changes.
+
+:::note
+Only **locally authenticated users** can be edited.  
+For **externally authenticated users** (e.g., LDAP or SSO), only the **Status** can be changed, and the user can be **deleted**.
+:::
+
+---
+
+## Deleting a User
+
+1. Open the **Access Control -> Users** section in the main menu.
+2. Search for the desired user in the list.
+3. Click **Delete**, or open the user's context menu and select **Delete**.
+4. An extended deletion dialog appears, showing all **linked objects** that will also be deleted (if applicable).
+5. Confirm the deletion in the displayed dialog.
+6. The user will then be **permanently removed**.
+
+:::danger
+This action **cannot be undone**.  
+If the user should only temporarily lose access, it is recommended to **lock the user** instead of deleting them.
+:::
+
+---
+
+## Example or Use Case
+
+<Example title="Create a local test user">
+  An administrator wants to create a temporary user for internal testing. They
+  open the **Users** section, click **Add**, and create a local account.
+  Afterward, they assign the **Tester** role to the user, which grants access to
+  selected virtual machines.
+</Example>
+
+{/* TODO: Add screenshot – Example: User creation */}
+
+---
+
+## Notes / Special Considerations
+
+- Users with external accounts are automatically created upon their first login.
+- Local users must be created manually.
+- A user can have multiple roles — their permissions are combined.
+- Individually assigned permissions supplement the rights from roles.
+- Locked users remain visible in the system but can no longer log in.
+
+---
+
+## Relationships to Other Objects
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Roles',
+      description: 'A user can be assigned any number of roles.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'Events',
+      description: 'A user can be assigned to any number of events.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'Connections',
+      description: 'A user can be assigned any number of connections.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'Activities',
+      description: 'A user can be assigned any number of activities.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'Emails',
+      description: 'A user can be assigned any number of sent emails.',
+      behavior: 'No automations.',
+    },
+  ]}
+/>
+
+---
+
+## Required Permissions
+
+<Permissions
+  data={[
+    { action: 'View users', permission: 'users_read', scoped: true },
+    { action: 'Create users', permission: 'users_create' },
+    { action: 'Edit users', permission: 'users_update', scoped: true },
+    { action: 'Delete users', permission: 'users_delete', scoped: true },
+    { action: 'View roles', permission: 'roles_read' },
+    { action: 'View permissions', permission: 'permissions_read' },
+    {
+      action: 'Assign permissions',
+      permission: 'objectpermissions_create',
+    },
+    {
+      action: 'Remove permissions',
+      permission: 'objectpermissions_delete',
+    },
+  ]}
+/>
+
+---
+
+## Related Topics
+
+<RelatedLinks
+  items={[
+    { label: 'Roles', href: './roles' },
+    { label: 'Permissions', href: './permissions' },
+    { label: 'Policies', href: './policies' },
+  ]}
+/>

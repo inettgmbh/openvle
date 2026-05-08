@@ -1,0 +1,293 @@
+---
+id: templates
+sidebar_label: Vorlagen
+sidebar_position: 20
+status: finished
+tags:
+  - mails
+  - templates
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# E-Mail-Vorlagen
+
+E-Mail-Vorlagen definieren Inhalt und Gestaltung der automatisch vom System versendeten Nachrichten – z. B. Benachrichtigungen über neue Veranstaltungen oder VM-Erstellungen.  
+Sie sorgen für ein einheitliches Erscheinungsbild und stellen sicher, dass alle Systemmails klar und verständlich formuliert sind.
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="E-Mails → Vorlagen"
+  alternative="Über die Detailansicht gesendeter E-Mails oder aus Systemaufgaben erreichbar"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anlegen und Bearbeiten von E-Mail-Vorlagen mit Betreff, Text und HTML-Layout',
+    'Verwendung von Platzhaltern für dynamische Inhalte (z. B. Benutzername, Veranstaltungstitel)',
+    'Testversand einzelner Vorlagen zur Kontrolle des Inhalts',
+    'Verknüpfung der Vorlage mit bestimmten Systemereignissen (z. B. VM-Erstellung)',
+    'Anzeige aller mit dieser E-Mail-Vorlage versendeten E-Mails',
+  ]}
+/>
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Anzeigename der Vorlage. Dient der Identifikation und Verknüpfung mit Systemaktionen.',
+    },
+    {
+      name: 'Beschreibung',
+      description:
+        'Kurze Beschreibung, wofür die Vorlage verwendet wird (z. B. „Benachrichtigung bei neuer VM“).',
+    },
+    {
+      name: 'Betreff',
+      description: 'Betreffzeile der E-Mail.',
+    },
+    {
+      name: 'Inhalt (HTML)',
+      description:
+        'Hauptinhalt der E-Mail im Text- oder HTML-Format. Kann dynamische Platzhalter enthalten.',
+    },
+    {
+      name: 'Antworten An E-Mail',
+      description:
+        'E-Mail-Adresse, an welche Nutzende auf automatisch versendete Nachrichten antworten können.',
+    },
+    {
+      name: 'E-Mail Aktion',
+      description:
+        'Zugewiesene E-Mail Aktion der E-Mail-Vorlage. Kann leer sein, um E-Mail-Vorlage nicht zu verwenden.',
+    },
+  ]}
+/>
+
+---
+
+## Vorhandene Platzhalter
+
+Damit E-Mails personalisiert gestaltet werden können, stehen verschiedene Platzhalter für den Inhalt von E-Mail-Vorlagen zur Verfügung.  
+Welche Platzhalter verfügbar sind, hängt von der jeweils zugewiesenen E-Mail-Aktion ab.  
+Die Spalte „Verfügbarkeit“ in der folgenden Tabelle zeigt, in welchen Kontexten die einzelnen Platzhalter verwendet werden können.
+
+:::warning
+Bitte beachte, dass beim Versenden von E-Mails **keine zusätzliche Berechtigungsprüfung** durchgeführt wird.  
+Das bedeutet, dass E-Mail-Vorlagen auch **Daten oder Informationen enthalten können, die für den jeweiligen Empfänger eigentlich nicht sichtbar** sein sollten.
+
+Dies betrifft insbesondere **E-Mails an Studierende**, da diese in OpenVLE in der Regel nur eingeschränkte Berechtigungen besitzen.
+
+**Beispiel:**  
+Wird in einer E-Mail-Vorlage, die an Studierende gesendet wird, der Platzhalter `{{ virtualmachine.ipv4 }}` oder `{{ virtualmachine.proxmoxNode }}` verwendet,  
+enthält die E-Mail technische Details wie die **interne IP-Adresse** oder den **Servernamen (Node)** der bereitgestellten VM.  
+Diese Informationen sind in OpenVLE normalerweise nur für Administratoren oder Lehrende sichtbar – Studierende könnten sie jedoch über die E-Mail einsehen.
+
+Verwende daher in E-Mail-Vorlagen **nur Platzhalter**, die für die jeweilige Empfängergruppe bestimmt und unkritisch sind.
+:::
+
+<div style={{overflowX: 'auto'}} className="compact-table">
+  | Objektmodell   | Platzhalter                           | Beschreibung                                                                 | Verfügbarkeit                 |
+  |----------------|---------------------------------------|------------------------------------------------------------------------------|-------------------------------|
+  | Benutzer       | `{{ user.email }}`                    | E-Mail-Adresse des Benutzers, der die Nachricht erhält.                      | Immer (Veranstaltungen & VMs) |
+  | Benutzer       | `{{ user.name }}`                     | Vollständiger Name des Benutzers, der die Nachricht erhält.                  | Immer (Veranstaltungen & VMs) |
+  | Benutzer       | `{{ user.username }}`                 | Benutzername des Benutzers, der die Nachricht erhält.                        | Immer (Veranstaltungen & VMs) |
+  | Projekt        | `{{ project.name }}`                  | Interner Name des Projekts.                                                  | Immer (Veranstaltungen & VMs) |
+  | Projekt        | `{{ project.title }}`                 | Öffentlich sichtbarer Titel des Projekts.                                    | Immer (Veranstaltungen & VMs) |
+  | SubTask        | `{{ subtask.action }}`                | Ausgeführte Aktion.                                                          | Veranstaltungen               |
+  | SubTask        | `{{ subtask.attempt }}`               | Anzahl der bisherigen Wiederholungsversuche dieses SubTasks.                 | Veranstaltungen               |
+  | SubTask        | `{{ subtask.createdAt }}`             | Zeitpunkt, zu dem der SubTask erstellt wurde.                                | Veranstaltungen               |
+  | SubTask        | `{{ subtask.createdById }}`           | Benutzer-ID des Erstellers des SubTasks.                                     | Veranstaltungen               |
+  | SubTask        | `{{ subtask.id }}`                    | Eindeutige Kennung (UUID) des SubTasks.                                      | Veranstaltungen               |
+  | SubTask        | `{{ subtask.job_id }}`                | Interne ID des Hintergrundjobs (RQ-Job), der diesen SubTask ausführt.        | Veranstaltungen               |
+  | SubTask        | `{{ subtask.name }}`                  | Name oder Typ des SubTasks.                                                  | Veranstaltungen               |
+  | SubTask        | `{{ subtask.object_id }}`             | Kennung (UUID) des Objekts, auf das sich der SubTask bezieht.                | Veranstaltungen               |
+  | SubTask        | `{{ subtask.object_type }}`           | Typ des Objekts, auf das sich der SubTask bezieht.                           | Veranstaltungen               |
+  | SubTask        | `{{ subtask.parent_task }}`           | Kennung des übergeordneten Tasks, zu dem der SubTask gehört.                 | Veranstaltungen               |
+  | SubTask        | `{{ subtask.response_code }}`         | Antwort- oder Statuscode nach Ausführung des SubTasks.                       | Veranstaltungen               |
+  | SubTask        | `{{ subtask.response_message }}`      | Rückgabe- oder Fehlermeldung aus der Ausführung des SubTasks.                | Veranstaltungen               |
+  | SubTask        | `{{ subtask.status }}`                | Aktueller Status, z. B. *queued*, *running*, *failed* oder *success*.        | Veranstaltungen               |
+  | SubTask        | `{{ subtask.updatedAt }}`             | Zeitpunkt der letzten Aktualisierung oder Fertigstellung des SubTasks.       | Veranstaltungen               |
+  | SubTask        | `{{ subtask.updatedById }}`           | Benutzer-ID des letzten Bearbeiters des SubTasks.                            | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.course }}`                  | Zugehöriger Kurs, welcher der Veranstaltung zugeordnet ist.                  | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.createdAt }}`               | Zeitpunkt, zu dem die Veranstaltung erstellt wurde.                          | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.createdById }}`             | Benutzer-ID des Erstellers der Veranstaltung.                                | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.dateEnd }}`                 | Enddatum der Veranstaltung.                                                  | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.dateStart }}`               | Startdatum der Veranstaltung.                                                | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.deployment_status }}`       | Bereitstellungsstatus der Veranstaltung, z. B. *pending* oder *ready*.       | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.description }}`             | Beschreibung oder zusätzliche Informationen zur Veranstaltung.               | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.guacamole }}`               | Angabe, ob Guacamole für diese Veranstaltung aktiv ist (Standard: True).     | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.id }}`                      | Eindeutige Kennung (UUID) der Veranstaltung.                                 | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.name }}`                    | Name der Veranstaltung.                                                      | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.slug }}`                    | Kurzname der Veranstaltung.                                                  | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.status }}`                  | Aktuelle StatusID der Veranstaltung.                                         | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.updatedAt }}`               | Zeitpunkt der letzten Aktualisierung der Veranstaltung.                      | Veranstaltungen               |
+  | Veranstaltung  | `{{ event.updatedById }}`             | Benutzer-ID des letzten Bearbeiters der Veranstaltung.                       | Veranstaltungen               |
+  | VM             | `{{ virtualmachine.cpu }}`            | Anzahl der zugewiesenen CPU-Kerne der virtuellen Maschine.                   | VMs                           |
+  | VM             | `{{ virtualmachine.createdAt }}`      | Zeitpunkt, zu dem die VM erstellt wurde.                                     | VMs                           |
+  | VM             | `{{ virtualmachine.createdById }}`    | Benutzer-ID des Erstellers der VM.                                           | VMs                           |
+  | VM             | `{{ virtualmachine.description }}`    | Beschreibung oder Zweck der VM.                                              | VMs                           |
+  | VM             | `{{ virtualmachine.disk }}`           | Größe des zugewiesenen Festplattenspeichers in GB.                           | VMs                           |
+  | VM             | `{{ virtualmachine.event }}`          | Zugehörige Veranstaltung, in deren Kontext die VM erstellt wurde.            | VMs                           |
+  | VM             | `{{ virtualmachine.id }}`             | Eindeutige Kennung (UUID) der VM.                                            | VMs                           |
+  | VM             | `{{ virtualmachine.ipv4 }}`           | IPv4-Adresse der VM, sofern verfügbar.                                       | VMs                           |
+  | VM             | `{{ virtualmachine.name }}`           | Name der virtuellen Maschine.                                                | VMs                           |
+  | VM             | `{{ virtualmachine.os }}`             | Zugewiesene BetriebssystemID der VM.                                         | VMs                           |
+  | VM             | `{{ virtualmachine.prevent_delete }}` | Gibt an, ob das Löschen der VM verhindert wird (*true/false*).               | VMs                           |
+  | VM             | `{{ virtualmachine.proxmoxId }}`      | Interne ID der VM im Proxmox-Cluster.                                        | VMs                           |
+  | VM             | `{{ virtualmachine.proxmoxNode }}`    | Name des Proxmox-Nodes, auf dem die VM ausgeführt wird.                      | VMs                           |
+  | VM             | `{{ virtualmachine.ram }}`            | Zugewiesener Arbeitsspeicher der VM in MB.                                   | VMs                           |
+  | VM             | `{{ virtualmachine.status }}`         | Aktueller Status der VM, z. B. *running*, *stopped* oder *error*.            | VMs                           |
+  | VM             | `{{ virtualmachine.template }}`       | VM-Vorlage, auf der die virtuelle Maschine basiert.                          | VMs                           |
+  | VM             | `{{ virtualmachine.updatedAt }}`      | Zeitpunkt der letzten Aktualisierung der VM.                                 | VMs                           |
+  | VM             | `{{ virtualmachine.updatedById }}`    | Benutzer-ID des letzten Bearbeiters der VM.                                  | VMs                           |
+</div>
+
+---
+
+## Erstellen einer E-Mail-Vorlage
+
+1. Öffne im Hauptmenü den Bereich **E-Mails → Vorlagen**.
+2. Klicke auf **Hinzufügen**, um eine neue E-Mail-Vorlage zu erstellen.
+3. Gib einen **Namen**, einen **Betreff**, eine **Beschreibung** und einen **Inhalt** für die E-Mail-Vorlage an.
+4. Für den **Inhalt** kannst du außerdem die oben genannten **Platzhalter** verwenden, um Inhalte dynamisch und personalisiert darzustellen.
+5. Optional kannst du eine **HTML-Vorschau** des Inhalts anzeigen lassen.
+6. Optional kannst du die E-Mail-Vorlage bereits einer **E-Mail-Aktion** zuweisen – dies ist jedoch auch zu einem späteren Zeitpunkt möglich.
+7. Speichere die E-Mail-Vorlage.
+
+---
+
+## Bearbeiten einer E-Mail-Vorlage
+
+1. Öffne im Hauptmenü den Bereich **E-Mails → Vorlagen**.
+2. Suche in der Liste nach der gewünschten E-Mail-Vorlage.
+3. Klicke auf **Bearbeiten**, oder öffne das Kontextmenü der E-Mail-Vorlage und wähle **Bearbeiten**.
+4. Im Formular werden alle aktuellen Daten der E-Mail-Vorlage angezeigt.
+5. Passe die gewünschten Felder an – beispielsweise **Name**, **Betreff** oder **Inhalt**.
+6. Wenn du die Zuordnung einer **E-Mail-Vorlage** zu einer **E-Mail-Aktion** entfernen möchtest, kannst du das Feld **E-Mail-Aktion** einfach leer lassen.
+7. Speichere die Änderungen.
+
+:::note
+Wenn du Änderungen an einer E-Mail-Vorlage zunächst testen möchtest, empfiehlt es sich, eine **neue E-Mail-Vorlage** anzulegen, ohne ihr eine E-Mail-Aktion zuzuweisen.  
+So stellst du sicher, dass nicht versehentlich bereits produktive E-Mails mit der neuen Vorlage versendet werden.
+:::
+
+---
+
+## Löschen einer E-Mail-Vorlage
+
+1. Öffne im Hauptmenü den Bereich **E-Mails → Vorlagen**.
+2. Suche in der Liste nach der gewünschten E-Mail-Vorlage.
+3. Klicke auf **Löschen**, oder öffne das Kontextmenü der E-Mail-Vorlage und wähle **Löschen**.
+4. Bestätige den Löschvorgang im angezeigten Dialog.
+5. Die E-Mail-Vorlage wird daraufhin dauerhaft entfernt.
+
+:::warning
+Wenn die E-Mail-Vorlage einer E-Mail-Aktion zugewiesen war und dieser Aktion **keine weitere E-Mail-Vorlage** zugewiesen ist,  
+werden für diese E-Mail-Aktion **keine E-Mails mehr versendet**.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Anpassung einer Benachrichtigung über neue Veranstaltung">
+  Eine Administratorin möchte den Text anpassen, der versendet wird, wenn eine
+  neue Veranstaltung startet. Im Bereich **E-Mails → Vorlagen** öffnet sie die
+  Vorlage *Veranstaltung erfolgreich bereitgestellt*, fügt eine persönliche
+  Anrede hinzu und testet den Versand mit einer Beispieladresse. Nach dem
+  Speichern wird die geänderte Version bei allen zukünftigen Veranstaltungen
+  verwendet.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel: Mail-Template-Editor */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Platzhalter in Vorlagen werden beim Versand automatisch durch reale Werte ersetzt.
+- Änderungen wirken sich nur auf zukünftige E-Mails aus – bereits versendete Nachrichten bleiben unverändert.
+- HTML-Vorlagen unterstützen grundlegendes Styling, Inline-Bilder und dynamische Inhalte.
+- Es können sowohl reine Text- als auch HTML-Vorlagen angelegt werden.
+- Die Vorschau und der Testversand helfen, Layout und Platzhalter zu prüfen, bevor Änderungen live gehen.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  items={[
+    {
+      object: 'E-Mail Aktion',
+      description:
+        'Einer E-Mail-Vorlage kann genau eine E-Mail Aktion zugewiesen werden',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'Gesendete E-Mail',
+      description:
+        'Einer E-Mail-Vorlage können beliebig viele Gesendete E-Mails zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  data={[
+    {
+      action: 'E-Mail-Vorlagen anzeigen',
+      permission: 'mailtemplates_read',
+      scoped: true,
+    },
+    {
+      action: 'E-Mail-Vorlagen anlegen',
+      permission: 'mailtemplates_create',
+      scoped: false,
+    },
+    {
+      action: 'E-Mail-Vorlagen bearbeiten',
+      permission: 'mailtemplates_update',
+      scoped: true,
+    },
+    {
+      action: 'E-Mail-Vorlagen löschen',
+      permission: 'mailtemplates_delete',
+      scoped: true,
+    },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Gesendete E-Mails', href: './sent' },
+    { label: 'Systemeinstellungen', href: '../system/settings' },
+    { label: 'Tasks', href: '../system/tasks' },
+  ]}
+/>

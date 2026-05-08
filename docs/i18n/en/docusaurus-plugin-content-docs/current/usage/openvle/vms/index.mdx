@@ -1,0 +1,319 @@
+---
+id: vms
+sidebar_label: Virtual Machines
+sidebar_position: 100
+status: finished
+tags:
+  - infrastructure
+  - vms
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Virtual Machines
+
+Virtual machines (VMs) represent the actual working environments in OpenVLE for **events**, **tests**, or **projects**.  
+They are based on VM templates and can be individually started, stopped, paused, or reset.  
+Each VM is centrally managed and can be accessed directly in the browser via a Guacamole connection.
+
+{/* TODO: Add screenshot – VM overview */}
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="VMs"
+  alternative="Linked via Events, Environments, or Templates"
+/>
+
+---
+
+## Features at a Glance
+
+<FeatureList
+  items={[
+    'View, start, stop, and reboot virtual machines',
+    'Create new VMs based on existing templates',
+    'Link with environments or users',
+    'Monitor the current status (running, paused, stopped)',
+    'Access via integrated Guacamole connections (RDP, SSH)',
+    'Reset to the initial state of the template',
+    'View resource information such as CPU, RAM, or storage usage',
+  ]}
+/>
+
+{/* TODO: Add screenshot – VM detail view */}
+
+---
+
+## Key Fields at a Glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Name of the virtual machine. Displayed in the system, in lists, and in connections. The name should be chosen to be unique and descriptive (e.g., "IT-Training-Win10-01").',
+    },
+    {
+      name: 'Operating System',
+      description:
+        'The installed operating system of the VM. This is automatically taken from the associated template and is used for categorization and filtering.',
+    },
+    {
+      name: 'CPU',
+      description:
+        'Number of vCPU cores assigned to the virtual machine. More cores improve performance but increase resource consumption on the host.',
+    },
+    {
+      name: 'Memory',
+      description:
+        'Assigned memory (RAM) in gigabytes. Determines how many applications can run simultaneously in the VM.',
+    },
+    {
+      name: 'Disk',
+      description:
+        'Assigned storage space in gigabytes. This value is usually taken from the template and cannot be adjusted.',
+    },
+    {
+      name: 'IPv4 Address',
+      description:
+        'Automatically assigned IP address of the VM. It is automatically detected and displayed once the Qemu Guest Agent is active. Used for identification and remote connection to the machine.',
+    },
+    {
+      name: 'Proxmox VE Info',
+      description:
+        'System-internal assignments to Proxmox VE, consisting of the **VMID** (unique ID on the host) and the **node name** (host system within the cluster). These fields are automatically maintained and are read-only.',
+    },
+    {
+      name: 'Description',
+      description:
+        'Free text field for documentation or commenting on the VM. Supports Markdown syntax (e.g., for lists or emphasis).',
+    },
+    {
+      name: 'Status',
+      description:
+        'Current operational state of the VM. Possible values are: `running`, `stopped`, `cloning`, `starting`, `stopping`, `deleting`. The status is controlled by actions (start, stop, clone, delete) or automatic processes.',
+    },
+  ]}
+/>
+
+---
+
+## Creating a Virtual Machine
+
+1. Open the **VMs** section in the main menu.
+2. Click **Add** to create a new VM.
+3. Select the desired **VM template** as the basis.
+4. Enter a **name** for the VM.
+5. The remaining fields are automatically pre-filled based on the selected VM template. These can be adjusted if needed.
+6. Save the VM.
+7. The VM will now be automatically created in the background. Once the process is complete, the VM status is set to `Running`.
+8. Switch to the **Connections** tab to create a connection to the VM.
+9. You can then connect to the VM via **Apache Guacamole**.
+
+:::info
+When creating a VM, the following assignments are automatically created or inherited:
+
+- **Applications ↔ VM Template**: All applications assigned to the VM template are automatically assigned to the new VM as well.
+- **Connection Templates ↔ VM Template**: All connection templates of the VM template are copied and assigned to the VM.
+
+This allows the newly created connection templates to be used to create connections to the VM — either manually or as part of an event.
+:::
+
+---
+
+## Editing a Virtual Machine
+
+1. Open the **VMs** section in the main menu.
+2. Search for the desired VM in the list.
+3. Click **Edit** or open the VM's context menu and select **Edit**.
+4. The form displays all current VM data.
+5. Adjust the desired fields — e.g., name, description, CPU, memory, or operating system.
+6. Save the changes.
+7. The update is applied in the background; depending on the change, a restart of the VM may be required.
+8. After a successful update, the new status and changed values are displayed in the overview.
+9. Optional: Open the **Connections** tab to review existing connections or adjust them if needed.
+
+:::info
+Changes to **CPU** or **memory** require a **restart of the VM** to take effect.  
+The restart can either be selected directly when editing or performed at a later time.
+:::
+
+---
+
+## Deleting a Virtual Machine
+
+1. Open the **VMs** section in the main menu.
+2. Search for the desired VM in the list.
+3. Click **Delete** or open the VM's context menu and select **Delete**.
+4. Confirm the deletion in the displayed dialog.
+5. The VM will then be permanently removed.
+6. After the process is complete, the VM disappears from the overview.
+
+:::danger
+When deleting a VM, all associated connections and connection templates are **automatically deleted** as well.  
+This action cannot be undone.
+:::
+
+---
+
+## Virtual Machine Actions
+
+Various actions are available in the context menu of a VM to control the current status or configuration of the VM.
+
+1. **Start** — Powers on a turned-off VM and sets it to the `running` status.
+2. **Shut down** — Shuts down the VM in a controlled manner via the operating system.
+3. **Reboot** — Performs a controlled reboot of the VM.
+4. **Stop** — Terminates the VM immediately without a regular shutdown (equivalent to a hard power-off).
+5. **Reset** — Performs an immediate reboot, comparable to pressing the reset button on a physical machine.
+6. **Refresh IP** — Updates the IP address stored in OpenVLE for the VM, in case it has changed or is no longer current.
+
+:::warning
+Some actions — such as **Stop** or **Reset** — directly access the virtualization environment and can lead to data loss if there are unsaved changes in the VM.  
+These actions should only be performed when a regular shutdown or reboot is not possible.
+:::
+
+---
+
+## Example or Use Case
+
+<Example title="Provision a VM for a training">
+  A system administrator wants to provision an individual VM for a training.
+  They open the **Virtual Machines** section, click **Add**, select the "Windows
+  10 - Training" VM template, and start it. The virtual machine is then created
+  and can be used further.
+</Example>
+
+{/* TODO: Add screenshot – Example: Provisioning a VM */}
+
+---
+
+## Notes / Special Considerations
+
+- Virtual machines are automatically created based on the selected template.
+- A VM can be started, paused, or shut down at any time.
+- Actions such as **Reset** or **Shutdown** immediately affect the guest system.
+- Running VMs consume resources on the host system — stop unused machines to save capacity.
+- Users can only access VMs for which they have the appropriate permissions.
+- Changes to a VM (e.g., name, assignment) require the appropriate rights.
+- The display updates regularly as long as the section is open.
+
+---
+
+## Relationships to Other Objects
+
+<ObjectRelations
+  showTasks={true}
+  items={[
+    {
+      object: 'Applications',
+      description: 'Any number of applications can be assigned to a VM.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'Event',
+      description:
+        'When created as part of an event, the VM is assigned to exactly one event.',
+      behavior: 'Automatic deletion upon certain actions within the event.',
+    },
+    {
+      object: 'Operating System',
+      description: 'Exactly one operating system can be assigned to a VM.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'Connection Templates',
+      description:
+        'Any number of connection templates can be assigned to a VM.',
+      behavior: 'Automatic deletion when the VM is removed.',
+    },
+    {
+      object: 'Connections',
+      description: 'Any number of connections can be assigned to a VM.',
+      behavior: 'Automatic deletion when the VM is removed.',
+    },
+  ]}
+/>
+
+---
+
+## Required Permissions
+
+<Permissions
+  data={[
+    {
+      action: 'View virtual machines',
+      permission: 'vms_read',
+      scoped: true,
+    },
+    { action: 'Create virtual machines', permission: 'vms_create' },
+    {
+      action: 'Edit virtual machines',
+      permission: 'vms_update',
+      scoped: true,
+    },
+    {
+      action: 'Delete virtual machines',
+      permission: 'vms_delete',
+      scoped: true,
+    },
+    {
+      action: 'VM action: Hibernate',
+      permission: 'vms_actions_hibernate',
+      scoped: true,
+    },
+    {
+      action: 'VM action: Pause',
+      permission: 'vms_actions_pause',
+      scoped: true,
+    },
+    {
+      action: 'VM action: Reboot',
+      permission: 'vms_actions_reboot',
+      scoped: true,
+    },
+    {
+      action: 'VM action: Reset',
+      permission: 'vms_actions_reset',
+      scoped: true,
+    },
+    {
+      action: 'VM action: Resume',
+      permission: 'vms_actions_resume',
+      scoped: true,
+    },
+    {
+      action: 'VM action: Shutdown',
+      permission: 'vms_actions_shutdown',
+      scoped: true,
+    },
+    {
+      action: 'VM action: Start',
+      permission: 'vms_actions_start',
+      scoped: true,
+    },
+    { action: 'VM action: Stop', permission: 'vms_actions_stop', scoped: true },
+    { action: 'View VM templates', permission: 'templates_read' },
+  ]}
+/>
+
+---
+
+## Related Topics
+
+<RelatedLinks
+  items={[
+    { label: 'VM Templates', href: '../vm-templates' },
+    { label: 'Connections', href: '../connections' },
+    { label: 'Environments', href: '../courses' },
+    { label: 'Events', href: '../events' },
+  ]}
+/>

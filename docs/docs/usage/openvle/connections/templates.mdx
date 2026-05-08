@@ -1,0 +1,225 @@
+---
+id: templates
+sidebar_label: Vorlagen
+sidebar_position: 30
+status: finished
+tags:
+  - connections
+  - guacamole
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Verbindungsvorlagen
+
+Verbindungsvorlagen definieren in **OpenVLE** wiederverwendbare Einstellungen für Verbindungen.  
+Damit lassen sich Verbindungsparameter wie **Protokoll**, **Port**, **Benutzername** oder **Passwort** standardisiert hinterlegen, sodass Administratorinnen und Administratoren neue Verbindungen schnell und konsistent erstellen können.
+
+{/* TODO: Screenshot hinzufügen – Übersicht der Verbindungsvorlagen */}
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="Verbindungen → Vorlagen"
+  alternative="Über Virtuelle Maschinen, VM-Vorlagen oder Verbindungen verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Eine Verbindungsvorlage ist immer genau einer VM oder VM-Vorlage zugewiesen',
+    'Anzeigen aller bestehenden Verbindungsvorlagen',
+    'Erstellen neuer Vorlagen mit definierten Standardwerten für Protokolle (z. B. RDP, SSH)',
+    'Löschen nicht mehr benötigter Vorlagen',
+  ]}
+/>
+
+{/* TODO: Screenshot hinzufügen – Beispiel: Verbindungsvorlage bearbeiten */}
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Label',
+      description:
+        'Anzeigename der Verbindungsvorlage. Wird in Listen und Dialogen angezeigt und automatisch generiert.',
+    },
+    {
+      name: 'VM oder VM-Vorlage',
+      description:
+        'Referenz auf die zugewiesene VM oder VM-Vorlage, für die diese Verbindungsvorlage gilt.',
+    },
+    {
+      name: 'Protokoll',
+      description:
+        'Kommunikationsprotokoll, das für die Verbindung verwendet wird. Unterstützte Werte sind **SSH** oder **RDP**.',
+    },
+    {
+      name: 'Port',
+      description:
+        'Netzwerkport für die Verbindung. Standardmäßig **22** für SSH und **3389** für RDP.',
+    },
+    {
+      name: 'Benutzername',
+      description:
+        'Anmeldebenutzername, der vom Apache-Guacamole-Server zur Authentifizierung auf der VM verwendet wird.',
+    },
+    {
+      name: 'Passwort',
+      description:
+        'Passwort des angegebenen Benutzerkontos. Wird vom Apache-Guacamole-Server verwendet, um die Verbindung herzustellen. Wird nicht erneut angezeigt.',
+    },
+  ]}
+/>
+
+---
+
+## Erstellen einer Verbindungsvorlage
+
+1. Öffne im Hauptmenü den Bereich **Verbindungen → Vorlagen**.
+2. Klicke auf **Hinzufügen**, um eine neue Verbindungsvorlage zu erstellen.
+3. Wähle das gewünschte **Protokoll** (z. B. RDP oder SSH) aus.
+4. Gib Standardparameter wie **Port**, **Benutzername** und **Passwort** an.
+5. Speichere die Vorlage.
+6. Verwende die Vorlage anschließend beim Erstellen neuer Verbindungen.
+
+:::info
+Verbindungsvorlagen können **nicht bearbeitet**, sondern nur **neu erstellt** werden.
+:::
+
+---
+
+## Löschen einer Verbindungsvorlage
+
+1. Öffne im Hauptmenü den Bereich **Verbindungen → Vorlagen**.
+2. Suche die gewünschte Vorlage in der Liste.
+3. Klicke auf **Löschen**, oder öffne das Kontextmenü und wähle **Löschen**.
+4. Bestätige den Löschvorgang im angezeigten Dialog.
+5. Die Verbindungsvorlage wird daraufhin dauerhaft entfernt.
+
+:::warning
+Verbindungsvorlagen können **nur gelöscht werden**, wenn **keine Verbindungen** mehr zu dieser Vorlage existieren.  
+Falls noch abhängige Verbindungen vorhanden sind, muss diese zunächst gelöscht werden, bevor die Vorlage entfernt werden kann.
+:::
+
+---
+
+## Automatische Duplizierung
+
+Beim Erstellen einer neuen VM werden alle **Verbindungsvorlagen**, die der verwendeten **VM-Vorlage** zugewiesen sind, automatisch dupliziert und der neu erstellten VM zugewiesen.  
+So können die neu erzeugten Verbindungsvorlagen verwendet werden, um Verbindungen zur VM herzustellen – entweder manuell oder im Rahmen einer Veranstaltung.
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Standard-RDP-Vorlage für Schulungsumgebungen erstellen">
+  Eine Administratorin möchte sicherstellen, dass alle Schulungs-VMs mit
+  denselben RDP-Einstellungen erstellt werden. Sie legt im Bereich
+  **Verbindungsvorlagen** eine neue Vorlage an, wählt das Protokoll **RDP** und
+  trägt die Anmeldeinformationen ein. Anschließend können auf Basis dieser
+  Verbindungsvorlage neue Verbindungen erstellt werden, die an die
+  entsprechenden Benutzer oder VMs gebunden sind.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel einer RDP-Verbindungsvorlage */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Verbindungsvorlagen können nicht bearbeitet, sondern nur neu erstellt werden.
+- Vorlagen dienen der Vereinheitlichung und beschleunigen die Bereitstellung neuer VMs oder Benutzerverbindungen.
+- Bestehende Verbindungen behalten ihre individuellen Einstellungen.
+- Über die Liste der Verbindungsvorlagen kann nachvollzogen werden, welche VMs oder Verbindungen eine bestimmte Vorlage verwenden.
+- Nur Administratorinnen und Administratoren oder Benutzer mit entsprechenden Berechtigungen dürfen Verbindungsvorlagen anlegen oder löschen.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  showChangelogs={false}
+  items={[
+    {
+      object: 'VM / VM-Vorlage',
+      description:
+        'Einer Verbindungsvorlage ist genau eine VM oder VM-Vorlage zugewiesen.',
+      behavior:
+        'Beim Löschen der VM oder VM-Vorlage werden alle zugehörigen Verbindungsvorlagen und darauf basierende Verbindungen automatisch gelöscht.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  data={[
+    {
+      action: 'Verbindungen anzeigen',
+      permission: 'guacamoles_read',
+      scoped: true,
+    },
+    {
+      action: 'Verbindungen anlegen',
+      permission: 'guacamoles_create',
+    },
+    {
+      action: 'Verbindungen löschen',
+      permission: 'guacamoles_delete',
+      scoped: true,
+    },
+    {
+      action: 'Verbindungsvorlagen anzeigen',
+      permission: 'guacamole_connection_profiles_read',
+      scoped: true,
+    },
+    {
+      action: 'Verbindungsvorlagen anlegen',
+      permission: 'guacamole_connection_profiles_create',
+    },
+    {
+      action: 'Verbindungsvorlagen löschen',
+      permission: 'guacamole_connection_profiles_delete',
+      scoped: true,
+    },
+    {
+      action: 'Virtuelle Maschinen anzeigen',
+      permission: 'vms_read',
+      scoped: true,
+    },
+    {
+      action: 'VM-Vorlagen lesen',
+      permission: 'templates_read',
+      scoped: true,
+    },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Verbindungen', href: './connection' },
+    { label: 'Virtuelle Maschinen', href: '../vms' },
+    { label: 'VM-Vorlagen', href: '../vm-templates' },
+  ]}
+/>

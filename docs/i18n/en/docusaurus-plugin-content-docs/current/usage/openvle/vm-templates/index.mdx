@@ -1,0 +1,452 @@
+---
+id: templates
+sidebar_label: VM Templates
+sidebar_position: 105
+status: finished
+tags:
+  - infrastructure
+  - templates
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+# VM Templates
+
+VM templates serve as the foundation for creating virtual machines in OpenVLE.  
+They contain a pre-installed system environment with all necessary tools and services and are typically used as part of environments or events.  
+Templates allow new VMs to be provisioned quickly and consistently.
+
+{/* TODO: Add screenshot – VM template overview */}
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="VM Templates"
+  alternative="Linked via Virtual Machines or Connections"
+/>
+
+---
+
+## Features at a Glance
+
+<FeatureList
+  items={[
+    'View, create, edit, and delete VM templates',
+    'Import existing templates from Proxmox VE',
+    'Link templates with operating systems and applications',
+    'Define technical parameters such as CPU, RAM, and disk size',
+    'Assign metadata (tags) and descriptions for better organization',
+  ]}
+/>
+
+{/* TODO: Add screenshot – Template detail view */}
+
+---
+
+## Key Fields at a Glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Name of the VM template. Displayed throughout the interface and should be chosen to be unique and descriptive, e.g., "Debian12-Base" or "Windows10-Training".',
+    },
+    {
+      name: 'Operating System',
+      description:
+        'The underlying operating system of the template. This is used for automatic configuration and filtering within the system.',
+    },
+    {
+      name: 'CPU',
+      description:
+        'Number of vCPUs that VMs based on this template receive. The value determines the computing power of each created machine.',
+    },
+    {
+      name: 'Memory',
+      description:
+        'Memory (RAM) in gigabytes assigned to new VMs. Directly affects the performance of the machines.',
+    },
+    {
+      name: 'Proxmox VE Info',
+      description:
+        'System-internal assignments to Proxmox VE, consisting of the **VMID** (unique ID on the host) and the **node name** (host system within the cluster). These fields are automatically maintained and are read-only.',
+    },
+    {
+      name: 'Description',
+      description:
+        'Free text field for documentation or commenting on the VM template. Supports Markdown syntax (e.g., for lists or emphasis).',
+    },
+  ]}
+/>
+
+---
+
+## Importing a VM Template
+
+VM templates that already exist on the Proxmox VE server can be imported into OpenVLE. This allows existing templates to be used directly within OpenVLE.  
+To do this, the **Proxmox VMID** of the desired template must be specified under `VM Templates -> Import`.
+
+The template information is then automatically loaded from the Proxmox VE server.  
+This imported data can be adjusted if needed — however, an adjustment is usually not required, **except for the "Operating System" field**.  
+Since the Proxmox VE server cannot read this information precisely, it must be specified manually once.
+
+:::info
+OpenVLE can only read VM templates from the Proxmox VE server for which the OpenVLE API token in the Proxmox VE cluster has the appropriate permissions.  
+If the API token permissions were set up according to the documentation, OpenVLE can only view VM templates (and VMs) within the associated Proxmox pool.  
+Therefore, it is mandatory to assign the VM templates to this pool on the Proxmox VE server.  
+Otherwise, the import will result in a **"VM template not found"** error.
+:::
+
+---
+
+## Creating a VM Template {#create-template}
+
+:::warning
+The VM that is to serve as the basis for the VM template must be **powered off**. Only powered-off VMs can be copied to a VM template. Shut down the VM via OpenVLE beforehand if necessary.
+:::
+
+1. Open the **VM Templates** section in the main menu.
+2. Click **Add** to create a new VM template.
+3. Select the desired **VM** as the basis.
+4. Enter a **name** for the VM template.
+5. The remaining fields are automatically pre-filled based on the selected VM. These can be adjusted if needed.
+6. Save the VM template.
+7. The VM template will now be automatically created in the background.
+8. Use this VM template to create new virtual machines or prepare events.
+
+:::info
+When creating a VM template, the following assignments are automatically created or inherited:
+
+- **Applications ↔ VM**: All applications assigned to the VM are automatically assigned to the new VM template as well.
+- **Connection Templates ↔ VM**: All connection templates of the VM are copied and assigned to the VM template.  
+  :::
+
+---
+
+## Editing a VM Template
+
+1. Open the **VM Templates** section in the main menu.
+2. Search for the desired VM template in the list.
+3. Click **Edit** or open the VM template's context menu and select **Edit**.
+4. The form displays all current VM template data.
+5. Adjust the desired fields — e.g., name, description, CPU, memory, or operating system.
+6. Save the changes.
+7. The update is applied in the background.
+
+:::note
+Changes to **VM templates** do **not** affect already created **VMs**.
+:::
+
+---
+
+## Deleting a VM Template
+
+1. Open the **VM Templates** section in the main menu.
+2. Search for the desired VM template in the list.
+3. Click **Delete** or open the VM template's context menu and select **Delete**.
+4. Confirm the deletion in the displayed dialog.
+5. The VM template will then be permanently removed.
+6. After the process is complete, the VM template disappears from the overview.
+
+:::danger
+When deleting a VM template, all associated connection templates are **automatically deleted** as well.  
+This action cannot be undone.
+:::
+
+---
+
+## VM Template Requirements
+
+For OpenVLE to communicate correctly with individual virtual machines, certain prerequisites must be met when creating VM templates.
+
+For all templates, regardless of the operating system:
+
+- **Qemu Guest Agent** must be installed and enabled (within the VM and on the PVE host).
+- **Cloud-Init** must be installed and enabled so that OpenVLE can control automations such as logins and network configurations.
+
+:::tip
+Most requirements only need to be implemented once for the respective **master template** per operating system.  
+All subsequent VMs or templates based on it automatically inherit the settings.
+:::
+
+:::warning
+**The following steps are not yet fully documented.**  
+The instructions for Linux are largely tested, while the Windows configuration is still being expanded.
+:::
+
+---
+
+### One-Time Setup
+
+These steps only need to be performed once per operating system and master template:
+
+<Tabs groupId="operating-systems" queryString="current-os">
+  <TabItem value="debian-ubuntu" label="Debian/Ubuntu" default>
+
+    ```bash
+    sudo apt update
+    sudo apt install qemu-guest-agent cloud-init
+    ```
+
+  </TabItem>
+  <TabItem value="arch" label="Arch Linux">
+
+    ```bash
+    sudo pacman -Syu
+    sudo pacman -S qemu-guest-agent cloud-init
+    ```
+
+  </TabItem>
+  <TabItem value="rhel-centos-fedora" label="RHEL/CentOS/Fedora">
+
+    ```bash
+    sudo dnf update
+    sudo dnf install qemu-guest-agent cloud-init
+    ```
+
+  </TabItem>
+  <TabItem value="opensuse" label="OpenSUSE">
+
+    ```bash
+    sudo zypper refresh
+    sudo zypper install qemu-guest-agent cloud-init
+    ```
+
+  </TabItem>
+  <TabItem value="windows" label="Windows">
+    - Install and configure VirtIO drivers  
+    - Install and enable Qemu Guest Agent  
+    - Install and enable Cloudbase-Init  
+    - Disable BitLocker (`manage-bde -off C:`)  
+    - Remove unnecessary Windows Store apps  
+  </TabItem>
+  <TabItem value="other" label="Other">
+    The `qemu-guest-agent` and `cloud-init` packages must be installed and
+    configured. Please consult the official documentation of the operating
+    system to find the appropriate commands for installation and updating.
+  </TabItem>
+</Tabs>
+
+---
+
+### Preparation Before Conversion
+
+These steps must be performed **every time** before a VM is converted into a template:
+
+<Tabs groupId="operating-systems" queryString="current-os">
+  <TabItem value="debian-ubuntu" label="Debian/Ubuntu" default>
+
+    ```bash
+    su root
+    rm -rf /etc/cloud/cloud-init.disabled /tmp/* /var/tmp/*
+    apt clean && apt autoclean
+    cloud-init clean
+    truncate -s 0 /etc/machine-id /var/lib/dbus/machine-id
+    find /var/log -type f -exec truncate -s 0 {} \;
+    find /var/log -type f -regex ".*\.log\.[0-9]*\(\.gz\)?$" -delete
+    find /var/log -type f -name "*.log.*.gz" -delete
+    find / -name *.bash_history -exec rm -f {} \;
+    find / -name *.sh_history -exec rm -f {} \;
+    find / -name *.zsh_history -exec rm -f {} \;
+    find / -name known_hosts -exec rm -f {} \;
+    history -c
+    ```
+
+  </TabItem>
+  <TabItem value="arch" label="Arch Linux">
+
+      ```bash
+      su root
+      rm -rf /etc/cloud/cloud-init.disabled /tmp/* /var/tmp/*
+      pacman -Sc && pacman -Scc
+      cloud-init clean
+      truncate -s 0 /etc/machine-id /var/lib/dbus/machine-id
+      find /var/log -type f -exec truncate -s 0 {} \;
+      find /var/log -type f -regex ".*\.log\.[0-9]*\(\.gz\)?$" -delete
+      find /var/log -type f -name "*.log.*.gz" -delete
+      find / -name *.bash_history -exec rm -f {} \;
+      find / -name *.sh_history -exec rm -f {} \;
+      find / -name *.zsh_history -exec rm -f {} \;
+      find / -name known_hosts -exec rm -f {} \;
+      history -c
+      ```
+
+  </TabItem>
+  <TabItem value="rhel-centos-fedora" label="RHEL/CentOS/Fedora">
+
+    ```bash
+    su root
+    rm -rf /etc/cloud/cloud-init.disabled /tmp/* /var/tmp/*
+    dnf clean all && dnf autoremove
+    cloud-init clean
+    truncate -s 0 /etc/machine-id /var/lib/dbus/machine-id
+    find /var/log -type f -exec truncate -s 0 {} \;
+    find /var/log -type f -regex ".*\.log\.[0-9]*\(\.gz\)?$" -delete
+    find /var/log -type f -name "*.log.*.gz" -delete
+    find / -name *.bash_history -exec rm -f {} \;
+    find / -name *.sh_history -exec rm -f {} \;
+    find / -name *.zsh_history -exec rm -f {} \;
+    find / -name known_hosts -exec rm -f {} \;
+    history -c
+    ```
+
+  </TabItem>
+  <TabItem value="opensuse" label="OpenSUSE">
+
+    ```bash
+    su root
+    rm -rf /etc/cloud/cloud-init.disabled /tmp/* /var/tmp/*
+    zypper clean && zypper clean --all
+    cloud-init clean
+    truncate -s 0 /etc/machine-id /var/lib/dbus/machine-id
+    find /var/log -type f -exec truncate -s 0 {} \;
+    find /var/log -type f -regex ".*\.log\.[0-9]*\(\.gz\)?$" -delete
+    find /var/log -type f -name "*.log.*.gz" -delete
+    find / -name *.bash_history -exec rm -f {} \;
+    find / -name *.sh_history -exec rm -f {} \;
+    find / -name *.zsh_history -exec rm -f {} \;
+    find / -name known_hosts -exec rm -f {} \;
+    history -c
+    ```
+
+  </TabItem>
+  <TabItem value="windows" label="Windows">
+
+    ```powershell
+    wevtutil cl System
+    wevtutil cl Application
+    wevtutil cl Security
+    Clear-History
+    ```
+
+  </TabItem>
+  <TabItem value="other" label="Other">
+  The `cloud-init` package must be reset so that it runs correctly on the next boot.  
+  It is also recommended to clear or empty the log entries, package caches, shell histories, SSH keys, and the machine ID.  
+  Please consult the official documentation of the operating system to find the appropriate commands for configuration.
+  </TabItem>
+</Tabs>
+
+After completing these steps, the VM can be shut down and **converted into a VM template**.
+
+---
+
+## Example or Use Case
+
+<Example title="Create a master template for Debian">
+  A system administrator wants to create a new Debian template for training
+  environments. They install the Qemu Guest Agent and Cloud-Init within the VM,
+  run the cleanup commands, and then convert the machine into a template.
+  Afterward, this template can be used in OpenVLE to quickly provision new VMs
+  for events or tests.
+</Example>
+
+{/* TODO: Add screenshot – Example: Debian master template */}
+
+---
+
+## Notes / Special Considerations
+
+- VM templates form the foundation for all automatically created virtual machines in OpenVLE.  
+  Changes to a VM template do **not retroactively** affect already created VMs.
+
+- When creating or importing a VM template, a **task** is started in the background.  
+  You can track the progress and any error messages in the **System -> Tasks** section.
+
+- A VM template can only be successfully imported or created if the **Qemu Guest Agent** and **Cloud-Init** are correctly set up within the system.
+
+- When a VM template is deleted, all associated **connection templates** are automatically removed.  
+  This cannot be undone.
+
+- Imported VM templates are automatically linked with the associated **Proxmox VE information** (node, VMID).  
+  These fields are read-only and serve for synchronization with the cluster.
+
+- Changes to CPU, RAM, or operating system only take effect on newly created virtual machines that are based on the updated VM template.
+
+- VM templates that are located in **Proxmox VE** outside the pool assigned to the OpenVLE API token **cannot be imported**.  
+  Therefore, make sure all relevant templates are correctly assigned.
+
+- For consistent management, it is recommended to maintain one **master template** per operating system that is regularly updated (e.g., with security patches or software updates).  
+  New VM templates can then be derived from this master template.
+
+- When converting a VM into a VM template, it is recommended to run a **cleanup script** (see the _Preparation Before Conversion_ section) beforehand to remove machine identifiers, log files, and SSH keys.
+
+- The display of VM templates updates automatically at regular intervals as long as the section is open.
+
+---
+
+## Relationships to Other Objects
+
+<ObjectRelations
+  showTasks={true}
+  items={[
+    {
+      object: 'Applications',
+      description:
+        'Any number of applications can be assigned to a VM template.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'Operating System',
+      description:
+        'Exactly one operating system can be assigned to a VM template.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'Connection Templates',
+      description:
+        'Any number of connection templates can be assigned to a VM template.',
+      behavior: 'Automatic deletion when the VM template is removed.',
+    },
+  ]}
+/>
+
+---
+
+## Required Permissions
+
+<Permissions
+  data={[
+    {
+      action: 'View VM templates',
+      permission: 'templates_read',
+      scoped: true,
+    },
+    { action: 'Create VM templates', permission: 'templates_create' },
+    {
+      action: 'Edit VM templates',
+      permission: 'templates_update',
+      scoped: true,
+    },
+    {
+      action: 'Delete VM templates',
+      permission: 'templates_delete',
+      scoped: true,
+    },
+    { action: 'View virtual machines', permission: 'vms_read' },
+  ]}
+/>
+
+---
+
+## Related Topics
+
+<RelatedLinks
+  items={[
+    { label: 'Virtual Machines', href: '../vms' },
+    { label: 'Connections', href: '../connections' },
+    { label: 'Environments', href: '../courses' },
+  ]}
+/>

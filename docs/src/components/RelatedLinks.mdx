@@ -1,0 +1,17 @@
+export const RelatedLinks = ({ items }) => (
+  <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
+    {items
+      .slice()
+      .sort((a, b) => a.label.localeCompare(b.label))
+      .map((link, index) => (
+        <li key={index} style={{ margin: '0.25rem 0' }}>
+          <a
+            href={link.href}
+            style={{ textDecoration: 'none', color: 'var(--ifm-link-color)' }}
+          >
+            • {link.label}
+          </a>
+        </li>
+      ))}
+  </ul>
+)

@@ -1,0 +1,198 @@
+---
+id: os
+sidebar_label: Operating systems
+sidebar_position: 130
+status: finished
+tags:
+  - infrastructure
+  - os
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Operating systems
+
+In the **Operating systems** section, you manage all operating systems that serve as the foundation for virtual machines and VM templates in OpenVLE.  
+Here you define which systems are available and can assign them to specific vendors to document the software landscape in a structured way.
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Infrastructure → Operating systems"
+  alternative="Linked from Vendors, Virtual Machines, or VM templates"
+/>
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'View, create, edit, and delete operating system entries',
+    'Assign a vendor to an operating system',
+    'Capture names, versions, and architectures',
+    'Link operating systems to VM templates or virtual machines',
+    'Serves as a basis for categorization and filtering within OpenVLE',
+  ]}
+/>
+
+---
+
+## Important fields at a glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'The name of the operating system, e.g. "Debian", "Windows 11", or "macOS Ventura". Displayed throughout the system.',
+    },
+    {
+      name: 'Vendor',
+      description:
+        'Relationship to the vendor that develops or distributes the operating system. Serves for structured assignment.',
+    },
+    {
+      name: 'Description',
+      description:
+        'Free-text field for description or version, e.g. "64-bit, LTS Release 2024" or "Education Edition".',
+    },
+  ]}
+/>
+
+---
+
+## Creating an operating system
+
+1. Open the **Infrastructure → Operating systems** section from the main menu.
+2. Click **Add** to create a new operating system.
+3. Enter a **name**, a **vendor**, and a **description** for the operating system.
+4. Save the operating system.
+5. From now on, you can select the operating system when creating **VMs** or **VM templates**.
+
+:::info
+The required vendor must exist before creating the operating system.
+:::
+
+---
+
+## Editing an operating system
+
+1. Open the **Infrastructure → Operating systems** section from the main menu.
+2. Find the desired operating system in the list.
+3. Click **Edit**, or open the context menu of the operating system and select **Edit**.
+4. The form displays all current data of the operating system.
+5. Adjust the desired fields -- for example **Name** or **Description**.
+6. Save the changes.
+
+:::note
+If an operating system version has been updated, e.g. from _Debian 12_ to _Debian 13_, it is recommended to create a **new operating system**.  
+This prevents already assigned VMs and VM templates from being affected by this version change.  
+Otherwise, it would appear in OpenVLE as though all assigned systems had been upgraded to the new version.
+:::
+
+---
+
+## Deleting an operating system
+
+1. Open the **Infrastructure → Operating systems** section from the main menu.
+2. Find the desired operating system in the list.
+3. Click **Delete**, or open the context menu of the operating system and select **Delete**.
+4. Confirm the deletion in the displayed dialog.
+5. The operating system is then permanently removed.
+
+:::warning
+Only operating systems that are no longer assigned to any VM or VM template can be deleted.
+:::
+
+---
+
+## Example or use case
+
+<Example title="Register a new operating system">
+  An administrator wants to add a new operating system to the infrastructure.  
+  She opens the **Infrastructure → Operating systems** section, clicks **Add**, and enters:
+  - Name: *Debian 12 (LTS)*  
+  - Vendor: *Debian Project*  
+  - Description: *Standard Linux distribution for training environments*
+
+She then assigns this operating system to the appropriate VM templates so that all VMs based on them are correctly classified.
+
+</Example>
+
+---
+
+## Notes / special considerations
+
+- Operating systems are **not automatically installed** -- they serve exclusively for **inventory management**.
+- An operating system can be linked to multiple VM templates or VMs.
+- Vendors must exist in advance to be assignable to an operating system.
+- Unambiguous naming facilitates filtering and later analysis.
+
+---
+
+## Relationships to other objects
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Vendor',
+      description: 'Exactly one vendor can be assigned to an operating system.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'VM templates',
+      description:
+        'Any number of VM templates can be assigned to an operating system.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'VMs',
+      description: 'Any number of VMs can be assigned to an operating system.',
+      behavior: 'No automations.',
+    },
+  ]}
+/>
+
+---
+
+## Required permissions
+
+<Permissions
+  data={[
+    { action: 'View operating systems', permission: 'os_read', scoped: true },
+    { action: 'Create operating systems', permission: 'os_create' },
+    {
+      action: 'Edit operating systems',
+      permission: 'os_update',
+      scoped: true,
+    },
+    {
+      action: 'Delete operating systems',
+      permission: 'os_delete',
+      scoped: true,
+    },
+    { action: 'View vendors', permission: 'vendors_read' },
+  ]}
+/>
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Applications', href: './applications' },
+    { label: 'Vendors', href: './vendors' },
+    { label: 'Virtual Machines', href: '../vms' },
+    { label: 'VM templates', href: '../vm-templates' },
+  ]}
+/>

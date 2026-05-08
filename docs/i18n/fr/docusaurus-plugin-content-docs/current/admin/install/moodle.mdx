@@ -1,0 +1,147 @@
+---
+id: moodle
+sidebar_label: Intégration Moodle (optionnel)
+sidebar_position: 70
+status: finished
+tags:
+  - installation
+  - moodle
+  - integration
+---
+
+# Moodle — Intégration {#moodle-integration}
+
+OpenVLE peut être connecté à une instance Moodle existante pour synchroniser automatiquement les cours et les participants. Ce guide décrit la mise en place et le fonctionnement de l'intégration.
+
+:::info Entièrement optionnel
+L'intégration Moodle est optionnelle. Si elle n'est pas utilisée, tous les éléments liés à Moodle (association de cours, synchronisation des participants) ne sont pas affichés dans l'interface utilisateur. Aucune configuration n'est nécessaire — l'intégration est désactivée par défaut.
+:::
+
+## Prérequis {#prerequisites}
+
+### Côté Moodle {#moodle-requirements}
+
+1. **Moodle 4.x** (ou supérieur) avec le plugin Web Services activé
+2. Un **jeton API** avec les permissions suivantes (Web Service Functions) :
+   - `core_webservice_get_site_info`
+   - `core_course_get_courses`
+   - `core_course_search_courses`
+   - `core_course_get_courses_by_field`
+   - `core_course_create_courses`
+   - `core_course_update_courses`
+   - `core_course_duplicate_course`
+   - `core_course_delete_courses`
+   - `core_course_get_categories`
+   - `core_enrol_get_enrolled_users`
+   - `enrol_manual_enrol_users`
+   - `enrol_manual_unenrol_users`
+   - `core_user_create_users`
+   - `core_user_get_users_by_field`
+3. Le **plugin Manual Enrolment** doit être activé dans Moodle
+
+### Créer un jeton API {#create-api-token}
+
+1. Administration Moodle > Administration du site > Serveur > Services web > Services externes
+2. Créer un nouveau service (par exemple "OpenVLE API")
+3. Ajouter les fonctions mentionnées ci-dessus au service
+4. Sous **Manage Tokens**, générer un jeton pour un utilisateur administrateur
+5. Copier le jeton et le renseigner comme `MOODLE_TOKEN` dans le fichier `.env` du backend
+
+## Configuration {#configuration}
+
+Saisissez les informations de connexion Moodle dans le fichier `.env` du backend. La référence complète de toutes les variables d'environnement se trouve sous [Configuration](configuration?stack=backend).
+
+| Variable                               | Description                                                                                                     | Exemple                        |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| `MOODLE_ENABLED`                       | Activer l'intégration Moodle                                                                                    | `"True"`                       |
+| `MOODLE_URL`                           | URL de l'instance Moodle (sans barre oblique finale)                                                            | `"https://moodle.example.com"` |
+| `MOODLE_TOKEN`                         | Jeton API Web Services                                                                                          | `"abc123def456"`               |
+| `MOODLE_VERIFY_SSL`                    | Vérifier le certificat SSL                                                                                      | `"True"`                       |
+| `MOODLE_TIMEOUT`                       | Délai d'expiration des requêtes API en secondes                                                                 | `"30"`                         |
+| `MOODLE_SYNC_TIMEOUT`                  | Délai d'expiration des tâches de synchronisation en secondes                                                    | `"10"`                         |
+| `MOODLE_USER_AUTH`                     | Méthode d'authentification pour les utilisateurs Moodle nouvellement créés (par ex. `ldap`, `oauth2`, `manual`) | `"ldap"`                       |
+| `MOODLE_USER_MATCH_FIELD`              | Champ de correspondance entre les utilisateurs OpenVLE et Moodle (`email` ou `username`)                        | `"email"`                      |
+| `MOODLE_COURSE_VISIBLE`                | Visibilité des cours Moodle dupliqués                                                                           | `"True"`                       |
+| `MOODLE_DELETE_COURSE_ON_EVENT_DELETE` | Supprimer le cours Moodle lorsque l'événement est supprimé                                                      | `"False"`                      |
+
+:::info
+Les variables doivent — comme toutes les variables du backend — être définies entre **guillemets**.
+:::
+
+## Vérification {#verification}
+
+1. **Vérifier les journaux du backend** pour une connexion Moodle réussie :
+   ```bash
+   docker logs openvle-backend 2>&1 | grep -i moodle
+   ```
+2. **Récupérer les cours Moodle** — vérifier via l'API OpenVLE que la connexion est établie :
+   ```
+   GET /v1/moodle/courses
+   ```
+   Ce point de terminaison devrait renvoyer une liste des cours Moodle disponibles.
+3. **Créer un événement de test** avec une association de cours Moodle et vérifier que le cours Moodle est correctement dupliqué lors du déploiement.
+
+## Fonctionnement {#how-it-works}
+
+### Association de cours Moodle {#course-mapping}
+
+Chaque **environnement** OpenVLE peut être associé à un cours Moodle en définissant le champ `moodleCourseId`. Cet identifiant de cours Moodle sert de modèle (template).
+
+Via le point de terminaison API `GET /v1/moodle/courses`, les cours Moodle disponibles peuvent être recherchés (nécessite la permission `moodle_read`).
+
+### Démarrage de l'événement (déploiement) {#event-start}
+
+Lorsqu'un événement est démarré et que l'environnement associé possède un `moodleCourseId` :
+
+1. **Duplication du cours Moodle** — Le cours Moodle modèle est dupliqué. Le nouveau cours Moodle reçoit le nom et le slug de l'événement.
+2. **Création des utilisateurs** — Pour chaque participant, une vérification est effectuée pour déterminer s'il existe dans Moodle (correspondance via `MOODLE_USER_MATCH_FIELD`). Si ce n'est pas le cas, l'utilisateur est automatiquement créé.
+3. **Inscription** — Tous les participants sont inscrits dans le nouveau cours Moodle :
+   - Rôle **Enseignant** → rôle Moodle _Editing Teacher_ (Role ID 3)
+   - Rôle **Étudiant** → rôle Moodle _Student_ (Role ID 5)
+
+La progression est suivie en tant que Task/SubTask dans OpenVLE.
+
+### Ajouter un participant (événement actif) {#add-participant}
+
+Lorsqu'un participant est ajouté à un événement **actif** avec un cours Moodle :
+
+1. L'utilisateur est créé dans Moodle si nécessaire
+2. L'utilisateur est inscrit dans le cours Moodle
+
+### Retirer un participant (événement actif) {#remove-participant}
+
+Lorsqu'un participant est retiré d'un événement **actif** avec un cours Moodle :
+
+- L'utilisateur est **désinscrit** du cours Moodle (`unenrol`)
+
+:::caution Perte de données lors de la désinscription
+Lors de la désinscription, les travaux rendus, les notes et la progression d'apprentissage dans le cours Moodle sont perdus. Il s'agit d'une limitation de l'API REST Moodle, qui n'offre actuellement aucune possibilité de désactiver une inscription sans déclencher un e-mail de notification (voir [MDL-70582](https://tracker.moodle.org/browse/MDL-70582)).
+:::
+
+### Fin de l'événement (archivage) {#event-end}
+
+Lorsqu'un événement est terminé :
+
+1. Tous les **étudiants** sont désinscrits du cours Moodle
+2. Les **enseignants** restent inscrits
+3. Le cours Moodle est mis en **non visible**
+
+### Suppression de l'événement {#event-deletion}
+
+Si `MOODLE_DELETE_COURSE_ON_EVENT_DELETE=True` est défini, le cours Moodle est également supprimé lors de la suppression de l'événement. Par défaut, le cours Moodle est conservé.
+
+## Permissions {#permissions}
+
+Pour l'intégration Moodle, la permission ObjectPermission `moodle_read` est nécessaire afin de pouvoir rechercher des cours Moodle via l'API. Cette permission doit être attribuée aux rôles correspondants.
+
+## Dépannage {#troubleshooting}
+
+| Problème                                   | Solution                                                                                                 |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `Failed to connect to Moodle`              | Vérifier `MOODLE_URL` et `MOODLE_TOKEN`. L'instance Moodle est-elle accessible ?                         |
+| `Moodle API Error [invalidtoken]`          | Le jeton est invalide ou expiré. Générer un nouveau jeton dans Moodle.                                   |
+| `Moodle API Error [invalidparameter]`      | L'une des valeurs transmises est invalide. Vérifier les journaux.                                        |
+| `Moodle API Error [accessexception]`       | Le jeton ne possède pas toutes les Web Service Functions requises. Vérifier la configuration du service. |
+| `Model with name: Moodle does not exist`   | L'ObjectPermission pour "Moodle" est manquante. Le backend a-t-il été mis à jour ?                       |
+| L'utilisateur n'est pas trouvé dans Moodle | Vérifier `MOODLE_USER_MATCH_FIELD`. L'e-mail/nom d'utilisateur correspond-il dans les deux systèmes ?    |
+| La création de l'utilisateur échoue        | `MOODLE_USER_AUTH` doit correspondre au plugin d'authentification dans Moodle (par ex. `ldap`).          |

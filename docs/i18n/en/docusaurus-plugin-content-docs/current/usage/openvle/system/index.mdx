@@ -1,0 +1,75 @@
+---
+id: system
+sidebar_label: System
+sidebar_position: 50
+status: finished
+tags:
+  - system
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# System
+
+The **System** section covers all central administration and background functions of OpenVLE.  
+Here you will find system-wide logs, tasks, configurations, and activities that affect the behavior and operation of the entire platform.
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="System"
+  alternative="Linked from the dashboard home page or administrator links"
+/>
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'Monitoring of all activities within the platform',
+    'Management and review of system tasks (e.g., automated processes, maintenance)',
+    'Customization of global system settings',
+    'Traceable change logs and audit information',
+    'Insights into system health and usage for administrators',
+  ]}
+/>
+
+---
+
+## Example or use case
+
+<Example title="Reviewing system activities">
+  An administrator wants to trace when users last made changes to VM templates.
+  She opens the **System → Activities** section and filters by the object "VM
+  templates". She can then see exactly which user performed which action and
+  when.
+</Example>
+
+{/* TODO: Add screenshot – Example activities overview */}
+
+---
+
+## Notes / Special considerations
+
+- The System section is generally only visible to users with elevated permissions.
+- Changes to global settings affect all users.
+- Tasks and activities can be used to analyze problems or monitor system health.
+- Logging is continuous – older entries may be automatically deleted after defined retention periods.
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Activities', href: './activities' },
+    { label: 'Tasks', href: './tasks' },
+    { label: 'Settings', href: './settings' },
+  ]}
+/>

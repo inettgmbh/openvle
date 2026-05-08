@@ -1,0 +1,77 @@
+---
+id: mails
+sidebar_label: E-Mails
+sidebar_position: 30
+status: finished
+tags:
+  - mails
+  - communication
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# E-Mails
+
+OpenVLE kann automatisch E-Mails an Benutzerinnen und Benutzer senden – beispielsweise bei der Erstellung von VMs oder beim Start von Veranstaltungen.  
+Im Bereich E-Mails findest du sowohl alle versendeten Nachrichten als auch die E-Mail-Vorlagen, die für Systemnachrichten verwendet werden, sowie alle vorhandenen E-Mail-Aktionen.
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="E-Mails"
+  alternative="Über Systembenachrichtigungen oder über Objekte mit Mailversand (z. B. Veranstaltungen) verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Übersicht aller versendeten E-Mails mit Status, Empfänger und Versandzeitpunkt',
+    'Einsehen von Betreff, Inhalt und Fehlern beim Versand',
+    'Verwaltung von E-Mail-Vorlagen für Systemaktionen',
+    'Filterung nach Zeitpunkt, Empfänger oder Versandstatus',
+  ]}
+/>
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="E-Mail-Versand bei Veranstaltungsstart">
+  Eine Veranstaltung wird in OpenVLE gestartet. Automatisch wird eine E-Mail mit
+  den Informationen an alle Teilnehmenden versendet. In der E-Mail-Übersicht
+  kann überprüft werden, ob alle Nachrichten erfolgreich zugestellt wurden und
+  welche Vorlage dabei verwendet wurde.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel Mailübersicht */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- E-Mails werden asynchron über Hintergrundaufgaben (Tasks) versendet.
+- Fehlgeschlagene Zustellungen können in der Übersicht erneut versendet werden.
+- Jede E-Mail ist mit der entsprechenden Vorlage verknüpft – Änderungen an Vorlagen wirken sich erst auf zukünftige E-Mails aus.
+- Der E-Mail-Text kann dynamische Platzhalter enthalten (z. B. `{user.name}`, `{event.name}`), die beim Versand ersetzt werden.
+- Der SMTP-Server kann individuell konfiguriert werden, siehe [Administration -> Installation -> Konfiguration](/docs/admin/install/configuration).
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Versendete E-Mails', href: './sent' },
+    { label: 'E-Mail-Vorlagen', href: './templates' },
+    { label: 'E-Mail Aktionen', href: './actions' },
+    { label: 'Einstellungen', href: '../system/settings' },
+  ]}
+/>

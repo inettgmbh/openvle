@@ -1,0 +1,107 @@
+---
+id: openvle
+sidebar_label: OpenVLE
+sidebar_position: 0
+status: finished
+tags:
+  - overview
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# OpenVLE
+
+OpenVLE is a web-based management software designed to efficiently organize and control complex IT infrastructures.  
+It enables the centralized management of **virtual machines**, **users**, **environments**, and **events** in a single, intuitive interface.  
+Even users with limited technical background can easily operate OpenVLE.
+
+OpenVLE integrates modern technologies such as **Proxmox VE**, **Apache Guacamole**, **Cloud-Init**, and the **Qemu Guest Agent** to automatically provision and manage virtual environments.  
+This allows multiple users to access virtual machines simultaneously — securely, efficiently, and without additional software installation.
+
+{/* TODO: Add screenshot — Overview of the management interface */}
+
+---
+
+## Where can I find this section?
+
+After logging in, you are taken directly to the **Dashboard** of OpenVLE.  
+From there, you can access all sections via the **left main menu** — such as:
+
+- **Access Control** for users, roles, and permissions
+- **Environments** and **Events** for learning environments
+- **Virtual Machines** and **Templates** for technical management
+- **System** and **Emails** for settings and notifications
+
+---
+
+## Features at a Glance
+
+OpenVLE offers a wide range of powerful features that cover the entire lifecycle of virtual learning and working environments:
+
+<FeatureList
+  items={[
+    'Create, duplicate, configure, and delete virtual machines — including bulk operations for training sessions or test scenarios',
+    'Template management for efficient reuse of predefined configurations',
+    'Integration of Apache Guacamole for browser-based RDP/SSH access without local software installation',
+    'Environment and event management with automated provisioning for participant groups',
+    'Automated email notifications for system events (e.g., VM creation, event provisioning)',
+    'Policy management for consent to privacy or usage agreements before use',
+    'Tagging and categorization of all objects for better organization and filtering',
+    'Activity logging and change tracking with full traceability',
+    'Management of manufacturers, operating systems, and applications for structured assignment and overview',
+  ]}
+/>
+
+{/* TODO: Add screenshot — Example view of a VM list */}
+
+---
+
+## Step-by-Step Guide
+
+Here is how to get started with OpenVLE:
+
+1. **Log in:** Sign in with your user account.
+2. **Explore the dashboard:** View open tasks, scheduled events, and recent activities.
+3. **Manage virtual machines:** Open the _Virtual Machines_ section to create or start new instances.
+4. **Create environments:** Bundle templates and VMs into an environment to provision them in events.
+5. **Check permissions:** Assign roles and access rights to control usage.
+
+---
+
+## Example or Use Case
+
+<Example title="Provisioning a virtual learning environment for training">
+  An administrator wants to provision a learning environment with multiple
+  preconfigured virtual machines for an IT training session. She first creates a
+  standard environment in the **VM Templates** section, then sets up an
+  **Environment** and schedules an **Event** to automatically assign the
+  machines to the participants.
+</Example>
+
+{/* TODO: Add screenshot — Environment creation workflow */}
+
+---
+
+## Notes / Special Considerations
+
+- Changes in OpenVLE are saved automatically.
+- Certain actions (e.g., VM creation or bulk operations) are executed in the background as **tasks**.
+- You can track all changes via the **activity log**.
+- If certain sections appear grayed out, you may be missing the required permissions.
+- All user actions are logged to ensure transparency and security.
+
+---
+
+## Related Topics
+
+<RelatedLinks
+  items={[
+    { label: 'Dashboard', href: './dashboard' },
+    { label: 'Access Control', href: './access-control' },
+    { label: 'Virtual Machines', href: './vms' },
+    { label: 'Environments', href: './courses' },
+    { label: 'Events', href: './events' },
+  ]}
+/>

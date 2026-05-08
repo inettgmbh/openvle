@@ -1,0 +1,46 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #e6410f;
+  --ifm-color-primary-dark: #cf3b0e;
+  --ifm-color-primary-darker: #c4370d;
+  --ifm-color-primary-darkest: #a12e0b;
+  --ifm-color-primary-light: #f04e1d;
+  --ifm-color-primary-lighter: #f15729;
+  --ifm-color-primary-lightest: #f26034;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #e6410f;
+  --ifm-color-primary-dark: #cf3b0e;
+  --ifm-color-primary-darker: #c4370d;
+  --ifm-color-primary-darkest: #b8340c;
+  --ifm-color-primary-light: #f04e1d;
+  --ifm-color-primary-lighter: #f15729;
+  --ifm-color-primary-lightest: #f26034;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+table {
+  display: block;
+  overflow-x: auto;
+  white-space: normal;
+}
+
+/* Compact tables for .env config tables */
+.compact-table table {
+  display: table;
+  overflow-x: visible;
+  white-space: normal;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}

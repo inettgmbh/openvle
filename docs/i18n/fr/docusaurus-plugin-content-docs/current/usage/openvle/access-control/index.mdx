@@ -1,0 +1,145 @@
+---
+id: access-control
+sidebar_label: Contrôle d'accès
+sidebar_position: 110
+status: finished
+tags:
+  - access-control
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Contrôle d'accès
+
+OpenVLE dispose d'une gestion des utilisateurs flexible et performante, qui constitue le fondement de l'ensemble du concept de rôles et de droits.  
+Elle permet un contrôle finement gradué de l'accès aux fonctions, objets et contenus au sein du système.
+
+{/* TODO: Ajouter une capture d'écran – Aperçu du contrôle d'accès */}
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Contrôle d'accès"
+  alternative="Accessible via les liens Utilisateurs, Rôles ou Permissions"
+/>
+
+---
+
+## Aperçu des fonctionnalités
+
+<FeatureList
+  items={[
+    "Gestion de tous les comptes utilisateurs au sein d'OpenVLE",
+    'Création et attribution de rôles avec des permissions définies',
+    'Attribution de droits à granularité fine au niveau des objets (par ex. une VM individuelle ou un modèle de VM individuel)',
+    'Attribution de permissions au niveau du modèle (par ex. tous les environnements ou tous les événements)',
+    'Gestion manuelle de comptes utilisateurs locaux en complément des comptes centraux',
+    'Vérification et ajustement des permissions individuelles',
+    'Héritage des permissions pour les objets créés',
+  ]}
+/>
+
+{/* TODO: Ajouter une capture d'écran – Exemple : aperçu des rôles */}
+
+---
+
+## Authentification
+
+Les utilisateurs peuvent se connecter à **OpenVLE** de deux manières :
+
+- **Authentification externe (LDAP / Windows AD / OpenID Connect) :**  
+  En règle générale, la connexion s'effectue via un fournisseur d'identité externe (IdP).  
+  Les identifiants sont gérés de manière centralisée et les comptes utilisateurs sont automatiquement créés dans OpenVLE lors de la première connexion.
+
+- **Compte local :**  
+  Il est également possible de créer des comptes utilisateurs locaux directement dans OpenVLE, par exemple pour des personnes externes, des scénarios de test ou des cas particuliers.
+
+> **Remarque :**  
+> Les comptes locaux conviennent particulièrement aux **accès temporaires**, aux **participants de formations** ou aux **comptes de service** qui ne disposent pas d'un identifiant centralisé.
+
+---
+
+## Rôles et permissions
+
+Dans **OpenVLE**, les droits d'accès sont gérés via des **rôles** et des **permissions** :
+
+- **Rôles :**  
+  Les rôles regroupent plusieurs permissions en groupes logiques (par ex. _Administrateur_, _Enseignant_ ou _Participant_).  
+  Un utilisateur peut appartenir simultanément à plusieurs rôles.
+
+- **Permissions directes :**  
+  Les permissions peuvent également être attribuées directement à des utilisateurs individuels, indépendamment des rôles, par exemple pour des droits spéciaux ou un contrôle d'accès particulièrement fin.
+
+> **Remarque :**  
+> La combinaison de **rôles** et de **permissions individuelles** permet un modèle de permissions flexible et sécurisé, capable de couvrir aussi bien des scénarios d'accès simples que complexes.
+
+---
+
+## Types de permissions
+
+Le système de permissions dans **OpenVLE** distingue deux niveaux :
+
+- **Permissions spécifiques à un objet :**  
+  L'accès est accordé de manière ciblée à **un objet spécifique**, par exemple à un **modèle de VM**, une **machine virtuelle** ou un **événement** individuel.
+
+- **Permissions spécifiques à un modèle :**  
+  L'accès s'applique **globalement à tous les objets d'un type donné**, par exemple à **tous les événements** ou **tous les modèles**.
+
+Ainsi, un utilisateur peut par exemple n'accéder qu'à **une seule machine virtuelle** ou, avec une permission spécifique au modèle, à **toutes les machines virtuelles** du système.
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Un utilisateur obtient l'accès à certaines machines virtuelles">
+  Un enseignant ne doit pouvoir accéder qu'aux machines virtuelles appartenant à
+  **ses événements**. Pour cela, le rôle **Enseignant** est attribué à
+  l'utilisateur, lequel contient des permissions générales pour afficher les
+  machines virtuelles. De plus, l'enseignant reçoit des **permissions
+  spécifiques à l'objet** pour exactement les machines virtuelles assignées à
+  son événement. Il n'a pas accès aux autres VM.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran – Exemple d'attribution de rôle */}
+
+---
+
+## Remarques / Particularités
+
+- **Les permissions prennent effet immédiatement :**  
+  Les modifications apportées aux rôles ou aux permissions d'objet deviennent actives immédiatement après l'enregistrement. Une reconnexion de l'utilisateur n'est pas nécessaire.
+
+- **Comportement d'héritage :**  
+  Les permissions de rôle s'appliquent globalement, tandis que les permissions d'objet ne s'appliquent qu'à l'objet concerné.  
+  Les permissions d'objet peuvent étendre les permissions de rôle existantes, mais pas les restreindre.
+
+- **Priorité en cas de conflit :**  
+  Si un utilisateur dispose de plusieurs rôles, leurs permissions sont fusionnées (« principe d'union »).  
+  Un retrait explicite de permissions n'est pas possible. Les droits manquants doivent être supprimés en retirant le rôle ou la permission correspondante.
+
+- **Visibilité des onglets :**  
+  Certaines sections ou onglets (par ex. **Permissions**, **Connexions**, **Modèles de VM**) ne sont affichés que si l'utilisateur dispose des permissions requises.
+
+- **Transparence pour les administrateurs :**  
+  Les administrateurs peuvent à tout moment consulter dans la section **Contrôle d'accès → Permissions** quels utilisateurs possèdent quels droits.
+
+---
+
+## Sujets associés
+
+<RelatedLinks
+  items={[
+    { label: 'Gestion des utilisateurs', href: './users' },
+    { label: 'Rôles', href: './roles' },
+    { label: 'Permissions', href: './permissions' },
+    { label: 'Politiques', href: './policies' },
+  ]}
+/>

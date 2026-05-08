@@ -1,0 +1,225 @@
+---
+id: templates
+sidebar_label: Modèles
+sidebar_position: 30
+status: finished
+tags:
+  - connections
+  - guacamole
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Modèles de connexion
+
+Les modèles de connexion définissent dans **OpenVLE** des paramètres réutilisables pour les connexions.  
+Ils permettent de stocker de manière standardisée des paramètres de connexion tels que le **protocole**, le **port**, le **nom d'utilisateur** ou le **mot de passe**, afin que les administrateurs puissent créer rapidement et de manière cohérente de nouvelles connexions.
+
+{/* TODO: Ajouter une capture d'écran -- Vue d'ensemble des modèles de connexion */}
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Connexions → Modèles"
+  alternative="Accessible via les machines virtuelles, les modèles de VM ou les connexions"
+/>
+
+---
+
+## Fonctionnalités en un coup d'oeil
+
+<FeatureList
+  items={[
+    'Un modèle de connexion est toujours attribué à exactement une VM ou un modèle de VM',
+    'Affichage de tous les modèles de connexion existants',
+    'Création de nouveaux modèles avec des valeurs par défaut définies pour les protocoles (par ex. RDP, SSH)',
+    'Suppression des modèles obsolètes',
+  ]}
+/>
+
+{/* TODO: Ajouter une capture d'écran -- Exemple : modification d'un modèle de connexion */}
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Label',
+      description:
+        "Nom d'affichage du modèle de connexion. Affiché dans les listes et les dialogues, généré automatiquement.",
+    },
+    {
+      name: 'VM ou modèle de VM',
+      description:
+        "Référence à la VM ou au modèle de VM attribué, pour lequel ce modèle de connexion s'applique.",
+    },
+    {
+      name: 'Protocole',
+      description:
+        'Protocole de communication utilisé pour la connexion. Les valeurs prises en charge sont **SSH** ou **RDP**.',
+    },
+    {
+      name: 'Port',
+      description:
+        'Port réseau pour la connexion. Par défaut **22** pour SSH et **3389** pour RDP.',
+    },
+    {
+      name: "Nom d'utilisateur",
+      description:
+        "Nom d'utilisateur de connexion utilisé par le serveur Apache Guacamole pour l'authentification sur la VM.",
+    },
+    {
+      name: 'Mot de passe',
+      description:
+        "Mot de passe du compte utilisateur spécifié. Utilisé par le serveur Apache Guacamole pour établir la connexion. N'est pas affiché à nouveau.",
+    },
+  ]}
+/>
+
+---
+
+## Créer un modèle de connexion
+
+1. Ouvrez dans le menu principal la section **Connexions → Modèles**.
+2. Cliquez sur **Ajouter** pour créer un nouveau modèle de connexion.
+3. Sélectionnez le **protocole** souhaité (par ex. RDP ou SSH).
+4. Indiquez les paramètres par défaut tels que le **port**, le **nom d'utilisateur** et le **mot de passe**.
+5. Enregistrez le modèle.
+6. Utilisez ensuite le modèle lors de la création de nouvelles connexions.
+
+:::info
+Les modèles de connexion ne peuvent **pas être modifiés**, mais uniquement **recréés**.
+:::
+
+---
+
+## Supprimer un modèle de connexion
+
+1. Ouvrez dans le menu principal la section **Connexions → Modèles**.
+2. Recherchez le modèle souhaité dans la liste.
+3. Cliquez sur **Supprimer**, ou ouvrez le menu contextuel et sélectionnez **Supprimer**.
+4. Confirmez la suppression dans le dialogue affiché.
+5. Le modèle de connexion est alors définitivement supprimé.
+
+:::warning
+Les modèles de connexion ne peuvent être **supprimés que si aucune connexion** n'existe encore pour ce modèle.  
+Si des connexions dépendantes existent encore, celles-ci doivent d'abord être supprimées avant que le modèle puisse être retiré.
+:::
+
+---
+
+## Duplication automatique
+
+Lors de la création d'une nouvelle VM, tous les **modèles de connexion** attribués au **modèle de VM** utilisé sont automatiquement dupliqués et attribués à la VM nouvellement créée.  
+Les modèles de connexion ainsi générés peuvent être utilisés pour établir des connexions vers la VM, que ce soit manuellement ou dans le cadre d'un événement.
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Créer un modèle RDP standard pour les environnements de formation">
+  Une administratrice souhaite s'assurer que toutes les VM de formation sont
+  créées avec les mêmes paramètres RDP. Dans la section **Modèles de
+  connexion**, elle crée un nouveau modèle, sélectionne le protocole **RDP** et
+  saisit les identifiants de connexion. Par la suite, de nouvelles connexions
+  peuvent être créées sur la base de ce modèle de connexion, liées aux
+  utilisateurs ou VM correspondants.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran -- Exemple d'un modèle de connexion RDP */}
+
+---
+
+## Remarques / Particularités
+
+- Les modèles de connexion ne peuvent pas être modifiés, mais uniquement recréés.
+- Les modèles servent à l'uniformisation et accélèrent le déploiement de nouvelles VM ou connexions utilisateur.
+- Les connexions existantes conservent leurs paramètres individuels.
+- Via la liste des modèles de connexion, il est possible de vérifier quelles VM ou connexions utilisent un modèle donné.
+- Seuls les administrateurs ou les utilisateurs disposant des permissions appropriées peuvent créer ou supprimer des modèles de connexion.
+
+---
+
+## Relations avec d'autres objets
+
+<ObjectRelations
+  showChangelogs={false}
+  items={[
+    {
+      object: 'VM / Modèle de VM',
+      description:
+        'Un modèle de connexion est attribué à exactement une VM ou un modèle de VM.',
+      behavior:
+        'Lors de la suppression de la VM ou du modèle de VM, tous les modèles de connexion associés et les connexions basées sur ceux-ci sont automatiquement supprimés.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises
+
+<Permissions
+  data={[
+    {
+      action: 'Afficher les connexions',
+      permission: 'guacamoles_read',
+      scoped: true,
+    },
+    {
+      action: 'Créer des connexions',
+      permission: 'guacamoles_create',
+    },
+    {
+      action: 'Supprimer des connexions',
+      permission: 'guacamoles_delete',
+      scoped: true,
+    },
+    {
+      action: 'Afficher les modèles de connexion',
+      permission: 'guacamole_connection_profiles_read',
+      scoped: true,
+    },
+    {
+      action: 'Créer des modèles de connexion',
+      permission: 'guacamole_connection_profiles_create',
+    },
+    {
+      action: 'Supprimer des modèles de connexion',
+      permission: 'guacamole_connection_profiles_delete',
+      scoped: true,
+    },
+    {
+      action: 'Afficher les machines virtuelles',
+      permission: 'vms_read',
+      scoped: true,
+    },
+    {
+      action: 'Lire les modèles de VM',
+      permission: 'templates_read',
+      scoped: true,
+    },
+  ]}
+/>
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: 'Connexions', href: './connection' },
+    { label: 'Machines virtuelles', href: '../vms' },
+    { label: 'Modèles de VM', href: '../vm-templates' },
+  ]}
+/>

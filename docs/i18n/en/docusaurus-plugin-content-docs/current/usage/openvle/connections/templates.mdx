@@ -1,0 +1,224 @@
+---
+id: templates
+sidebar_label: Templates
+sidebar_position: 30
+status: finished
+tags:
+  - connections
+  - guacamole
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Connection templates
+
+Connection templates define reusable settings for connections in **OpenVLE**.  
+They allow you to store standardized connection parameters such as **protocol**, **port**, **username**, or **password**, so that administrators can create new connections quickly and consistently.
+
+{/* TODO: Add screenshot -- Connection templates overview */}
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Connections → Templates"
+  alternative="Linked from Virtual Machines, VM templates, or Connections"
+/>
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'A connection template is always assigned to exactly one VM or VM template',
+    'View all existing connection templates',
+    'Create new templates with defined default values for protocols (e.g. RDP, SSH)',
+    'Delete templates that are no longer needed',
+  ]}
+/>
+
+{/* TODO: Add screenshot -- Example: Edit connection template */}
+
+---
+
+## Important fields at a glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Label',
+      description:
+        'Display name of the connection template. Shown in lists and dialogs and automatically generated.',
+    },
+    {
+      name: 'VM or VM template',
+      description:
+        'Reference to the assigned VM or VM template that this connection template applies to.',
+    },
+    {
+      name: 'Protocol',
+      description:
+        'Communication protocol used for the connection. Supported values are **SSH** or **RDP**.',
+    },
+    {
+      name: 'Port',
+      description:
+        'Network port for the connection. Default is **22** for SSH and **3389** for RDP.',
+    },
+    {
+      name: 'Username',
+      description:
+        'Login username used by the Apache Guacamole server for authentication on the VM.',
+    },
+    {
+      name: 'Password',
+      description:
+        'Password for the specified user account. Used by the Apache Guacamole server to establish the connection. Not displayed again after creation.',
+    },
+  ]}
+/>
+
+---
+
+## Creating a connection template
+
+1. Open the **Connections → Templates** section from the main menu.
+2. Click **Add** to create a new connection template.
+3. Select the desired **protocol** (e.g. RDP or SSH).
+4. Enter default parameters such as **port**, **username**, and **password**.
+5. Save the template.
+6. You can then use the template when creating new connections.
+
+:::info
+Connection templates **cannot be edited**, only **recreated**.
+:::
+
+---
+
+## Deleting a connection template
+
+1. Open the **Connections → Templates** section from the main menu.
+2. Find the desired template in the list.
+3. Click **Delete**, or open the context menu and select **Delete**.
+4. Confirm the deletion in the displayed dialog.
+5. The connection template is then permanently removed.
+
+:::warning
+Connection templates can **only be deleted** when **no connections** based on this template exist.  
+If dependent connections still exist, they must be deleted first before the template can be removed.
+:::
+
+---
+
+## Automatic duplication
+
+When a new VM is created, all **connection templates** assigned to the **VM template** used are automatically duplicated and assigned to the newly created VM.  
+This way, the newly generated connection templates can be used to establish connections to the VM -- either manually or as part of an event.
+
+---
+
+## Example or use case
+
+<Example title="Create a standard RDP template for training environments">
+  An administrator wants to ensure that all training VMs are created with the
+  same RDP settings. She creates a new template in the **Connection templates**
+  section, selects the **RDP** protocol, and enters the login credentials.
+  Connections can then be created based on this connection template and assigned
+  to the corresponding users or VMs.
+</Example>
+
+{/* TODO: Add screenshot -- RDP connection template example */}
+
+---
+
+## Notes / special considerations
+
+- Connection templates cannot be edited, only recreated.
+- Templates serve to standardize and speed up the provisioning of new VMs or user connections.
+- Existing connections retain their individual settings.
+- The connection templates list allows you to see which VMs or connections use a specific template.
+- Only administrators or users with the appropriate permissions may create or delete connection templates.
+
+---
+
+## Relationships to other objects
+
+<ObjectRelations
+  showChangelogs={false}
+  items={[
+    {
+      object: 'VM / VM template',
+      description:
+        'A connection template is assigned to exactly one VM or VM template.',
+      behavior:
+        'When the VM or VM template is deleted, all associated connection templates and connections based on them are automatically deleted.',
+    },
+  ]}
+/>
+
+---
+
+## Required permissions
+
+<Permissions
+  data={[
+    {
+      action: 'View connections',
+      permission: 'guacamoles_read',
+      scoped: true,
+    },
+    {
+      action: 'Create connections',
+      permission: 'guacamoles_create',
+    },
+    {
+      action: 'Delete connections',
+      permission: 'guacamoles_delete',
+      scoped: true,
+    },
+    {
+      action: 'View connection templates',
+      permission: 'guacamole_connection_profiles_read',
+      scoped: true,
+    },
+    {
+      action: 'Create connection templates',
+      permission: 'guacamole_connection_profiles_create',
+    },
+    {
+      action: 'Delete connection templates',
+      permission: 'guacamole_connection_profiles_delete',
+      scoped: true,
+    },
+    {
+      action: 'View virtual machines',
+      permission: 'vms_read',
+      scoped: true,
+    },
+    {
+      action: 'Read VM templates',
+      permission: 'templates_read',
+      scoped: true,
+    },
+  ]}
+/>
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Connections', href: './connection' },
+    { label: 'Virtual Machines', href: '../vms' },
+    { label: 'VM templates', href: '../vm-templates' },
+  ]}
+/>

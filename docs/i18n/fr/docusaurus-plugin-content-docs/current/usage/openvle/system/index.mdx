@@ -1,0 +1,76 @@
+---
+id: system
+sidebar_label: Système
+sidebar_position: 50
+status: finished
+tags:
+  - system
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Système
+
+La section **Système** regroupe toutes les fonctions centrales d'administration et d'arrière-plan d'OpenVLE.  
+Vous y trouverez les journaux système, les tâches, les configurations et les activités qui concernent le comportement et le fonctionnement de l'ensemble de la plateforme.
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Système"
+  alternative="Accessible via la page d'accueil du tableau de bord ou les liens administrateur"
+/>
+
+---
+
+## Aperçu des fonctionnalités
+
+<FeatureList
+  items={[
+    'Surveillance de toutes les activités au sein de la plateforme',
+    'Gestion et consultation des tâches système (par ex. processus automatisés, maintenance)',
+    'Personnalisation des paramètres système globaux',
+    "Journaux de modifications traçables et informations d'audit",
+    "Informations sur l'état du système et l'utilisation pour les administrateurs",
+  ]}
+/>
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Vérifier les activités système">
+  Une administratrice souhaite savoir quand des utilisateurs ont effectué des
+  modifications sur les modèles de VM pour la dernière fois. Elle ouvre la
+  section **Système → Activités** et filtre par l'objet « Modèles de VM ». Elle
+  peut ensuite voir précisément quel utilisateur a effectué quelle action et à
+  quel moment.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran – Exemple de vue d'ensemble des activités */}
+
+---
+
+## Remarques / Particularités
+
+- La section Système n'est généralement visible que pour les utilisateurs disposant de permissions étendues.
+- Les modifications des paramètres globaux affectent tous les utilisateurs.
+- Les tâches et les activités peuvent être utilisées pour analyser des problèmes ou surveiller l'état du système.
+- La journalisation est continue – les entrées plus anciennes peuvent être automatiquement supprimées après des délais de conservation définis.
+
+---
+
+## Sujets associés
+
+<RelatedLinks
+  items={[
+    { label: 'Activités', href: './activities' },
+    { label: 'Tâches', href: './tasks' },
+    { label: 'Paramètres', href: './settings' },
+  ]}
+/>

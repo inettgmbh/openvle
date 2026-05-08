@@ -1,0 +1,454 @@
+---
+id: templates
+sidebar_label: Modèles de VM
+sidebar_position: 105
+status: finished
+tags:
+  - infrastructure
+  - templates
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+# Modèles de VM
+
+Les modèles de VM servent dans OpenVLE de base pour la création de machines virtuelles.  
+Ils contiennent un environnement système préinstallé avec tous les outils et services nécessaires et sont généralement utilisés dans le cadre d'environnements ou d'événements.  
+Grâce aux modèles, de nouvelles VM peuvent être déployées rapidement et de manière cohérente.
+
+{/* TODO: Ajouter une capture d'écran -- Vue d'ensemble des modèles de VM */}
+
+---
+
+## Où trouver cette section ? {#where}
+
+<NavigationHint
+  path="Modèles de VM"
+  alternative="Accessible via les machines virtuelles ou les connexions"
+/>
+
+---
+
+## Aperçu des fonctionnalités {#features}
+
+<FeatureList
+  items={[
+    'Afficher, créer, modifier et supprimer des modèles de VM',
+    'Importer des templates existants depuis Proxmox VE',
+    "Associer des modèles à des systèmes d'exploitation et des applications",
+    'Définir des paramètres techniques comme le CPU, la RAM et la taille du disque',
+    'Attribuer des métadonnées (tags) et des descriptions pour une meilleure organisation',
+  ]}
+/>
+
+{/* TODO: Ajouter une capture d'écran -- Vue détaillée d'un modèle */}
+
+---
+
+## Aperçu des champs importants {#fields}
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        'Nom du modèle de VM. Affiché dans l\'ensemble de l\'interface et doit être choisi de manière unique et explicite, par ex. "Debian12-Base" ou "Windows10-Formation".',
+    },
+    {
+      name: "Système d'exploitation",
+      description:
+        "Le système d'exploitation sous-jacent du modèle. Celui-ci est utilisé pour la configuration automatique et le filtrage dans le système.",
+    },
+    {
+      name: 'CPU',
+      description:
+        'Nombre de vCPU que les VM basées sur ce modèle recevront. La valeur détermine la puissance de calcul de chaque machine créée.',
+    },
+    {
+      name: 'Mémoire vive',
+      description:
+        'Mémoire vive (RAM) en gigaoctets attribuée aux nouvelles VM. Influence directement les performances des machines.',
+    },
+    {
+      name: 'Infos Proxmox VE',
+      description:
+        "Attributions internes au système vers Proxmox VE, composées du **VMID** (identifiant unique sur l'hôte) et du **nom du noeud** (système hôte au sein du cluster). Ces champs sont gérés automatiquement et sont en lecture seule.",
+    },
+    {
+      name: 'Description',
+      description:
+        'Champ de texte libre pour la documentation ou les commentaires sur le modèle de VM. Prend en charge la syntaxe Markdown (par ex. pour les listes ou les mises en évidence).',
+    },
+  ]}
+/>
+
+---
+
+## Importer un modèle de VM {#import}
+
+Les modèles de VM déjà présents sur le serveur Proxmox VE peuvent être importés dans OpenVLE. Cela permet de réutiliser directement les modèles existants au sein d'OpenVLE.  
+Pour cela, il faut indiquer le **VMID Proxmox** du modèle souhaité sous `Modèles de VM -> Importer`.
+
+Ensuite, les informations du modèle sont automatiquement chargées depuis le serveur Proxmox VE.  
+Ces données importées peuvent être ajustées si nécessaire -- un ajustement n'est toutefois généralement pas nécessaire, **sauf pour le champ "Système d'exploitation"**.  
+Comme le serveur Proxmox VE ne peut pas lire cette information de manière exacte, elle doit être indiquée manuellement une seule fois.
+
+:::info
+OpenVLE ne peut lire que les modèles de VM du serveur Proxmox VE pour lesquels le token API OpenVLE dispose des permissions correspondantes dans le cluster Proxmox VE.  
+Si les permissions du token API ont été configurées conformément à la documentation, OpenVLE ne peut voir que les modèles de VM (et les VM) au sein du pool Proxmox associé.  
+Il est donc impératif d'attribuer les modèles de VM à ce pool dans le serveur Proxmox VE.  
+Dans le cas contraire, l'importation entraîne une erreur **"Modèle de VM introuvable"**.
+:::
+
+---
+
+## Créer un modèle de VM {#create-template}
+
+:::warning
+La VM qui doit servir de base au modèle de VM doit être **éteinte**. Seules les VM éteintes peuvent être copiées en modèle de VM. Arrêtez la VM au préalable via OpenVLE si nécessaire.
+:::
+
+1. Ouvrez la section **Modèles de VM** dans le menu principal.
+2. Cliquez sur **Ajouter** pour créer un nouveau modèle de VM.
+3. Sélectionnez la **VM** souhaitée comme base.
+4. Saisissez un **nom** pour le modèle de VM.
+5. Les autres champs sont automatiquement préremplis sur la base de la VM choisie. Ils peuvent être ajustés si nécessaire.
+6. Enregistrez le modèle de VM.
+7. Le modèle de VM est maintenant créé automatiquement en arrière-plan.
+8. Utilisez ce modèle de VM pour créer de nouvelles machines virtuelles ou préparer des événements.
+
+:::info
+Lors de la création d'un modèle de VM, les associations suivantes sont automatiquement créées ou héritées :
+
+- **Applications ↔ VM** : Toutes les applications assignées à la VM sont automatiquement assignées au nouveau modèle de VM.
+- **Modèles de connexion ↔ VM** : Tous les modèles de connexion de la VM sont copiés et assignés au modèle de VM.  
+  :::
+
+---
+
+## Modifier un modèle de VM {#edit}
+
+1. Ouvrez la section **Modèles de VM** dans le menu principal.
+2. Recherchez le modèle de VM souhaité dans la liste.
+3. Cliquez sur **Modifier** ou ouvrez le menu contextuel du modèle de VM et sélectionnez **Modifier**.
+4. Le formulaire affiche toutes les données actuelles du modèle de VM.
+5. Ajustez les champs souhaités, par ex. le nom, la description, le CPU, la mémoire vive ou le système d'exploitation.
+6. Enregistrez les modifications.
+7. La mise à jour est appliquée en arrière-plan.
+
+:::note
+Les modifications des **modèles de VM** n'affectent **pas** les **VM** déjà créées.
+:::
+
+---
+
+## Supprimer un modèle de VM {#delete}
+
+1. Ouvrez la section **Modèles de VM** dans le menu principal.
+2. Recherchez le modèle de VM souhaité dans la liste.
+3. Cliquez sur **Supprimer** ou ouvrez le menu contextuel du modèle de VM et sélectionnez **Supprimer**.
+4. Confirmez la suppression dans la boîte de dialogue affichée.
+5. Le modèle de VM est alors définitivement supprimé.
+6. Une fois le processus terminé, le modèle de VM disparaît de la vue d'ensemble.
+
+:::danger
+Lors de la suppression d'un modèle de VM, tous les modèles de connexion associés sont **automatiquement supprimés**.  
+Cette opération ne peut pas être annulée.
+:::
+
+---
+
+## Exigences pour les modèles de VM {#requirements}
+
+Pour qu'OpenVLE puisse communiquer correctement avec les différentes machines virtuelles, certaines conditions préalables doivent être remplies lors de la création des modèles de VM.
+
+Pour tous les modèles, quel que soit le système d'exploitation :
+
+- **Qemu Guest Agent** doit être installé et activé (dans la VM et sur l'hôte PVE).
+- **Cloud-Init** doit être installé et activé pour qu'OpenVLE puisse contrôler les automatisations telles que les connexions et les configurations réseau.
+
+:::tip
+La plupart des exigences ne doivent être mises en oeuvre qu'une seule fois pour le **modèle maître** respectif par système d'exploitation.  
+Toutes les VM ou modèles ultérieurs basés sur celui-ci reprennent automatiquement les paramètres.
+:::
+
+:::warning
+**Les étapes suivantes ne sont pas encore entièrement documentées.**  
+Les instructions pour Linux sont largement testées, tandis que la configuration Windows est encore en cours d'extension.
+:::
+
+---
+
+### Configuration initiale {#initial-setup}
+
+Ces étapes ne doivent être effectuées qu'une seule fois par système d'exploitation et modèle maître :
+
+<Tabs groupId="operating-systems" queryString="current-os">
+  <TabItem value="debian-ubuntu" label="Debian/Ubuntu" default>
+
+    ```bash
+    sudo apt update
+    sudo apt install qemu-guest-agent cloud-init
+    ```
+
+  </TabItem>
+  <TabItem value="arch" label="Arch Linux">
+
+    ```bash
+    sudo pacman -Syu
+    sudo pacman -S qemu-guest-agent cloud-init
+    ```
+
+  </TabItem>
+  <TabItem value="rhel-centos-fedora" label="RHEL/CentOS/Fedora">
+
+    ```bash
+    sudo dnf update
+    sudo dnf install qemu-guest-agent cloud-init
+    ```
+
+  </TabItem>
+  <TabItem value="opensuse" label="OpenSUSE">
+
+    ```bash
+    sudo zypper refresh
+    sudo zypper install qemu-guest-agent cloud-init
+    ```
+
+  </TabItem>
+  <TabItem value="windows" label="Windows">
+    - Installer et configurer les pilotes VirtIO  
+    - Installer et activer le Qemu Guest Agent  
+    - Installer et activer Cloudbase-Init  
+    - Désactiver BitLocker (`manage-bde -off C:`)  
+    - Supprimer les applications Windows Store superflues  
+  </TabItem>
+  <TabItem value="other" label="Autres">
+    Les paquets `qemu-guest-agent` et `cloud-init` doivent être installés et
+    configurés. Veuillez consulter la documentation officielle du
+    système d'exploitation pour trouver les commandes correspondantes
+    d'installation et de mise à jour.
+  </TabItem>
+</Tabs>
+
+---
+
+### Préparation avant la conversion {#pre-conversion}
+
+Ces étapes doivent être effectuées **à chaque fois** avant qu'une VM ne soit convertie en modèle :
+
+<Tabs groupId="operating-systems" queryString="current-os">
+  <TabItem value="debian-ubuntu" label="Debian/Ubuntu" default>
+
+    ```bash
+    su root
+    rm -rf /etc/cloud/cloud-init.disabled /tmp/* /var/tmp/*
+    apt clean && apt autoclean
+    cloud-init clean
+    truncate -s 0 /etc/machine-id /var/lib/dbus/machine-id
+    find /var/log -type f -exec truncate -s 0 {} \;
+    find /var/log -type f -regex ".*\.log\.[0-9]*\(\.gz\)?$" -delete
+    find /var/log -type f -name "*.log.*.gz" -delete
+    find / -name *.bash_history -exec rm -f {} \;
+    find / -name *.sh_history -exec rm -f {} \;
+    find / -name *.zsh_history -exec rm -f {} \;
+    find / -name known_hosts -exec rm -f {} \;
+    history -c
+    ```
+
+  </TabItem>
+  <TabItem value="arch" label="Arch Linux">
+
+      ```bash
+      su root
+      rm -rf /etc/cloud/cloud-init.disabled /tmp/* /var/tmp/*
+      pacman -Sc && pacman -Scc
+      cloud-init clean
+      truncate -s 0 /etc/machine-id /var/lib/dbus/machine-id
+      find /var/log -type f -exec truncate -s 0 {} \;
+      find /var/log -type f -regex ".*\.log\.[0-9]*\(\.gz\)?$" -delete
+      find /var/log -type f -name "*.log.*.gz" -delete
+      find / -name *.bash_history -exec rm -f {} \;
+      find / -name *.sh_history -exec rm -f {} \;
+      find / -name *.zsh_history -exec rm -f {} \;
+      find / -name known_hosts -exec rm -f {} \;
+      history -c
+      ```
+
+  </TabItem>
+  <TabItem value="rhel-centos-fedora" label="RHEL/CentOS/Fedora">
+
+    ```bash
+    su root
+    rm -rf /etc/cloud/cloud-init.disabled /tmp/* /var/tmp/*
+    dnf clean all && dnf autoremove
+    cloud-init clean
+    truncate -s 0 /etc/machine-id /var/lib/dbus/machine-id
+    find /var/log -type f -exec truncate -s 0 {} \;
+    find /var/log -type f -regex ".*\.log\.[0-9]*\(\.gz\)?$" -delete
+    find /var/log -type f -name "*.log.*.gz" -delete
+    find / -name *.bash_history -exec rm -f {} \;
+    find / -name *.sh_history -exec rm -f {} \;
+    find / -name *.zsh_history -exec rm -f {} \;
+    find / -name known_hosts -exec rm -f {} \;
+    history -c
+    ```
+
+  </TabItem>
+  <TabItem value="opensuse" label="OpenSUSE">
+
+    ```bash
+    su root
+    rm -rf /etc/cloud/cloud-init.disabled /tmp/* /var/tmp/*
+    zypper clean && zypper clean --all
+    cloud-init clean
+    truncate -s 0 /etc/machine-id /var/lib/dbus/machine-id
+    find /var/log -type f -exec truncate -s 0 {} \;
+    find /var/log -type f -regex ".*\.log\.[0-9]*\(\.gz\)?$" -delete
+    find /var/log -type f -name "*.log.*.gz" -delete
+    find / -name *.bash_history -exec rm -f {} \;
+    find / -name *.sh_history -exec rm -f {} \;
+    find / -name *.zsh_history -exec rm -f {} \;
+    find / -name known_hosts -exec rm -f {} \;
+    history -c
+    ```
+
+  </TabItem>
+  <TabItem value="windows" label="Windows">
+
+    ```powershell
+    wevtutil cl System
+    wevtutil cl Application
+    wevtutil cl Security
+    Clear-History
+    ```
+
+  </TabItem>
+  <TabItem value="other" label="Autres">
+  Le paquet `cloud-init` doit être réinitialisé afin qu'il s'exécute correctement au prochain démarrage.  
+  Il est également recommandé de supprimer ou vider les entrées de journal, les caches de paquets, les historiques du shell, les clés SSH et l'identifiant machine.  
+  Veuillez consulter la documentation officielle du système d'exploitation pour trouver les commandes de configuration correspondantes.
+  </TabItem>
+</Tabs>
+
+Après avoir terminé ces étapes, la VM peut être arrêtée et **convertie en modèle de VM**.
+
+---
+
+## Exemple ou cas d'utilisation {#example}
+
+<Example title="Créer un modèle maître pour Debian">
+  Un administrateur système souhaite créer un nouveau modèle Debian pour les
+  environnements de formation. Cette personne installe dans la VM le Qemu Guest
+  Agent et Cloud-Init, exécute les commandes de nettoyage puis convertit la
+  machine en modèle. Ensuite, ce modèle peut être utilisé dans OpenVLE pour
+  déployer rapidement de nouvelles VM pour des événements ou des tests.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran -- Exemple : Modèle maître Debian */}
+
+---
+
+## Remarques / Particularités {#notes}
+
+- Les modèles de VM constituent la base de toutes les machines virtuelles créées automatiquement dans OpenVLE.  
+  Les modifications d'un modèle de VM n'affectent **pas rétroactivement** les VM déjà créées.
+
+- Lors de la création ou de l'importation d'un modèle de VM, une **tâche** est lancée en arrière-plan.  
+  Vous pouvez suivre la progression et les éventuels messages d'erreur dans la section **Système -> Tâches**.
+
+- Un modèle de VM ne peut être importé ou créé avec succès que si le **Qemu Guest Agent** et **Cloud-Init** sont correctement configurés au sein du système.
+
+- Lorsqu'un modèle de VM est supprimé, tous les **modèles de connexion** associés sont automatiquement supprimés.  
+  Cette opération ne peut pas être annulée.
+
+- Les modèles de VM importés sont automatiquement associés aux **informations Proxmox VE** correspondantes (noeud, VMID).  
+  Ces champs sont en lecture seule et servent à la synchronisation avec le cluster.
+
+- Les modifications du CPU, de la RAM ou du système d'exploitation ne prennent effet que sur les nouvelles machines virtuelles créées à partir du modèle de VM mis à jour.
+
+- Les modèles de VM qui se trouvent dans **Proxmox VE** en dehors du pool attribué au token API OpenVLE ne peuvent **pas être importés**.  
+  Assurez-vous donc que tous les modèles pertinents sont correctement attribués.
+
+- Pour une gestion uniforme, il est recommandé de maintenir un **modèle maître** par système d'exploitation, régulièrement mis à jour (par ex. avec des correctifs de sécurité ou des mises à jour logicielles).  
+  De nouveaux modèles de VM peuvent ensuite être dérivés de ce modèle maître.
+
+- Lors de la conversion d'une VM en modèle de VM, il est recommandé d'exécuter au préalable un **script de nettoyage** (voir la section _Préparation avant la conversion_) pour supprimer les identifiants machine, les fichiers journaux et les clés SSH.
+
+- L'affichage des modèles de VM se met à jour automatiquement de manière régulière tant que la section est ouverte.
+
+---
+
+## Relations avec d'autres objets {#relations}
+
+<ObjectRelations
+  showTasks={true}
+  items={[
+    {
+      object: 'Applications',
+      description:
+        "Un nombre illimité d'applications peut être attribué à un modèle de VM.",
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: "Système d'exploitation",
+      description:
+        "Exactement un système d'exploitation peut être attribué à un modèle de VM.",
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'Modèles de connexion',
+      description:
+        'Un nombre illimité de modèles de connexion peut être attribué à un modèle de VM.',
+      behavior:
+        'Suppression automatique lors de la suppression du modèle de VM.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises {#permissions}
+
+<Permissions
+  data={[
+    {
+      action: 'Afficher les modèles de VM',
+      permission: 'templates_read',
+      scoped: true,
+    },
+    { action: 'Créer des modèles de VM', permission: 'templates_create' },
+    {
+      action: 'Modifier des modèles de VM',
+      permission: 'templates_update',
+      scoped: true,
+    },
+    {
+      action: 'Supprimer des modèles de VM',
+      permission: 'templates_delete',
+      scoped: true,
+    },
+    { action: 'Afficher les machines virtuelles', permission: 'vms_read' },
+  ]}
+/>
+
+---
+
+## Sujets connexes {#related}
+
+<RelatedLinks
+  items={[
+    { label: 'Machines virtuelles', href: '../vms' },
+    { label: 'Connexions', href: '../connections' },
+    { label: 'Environnements', href: '../courses' },
+  ]}
+/>

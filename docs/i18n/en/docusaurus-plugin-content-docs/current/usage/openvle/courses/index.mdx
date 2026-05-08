@@ -1,0 +1,192 @@
+---
+id: courses
+sidebar_label: Environments
+sidebar_position: 70
+status: finished
+tags:
+  - courses
+  - events
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Environments
+
+In OpenVLE, **environments** form the technical and organizational foundation of an event.  
+An environment defines **which VM templates** are used and is typically created as part of an event, determining which resources are available to participants.
+
+{/* TODO: Add screenshot – Environment overview */}
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Events -> Environments"
+  alternative="Linked via the detail view of an event"
+/>
+
+---
+
+## Features at a Glance
+
+<FeatureList
+  items={[
+    'View all existing environments of an event',
+    'Create new environments with course structure and VM template assignments',
+    'Assign participants and roles within an environment',
+    'Link VM templates',
+    'Edit or delete existing environments',
+  ]}
+/>
+
+{/* TODO: Add screenshot – Environment detail view */}
+
+---
+
+## Key Fields at a Glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Name of the environment. Displayed throughout the interface and should be chosen to be unique and descriptive, e.g., "IT Training German 2024" or "Module Computer Science 1".',
+    },
+    {
+      name: 'Description',
+      description:
+        'Free text field for documentation or commenting on the environment.',
+    },
+  ]}
+/>
+
+---
+
+## Creating an Environment
+
+1. Open the **Environments** section in the main menu.
+2. Click **Add** to create a new environment.
+3. Enter a **name** and a **description** for the environment.
+4. Save the environment.
+5. In the **VM Templates** tab, you can now add or remove the required VM templates for the environment.
+6. Use this environment to prepare new events.
+
+---
+
+## Editing an Environment
+
+1. Open the **Environments** section in the main menu.
+2. Search for the desired environment in the list.
+3. Click **Edit** or open the environment's context menu and select **Edit**.
+4. The form displays all current environment data.
+5. Adjust the desired fields — e.g., name or description.
+6. Save the changes.
+7. In the **VM Templates** tab, you can add or remove the required VM templates for the environment.
+
+:::warning
+Changes to an environment (including the assigned VM templates) affect all **planned** events that use this environment. During deployment, the event is provisioned with the current version of the environment.
+
+**Active** events are not affected: During deployment, a direct relationship between the event and the VM templates is created, so the event is decoupled from the environment from that point on.
+:::
+
+---
+
+## Deleting an Environment
+
+1. Open the **Environments** section in the main menu.
+2. Search for the desired environment in the list.
+3. Click **Delete** or open the environment's context menu and select **Delete**.
+4. Confirm the deletion in the displayed dialog.
+5. The environment will then be permanently removed.
+
+:::danger
+An environment can only be deleted when no assigned events exist.
+:::
+
+---
+
+## Example or Use Case
+
+<Example title="Create an environment for an IT basics course">
+  An administrator wants to provide a new training environment for the "IT
+  Basics" environment. They create a new entry in the **Environments** section
+  and assign the VM templates for Windows and Linux VMs. After saving, the
+  environment can be used in a new event.
+</Example>
+
+{/* TODO: Add screenshot – Example of an environment */}
+
+---
+
+## Notes / Special Considerations
+
+- Environments can be assigned to multiple **events**.
+- An environment can contain multiple VM templates.
+- Changes to an environment affect all **planned** events that use this environment. Already active events remain unchanged, since a direct relationship between event and VM templates is created during deployment.
+- Deleting an environment is only possible when no assigned events exist.
+- Only users with appropriate permissions may edit or delete environments.
+
+---
+
+## Relationships to Other Objects
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Events',
+      description: 'An environment can be assigned to any number of events.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'VM Templates',
+      description:
+        'Any number of VM templates can be assigned to an environment.',
+      behavior: 'No automations.',
+    },
+  ]}
+/>
+
+---
+
+## Required Permissions
+
+<Permissions
+  data={[
+    { action: 'View environments', permission: 'courses_read', scoped: true },
+    { action: 'Create environments', permission: 'courses_create' },
+    {
+      action: 'Edit environments',
+      permission: 'courses_update',
+      scoped: true,
+    },
+    {
+      action: 'Delete environments',
+      permission: 'courses_delete',
+      scoped: true,
+    },
+    {
+      action: 'View events',
+      permission: 'events_read',
+      scoped: true,
+    },
+  ]}
+/>
+
+---
+
+## Related Topics
+
+<RelatedLinks
+  items={[
+    { label: 'Events', href: '../events' },
+    { label: 'Virtual Machines', href: '../vms' },
+    { label: 'VM Templates', href: '../vm-templates' },
+  ]}
+/>

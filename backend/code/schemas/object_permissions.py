@@ -1,0 +1,230 @@
+from enum import Enum
+
+from pydantic import UUID4, BaseModel, ConfigDict, model_validator
+
+from core.exceptions import BadRequestError, InvalidFieldValue
+
+from .base import DBBase, DBBaseCreate, PaginationPageDetails
+
+# Non-standard legacy permission keys with their required object_types
+LEGACY_PERMISSION_CONSTRAINTS = {
+    "object_set_password": "User",
+    "object_search": "User",
+    "object_send": "Mail",
+    "object_send_bulk": "Mail",
+    "object_reset": "VirtualMachine",
+    "object_actions_stop": ["VirtualMachine", "Event"],
+    "object_actions_start": ["VirtualMachine", "Event"],
+    "object_actions_shutdown": "VirtualMachine",
+    "object_actions_pause": "VirtualMachine",
+    "object_actions_hibernate": "VirtualMachine",
+    "object_actions_resume": "VirtualMachine",
+    "object_actions_reboot": "VirtualMachine",
+    "object_actions_reset": "VirtualMachine",
+    "object_admins": "Dashboard",
+    "object_verwaltende": "Dashboard",
+    "object_templates_update": "Event",
+    "object_users_read": "Policy",
+}
+
+
+# object_types where object_id association is NOT allowed (global permissions only)
+class DeactivatedObjectTypes(Enum):
+    Activity = "Activity"
+    Changelog = "Changelog"
+    ObjectPermission = "ObjectPermission"
+    Dashboard = "Dashboard"
+    Language = "Language"
+    Mail = "Mail"
+    Proxmox = "Proxmox"
+    # Role = "Role"
+    SubTask = "SubTask"
+    Tag = "Tag"
+    Task = "Task"
+    System = "System"
+
+
+# Forbidden ObjectPermission combinations
+FORBIDDEN_COMBINATIONS = {
+    "Tag": None,  # Global deactivation
+    "Activity": ["object_create", "object_update", "object_delete"],
+}
+GLOBAL_ONLY_PERMISSIONS = ["object_templates_update", "object_users_read"]
+
+
+# ObjectPermission.key options
+class ObjectPermissionKeys(Enum):
+    object_full = "object_full"
+    object_read = "object_read"
+    object_create = "object_create"
+    object_delete = "object_delete"
+    object_update = "object_update"
+
+
+# ObjectPermissions base
+class ObjectPermissionBase(DBBase):
+    object_type: str | None = None
+    object_id: UUID4 | None = None
+    entity_id: UUID4 | None = None
+    entity_type: str | None = None
+    permission_key: str | None = None
+    model_config = ConfigDict(from_attributes=True)
+
+
+# Properties to receive via API on creation
+class ObjectPermissionCreate(DBBaseCreate):
+    object_type: str
+    object_id: UUID4 | None = None
+    entity_id: UUID4
+    entity_type: str
+    permission_key: str
+
+    @model_validator(mode="before")
+    @classmethod
+    def validate_object_permission(cls, values):
+        object_type = values.get("object_type")
+        object_id = values.get("object_id")
+        permission_key = values.get("permission_key")
+
+        # Validate forbidden combinations
+        if object_type in FORBIDDEN_COMBINATIONS:
+            forbidden_perms = FORBIDDEN_COMBINATIONS[object_type]
+
+            # If None, entire object_type is forbidden
+            if forbidden_perms is None:
+                raise InvalidFieldValue(field="object_type", value=object_type)
+
+            # If list, check if permission_key is in forbidden list
+            if permission_key in forbidden_perms:
+                raise InvalidFieldValue(
+                    field="permission_key", value=permission_key
+                )
+
+        # Validate global-only permission keys (must have object_id=None)
+        if permission_key in GLOBAL_ONLY_PERMISSIONS and object_id is not None:
+            raise BadRequestError(
+                message=f"Permission key '{permission_key}' can only be used as a global permission and may not be assigned to an object."
+            )
+
+        # Validate deactivated types with object_id
+        deactivated_types = [t.value for t in DeactivatedObjectTypes]
+        if object_type in deactivated_types and object_id is not None:
+            supported_types = [
+                "Application",
+                "Course",
+                "Document",
+                "Event",
+                "Guacamole",
+                "GuacamoleConnectionProfile",
+                "MailTemplate",
+                "OS",
+                "Policy",
+                "Template",
+                "Vendor",
+                "VirtualMachine",
+            ]
+            raise InvalidFieldValue(
+                field="object_type",
+                value=object_type,
+                supported_values=", ".join(supported_types),
+            )
+
+        # Only allow object_create if object_id is None
+        if permission_key == "object_create" and object_id is not None:
+            raise BadRequestError(
+                message="Cannot create generic 'object_create' Permission if 'object_id' is provided."
+            )
+
+        # Validate legacy permission keys are only used with correct object_type
+        if permission_key in LEGACY_PERMISSION_CONSTRAINTS:
+            allowed_types = LEGACY_PERMISSION_CONSTRAINTS[permission_key]
+            # Handle both single string and list of strings
+            if isinstance(allowed_types, str):
+                allowed_types = [allowed_types]
+
+            if object_type not in allowed_types:
+                allowed_types_str = "' or '".join(allowed_types)
+                raise BadRequestError(
+                    message=f"Permission key '{permission_key}' can only be used with object_type '{allowed_types_str}', not '{object_type}'."
+                )
+
+        # Validate permission_key is either a valid enum value or a legacy key
+        valid_enum_values = [key.value for key in ObjectPermissionKeys]
+
+        # Build context-aware list of valid keys for this object_type/object_id combination
+        valid_keys_for_context = valid_enum_values.copy()
+
+        # Remove forbidden permissions for this object_type
+        if object_type in FORBIDDEN_COMBINATIONS:
+            forbidden_perms = FORBIDDEN_COMBINATIONS[object_type]
+            if forbidden_perms is not None:  # If not entirely forbidden
+                for forbidden_perm in forbidden_perms:
+                    if forbidden_perm in valid_keys_for_context:
+                        valid_keys_for_context.remove(forbidden_perm)
+
+        # Add legacy permissions that are valid for this object_type
+        for legacy_key, allowed_types in LEGACY_PERMISSION_CONSTRAINTS.items():
+            if isinstance(allowed_types, str):
+                allowed_types = [allowed_types]
+            if object_type in allowed_types:
+                # Check if it's forbidden for this object_type
+                if object_type in FORBIDDEN_COMBINATIONS:
+                    forbidden_perms = FORBIDDEN_COMBINATIONS[object_type]
+                    if (
+                        forbidden_perms is not None
+                        and legacy_key in forbidden_perms
+                    ):
+                        continue  # Skip forbidden permission
+
+                # Check if it's a global-only permission and object_id is provided
+                if (
+                    legacy_key in GLOBAL_ONLY_PERMISSIONS
+                    and object_id is not None
+                ):
+                    continue  # Skip this key - it's not valid with object_id
+                valid_keys_for_context.append(legacy_key)
+
+        # Remove object_create if object_id is provided
+        if object_id is not None and "object_create" in valid_keys_for_context:
+            valid_keys_for_context.remove("object_create")
+
+        if permission_key not in valid_keys_for_context:
+            raise InvalidFieldValue(
+                field="permission_key",
+                value=permission_key,
+                supported_values=", ".join(sorted(valid_keys_for_context)),
+            )
+
+        return values
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ObjectPermissionInDBBase(ObjectPermissionBase):
+    id: UUID4
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+# Main class used as response model
+class ObjectPermission(ObjectPermissionInDBBase):
+    object_type: str | None = None
+    object_id: UUID4 | None = None
+    entity_id: UUID4 | None = None
+    entity_type: str
+    permission_key: str | None = None
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ObjectPermissionForRole(BaseModel):
+    id: UUID4
+    object_type: str | None = None
+    object_id: UUID4 | None = None
+    permission_key: str | None = None
+    model_config = ConfigDict(from_attributes=True)
+
+
+# List object of ObjectPermission
+class ObjectPermissionList(BaseModel):
+    pageDetails: PaginationPageDetails
+    items: list[ObjectPermission]

@@ -1,0 +1,8 @@
+export const FeatureList = ({ items }) => (
+  <ul style={{ listStyleType: 'disc', marginLeft: '1.5rem' }}>
+    {items.map((item, index) => (
+      <li key={index}>{item}</li>
+    ))}
+  </ul>
+
+)

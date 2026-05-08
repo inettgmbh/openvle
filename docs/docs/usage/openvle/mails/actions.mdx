@@ -1,0 +1,215 @@
+---
+id: actions
+sidebar_label: Aktionen
+sidebar_position: 5
+status: finished
+tags:
+  - mails
+  - actions
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# E-Mail Aktionen
+
+Im Bereich **Aktionen** findest du eine Übersicht aller systeminternen Ereignisse, bei denen OpenVLE automatisch E-Mails versenden kann.  
+Jede Aktion repräsentiert ein konkretes Ereignis im System – etwa das Erstellen einer virtuellen Maschine, den Start einer Veranstaltung oder das Beenden einer Veranstaltung.  
+Durch die Zuordnung einer E-Mail-Vorlage zu einer Aktion wird festgelegt, welche Nachricht in diesem Fall versendet wird.
+
+Wenn einer Aktion keine E-Mail-Vorlage zugewiesen ist, wird beim Auftreten dieser Aktion **keine E-Mail** verschickt.
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="E-Mails → Aktionen"
+  alternative="Über die E-Mail-Vorlagen verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeige aller im System vorhandenen E-Mail-Aktionen',
+    'Zuordnung oder Änderung der verwendeten E-Mail-Vorlage pro Aktion',
+    'Schnelle Übersicht, welche Aktionen aktuell E-Mails versenden',
+    'Bearbeitung der zugewiesenen Vorlagen direkt über die Aktionsansicht',
+  ]}
+/>
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Anzeigename der Aktion in der Oberfläche. Beschreibt, wann die Aktion ausgelöst wird, z. B. „Veranstaltung wird bereitgestellt“.',
+    },
+    {
+      name: 'Beschreibung',
+      description:
+        'Kurze Beschreibung oder Versionsangabe der Aktion, beinhaltet die erlaubten E-Mail Variablen.',
+    },
+    {
+      name: 'Slug',
+      description:
+        'Interner Name der Aktion, z. B. „events_post_deployment_success“. Wird systemseitig verwendet.',
+    },
+  ]}
+/>
+
+---
+
+## Aktuell vorhandene E-Mail-Aktionen
+
+:::info
+Folgende Aktionen innerhalb von **OpenVLE** lösen momentan automatische E-Mails aus.
+:::
+
+### Veranstaltungen
+
+<div style={{ overflowX: 'auto' }} className="compact-table">
+
+| Name                                                  | Slug                             | Beschreibung                                                                                                                                                                    |
+| ----------------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Veranstaltung erfolgreich bereitgestellt              | events_post_deployment_success   | Benachrichtigt **alle Teilnehmenden (Lehrende und Studierende)**, dass die Veranstaltung erfolgreich bereitgestellt wurde und nun verfügbar ist.                                |
+| Veranstaltung konnte nicht archiviert werden          | events_post_decommission_failed  | Informiert **die Veranstaltungs-Admins**, dass die Archivierung der Veranstaltung fehlgeschlagen ist und manuelle Maßnahmen erforderlich sein könnten.                          |
+| Veranstaltung konnte nicht bereitgestellt werden      | events_post_deployment_failed    | Benachrichtigt **die Veranstaltungs-Admins**, dass die Bereitstellung der Veranstaltung fehlgeschlagen ist. Enthält ggf. technische Details oder Hinweise zur Fehlerbehebung.   |
+| Veranstaltung wird archiviert                         | events_decommission_started      | Informiert **alle Teilnehmenden (Lehrende und Studierende)**, dass die Veranstaltung derzeit archiviert wird und nicht mehr zugänglich sein wird.                               |
+| Veranstaltung wird bald beginnen                      | events_pre_start                 | Sendet eine Erinnerung an **alle Teilnehmenden (Lehrende und Studierende)**, dass die Veranstaltung in Kürze startet. Enthält ggf. Zugangsdaten oder organisatorische Hinweise. |
+| Veranstaltung wird bereitgestellt                     | events_deployment_started        | Informiert **die Veranstaltungs-Admins**, dass die Bereitstellung der Veranstaltung begonnen hat. Dient zur Statusverfolgung der Bereitstellung.                                |
+| Veranstaltung wird demnächst archiviert (Lehrende)    | events_pre_end_admin             | Benachrichtigt **nur die Lehrenden**, dass die Veranstaltung demnächst archiviert wird, mit der Möglichkeit, vorab noch letzte Änderungen oder Downloads vorzunehmen.           |
+| Veranstaltung wird demnächst archiviert (Studierende) | events_pre_end_student           | Informiert **nur die Studierenden**, dass die Veranstaltung bald archiviert wird und Material oder Ergebnisse vorher gesichert werden sollten.                                  |
+| Veranstaltung wurde erfolgreich archiviert            | events_post_decommission_success | Bestätigt **den Veranstaltungs-Admins**, dass die Archivierung erfolgreich abgeschlossen wurde.                                                                                 |
+| Veranstaltung wurde gelöscht                          | events_delete                    | Benachrichtigt **die Veranstaltungs-Admins**, dass die Veranstaltung vollständig gelöscht wurde. Enthält ggf. Bestätigungs- oder Log-Informationen.                             |
+
+</div>
+
+### Virtuelle Maschinen
+
+<div style={{ overflowX: 'auto' }} className="compact-table">
+
+| Name                                              | Slug              | Beschreibung                                                                                                                        |
+| ------------------------------------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| VirtualMachine konnte nicht bereitgestellt werden | vm_create_failed  | Informiert, dass eine virtuelle Maschine während der Bereitstellung nicht erstellt werden konnte. Enthält technische Fehlerdetails. |
+| VirtualMachine konnte nicht gelöscht werden       | vm_delete_failed  | Benachrichtigt dass das Löschen einer virtuellen Maschine fehlgeschlagen ist. Ggf. mit Hinweisen zur manuellen Bereinigung.         |
+| VirtualMachine wird gelöscht                      | vm_delete_started | Sendet eine Statusmeldung, dass der Löschvorgang einer virtuellen Maschine gestartet wurde.                                         |
+| VirtualMachine wurde erfolgreich bereitgestellt   | vm_create_success | Benachrichtigt, dass die virtuelle Maschine erfolgreich erstellt und einsatzbereit ist.                                             |
+
+</div>
+
+---
+
+## Zuweisen einer E-Mail-Vorlage
+
+1. Öffne im Hauptmenü den Bereich **E-Mails → Aktionen**.
+2. Suche in der Liste nach der gewünschten Aktion.
+3. Öffne die Aktion.
+4. Wechsle in den Tab **E-Mail-Vorlagen** und klicke auf **Zuweisen**.
+5. Suche die gewünschte E-Mail-Vorlage und wähle diese aus.
+6. Speichere die Zuweisung.
+
+:::info
+Wenn einer Aktion **eine** E-Mail-Vorlage zugewiesen ist, wird dies in der Detailansicht der E-Mail-Vorlage oben rechts durch ein **grünes Symbol** angezeigt.
+:::
+
+---
+
+## Entfernen einer E-Mail-Vorlage
+
+1. Öffne im Hauptmenü den Bereich **E-Mails → Aktionen**.
+2. Suche in der Liste nach der gewünschten Aktion.
+3. Öffne die Aktion.
+4. Wechsle in den Tab **E-Mail-Vorlagen**.
+5. Klicke bei der zu entfernenden E-Mail-Vorlage auf **Entfernen**, oder öffne das Kontextmenü und wähle **Entfernen**.
+6. Bestätige den Vorgang im angezeigten Dialog.
+
+:::info
+Wenn einer Aktion **keine** E-Mail-Vorlage zugewiesen ist, wird dies in der Detailansicht der E-Mail-Vorlage oben rechts durch ein **rotes Symbol** angezeigt.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="E-Mail-Aktion für bereitgestellte virtuelle Maschinen">
+  Nach der Erstellung einer neuen virtuellen Maschine soll automatisch eine
+  E-Mail versendet werden. Öffne im Bereich **E-Mails → Aktionen** die Aktion
+  *„VirtualMachine wurde erfolgreich bereitgestellt“* und weise ihr die Vorlage
+  *„VirtualMachine wurde erfolgreich bereitgestellt“* zu. Ab sofort wird beim
+  Erstellen einer neuen virtuellen Maschine automatisch diese E-Mail versendet.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel Aktionsverwaltung */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Aktionen werden systemseitig vorgegeben und können nicht manuell erstellt oder gelöscht werden.
+- Wird einer Aktion keine Vorlage zugewiesen, findet kein E-Mail-Versand statt.
+- Änderungen an der zugewiesenen Vorlage wirken sich sofort auf zukünftige Ereignisse aus.
+- Aktionen sind in der Regel nach Bereichen gruppiert (z. B. Benutzer, Umgebungen, Veranstaltungen, System).
+- Manche Aktionen sind rein intern und dienen der Protokollierung, ohne Versandfunktion.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  showChangelogs={false}
+  showPermissions={false}
+  showTags={false}
+  items={[
+    {
+      object: 'E-Mail-Vorlagen',
+      description:
+        'Einer Aktion können beliebig viele E-Mail-Vorlagen zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    {
+      action: 'E-Mail-Vorlagen anzeigen',
+      permission: 'mailtemplates_read',
+      scoped: true,
+    },
+    {
+      action: 'E-Mail-Vorlagen bearbeiten',
+      permission: 'mailtemplates_update',
+      scoped: false,
+    },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Gesendete E-Mails', href: './sent' },
+    { label: 'E-Mail-Vorlagen', href: './templates' },
+    { label: 'Systemeinstellungen', href: '../system/settings' },
+  ]}
+/>

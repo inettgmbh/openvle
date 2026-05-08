@@ -1,0 +1,143 @@
+---
+name: openvle
+
+services:
+  mariadb:
+    image: mariadb:${MARIADB_IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    networks:
+      - backend
+    healthcheck:
+      test: mariadb-admin -u${MARIADB_USER} -p${MARIADB_PASSWORD} ping -h localhost
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  mongodb:
+    image: mongo:${MONGODB_IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
+    volumes:
+      - ./mongodb:/data/db
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  redis:
+    image: redis:${REDIS_IMAGE_TAG}
+    restart: unless-stopped
+    command: /bin/sh -c 'redis-server --appendonly yes --save 60 1 --loglevel warning --requirepass ${REDIS_PASSWORD}'
+    volumes:
+      - ./redis:/data
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "--raw", "incr", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  worker:
+    image: ${IMAGE_REGISTRY:-ghcr.io/inettgmbh}/openvle/backend:${BACKEND_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      SERVICE_ROLE: worker
+    volumes:
+      - ./.env:/usr/src/.env:ro
+    networks:
+      - backend
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      mode: replicated
+      replicas: 4
+
+  worker-vm-clone:
+    image: ${IMAGE_REGISTRY:-ghcr.io/inettgmbh}/openvle/backend:${BACKEND_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      SERVICE_ROLE: worker-vm-clone
+    volumes:
+      - ./.env:/usr/src/.env:ro
+    networks:
+      - backend
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker-periodic:
+    image: ${IMAGE_REGISTRY:-ghcr.io/inettgmbh}/openvle/backend:${BACKEND_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      SERVICE_ROLE: worker-periodic
+    volumes:
+      - ./.env:/usr/src/.env:ro
+    networks:
+      - backend
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  scheduler:
+    image: ${IMAGE_REGISTRY:-ghcr.io/inettgmbh}/openvle/backend:${BACKEND_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      SERVICE_ROLE: scheduler
+    volumes:
+      - ./.env:/usr/src/.env:ro
+    networks:
+      - backend
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  backend:
+    image: ${IMAGE_REGISTRY:-ghcr.io/inettgmbh}/openvle/backend:${BACKEND_IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      SERVICE_ROLE: backend
+    volumes:
+      - ./.env:/usr/src/.env:ro
+    networks:
+      - backend
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - 0.0.0.0:8000:80
+    deploy:
+      mode: replicated
+      replicas: 1
+
+networks:
+  backend:

@@ -1,0 +1,295 @@
+---
+id: users
+sidebar_label: Utilisateurs
+sidebar_position: 20
+status: finished
+tags:
+  - access-control
+  - users
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Utilisateurs
+
+La gestion des utilisateurs est un élément central d'OpenVLE.  
+Vous gérez ici toutes les personnes ayant accès au système, qu'il s'agisse d'utilisateurs avec un **compte OIDC / LDAP** ou de **comptes locaux** (par ex. personnes externes ou utilisateurs de test).
+
+{/* TODO: Ajouter une capture d'écran – Aperçu des utilisateurs */}
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Contrôle d'accès → Utilisateurs"
+  alternative="Accessible via les liens Rôles ou Permissions"
+/>
+
+---
+
+## Aperçu des fonctionnalités
+
+<FeatureList
+  items={[
+    'Afficher, créer, modifier et supprimer des comptes utilisateurs',
+    'Attribuer ou retirer des rôles',
+    'Accorder des permissions individuelles au niveau des objets ou des modèles',
+    'Verrouiller et déverrouiller des comptes utilisateurs',
+    'Consulter les connexions, VM et activités associées',
+    'Suivre les modifications via les journaux de modifications',
+  ]}
+/>
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        "Nom complet de l'utilisateur. Affiché dans les listes, les vues détaillées et lors de la communication (par ex. dans les e-mails).",
+    },
+    {
+      name: "Nom d'utilisateur",
+      description:
+        "Identifiant de connexion unique de l'utilisateur. Utilisé pour l'authentification et ne peut plus être modifié après la création.",
+    },
+    {
+      name: 'E-mail',
+      description:
+        "Adresse e-mail principale de l'utilisateur. Utilisée pour les notifications, les e-mails système et les réinitialisations de mot de passe.",
+    },
+    {
+      name: 'Statut',
+      description:
+        "État actuel du compte utilisateur. Les valeurs possibles sont *active* (Actif), *inactive* (Inactif), *email pending* (Confirmation d'e-mail en attente) ou *banned* (Bloqué).",
+    },
+    {
+      name: 'Langue',
+      description:
+        "Langue système préférée de l'utilisateur. Détermine dans quelle langue les notifications et les textes de l'interface sont affichés.",
+    },
+    {
+      name: 'Auth Backend',
+      description:
+        "Méthode d'authentification de l'utilisateur. Peut être *internal* (géré localement) ou *external* (via un fournisseur d'identité externe tel que LDAP ou OIDC).",
+    },
+  ]}
+/>
+
+---
+
+## Création d'un utilisateur
+
+1. Ouvrez dans le menu principal la section **Contrôle d'accès → Utilisateurs**.
+2. Cliquez sur **Ajouter** pour créer un nouveau compte utilisateur.
+3. Saisissez les données souhaitées (**Nom**, **Nom d'utilisateur**, **E-mail** et **Statut**).  
+   S'il s'agit d'un **utilisateur authentifié en externe** (par ex. LDAP ou OIDC), l'option **Accès** doit être réglée sur **Oui**.  
+   S'il s'agit d'un **utilisateur authentifié localement**, l'option **Accès** doit être réglée sur **Non**.  
+   **En règle générale, ce paramètre doit rester sur « Oui ».**
+4. Enregistrez le nouvel utilisateur.
+5. Attribuez à l'utilisateur des **rôles** ou des **permissions individuelles**.
+
+{/* TODO: Ajouter une capture d'écran – Formulaire utilisateur */}
+
+> **Conseil :**  
+> La plupart des utilisateurs sont créés automatiquement lors de leur première connexion avec leur compte externe.
+
+:::info
+Les utilisateurs authentifiés en externe sont identifiés par leur **nom d'utilisateur**.  
+Assurez-vous donc que le nom d'utilisateur correspond exactement à la valeur du fournisseur d'identité externe (IdP).  
+Les champs tels que **Nom** et **Adresse e-mail** sont automatiquement mis à jour avec les informations de l'IdP externe lors de la connexion de l'utilisateur.
+:::
+
+:::warning
+Les utilisateurs authentifiés en externe ne peuvent plus être **modifiés** après leur création.  
+Seul le **statut** (actif/inactif) peut être changé et l'utilisateur peut être **supprimé**.  
+Le **nom d'utilisateur** ne peut **pas être modifié ultérieurement**.
+:::
+
+---
+
+## Activer ou désactiver un utilisateur
+
+1. Ouvrez dans le menu principal la section **Contrôle d'accès → Utilisateurs**.
+2. Recherchez l'utilisateur souhaité dans la liste et ouvrez-le.
+3. Dans la barre d'actions de l'utilisateur, vous voyez soit un **bouton jaune « Bloquer »** (pour bloquer) soit un **bouton jaune « Débloquer »** (pour débloquer).
+4. En cliquant sur le bouton correspondant, vous pouvez bloquer ou débloquer l'accès de l'utilisateur.
+
+:::warning
+Après le blocage, l'utilisateur ne peut **immédiatement plus effectuer aucune action** dans OpenVLE, même s'il est actuellement connecté et dispose d'une session encore valide.
+:::
+
+:::danger
+L'accès à **Apache Guacamole** n'est actuellement **pas automatiquement bloqué**.  
+Cette fonctionnalité sera fournie dans une version ultérieure.
+:::
+
+---
+
+## Réinitialiser le mot de passe d'un utilisateur (comptes locaux uniquement)
+
+1. Ouvrez dans le menu principal la section **Contrôle d'accès → Utilisateurs**.
+2. Recherchez l'utilisateur souhaité dans la liste et ouvrez-le.
+3. Cliquez sur le **bouton jaune « Définir le mot de passe »** dans la barre d'actions.
+4. Saisissez le nouveau mot de passe deux fois.
+5. Enregistrez les modifications.
+
+:::warning
+Les sessions actives de l'utilisateur ne sont **pas affectées** par cette opération. L'utilisateur n'est **pas automatiquement déconnecté**.
+:::
+
+:::note
+La réinitialisation du mot de passe n'est possible que pour les **utilisateurs authentifiés localement**.  
+Pour les méthodes d'authentification externes (par ex. LDAP ou SSO), le mot de passe ne peut pas être modifié.
+:::
+
+---
+
+## Modifier un utilisateur (comptes locaux uniquement)
+
+1. Ouvrez dans le menu principal la section **Contrôle d'accès → Utilisateurs**.
+2. Recherchez l'utilisateur souhaité dans la liste.
+3. Cliquez sur **Modifier**, ou ouvrez le menu contextuel de l'utilisateur et sélectionnez **Modifier**.
+4. Le formulaire affiche toutes les données actuelles de l'utilisateur.
+5. Ajustez les champs souhaités, par exemple **Nom** ou **E-mail**.
+6. Enregistrez les modifications.
+
+:::note
+Seuls les **utilisateurs authentifiés localement** peuvent être modifiés.  
+Pour les **utilisateurs authentifiés en externe** (par ex. LDAP ou SSO), seul le **statut** peut être changé et l'utilisateur peut être **supprimé**.
+:::
+
+---
+
+## Supprimer un utilisateur
+
+1. Ouvrez dans le menu principal la section **Contrôle d'accès → Utilisateurs**.
+2. Recherchez l'utilisateur souhaité dans la liste.
+3. Cliquez sur **Supprimer**, ou ouvrez le menu contextuel de l'utilisateur et sélectionnez **Supprimer**.
+4. Une boîte de dialogue de suppression étendue apparaît, affichant tous les **objets liés** qui seront également supprimés (le cas échéant).
+5. Confirmez la suppression dans la boîte de dialogue affichée.
+6. L'utilisateur est alors **définitivement supprimé**.
+
+:::danger
+Cette opération est **irréversible**.  
+Si l'utilisateur ne doit être privé d'accès que temporairement, il est recommandé de **bloquer l'utilisateur** plutôt que de le supprimer.
+:::
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Créer un utilisateur de test local">
+  Une administratrice souhaite créer un utilisateur temporaire pour des tests
+  internes. Elle ouvre la section **Utilisateurs**, clique sur **Ajouter** et
+  crée un compte local. Ensuite, elle attribue à l'utilisateur le rôle
+  **Testeur**, qui permet l'accès à des machines virtuelles sélectionnées.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran – Exemple : création d'un utilisateur */}
+
+---
+
+## Remarques / Particularités
+
+- Les utilisateurs avec des comptes externes sont créés automatiquement lors de la première connexion.
+- Les utilisateurs locaux doivent être créés manuellement.
+- Un utilisateur peut posséder plusieurs rôles dont les permissions sont combinées.
+- Les permissions attribuées individuellement complètent les droits issus des rôles.
+- Les utilisateurs bloqués restent visibles dans le système mais ne peuvent plus se connecter.
+
+---
+
+## Relations avec d'autres objets
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Rôles',
+      description:
+        'Un nombre illimité de rôles peut être attribué à un utilisateur.',
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'Événements',
+      description:
+        "Un utilisateur peut être assigné à un nombre illimité d'événements.",
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'Connexions',
+      description:
+        'Un nombre illimité de connexions peut être attribué à un utilisateur.',
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'Activités',
+      description:
+        "Un nombre illimité d'activités peut être attribué à un utilisateur.",
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'E-mails',
+      description:
+        "Un nombre illimité d'e-mails envoyés peut être attribué à un utilisateur.",
+      behavior: 'Aucune automatisation.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises
+
+<Permissions
+  data={[
+    {
+      action: 'Afficher les utilisateurs',
+      permission: 'users_read',
+      scoped: true,
+    },
+    { action: 'Créer des utilisateurs', permission: 'users_create' },
+    {
+      action: 'Modifier des utilisateurs',
+      permission: 'users_update',
+      scoped: true,
+    },
+    {
+      action: 'Supprimer des utilisateurs',
+      permission: 'users_delete',
+      scoped: true,
+    },
+    { action: 'Afficher les rôles', permission: 'roles_read' },
+    { action: 'Afficher les permissions', permission: 'permissions_read' },
+    {
+      action: 'Attribuer des permissions',
+      permission: 'objectpermissions_create',
+    },
+    {
+      action: 'Retirer des permissions',
+      permission: 'objectpermissions_delete',
+    },
+  ]}
+/>
+
+---
+
+## Sujets associés
+
+<RelatedLinks
+  items={[
+    { label: 'Rôles', href: './roles' },
+    { label: 'Permissions', href: './permissions' },
+    { label: 'Politiques', href: './policies' },
+  ]}
+/>

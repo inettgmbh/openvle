@@ -1,0 +1,43 @@
+.container {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Status Variants */
+.stable {
+  background-color: #e1f5e6;
+  color: #1b5e20;
+}
+
+.draft {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.deprecated {
+  background-color: #fdecea;
+  color: #b71c1c;
+}
+
+/* Maintenance */
+.maintenance {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+}
+
+/* Security */
+.security {
+  background-color: #ffebee;
+  color: #b71c1c;
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 164.75 142.98">
+  <defs>
+    <style>
+      .blue-500 { fill: #007aff; }
+      .blue-300 { fill: #39f; }
+      .inner-fill { fill: #ffffff; }
+      @media (prefers-color-scheme: light) {
+        .inner-fill { fill: transparent; }
+      }
+    </style>
+  </defs>
+  <g>
+    <polygon class="inner-fill" points="61.93 35.78 102.78 35.78 82.16 71.49 41.31 71.49"/>
+    <polygon class="inner-fill" points="82.59 71.49 123.43 71.49 102.81 107.21 61.97 107.21"/>
+    <polygon class="blue-500" points="144.09 35.78 123.47 71.49 82.16 71.49 102.78 35.78 144.09 35.78"/>
+    <polygon class="blue-300" points="144.09 35.77 144.09 35.78 61.93 35.78 41.31 71.49 0 71.49 41.27 0 123.43 0 144.09 35.77"/>
+    <polygon class="blue-500" points="82.59 71.49 61.97 107.21 20.65 107.21 41.27 71.49 82.59 71.49"/>
+    <polygon class="blue-300" points="164.75 71.49 123.47 142.98 41.32 142.98 20.65 107.21 20.65 107.21 102.81 107.21 123.43 71.49 164.75 71.49"/>
+  </g>
+</svg>

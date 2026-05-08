@@ -1,0 +1,84 @@
+---
+id: infrastructure
+sidebar_label: Infrastruktur
+sidebar_position: 40
+status: finished
+tags:
+  - infrastructure
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Infrastruktur
+
+Der Bereich **Infrastruktur** bietet eine zentrale Übersicht über alle hersteller- und systembezogenen Daten in OpenVLE.  
+Hier verwaltest du **Hersteller**, **Anwendungen** und **Betriebssysteme**, die in virtuellen Maschinen (VMs) oder VM-Vorlagen verwendet werden.  
+Diese Informationen dienen der strukturierten Erfassung, Dokumentation und Nachverfolgbarkeit innerhalb der Verwaltungssoftware.
+
+{/* TODO: Screenshot hinzufügen – Übersicht Infrastruktur */}
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint path="Infrastruktur" />
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Pflegen von Herstellerdaten und Zuordnung zu Betriebssystemen und Anwendungen',
+    'Verwalten von Betriebssystemen mit Version und Architektur',
+    'Verwalten von Anwendungen mit Namen, Version und Beschreibung',
+    'Zuordnen von Anwendungen und Betriebssystemen zu VMs oder VM-Vorlagen',
+    'Unterstützung bei der Inventarisierung und Dokumentation der eingesetzten Software',
+  ]}
+/>
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Nachvollziehbare Softwarezuordnung zu einer VM">
+  Eine Administratorin möchte dokumentieren, welche Software auf einer
+  Schulungs-VM installiert ist. Sie öffnet den Bereich **Infrastruktur →
+  Anwendungen**, legt dort die Anwendung „LibreOffice 7.6“ an und weist diese
+  anschließend der VM-Vorlage „Debian12-Schulung“ zu. Dadurch ist jederzeit
+  nachvollziehbar, welche Software auf welchen VMs oder VM-Vorlagen vorhanden
+  ist.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel: Anwendung zuweisen */}
+
+---
+
+## Hinweise / Besonderheiten
+
+:::info
+Die hier aufgeführten Funktionen dienen ausschließlich der **Inventarisierung** von VMs und VM-Vorlagen.  
+Es erfolgt **keine automatische Installation** von Anwendungen innerhalb der Systeme.
+
+Wenn du Anwendungen in einer VM oder VM-Vorlage benötigst, musst du diese weiterhin manuell installieren.  
+Erst nach Abschluss der Konfiguration sollte die VM oder VM-Vorlage den passenden Einträgen in OpenVLE zugewiesen werden.
+:::
+
+Diese Trennung zwischen Inventarisierung und Installation sorgt für klare Nachvollziehbarkeit und verhindert unbeabsichtigte Änderungen an produktiven Systemen.
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Anwendungen', href: './applications' },
+    { label: 'Betriebssysteme', href: './os' },
+    { label: 'Hersteller', href: './vendors' },
+    { label: 'Virtuelle Maschinen', href: '../vms' },
+    { label: 'VM-Vorlagen', href: '../vm-templates' },
+  ]}
+/>

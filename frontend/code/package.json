@@ -1,0 +1,138 @@
+{
+  "name": "openvle-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OpenVLE Frontend",
+  "homepage": "https://docs.openvle.org",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/inettgmbh/openvle/issues",
+    "email": "support@inett.de"
+  },
+  "license": "AGPL-3.0",
+  "author": {
+    "name": "Pascal Hauch",
+    "email": "phauch@inett.de"
+  },
+  "contributors": [
+    {
+      "name": "Sascha Zinn",
+      "email": "szinn@inett.de"
+    },
+    {
+      "name": "Mario Zimmermann",
+      "email": "mzimmermann@inett.de"
+    }
+  ],
+  "os": [
+    "!win32"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build:ci": "vite build",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint:ci": "eslint --format gitlab",
+    "lint:fix": "eslint --format stylish --fix",
+    "lint": "eslint --format stylish",
+    "format:ci": "prettier --check src/ tests/",
+    "format:fix": "prettier --write src/ tests/",
+    "format": "prettier --check src/ tests/",
+    "test:unit:ci": "vitest run",
+    "test:unit": "vitest",
+    "test:coverage:ci": "vitest run --coverage",
+    "test:coverage": "vitest --coverage",
+    "release:test": "semantic-release --ci=false --dry-run"
+  },
+  "dependencies": {
+    "@dicebear/collection": "^9.2.4",
+    "@dicebear/core": "^9.2.4",
+    "@mdi/js": "^7.0.96",
+    "@sentry/vue": "^10.0.0",
+    "@vuepic/vue-datepicker": "^11.0.0",
+    "axios": "^1.4.0",
+    "chart.js": "^4.3.0",
+    "cropperjs": "^1.6.2",
+    "highlight.js": "^11.11.1",
+    "katex": "^0.16.25",
+    "marked": "^14.0.0",
+    "md-editor-v3": "^5.5.0",
+    "mermaid": "^11.12.1",
+    "numeral": "^2.0.6",
+    "papaparse": "^5.5.3",
+    "pinia": "^3.0.0",
+    "pinia-plugin-persistedstate": "^4.0.0",
+    "screenfull": "^6.0.2",
+    "turndown": "^7.2.2",
+    "vue": "^3.0.0",
+    "vue-i18n": "^11.0.0",
+    "vue-multiselect": "^3.3.1",
+    "vue-router": "^4.0.0",
+    "vue-toastification": "^2.0.0-rc.5"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^2.0.0",
+    "@inett/semantic-release-unsquash": "^2.0.1",
+    "@pinia/testing": "^1.0.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/exec": "^7.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/gitlab": "^13.2.4",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
+    "@tailwindcss/forms": "^0.5.1",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vitejs/plugin-vue-jsx": "^5.0.0",
+    "@vitest/coverage-v8": "^3.0.0",
+    "@vue/eslint-config-prettier": "^10.0.0-rc.3",
+    "@vue/test-utils": "^2.3.2",
+    "autoprefixer": "^10.2.6",
+    "dotenv": "^17.2.2",
+    "eslint": "^9.0.0",
+    "eslint-formatter-gitlab": "^7.0.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-vue": "^10.0.0",
+    "globals": "^17.0.0",
+    "jsdom": "^26.0.0",
+    "postcss": "^8.3.0",
+    "postcss-import": "^16.0.0",
+    "prettier": "^3.6.2",
+    "sass": "^1.63.6",
+    "semantic-release": "^25.0.0",
+    "tailwindcss": "^3.0.14",
+    "vite": "^5.0.0",
+    "vite-plugin-pwa": "^1.0.2",
+    "vitest": "^3.0.0"
+  },
+  "prettier": {
+    "semi": false,
+    "tabWidth": 2,
+    "useTabs": false,
+    "singleQuote": true,
+    "printWidth": 80,
+    "trailingComma": "all",
+    "vueIndentScriptAndStyle": false,
+    "quoteProps": "as-needed",
+    "jsxSingleQuote": false,
+    "bracketSpacing": true,
+    "bracketSameLine": false,
+    "arrowParens": "always",
+    "endOfLine": "lf",
+    "embeddedLanguageFormatting": "auto",
+    "singleAttributePerLine": false
+  },
+  "browserslist": {
+    "production": [
+      "> 1%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0"
+  }
+}

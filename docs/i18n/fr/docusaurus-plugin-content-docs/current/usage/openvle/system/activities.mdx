@@ -1,0 +1,162 @@
+---
+id: activities
+sidebar_label: Activités
+sidebar_position: 10
+status: finished
+tags:
+  - system
+  - activities
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Activités
+
+La section **Activités** sert de journal d'accès et de modifications pour les administrateurs.  
+Elle enregistre **quels utilisateurs ont consulté quelles pages du système ou déclenché quelles actions, et à quel moment** – similaire à un journal d'accès HTTP.
+
+La vue d'ensemble des activités permet de suivre l'utilisation du système, de détecter des anomalies et, si nécessaire, de mener des actions de support ou d'audit ciblées.
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Système → Activités"
+  alternative="Accessible via les utilisateurs"
+/>
+
+---
+
+## Aperçu des fonctionnalités
+
+<FeatureList
+  items={[
+    'Affichage de toutes les activités des utilisateurs dans le système (par ex. consultations de pages, accès API)',
+    'Filtrage par utilisateur, période, point de terminaison ou méthode HTTP',
+    'Consultation des requêtes et réponses, y compris les en-têtes et les codes de statut',
+  ]}
+/>
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'timestamp',
+      description:
+        "Moment auquel l'activité a eu lieu. Enregistré automatiquement en heure UTC.",
+    },
+    {
+      name: 'requestClientIP',
+      description:
+        "Adresse IP du client à l'origine de la requête. Utile pour le suivi des accès.",
+    },
+    {
+      name: 'requestUser',
+      description:
+        "Identifiant utilisateur de la personne ayant déclenché la requête. Fait référence à l'objet utilisateur dans le système.",
+    },
+    {
+      name: 'requestPermission',
+      description:
+        "La permission pertinente pour la requête (par ex. « users_read_one »). Sert à l'audit des permissions.",
+    },
+    {
+      name: 'requestMethod',
+      description:
+        'Méthode HTTP de la requête (par ex. GET, POST, PUT, DELETE). Indique si des données ont été lues, créées ou modifiées.',
+    },
+    {
+      name: 'requestUrl',
+      description:
+        "L'URL consultée ou le point de terminaison API. Permet de retracer la ressource concernée.",
+    },
+    {
+      name: 'responseCode',
+      description:
+        'Code de statut HTTP de la réponse du serveur (par ex. 200 = succès, 403 = non autorisé, 500 = erreur serveur).',
+    },
+    {
+      name: 'x-process-time',
+      description:
+        "Temps de traitement de la requête en secondes. Transmis dans l'en-tête « x-process-time » et indique la durée du traitement côté serveur.",
+    },
+  ]}
+/>
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Analyser les requêtes d'un utilisateur">
+  Une administratrice souhaite vérifier quelles actions un utilisateur a
+  effectuées au cours des dernières 24 heures. Elle ouvre la section **Système →
+  Activités**, filtre par l'identifiant utilisateur et obtient une liste des
+  appels API correspondants, y compris l'adresse IP, la méthode et le code de
+  réponse. À partir de ces informations, elle peut rapidement déterminer s'il
+  s'agit d'un problème technique ou d'une erreur de manipulation.
+</Example>
+
+```json
+{
+  "timestamp": "2015-10-21T16:29:00.000000+02:00",
+  "requestClientIP": "1.1.1.1",
+  "requestUser": "25e281df-1bd9-47cc-97a2-496fffe5516a",
+  "requestPermission": "users_read_one",
+  "requestMethod": "GET",
+  "requestUrl": "/v1/users/66179794-55e2-4be7-abff-256f1e1b8838",
+  "responseCode": 200
+}
+```
+
+{/* TODO: Ajouter une capture d'écran – Exemple : liste des activités avec filtre */}
+
+---
+
+## Remarques / Particularités
+
+- Les journaux d'activité sont générés automatiquement par tous les accès API.
+- Les utilisateurs standard peuvent consulter leurs propres activités, les journaux complets ne sont accessibles qu'aux administrateurs.
+- Les activités supprimées ne peuvent pas être restaurées.
+- Seuls les journaux d'accès du backend sont enregistrés.
+- Pour améliorer les performances, les anciennes entrées sont automatiquement supprimées après un délai défini. Les détails se trouvent dans les paramètres de configuration du backend.
+
+---
+
+## Permissions requises
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    {
+      action: 'Afficher les activités',
+      permission: 'activities_read',
+      scoped: false,
+    },
+    {
+      action: 'Afficher ses propres activités',
+      permission: 'activities_read_own',
+      scoped: false,
+    },
+  ]}
+/>
+
+---
+
+## Sujets associés
+
+<RelatedLinks
+  items={[
+    { label: 'Tâches', href: './tasks' },
+    { label: 'Paramètres', href: './settings' },
+    { label: 'Utilisateurs', href: '../access-control/user' },
+  ]}
+/>

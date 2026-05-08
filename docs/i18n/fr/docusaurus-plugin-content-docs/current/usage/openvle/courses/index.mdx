@@ -1,0 +1,198 @@
+---
+id: courses
+sidebar_label: Environnements
+sidebar_position: 70
+status: finished
+tags:
+  - courses
+  - events
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Environnements
+
+Dans OpenVLE, les **environnements** constituent la base technique et organisationnelle d'un événement.  
+Un environnement définit **quels modèles de VM** sont utilisés et est généralement créé dans le cadre d'un événement. Il détermine les ressources mises à la disposition des participants.
+
+{/* TODO: Ajouter une capture d'écran – Aperçu des environnements */}
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Événements → Environnements"
+  alternative="Accessible via la vue détaillée d'un événement"
+/>
+
+---
+
+## Aperçu des fonctionnalités
+
+<FeatureList
+  items={[
+    "Afficher tous les environnements existants d'un événement",
+    'Créer de nouveaux environnements avec une structure de cours et attribution de modèles de VM',
+    "Attribuer des participants et des rôles au sein d'un environnement",
+    'Associer des modèles de VM',
+    'Modifier ou supprimer des environnements existants',
+  ]}
+/>
+
+{/* TODO: Ajouter une capture d'écran – Vue détaillée d'un environnement */}
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        "Nom de l'environnement. Affiché dans l'ensemble de l'interface et doit être choisi de manière unique et explicite, par ex. « Formation IT Allemand 2024 » ou « Module Informatique 1 ».",
+    },
+    {
+      name: 'Description',
+      description:
+        "Champ de texte libre pour la documentation ou le commentaire de l'environnement.",
+    },
+  ]}
+/>
+
+---
+
+## Créer un environnement
+
+1. Ouvrez dans le menu principal la section **Environnements**.
+2. Cliquez sur **Ajouter** pour créer un nouvel environnement.
+3. Saisissez un **nom** et une **description** pour l'environnement.
+4. Enregistrez l'environnement.
+5. Dans l'onglet **Modèles de VM**, vous pouvez maintenant ajouter ou retirer les modèles de VM nécessaires de l'environnement.
+6. Utilisez cet environnement pour préparer de nouveaux événements.
+
+---
+
+## Modifier un environnement
+
+1. Ouvrez dans le menu principal la section **Environnements**.
+2. Recherchez l'environnement souhaité dans la liste.
+3. Cliquez sur **Modifier** ou ouvrez le menu contextuel de l'environnement et sélectionnez **Modifier**.
+4. Le formulaire affiche toutes les données actuelles de l'environnement.
+5. Ajustez les champs souhaités, par ex. le nom ou la description.
+6. Enregistrez les modifications.
+7. Dans l'onglet **Modèles de VM**, vous pouvez ajouter ou retirer les modèles de VM nécessaires de l'environnement.
+
+:::warning
+Les modifications apportées à un environnement (y compris les modèles de VM attribués) affectent tous les événements **planifiés** qui utilisent cet environnement. Lors du déploiement, l'événement est mis à disposition avec la version actuelle de l'environnement.
+
+Les événements **actifs** ne sont pas affectés : lors du déploiement, une relation directe entre l'événement et les modèles de VM est créée, de sorte que l'événement est à partir de ce moment découplé de l'environnement.
+:::
+
+---
+
+## Supprimer un environnement
+
+1. Ouvrez dans le menu principal la section **Environnements**.
+2. Recherchez l'environnement souhaité dans la liste.
+3. Cliquez sur **Supprimer** ou ouvrez le menu contextuel de l'environnement et sélectionnez **Supprimer**.
+4. Confirmez la suppression dans la boîte de dialogue affichée.
+5. L'environnement est alors définitivement supprimé.
+
+:::danger
+Un environnement ne peut être supprimé que lorsqu'aucun événement ne lui est plus attribué.
+:::
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Créer un environnement pour un cours de base en informatique">
+  Une administratrice souhaite mettre à disposition un nouvel environnement de
+  formation pour l'environnement « Bases de l'informatique ». Elle crée dans la
+  section **Environnements** une nouvelle entrée et attribue les modèles de VM
+  pour les VM Windows et Linux. Après l'enregistrement, l'environnement peut
+  être utilisé dans un nouvel événement.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran – Exemple d'un environnement */}
+
+---
+
+## Remarques / Particularités
+
+- Les environnements peuvent être associés à plusieurs **événements**.
+- Un environnement peut contenir plusieurs modèles de VM.
+- Les modifications apportées à un environnement affectent tous les événements **planifiés** qui utilisent cet environnement. Les événements déjà actifs restent inchangés, car lors du déploiement, une relation directe entre l'événement et les modèles de VM est créée.
+- La suppression d'un environnement n'est possible que lorsqu'aucun événement ne lui est plus attribué.
+- Seuls les utilisateurs disposant des permissions appropriées peuvent modifier ou supprimer des environnements.
+
+---
+
+## Relations avec d'autres objets
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Événements',
+      description:
+        "Un environnement peut être attribué à un nombre illimité d'événements.",
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: 'Modèles de VM',
+      description:
+        'Un nombre illimité de modèles de VM peut être attribué à un environnement.',
+      behavior: 'Aucune automatisation.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises
+
+<Permissions
+  data={[
+    {
+      action: 'Afficher les environnements',
+      permission: 'courses_read',
+      scoped: true,
+    },
+    { action: 'Créer des environnements', permission: 'courses_create' },
+    {
+      action: 'Modifier des environnements',
+      permission: 'courses_update',
+      scoped: true,
+    },
+    {
+      action: 'Supprimer des environnements',
+      permission: 'courses_delete',
+      scoped: true,
+    },
+    {
+      action: 'Afficher les événements',
+      permission: 'events_read',
+      scoped: true,
+    },
+  ]}
+/>
+
+---
+
+## Sujets associés
+
+<RelatedLinks
+  items={[
+    { label: 'Événements', href: '../events' },
+    { label: 'Machines virtuelles', href: '../vms' },
+    { label: 'Modèles de VM', href: '../vm-templates' },
+  ]}
+/>

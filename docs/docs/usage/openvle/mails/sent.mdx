@@ -1,0 +1,173 @@
+---
+id: sent
+sidebar_label: Gesendet
+sidebar_position: 10
+status: finished
+tags:
+  - mails
+  - sent
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Gesendete E-Mails
+
+Im Bereich **Gesendet** findest du eine Übersicht aller vom System versendeten E-Mails.  
+Hier kannst du nachvollziehen, wann, an wen und mit welcher Vorlage eine Nachricht versendet wurde – z. B. Benachrichtigungen über Veranstaltungen oder virtuelle Maschinen.
+
+Diese Übersicht dient als Nachweis und Kontrolle, falls Benutzerinnen oder Benutzer angeben, eine erwartete Nachricht nicht erhalten zu haben, oder du prüfen möchtest, ob ein bestimmter Versand erfolgt ist.
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="E-Mails → Gesendet"
+  alternative="Über Verlinkungen aus Tasks, Veranstaltungen oder Benutzer erreichbar"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeige aller automatisch oder manuell versendeten E-Mails',
+    'Filterung nach Empfänger, Versandzeitpunkt, Betreff oder Status',
+    'Einsicht in Betreff, Inhalt und Versandstatus',
+    'Überprüfung des Versandzeitpunkts und eventueller Fehlermeldungen',
+    'Verknüpfung zur jeweiligen E-Mail-Vorlage und Task',
+  ]}
+/>
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Betreff',
+      description:
+        'Betreffzeile der E-Mail. Wird im Posteingang des Empfängers angezeigt.',
+    },
+    {
+      name: 'Empfänger',
+      description:
+        'E-Mail-Adresse des Empfängers, an die die Nachricht gesendet wurde. Bei Systemmails in der Regel die Adresse eines Benutzerkontos.',
+    },
+    {
+      name: 'E-Mail-Vorlage',
+      description:
+        'Referenz auf die verwendete E-Mail-Vorlage, die den Text, das Layout und ggf. Platzhalter definiert.',
+    },
+    {
+      name: 'Status',
+      description:
+        'Aktueller Versandstatus der E-Mail, z. B. *sent* (erfolgreich versendet), *failed* (Fehler beim Versand) oder *queued* (in Warteschlange).',
+    },
+    {
+      name: 'Erstellt am',
+      description:
+        'Zeitpunkt, zu dem die E-Mail im System generiert und für den Versand vorbereitet wurde.',
+    },
+    {
+      name: 'Absendername / Absenderadresse',
+      description:
+        'Angezeigter Name und die Absenderadresse, die der Empfänger in seiner E-Mail-Anwendung sieht. Diese Werte werden in der Regel aus der E-Mail-Vorlage oder den globalen Systemeinstellungen übernommen.',
+    },
+    {
+      name: 'Antwort-an-Adresse',
+      description:
+        'E-Mail-Adresse, an die Antworten des Empfängers gesendet werden sollen. Kann vom eigentlichen Absender abweichen.',
+    },
+    {
+      name: 'Inhalt',
+      description:
+        'Der tatsächliche Nachrichtentext der versendeten E-Mail. Enthält den aufgelösten Inhalt der Vorlage inklusive aller verwendeten Platzhalter.',
+    },
+  ]}
+/>
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Nachverfolgung einer versendeten Systemmail">
+  Eine Benutzerin meldet, dass sie keine Benachrichtigung über den Start einer
+  Veranstaltung erhalten hat. In der Ansicht **E-Mails → Gesendet** kannst du
+  nach ihrer Adresse suchen und sehen, dass die Mail erfolgreich versendet
+  wurde. So lässt sich der Versand nachvollziehen oder mögliche Fehler (z. B.
+  abgelehnte Zustellung) erkennen.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel Gesendet-Übersicht */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Fehlgeschlagene E-Mails können bei Bedarf erneut versendet werden.
+- Gesendete E-Mails werden für einen definierten Zeitraum gespeichert und danach automatisch gelöscht, siehe [Administration -> Installation -> Konfiguration](/docs/admin/install/configuration).
+- Bei großen Mengen an Systemmails (z. B. Veranstaltungsstart) erfolgt der Versand stapelweise (_bulk send_).
+- Der tatsächliche E-Mail-Versand erfolgt asynchron über den Task-Worker-Prozess.
+- Im Detailfenster einer E-Mail ist der verwendete Name der E-Mail-Vorlage und der Empfänger direkt einsehbar.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  showChangelogs={false}
+  showPermissions={false}
+  showTasks={true}
+  showTags={false}
+  items={[
+    {
+      object: 'E-Mail-Vorlage',
+      description:
+        'Einer gesendeten E-Mail ist genau eine E-Mail-Vorlage zugewiesen.',
+      behavior: 'Keine Automatisierungen.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    { action: 'E-Mails anzeigen', permission: 'mails_read', scoped: false },
+    {
+      action: 'E-Mails versenden',
+      permission: 'mails_send',
+      scoped: false,
+    },
+    {
+      action: 'E-Mails versenden (Massenversand)',
+      permission: 'mails_send_bulk',
+      scoped: false,
+      beta: true,
+    },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'E-Mail-Vorlagen', href: './templates' },
+    { label: 'Einstellungen', href: '../system/settings' },
+    { label: 'Tasks', href: '../system/tasks' },
+  ]}
+/>

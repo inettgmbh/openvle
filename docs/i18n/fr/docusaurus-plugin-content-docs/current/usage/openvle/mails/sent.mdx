@@ -1,0 +1,173 @@
+---
+id: sent
+sidebar_label: Envoyés
+sidebar_position: 10
+status: finished
+tags:
+  - mails
+  - sent
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# E-mails envoyés
+
+Dans la section **Envoyés**, vous trouverez une vue d'ensemble de tous les e-mails envoyés par le système.  
+Vous pouvez y vérifier quand, à qui et avec quel modèle un message a été envoyé, par ex. des notifications concernant des événements ou des machines virtuelles.
+
+Cette vue d'ensemble sert de preuve et de contrôle si des utilisateurs indiquent ne pas avoir reçu un message attendu, ou si vous souhaitez vérifier qu'un envoi spécifique a bien été effectué.
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="E-mails → Envoyés"
+  alternative="Accessible via les liens depuis les tasks, événements ou utilisateurs"
+/>
+
+---
+
+## Fonctionnalités en un coup d'oeil
+
+<FeatureList
+  items={[
+    'Affichage de tous les e-mails envoyés automatiquement ou manuellement',
+    "Filtrage par destinataire, horodatage d'envoi, objet ou statut",
+    "Consultation de l'objet, du contenu et du statut d'envoi",
+    "Vérification de l'horodatage d'envoi et des éventuels messages d'erreur",
+    "Lien vers le modèle d'e-mail et le task correspondants",
+  ]}
+/>
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Objet',
+      description:
+        "Ligne d'objet de l'e-mail. Affichée dans la boîte de réception du destinataire.",
+    },
+    {
+      name: 'Destinataire',
+      description:
+        "Adresse e-mail du destinataire auquel le message a été envoyé. Pour les e-mails système, il s'agit généralement de l'adresse d'un compte utilisateur.",
+    },
+    {
+      name: "Modèle d'e-mail",
+      description:
+        "Référence au modèle d'e-mail utilisé, qui définit le texte, la mise en page et éventuellement les espaces réservés.",
+    },
+    {
+      name: 'Statut',
+      description:
+        "Statut d'envoi actuel de l'e-mail, par ex. *sent* (envoyé avec succès), *failed* (erreur lors de l'envoi) ou *queued* (en file d'attente).",
+    },
+    {
+      name: 'Créé le',
+      description:
+        "Horodatage auquel l'e-mail a été généré dans le système et préparé pour l'envoi.",
+    },
+    {
+      name: "Nom d'expéditeur / Adresse d'expéditeur",
+      description:
+        "Nom affiché et adresse d'expéditeur que le destinataire voit dans son application de messagerie. Ces valeurs sont généralement reprises du modèle d'e-mail ou des paramètres système globaux.",
+    },
+    {
+      name: 'Adresse de réponse',
+      description:
+        "Adresse e-mail à laquelle les réponses du destinataire doivent être envoyées. Peut différer de l'expéditeur réel.",
+    },
+    {
+      name: 'Contenu',
+      description:
+        'Le texte réel du message envoyé. Contient le contenu résolu du modèle, y compris tous les espaces réservés utilisés.',
+    },
+  ]}
+/>
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Suivi d'un e-mail système envoyé">
+  Une utilisatrice signale qu'elle n'a pas reçu de notification concernant le
+  démarrage d'un événement. Dans la vue **E-mails → Envoyés**, vous pouvez
+  rechercher son adresse et constater que l'e-mail a été envoyé avec succès.
+  Cela permet de retracer l'envoi ou de détecter d'éventuelles erreurs (par ex.
+  une livraison refusée).
+</Example>
+
+{/* TODO: Ajouter une capture d'écran -- Exemple de vue d'ensemble des envoyés */}
+
+---
+
+## Remarques / Particularités
+
+- Les e-mails échoués peuvent être renvoyés si nécessaire.
+- Les e-mails envoyés sont conservés pendant une durée définie puis automatiquement supprimés, voir [Administration -> Installation -> Configuration](/docs/admin/install/configuration).
+- Pour de grandes quantités d'e-mails système (par ex. démarrage d'événement), l'envoi s'effectue par lots (_bulk send_).
+- L'envoi effectif des e-mails s'effectue de manière asynchrone via le processus task-worker.
+- Dans la fenêtre de détail d'un e-mail, le nom du modèle d'e-mail utilisé et le destinataire sont directement consultables.
+
+---
+
+## Relations avec d'autres objets
+
+<ObjectRelations
+  showChangelogs={false}
+  showPermissions={false}
+  showTasks={true}
+  showTags={false}
+  items={[
+    {
+      object: "Modèle d'e-mail",
+      description:
+        "Exactement un modèle d'e-mail est attribué à chaque e-mail envoyé.",
+      behavior: 'Aucune automatisation.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    { action: 'Afficher les e-mails', permission: 'mails_read', scoped: false },
+    {
+      action: 'Envoyer des e-mails',
+      permission: 'mails_send',
+      scoped: false,
+    },
+    {
+      action: 'Envoyer des e-mails (envoi en masse)',
+      permission: 'mails_send_bulk',
+      scoped: false,
+      beta: true,
+    },
+  ]}
+/>
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: "Modèles d'e-mail", href: './templates' },
+    { label: 'Paramètres', href: '../system/settings' },
+    { label: 'Tasks', href: '../system/tasks' },
+  ]}
+/>

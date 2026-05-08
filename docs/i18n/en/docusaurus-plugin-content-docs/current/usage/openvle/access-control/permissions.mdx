@@ -1,0 +1,193 @@
+---
+id: permissions
+sidebar_label: Permissions
+sidebar_position: 40
+status: finished
+tags:
+  - access-control
+  - permissions
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Permissions
+
+Permissions control access to functions and content in OpenVLE.  
+You determine which users or roles are allowed to perform specific actions such as **Read**, **Create**, **Edit**, or **Delete**.  
+In this section, you can manage existing permissions.
+
+{/* TODO: Add screenshot – Permissions overview */}
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Access Control -> Permissions"
+  alternative="Linked via User or Role views"
+/>
+
+---
+
+## Features at a Glance
+
+<FeatureList
+  items={[
+    'View and manage existing permissions',
+    'Filter and search by permission name or assigned roles',
+    'Review which roles or users have a specific permission',
+  ]}
+/>
+
+{/* TODO: Add screenshot – Permission detail view */}
+
+---
+
+## Key Fields at a Glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'The name of the permission, e.g., "Read activities" or "Create manufacturers". Displayed in lists and associations.',
+    },
+    {
+      name: 'Key (Slug)',
+      description:
+        'Short name of the permission. Used internally within OpenVLE.',
+    },
+  ]}
+/>
+
+---
+
+## Adding Object Permissions for a User
+
+For various object models, **direct object permissions** can be granted.  
+This means the user receives a permission **only for a specific object** — not for all objects of the same type.
+
+1. Search for and open the desired object.
+2. Switch to the **Permissions** tab.  
+   If this tab is not available, you either lack the required permissions to create object permissions, or the corresponding object model does not support object permissions.
+3. Click the **green plus button**.
+4. In the input form, you can search for the desired user and select the appropriate permission.  
+   The following permissions are available by default:
+
+   - **Read**
+   - **Read & Edit**
+   - **Full Access**
+
+   For **virtual machines (VMs)**, the additional permission **Read & VM Control** is available,  
+   which also allows the user to perform actions such as **Start**, **Stop**, or **Reboot** on the VM.
+
+5. Save the permission.
+
+---
+
+## Removing Object Permissions from a User
+
+1. Open the relevant object.
+2. Switch to the **Permissions** tab.
+3. In the list of existing permissions, click **Remove** on the desired row, or open the context menu and select **Delete**.
+4. Confirm the action in the displayed dialog.
+
+:::note
+Removing an object permission takes effect **immediately** — the user instantly loses access to the respective object.
+:::
+
+---
+
+## Example or Use Case
+
+<Example title="Assign a permission to the Environment Manager role">
+  An administrator wants to specify that only instructors may create new
+  environments. To do this, they create a new **Environment Manager** role and
+  assign it the <code>courses_create</code> permission. This way, only members
+  of this role can create new environments, while other users cannot.
+</Example>
+
+{/* TODO: Add screenshot – Example: Permission creation */}
+
+---
+
+## Notes / Special Considerations
+
+- Permissions follow the **CRUD principle** (Create, Read, Update, Delete).
+- Permissions can be assigned both **globally** and **object-specific (scoped)**.
+- Changes to a permission take effect immediately for all roles and users that use it.
+- New permissions should only be created by administrators, as they directly affect system access.
+- Via the **Users** and **Roles** tabs, you can see where the permission is assigned.
+
+---
+
+## Relationships to Other Objects
+
+<ObjectRelations
+  showChangelogs={false}
+  showPermissions={false}
+  showTags={false}
+  items={[
+    {
+      object: 'Roles',
+      description: 'A permission can be assigned to any number of roles.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'Users',
+      description: 'A permission can be assigned to any number of users.',
+      behavior: 'No automations.',
+    },
+  ]}
+/>
+
+---
+
+## Required Permissions
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    {
+      action: 'View permissions',
+      permission: 'permissions_read',
+      scoped: false,
+    },
+    {
+      action: 'Create permissions',
+      permission: 'permissions_create',
+      deprecated: true,
+    },
+    {
+      action: 'Edit permissions',
+      permission: 'permissions_update',
+      scoped: false,
+      deprecated: true,
+    },
+    {
+      action: 'Delete permissions',
+      permission: 'permissions_delete',
+      scoped: false,
+      deprecated: true,
+    },
+    { action: 'View roles', permission: 'roles_read' },
+  ]}
+/>
+
+---
+
+## Related Topics
+
+<RelatedLinks
+  items={[
+    { label: 'User Management', href: './users' },
+    { label: 'Roles', href: './roles' },
+    { label: 'Policies', href: './policies' },
+  ]}
+/>

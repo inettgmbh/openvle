@@ -1,0 +1,36 @@
+import { translate } from '@docusaurus/Translate'
+
+export const NavigationHint = ({ path, alternative }) => (
+  <div
+    style={{
+      borderLeft: '4px solid var(--ifm-color-primary)',
+      padding: '0.5rem 1rem',
+      backgroundColor: 'var(--ifm-color-emphasis-100)',
+      marginBottom: '1rem',
+    }}
+  >
+    <strong>
+      {translate({ id: 'component.navigation.label', message: 'Navigation:' })}
+    </strong>
+    <br />
+    {path && (
+      <>
+        {translate({
+          id: 'component.navigation.mainMenu',
+          message: 'Über das Hauptmenü:',
+        })}{' '}
+        <em>{path}</em>
+        <br />
+      </>
+    )}
+    {alternative && (
+      <>
+        {translate({
+          id: 'component.navigation.alternative',
+          message: 'Alternativ erreichbar über:',
+        })}{' '}
+        <em>{alternative}</em>
+      </>
+    )}
+  </div>
+)

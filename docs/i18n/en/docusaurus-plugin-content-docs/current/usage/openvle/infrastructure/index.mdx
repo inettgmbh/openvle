@@ -1,0 +1,83 @@
+---
+id: infrastructure
+sidebar_label: Infrastructure
+sidebar_position: 40
+status: finished
+tags:
+  - infrastructure
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Infrastructure
+
+The **Infrastructure** section provides a central overview of all vendor- and system-related data in OpenVLE.  
+Here you manage **vendors**, **applications**, and **operating systems** used in virtual machines (VMs) or VM templates.  
+This information serves the structured capture, documentation, and traceability within the management software.
+
+{/* TODO: Add screenshot -- Infrastructure overview */}
+
+---
+
+## Where can I find this section?
+
+<NavigationHint path="Infrastructure" />
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'Maintain vendor data and assign them to operating systems and applications',
+    'Manage operating systems with version and architecture',
+    'Manage applications with name, version, and description',
+    'Assign applications and operating systems to VMs or VM templates',
+    'Support for inventory management and documentation of deployed software',
+  ]}
+/>
+
+---
+
+## Example or use case
+
+<Example title="Traceable software assignment to a VM">
+  An administrator wants to document which software is installed on a training
+  VM. She opens the **Infrastructure → Applications** section, creates the
+  application "LibreOffice 7.6", and then assigns it to the VM template
+  "Debian12-Training". This makes it possible to track at any time which
+  software is available on which VMs or VM templates.
+</Example>
+
+{/* TODO: Add screenshot -- Example: Assign application */}
+
+---
+
+## Notes / special considerations
+
+:::info
+The features listed here are used exclusively for the **inventory management** of VMs and VM templates.  
+**No automatic installation** of applications takes place within the systems.
+
+If you need applications in a VM or VM template, you must still install them manually.  
+Only after completing the configuration should the VM or VM template be assigned to the corresponding entries in OpenVLE.
+:::
+
+This separation between inventory management and installation ensures clear traceability and prevents unintended changes to production systems.
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Applications', href: './applications' },
+    { label: 'Operating systems', href: './os' },
+    { label: 'Vendors', href: './vendors' },
+    { label: 'Virtual Machines', href: '../vms' },
+    { label: 'VM templates', href: '../vm-templates' },
+  ]}
+/>

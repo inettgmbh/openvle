@@ -1,0 +1,76 @@
+---
+id: mails
+sidebar_label: Emails
+sidebar_position: 30
+status: finished
+tags:
+  - mails
+  - communication
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Emails
+
+OpenVLE can automatically send emails to users -- for example when VMs are created or when events start.  
+In the Emails section, you will find all sent messages, the email templates used for system notifications, and all available email actions.
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Emails"
+  alternative="Linked from system notifications or from objects with email dispatch (e.g. events)"
+/>
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'Overview of all sent emails with status, recipient, and send time',
+    'View subject, content, and delivery errors',
+    'Management of email templates for system actions',
+    'Filtering by time, recipient, or delivery status',
+  ]}
+/>
+
+---
+
+## Example or use case
+
+<Example title="Email dispatch when an event starts">
+  An event is started in OpenVLE. An email with the relevant information is
+  automatically sent to all participants. In the email overview, you can verify
+  whether all messages were successfully delivered and which template was used.
+</Example>
+
+{/* TODO: Add screenshot -- Email overview example */}
+
+---
+
+## Notes / special considerations
+
+- Emails are sent asynchronously via background tasks.
+- Failed deliveries can be resent from the overview.
+- Each email is linked to its corresponding template -- changes to templates only affect future emails.
+- The email text can contain dynamic placeholders (e.g. `{user.name}`, `{event.name}`) that are replaced at the time of dispatch.
+- The SMTP server can be individually configured, see [Administration -> Installation -> Configuration](/docs/admin/install/configuration).
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Sent emails', href: './sent' },
+    { label: 'Email templates', href: './templates' },
+    { label: 'Email actions', href: './actions' },
+    { label: 'Settings', href: '../system/settings' },
+  ]}
+/>

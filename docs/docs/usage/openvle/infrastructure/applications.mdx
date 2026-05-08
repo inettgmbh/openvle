@@ -1,0 +1,205 @@
+---
+id: applications
+sidebar_label: Anwendungen
+sidebar_position: 120
+status: finished
+tags:
+  - infrastructure
+  - applications
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Anwendungen
+
+Im Bereich **Anwendungen** verwaltest du Softwarekomponenten, die in VM-Vorlagen, virtuellen Maschinen oder Umgebungen eingesetzt werden.  
+So behältst du den Überblick darüber, welche Softwareversionen in deiner OpenVLE-Infrastruktur verwendet werden und kannst diese systematisch dokumentieren.
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="Infrastruktur → Anwendungen"
+  alternative="Über Hersteller, virtuelle Maschinen oder VM-Vorlagen verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeigen, Erstellen, Bearbeiten und Löschen von Anwendungen',
+    'Zuweisen einer Anwendung zu einem Hersteller',
+    'Erfassen von Versionsinformationen und Beschreibungen',
+    'Verknüpfen von Anwendungen mit VM-Vorlagen oder Umgebungen',
+    'Unterstützung bei der Inventarisierung der eingesetzten Software',
+  ]}
+/>
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Der Name der Anwendung, z. B. „LibreOffice“ oder „Visual Studio Code“. Wird in Listen und Verknüpfungen angezeigt.',
+    },
+    {
+      name: 'Hersteller',
+      description:
+        'Beziehung zum Hersteller, der die Anwendung bereitstellt. Ermöglicht konsistente Zuordnung und Filterung innerhalb der Infrastruktur.',
+    },
+    {
+      name: 'Beschreibung',
+      description:
+        'Kurze Beschreibung oder Versionsangabe der Anwendung, z. B. „Office-Suite für Textverarbeitung, Tabellen und Präsentationen“.',
+    },
+  ]}
+/>
+
+---
+
+## Erstellen einer Anwendung
+
+1. Öffne im Hauptmenü den Bereich **Infrastruktur → Anwendungen**.
+2. Klicke auf **Hinzufügen**, um eine neue Anwendung zu erstellen.
+3. Gib einen **Namen**, einen **Hersteller** und eine **Beschreibung** für die Anwendung an.
+4. Speichere die Anwendung.
+5. Wechsle anschließend in den Tab **VMs** oder **VM-Vorlagen**, um die benötigten VM-Vorlagen der Anwendung hinzuzufügen oder zu entfernen.
+
+:::info
+Der erforderliche Hersteller muss vor dem Erstellen der Anwendung vorhanden sein.
+:::
+
+---
+
+## Bearbeiten einer Anwendung
+
+1. Öffne im Hauptmenü den Bereich **Infrastruktur → Anwendungen**.
+2. Suche in der Liste nach der gewünschten Anwendung.
+3. Klicke auf **Bearbeiten**, oder öffne das Kontextmenü der Anwendung und wähle **Bearbeiten**.
+4. Im Formular werden alle aktuellen Daten der Anwendung angezeigt.
+5. Passe die gewünschten Felder an – beispielsweise **Name** oder **Beschreibung**.
+6. Speichere die Änderungen.
+
+:::note
+Wenn eine Softwareversion aktualisiert wurde, z. B. von _Office 2016_ auf _Office 2019_, wird empfohlen, eine **neue Anwendung** anzulegen.  
+So wird verhindert, dass bereits zugewiesene VMs und VM-Vorlagen von dieser Versionsänderung betroffen sind.  
+Andernfalls erscheint es in OpenVLE so, als wären alle zugewiesenen Systeme auf die neue Version aktualisiert worden.
+:::
+
+---
+
+## Löschen einer Anwendung
+
+1. Öffne im Hauptmenü den Bereich **Infrastruktur → Anwendungen**.
+2. Suche in der Liste nach der gewünschten Anwendung.
+3. Klicke auf **Löschen**, oder öffne das Kontextmenü der Anwendung und wähle **Löschen**.
+4. Bestätige den Löschvorgang im angezeigten Dialog.
+5. Die Anwendung wird daraufhin dauerhaft entfernt.
+
+:::note
+Beim Löschen einer Anwendung werden alle Zuweisungen zu VMs und VM-Vorlagen entfernt.  
+Die betroffenen VMs und VM-Vorlagen selbst bleiben jedoch unverändert erhalten.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Neue Anwendung für VM-Vorlagen anlegen">
+  Eine Administratorin möchte eine Anwendung für alle Schulungsmaschinen dokumentieren.  
+  Sie öffnet den Bereich **Infrastruktur → Anwendungen**, klickt auf **Hinzufügen** und gibt die Daten ein:  
+  - Name: *LibreOffice*  
+  - Hersteller: *The Document Foundation*  
+  - Beschreibung: *Office-Suite für Textverarbeitung, Tabellen und Präsentationen*
+
+Danach weist sie die Anwendung den relevanten VM-Vorlagen zu, um eine saubere Inventarisierung sicherzustellen.
+
+</Example>
+
+---
+
+## Hinweise / Besonderheiten
+
+- Anwendungen dienen ausschließlich der **Dokumentation** und **Zuordnung** – sie werden nicht automatisch installiert.
+- Eine Anwendung kann mehreren VM-Vorlagen oder virtuellen Maschinen zugewiesen werden.
+- Wenn eine Anwendung gelöscht wird, werden bestehende Zuweisungen in VMs oder VM-Vorlagen ebenfalls entfernt.
+- Hersteller müssen vor der Erstellung einer Anwendung bereits vorhanden sein.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Hersteller',
+      description:
+        'Einer Anwendung kann genau ein Hersteller zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'VM-Vorlagen',
+      description:
+        'Einer Anwendung können beliebig viele VM-Vorlagen zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'VMs',
+      description:
+        'Einer Anwendung können beliebig viele VMs zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  data={[
+    {
+      action: 'Anwendungen anzeigen',
+      permission: 'applications_read',
+      scoped: true,
+    },
+    { action: 'Anwendungen anlegen', permission: 'applications_create' },
+    {
+      action: 'Anwendungen bearbeiten',
+      permission: 'applications_update',
+      scoped: true,
+    },
+    {
+      action: 'Anwendungen löschen',
+      permission: 'applications_delete',
+      scoped: true,
+    },
+    { action: 'Hersteller anzeigen', permission: 'vendors_read' },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Betriebssysteme', href: './os' },
+    { label: 'Hersteller', href: './vendors' },
+    { label: 'Virtuelle Maschinen', href: '../vms' },
+    { label: 'VM-Vorlagen', href: '../vm-templates' },
+  ]}
+/>

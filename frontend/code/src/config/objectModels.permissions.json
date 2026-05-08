@@ -1,0 +1,512 @@
+{
+  "version": 1,
+  "objectModels": [
+    {
+      "key": "activities",
+      "objectTypeKey": "activity",
+      "label": "Aktivitäten",
+      "backendObjectTypes": ["Activity", "activity", "activities"],
+      "keyspace": "activities",
+      "scopes": { "global": true, "object": false },
+      "permissionKeys": {
+        "global": ["object_read", "object_full"]
+      }
+    },
+    {
+      "key": "changelogs",
+      "objectTypeKey": "changelog",
+      "label": "Änderungen (Changelogs)",
+      "backendObjectTypes": ["Changelog", "changelog", "changelogs"],
+      "keyspace": "changelogs",
+      "scopes": { "global": true, "object": false },
+      "permissionKeys": {
+        "global": ["object_read", "object_full"]
+      }
+    },
+    {
+      "key": "applications",
+      "objectTypeKey": "application",
+      "label": "Anwendungen",
+      "backendObjectTypes": ["Application", "application", "applications"],
+      "keyspace": "applications",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ],
+        "object": [
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ]
+      }
+    },
+    {
+      "key": "users",
+      "objectTypeKey": "user",
+      "label": "Benutzer",
+      "backendObjectTypes": ["User", "user", "users"],
+      "keyspace": "users",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full",
+          "object_set_password"
+        ],
+        "object": [
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ]
+      }
+    },
+    {
+      "key": "objectPermissions",
+      "objectTypeKey": "permission",
+      "label": "Berechtigungen",
+      "backendObjectTypes": [
+        "ObjectPermission",
+        "object_permission",
+        "object_permissions",
+        "ObjectPermissions"
+      ],
+      "keyspace": "objectPermissions",
+      "scopes": { "global": true, "object": false },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_delete",
+          "object_full"
+        ]
+      }
+    },
+    {
+      "key": "os",
+      "objectTypeKey": "os",
+      "label": "Betriebssysteme",
+      "backendObjectTypes": ["OS", "os", "OperatingSystem", "operating_system"],
+      "keyspace": "os",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ],
+        "object": [
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ]
+      }
+    },
+    {
+      "key": "dashboard",
+      "objectTypeKey": "dashboard",
+      "label": "Dashboard",
+      "backendObjectTypes": ["Dashboard", "dashboard", "Dashboards"],
+      "keyspace": "dashboard",
+      "scopes": { "global": true, "object": false },
+      "permissionKeys": {
+        "global": ["object_admins", "object_verwaltende"]
+      }
+    },
+    {
+      "key": "documents",
+      "objectTypeKey": "document",
+      "label": "Dokumente",
+      "backendObjectTypes": ["Document", "document", "documents"],
+      "keyspace": "documents",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ],
+        "object": [
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ]
+      }
+    },
+    {
+      "key": "mailTemplates",
+      "objectTypeKey": "mailTemplate",
+      "label": "E-Mail Vorlagen",
+      "backendObjectTypes": ["MailTemplate", "mail_template", "mail_templates"],
+      "keyspace": "mail_templates",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ],
+        "object": [
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ]
+      }
+    },
+    {
+      "key": "mails",
+      "objectTypeKey": "mail",
+      "label": "E-Mails (gesendet)",
+      "backendObjectTypes": ["Mail", "mail", "mails"],
+      "keyspace": "mails",
+      "scopes": { "global": true, "object": false },
+      "permissionKeys": {
+        "global": [
+          "object_read",
+          "object_full",
+          "object_send",
+          "object_send_bulk"
+        ]
+      }
+    },
+    {
+      "key": "moodle",
+      "objectTypeKey": "moodle",
+      "label": "Moodle Kurse",
+      "backendObjectTypes": ["Moodle", "moodle"],
+      "keyspace": "moodleCourses",
+      "featureFlag": "moodle.enabled",
+      "scopes": { "global": true, "object": false },
+      "permissionKeys": {
+        "global": ["object_read", "object_full"]
+      }
+    },
+    {
+      "key": "vendors",
+      "objectTypeKey": "vendor",
+      "label": "Hersteller",
+      "backendObjectTypes": ["Vendor", "vendor", "vendors"],
+      "keyspace": "vendors",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ],
+        "object": [
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ]
+      }
+    },
+    {
+      "key": "proxmox",
+      "objectTypeKey": "proxmox",
+      "label": "Proxmox VE",
+      "backendObjectTypes": ["Proxmox", "proxmox", "ProxmoxVE", "proxmoxve"],
+      "keyspace": "proxmox",
+      "scopes": { "global": true, "object": false },
+      "permissionKeys": {
+        "global": ["object_read", "object_full"]
+      }
+    },
+    {
+      "key": "policies",
+      "objectTypeKey": "policy",
+      "label": "Richtlinien",
+      "backendObjectTypes": ["Policy", "policy", "policies"],
+      "keyspace": "policies",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full",
+          "object_users_read"
+        ],
+        "object": [
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full",
+          "object_users_read"
+        ]
+      }
+    },
+    {
+      "key": "roles",
+      "objectTypeKey": "role",
+      "label": "Rollen",
+      "backendObjectTypes": ["Role", "role", "roles"],
+      "keyspace": "roles",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ],
+        "object": [
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ]
+      }
+    },
+    {
+      "key": "subtasks",
+      "objectTypeKey": "subtask",
+      "label": "SubTasks",
+      "backendObjectTypes": ["SubTask", "subtask", "subtasks"],
+      "keyspace": "subtasks",
+      "scopes": { "global": true, "object": false },
+      "permissionKeys": {
+        "global": ["object_read", "object_full"]
+      }
+    },
+    {
+      "key": "systemSettings",
+      "objectTypeKey": "systemSetting",
+      "label": "System Einstellungen",
+      "backendObjectTypes": ["System", "SystemSetting", "system"],
+      "keyspace": null,
+      "scopes": { "global": true, "object": false },
+      "permissionKeys": {
+        "global": ["object_read", "object_update", "object_full"]
+      }
+    },
+    {
+      "key": "tasks",
+      "objectTypeKey": "task",
+      "label": "Tasks",
+      "backendObjectTypes": ["Task", "task", "tasks", "Tasks"],
+      "keyspace": "tasks",
+      "scopes": { "global": true, "object": false },
+      "permissionKeys": {
+        "global": ["object_read", "object_full"]
+      }
+    },
+    {
+      "key": "courses",
+      "objectTypeKey": "course",
+      "label": "Umgebungen",
+      "backendObjectTypes": ["Course", "course", "courses", "Courses"],
+      "keyspace": "courses",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ],
+        "object": [
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ]
+      }
+    },
+    {
+      "key": "events",
+      "objectTypeKey": "event",
+      "label": "Veranstaltungen",
+      "backendObjectTypes": ["Event", "event", "events"],
+      "keyspace": "events",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full",
+          "object_actions_start",
+          "object_actions_stop",
+          "object_templates_update"
+        ],
+        "object": [
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full",
+          "object_actions_start",
+          "object_actions_stop"
+        ]
+      }
+    },
+    {
+      "key": "connections",
+      "objectTypeKey": "guacamole",
+      "label": "Verbindungen",
+      "backendObjectTypes": ["Guacamole", "guacamole"],
+      "keyspace": "guacamoles",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_delete",
+          "object_full"
+        ],
+        "object": ["object_read", "object_delete", "object_full"]
+      }
+    },
+    {
+      "key": "connectionProfiles",
+      "objectTypeKey": "guacamoleConnectionProfile",
+      "label": "Verbindungsvorlagen",
+      "backendObjectTypes": [
+        "GuacamoleConnectionProfile",
+        "guacamoleconnectionprofile"
+      ],
+      "keyspace": "connectionProfiles",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_delete",
+          "object_full"
+        ],
+        "object": ["object_read", "object_delete", "object_full"]
+      }
+    },
+    {
+      "key": "templates",
+      "objectTypeKey": "template",
+      "label": "VM-Vorlagen",
+      "backendObjectTypes": ["Template", "template", "templates"],
+      "keyspace": "templates",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ],
+        "object": [
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ]
+      }
+    },
+    {
+      "key": "virtualmachines",
+      "objectTypeKey": "virtualMachine",
+      "label": "VMs",
+      "backendObjectTypes": [
+        "VirtualMachine",
+        "virtual_machine",
+        "virtual_machines",
+        "VM",
+        "VMs"
+      ],
+      "keyspace": "vms",
+      "scopes": { "global": true, "object": true },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_reset",
+          "object_full",
+          "object_actions_hibernate",
+          "object_actions_pause",
+          "object_actions_reboot",
+          "object_actions_reset",
+          "object_actions_resume",
+          "object_actions_shutdown",
+          "object_actions_start",
+          "object_actions_stop"
+        ],
+        "object": [
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_reset",
+          "object_full",
+          "object_actions_hibernate",
+          "object_actions_pause",
+          "object_actions_reboot",
+          "object_actions_reset",
+          "object_actions_resume",
+          "object_actions_shutdown",
+          "object_actions_start",
+          "object_actions_stop"
+        ]
+      }
+    },
+    {
+      "key": "scim_providers",
+      "objectTypeKey": "scimProvider",
+      "label": "SCIM Providers",
+      "backendObjectTypes": ["ScimProvider", "scim_provider", "scim_providers"],
+      "keyspace": "scim_providers",
+      "featureFlag": "scim.enabled",
+      "scopes": { "global": true, "object": false },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ]
+      }
+    },
+    {
+      "key": "scim_clients",
+      "objectTypeKey": "scimClient",
+      "label": "SCIM Clients",
+      "backendObjectTypes": ["ScimClient", "scim_client", "scim_clients"],
+      "keyspace": "scim_clients",
+      "featureFlag": "scim.enabled",
+      "scopes": { "global": true, "object": false },
+      "permissionKeys": {
+        "global": [
+          "object_create",
+          "object_read",
+          "object_update",
+          "object_delete",
+          "object_full"
+        ]
+      }
+    }
+  ]
+}

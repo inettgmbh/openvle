@@ -1,0 +1,162 @@
+---
+id: activities
+sidebar_label: Aktivitäten
+sidebar_position: 10
+status: finished
+tags:
+  - system
+  - activities
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Aktivitäten
+
+Der Bereich **Aktivitäten** dient als Zugriffs- und Änderungsjournal für Administratoren.  
+Hier wird protokolliert, **welche Benutzer wann welche Seiten im System aufgerufen oder Aktionen ausgelöst haben** – ähnlich einem HTTP Access Log.
+
+Die Aktivitätsübersicht hilft dabei, Systemnutzung nachzuvollziehen, Auffälligkeiten zu erkennen und bei Bedarf gezielt Support- oder Audit-Maßnahmen durchzuführen.
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="System → Aktivitäten"
+  alternative="Über Benutzer verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeige aller Benutzeraktivitäten im System (z. B. Seitenaufrufe, API-Zugriffe)',
+    'Filterung nach Benutzer, Zeitraum, Endpunkt oder HTTP-Methode',
+    'Einsicht in Anfragen und Antworten inkl. Header und Statuscodes',
+  ]}
+/>
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'timestamp',
+      description:
+        'Zeitpunkt, zu dem die Aktivität stattgefunden hat. Wird automatisch in UTC-Zeit gespeichert.',
+    },
+    {
+      name: 'requestClientIP',
+      description:
+        'IP-Adresse des Clients, von dem die Anfrage kam. Nützlich zur Nachverfolgung von Zugriffen.',
+    },
+    {
+      name: 'requestUser',
+      description:
+        'Benutzer-ID der Person, die die Anfrage ausgelöst hat. Verweist auf das Benutzerobjekt im System.',
+    },
+    {
+      name: 'requestPermission',
+      description:
+        'Die Berechtigung, die für die Anfrage relevant war (z. B. „users_read_one“). Dient der Auditierung von Berechtigungen.',
+    },
+    {
+      name: 'requestMethod',
+      description:
+        'HTTP-Methode der Anfrage (z. B. GET, POST, PUT, DELETE). Zeigt an, ob Daten gelesen, erstellt oder geändert wurden.',
+    },
+    {
+      name: 'requestUrl',
+      description:
+        'Die aufgerufene URL bzw. API-Endpunkt. Ermöglicht das Nachvollziehen der betroffenen Ressource.',
+    },
+    {
+      name: 'responseCode',
+      description:
+        'HTTP-Statuscode der Serverantwort (z. B. 200 = erfolgreich, 403 = unberechtigt, 500 = Serverfehler).',
+    },
+    {
+      name: 'x-process-time',
+      description:
+        'Verarbeitungszeit der Anfrage in Sekunden. Wird im Header „x-process-time“ mitgeliefert und zeigt, wie lange die Serververarbeitung gedauert hat.',
+    },
+  ]}
+/>
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Anfragen eines Benutzers analysieren">
+  Eine Administratorin möchte prüfen, welche Aktionen ein Benutzer in den
+  letzten 24 Stunden durchgeführt hat. Sie öffnet den Bereich **System →
+  Aktivitäten**, filtert nach der Benutzer-ID und erhält eine Liste mit den
+  entsprechenden API-Aufrufen, inklusive IP-Adresse, Methode und Antwortcode.
+  Anhand dieser Informationen kann sie schnell nachvollziehen, ob ein
+  technisches Problem oder ein Bedienfehler vorlag.
+</Example>
+
+```json
+{
+  "timestamp": "2015-10-21T16:29:00.000000+02:00",
+  "requestClientIP": "1.1.1.1",
+  "requestUser": "25e281df-1bd9-47cc-97a2-496fffe5516a",
+  "requestPermission": "users_read_one",
+  "requestMethod": "GET",
+  "requestUrl": "/v1/users/66179794-55e2-4be7-abff-256f1e1b8838",
+  "responseCode": 200
+}
+```
+
+{/* TODO: Screenshot hinzufügen – Beispiel: Aktivitätenliste mit Filter */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Die Aktivitätsprotokolle werden automatisch durch alle API-Zugriffe erzeugt.
+- Eigene Aktivitäten können von normalen Benutzern eingesehen werden, vollständige Logs nur von Administratoren.
+- Gelöschte Aktivitäten sind nicht wiederherstellbar.
+- Erfasst werden ausschließlich die Access-Logs des Backends.
+- Zur Verbesserung der Performance werden alte Einträge nach einer definierten Frist automatisch gelöscht. Details dazu finden sich in den Konfigurationseinstellungen des Backends.
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    {
+      action: 'Aktivitäten anzeigen',
+      permission: 'activities_read',
+      scoped: false,
+    },
+    {
+      action: 'Eigene Aktivitäten anzeigen',
+      permission: 'activities_read_own',
+      scoped: false,
+    },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Aufgaben', href: './tasks' },
+    { label: 'Einstellungen', href: './settings' },
+    { label: 'Benutzer', href: '../access-control/user' },
+  ]}
+/>

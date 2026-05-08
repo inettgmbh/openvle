@@ -1,0 +1,215 @@
+---
+id: tags
+sidebar_label: Tags
+sidebar_position: 60
+status: finished
+tags:
+  - tags
+  - organization
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Tags
+
+Tags are keywords that can be used to categorize, filter, and more easily find objects (e.g. environments, VM templates, or virtual machines).  
+They help to structure large amounts of data clearly and to group objects by topic.
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Tags"
+  alternative="Linked from detail views of environments, VMs, VM templates, or other objects"
+/>
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'Create and manage keywords (tags)',
+    'Assign tags to objects such as environments, VM templates, VMs, or other objects',
+    'Quick filtering and grouping',
+    'Automatic suggestions when adding new tags based on existing entries',
+  ]}
+/>
+
+---
+
+## Important fields at a glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description: 'Name of the tag. Displayed in all list and detail views.',
+    },
+    {
+      name: 'Value',
+      description: 'Value of the tag. Displayed in all list and detail views.',
+    },
+  ]}
+/>
+
+---
+
+## Creating a tag
+
+1. Open the section of the desired object from the main menu.
+2. Find the desired object in the list and open it.
+3. In the detail view of the object, there is a **Tags** section.
+4. Click the plus button to add a new tag.
+5. Enter a **name** and a **value** for the tag.
+6. Save the tag.
+
+---
+
+## Deleting a tag
+
+1. Open the section of the desired object from the main menu.
+2. Find the desired object in the list and open it.
+3. In the detail view of the object, there is a **Tags** section.
+4. Click the X button next to the tag you want to delete.
+5. Confirm the deletion in the displayed dialog.
+
+---
+
+## Example or use case
+
+<Example title="Categorize environments with tags">
+  An environment manager wants to organize her events by topic areas. She
+  creates the tags *Networking*, *Basics*, and *Advanced*. She can then filter
+  by these tags in the environment overview and specifically find environments
+  assigned to a particular topic area.
+</Example>
+
+{/* TODO: Add screenshot -- Tag management example */}
+
+---
+
+## Notes / special considerations
+
+- Tags can be used multiple times and assigned to multiple objects simultaneously.
+- When an object is deleted, its assigned tags are automatically removed.
+- Tags are independent of user roles -- all users with the appropriate permissions can see and use them.
+- The tagging system is universal and supports nearly all object models in OpenVLE.
+
+---
+
+## Relationships to other objects
+
+<ObjectRelations
+  showChangelogs={false}
+  showTags={false}
+  showPermissions={false}
+  items={[
+    {
+      object: 'Applications',
+      description: 'Any number of tags can be assigned to applications.',
+      behavior:
+        'Automatic removal of the tag when the associated object is deleted.',
+    },
+    {
+      object: 'Operating systems',
+      description: 'Any number of tags can be assigned to operating systems.',
+      behavior:
+        'Automatic removal of the tag when the associated object is deleted.',
+    },
+    {
+      object: 'Vendors',
+      description: 'Any number of tags can be assigned to vendors.',
+      behavior:
+        'Automatic removal of the tag when the associated object is deleted.',
+    },
+    {
+      object: 'Email templates',
+      description: 'Any number of tags can be assigned to email templates.',
+      behavior:
+        'Automatic removal of the tag when the associated object is deleted.',
+    },
+    {
+      object: 'Events',
+      description: 'Any number of tags can be assigned to events.',
+      behavior:
+        'Automatic removal of the tag when the associated object is deleted.',
+    },
+    {
+      object: 'Connections',
+      description: 'Any number of tags can be assigned to connections.',
+      behavior:
+        'Automatic removal of the tag when the associated object is deleted.',
+    },
+    {
+      object: 'Connection templates',
+      description:
+        'Any number of tags can be assigned to connection templates.',
+      behavior:
+        'Automatic removal of the tag when the associated object is deleted.',
+    },
+    {
+      object: 'VMs',
+      description: 'Any number of tags can be assigned to VMs.',
+      behavior:
+        'Automatic removal of the tag when the associated object is deleted.',
+    },
+    {
+      object: 'VM templates',
+      description: 'Any number of tags can be assigned to VM templates.',
+      behavior:
+        'Automatic removal of the tag when the associated object is deleted.',
+    },
+    {
+      object: 'Users',
+      description: 'Any number of tags can be assigned to users.',
+      behavior:
+        'Automatic removal of the tag when the associated object is deleted.',
+    },
+    {
+      object: 'Policies',
+      description: 'Any number of tags can be assigned to policies.',
+      behavior:
+        'Automatic removal of the tag when the associated object is deleted.',
+    },
+    {
+      object: 'Roles',
+      description: 'Any number of tags can be assigned to roles.',
+      behavior:
+        'Automatic removal of the tag when the associated object is deleted.',
+    },
+  ]}
+/>
+
+---
+
+## Required permissions
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    { action: 'View tags', permission: 'tags_read', scoped: false },
+    { action: 'Create tags', permission: 'tags_create' },
+    { action: 'Edit tags', permission: 'tags_update', scoped: false },
+    { action: 'Delete tags', permission: 'tags_delete', scoped: false },
+  ]}
+/>
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Environments', href: '../courses' },
+    { label: 'VM templates', href: '../vm-templates' },
+    { label: 'Virtual Machines', href: '../vms' },
+  ]}
+/>

@@ -1,0 +1,220 @@
+---
+id: policies
+sidebar_label: Politiques
+sidebar_position: 90
+status: finished
+tags:
+  - access-control
+  - policies
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Politiques
+
+Les politiques sont des règles ou des conditions d'utilisation que les utilisateurs doivent accepter avant de pouvoir utiliser certaines fonctions dans OpenVLE.  
+Cela peut concerner par exemple des dispositions relatives à la protection des données, des directives d'utilisation informatique ou des clauses de non-responsabilité.  
+Les politiques actives sont affichées lors de la connexion.
+
+{/* TODO: Ajouter une capture d'écran – Exemple d'une politique affichée lors de la connexion */}
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint path="Contrôle d'accès → Politiques" />
+
+---
+
+## Aperçu des fonctionnalités
+
+<FeatureList
+  items={[
+    'Afficher et gérer les politiques existantes',
+    'Créer de nouvelles politiques avec titre, description et contenu',
+    'Définir si une politique est active ou inactive',
+    'Consulter quels utilisateurs ont déjà accepté une politique',
+    'Supprimer ou désactiver les politiques qui ne sont plus nécessaires',
+  ]}
+/>
+
+{/* TODO: Ajouter une capture d'écran – Liste des politiques ou vue détaillée */}
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        "Désignation de la politique. Affichée dans les listes, les boîtes de dialogue et lors de l'acceptation par les utilisateurs.",
+    },
+    {
+      name: 'Contenu',
+      description:
+        "Texte complet de la politique, affiché aux utilisateurs lors de l'acceptation. Prend en charge le formatage **Markdown** (par ex. titres, listes, liens, mises en évidence).",
+    },
+    {
+      name: 'Description',
+      description:
+        "Brève description de la politique, par ex. « Politique de confidentialité pour les étudiants » ou « Conditions générales d'utilisation pour les administrateurs ».",
+    },
+    {
+      name: 'Statut',
+      description:
+        'Statut actuel de la politique, soit « Inactif » soit « Actif ».',
+    },
+  ]}
+/>
+
+---
+
+## Créer une politique
+
+1. Ouvrez dans le menu principal la section **Contrôle d'accès → Politiques**.
+2. Cliquez sur **Ajouter** pour créer une nouvelle politique.
+3. Saisissez le nom, la description et le contenu textuel de la politique.  
+   Le contenu textuel prend en charge le formatage Markdown, vous permettant d'utiliser par ex. des titres, des listes, des liens ou des mises en évidence.
+4. Enregistrez la politique.
+
+---
+
+## Activer ou désactiver une politique
+
+1. Ouvrez dans le menu principal la section **Contrôle d'accès → Politiques**.
+2. Recherchez la politique souhaitée dans la liste et ouvrez-la.
+3. Dans la barre d'actions de la politique, vous voyez soit un **bouton rouge « Inactif »** (pour activer) soit un **bouton vert « Actif »** (pour désactiver).  
+   En cliquant sur le bouton correspondant, vous pouvez activer ou désactiver la politique.
+
+:::info
+Les politiques peuvent être activées et désactivées autant de fois que souhaité.
+:::
+
+:::info
+Après l'activation, la politique ne sera affichée qu'à la **prochaine connexion** des utilisateurs.  
+Les utilisateurs déjà connectés restent connectés jusqu'à la fin de leur session en cours.  
+Pour déconnecter tous les utilisateurs simultanément, consultez [Administration -> Exploitation et gestion -> FAQ](/docs/admin/operations/faq#logout-all-users).
+:::
+
+---
+
+## Modifier une politique
+
+1. Ouvrez dans le menu principal la section **Contrôle d'accès → Politiques**.
+2. Recherchez la politique souhaitée dans la liste.
+3. Cliquez sur **Modifier**, ou ouvrez le menu contextuel de la politique et sélectionnez **Modifier**.
+4. Le formulaire affiche toutes les données actuelles de la politique.
+5. Ajustez les champs souhaités, par exemple **Nom**, **Description** ou **Contenu textuel**.
+6. Enregistrez les modifications.
+
+:::note
+Une politique ne peut être modifiée que si elle est **inactive** et qu'**aucun utilisateur** ne l'a déjà acceptée.  
+Les politiques actives ou les politiques avec des acceptations existantes ne peuvent **plus être modifiées**.
+
+Si par exemple votre politique de confidentialité a changé, créez une **nouvelle politique** (par ex. « Politique de confidentialité v2 »),  
+désactivez l'ancienne politique, puis activez la nouvelle version.
+:::
+
+---
+
+## Supprimer une politique
+
+1. Ouvrez dans le menu principal la section **Contrôle d'accès → Politiques**.
+2. Recherchez la politique souhaitée dans la liste.
+3. Cliquez sur **Supprimer**, ou ouvrez le menu contextuel de la politique et sélectionnez **Supprimer**.
+4. Confirmez la suppression dans la boîte de dialogue affichée.
+5. La politique est alors définitivement supprimée.
+
+:::warning
+Seules les **politiques inactives** peuvent être supprimées.
+:::
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Créer une politique de confidentialité pour tous les utilisateurs">
+  Une administratrice souhaite s'assurer que tous les utilisateurs ont lu et
+  accepté les conditions de protection des données. Elle crée dans la section
+  **Politiques** une nouvelle politique intitulée « Dispositions relatives à la
+  protection des données ». La politique est marquée comme active, de sorte que
+  tous les utilisateurs seront invités à la confirmer lors de leur prochaine
+  connexion.
+</Example>
+
+{/* TODO: Ajouter une capture d'écran – Exemple d'affichage de la politique de confidentialité */}
+
+---
+
+## Remarques / Particularités
+
+- Les utilisateurs ne peuvent que **lire et accepter** les politiques actives, mais pas les modifier.
+- Les politiques sont marquées comme **acceptées** par utilisateur dans la vue détaillée de la politique.
+- Les politiques actives ne sont appliquées qu'au sein d'**OpenVLE**, pas au sein d'**Apache Guacamole**.
+- Une politique peut être désactivée sans être supprimée.
+- Les modifications aux politiques déjà actives ne sont plus possibles.
+- Dans l'onglet **Utilisateurs**, les administrateurs peuvent vérifier qui a déjà accepté une politique.
+
+---
+
+## Relations avec d'autres objets
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Utilisateurs',
+      description:
+        "Un nombre illimité d'utilisateurs peut accepter une politique.",
+      behavior: 'Aucune automatisation.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises
+
+<Permissions
+  data={[
+    {
+      action: 'Afficher les politiques',
+      permission: 'policies_read',
+      scoped: true,
+    },
+    { action: 'Créer des politiques', permission: 'policies_create' },
+    {
+      action: 'Modifier des politiques',
+      permission: 'policies_update',
+      scoped: true,
+    },
+    {
+      action: 'Supprimer des politiques',
+      permission: 'policies_delete',
+      scoped: true,
+    },
+    {
+      action: 'Afficher les acceptations des utilisateurs',
+      permission: 'policies_users_read',
+    },
+  ]}
+/>
+
+---
+
+## Sujets associés
+
+<RelatedLinks
+  items={[
+    { label: 'Gestion des utilisateurs', href: './users' },
+    { label: 'Rôles', href: './roles' },
+    { label: 'Permissions', href: './permissions' },
+  ]}
+/>

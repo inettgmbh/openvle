@@ -1,0 +1,496 @@
+# Translations template for openvle-backend.
+# Copyright (C) 2026 inett GmbH
+# This file is distributed under the same license as the openvle-backend
+# project.
+# Sascha Zinn <szinn@inett.de>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: openvle-backend 0.88.1\n"
+"Report-Msgid-Bugs-To: support@inett.de\n"
+"POT-Creation-Date: 2026-03-18 08:05+0200\n"
+"Last-Translator: inett GmbH <support@inett.de>\n"
+"Language-Team: inett GmbH <support@inett.de>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.16.0\n"
+
+#: controllers/base.py:279
+msgid ""
+"The provided search_value '{value}' is not valid for the search_field "
+"'{field}'."
+msgstr ""
+
+#: controllers/base.py:659 controllers/guacamole.py:277
+#: controllers/object_permissions.py:472 controllers/policies.py:190
+#: controllers/roles.py:209 controllers/tags.py:521 controllers/users.py:641
+msgid "{model} with ID {id} has been deleted."
+msgstr ""
+
+#: controllers/documents.py:43
+msgid "Only the creator of the document object may upload the associated file."
+msgstr ""
+
+#: controllers/documents.py:50
+msgid "A file is already assigned to document object."
+msgstr ""
+
+#: controllers/events.py:733 controllers/events.py:1217
+msgid "Template {template_name} has no proxmoxId"
+msgstr ""
+
+#: controllers/events.py:810
+msgid "The VirtualMachine with ID: '{id}' could not be added to event."
+msgstr ""
+
+#: controllers/events.py:1189
+msgid "Event must have at least 1 teacher before it can be started."
+msgstr ""
+
+#: controllers/events.py:1195
+msgid "Event must have at least 1 student before it can be started."
+msgstr ""
+
+#: controllers/events.py:1210
+msgid "Parent Course has no related Templates."
+msgstr ""
+
+#: controllers/events.py:1227
+msgid "Error creating relations between Event and Course templates."
+msgstr ""
+
+#: controllers/events.py:1236
+msgid "Event has no related Templates."
+msgstr ""
+
+#: controllers/events.py:1249
+msgid ""
+"Template: {template_name} has no assigned GuacamoleConnectionProfiles "
+"with which to create Guacamole connections."
+msgstr ""
+
+#: controllers/events.py:1478
+msgid ""
+"There are still active VirtualMachines assigned to the Event. Please "
+"decommission them before deleting the Event."
+msgstr ""
+
+#: controllers/events.py:1530
+msgid "Event with ID {id} has been deleted."
+msgstr ""
+
+#: controllers/guacamole.py:196 controllers/guacamole.py:304
+msgid "VirtualMachine does not have a valid IPv4 address."
+msgstr ""
+
+#: controllers/guacamole.py:292
+msgid "Guacamole connection has already been provisioned"
+msgstr ""
+
+#: controllers/guacamole.py:341
+msgid ""
+"The following error occurred while provisioning Guacamole connection: "
+"{guac_provision}"
+msgstr ""
+
+#: controllers/guacamole.py:371
+msgid ""
+"The following error occurred while updating Guacamole connection "
+"'{guac_name}' hostname: {guac_resp}"
+msgstr ""
+
+#: controllers/object_permissions.py:177
+msgid "An ObjectPermission with this exact combination already exists."
+msgstr ""
+
+#: controllers/object_permissions.py:220
+msgid "The ObjectPermission '{permission_key}' already exists for this object."
+msgstr ""
+
+#: controllers/object_permissions.py:238
+msgid "An 'object_create' permission already exists for this object."
+msgstr ""
+
+#: controllers/object_permissions.py:252
+msgid ""
+"Cannot add 'object_create' when multiple CRUD permissions already exist. "
+"Only one CRUD permission can coexist with object_create."
+msgstr ""
+
+#: controllers/object_permissions.py:277
+msgid ""
+"Cannot add another CRUD permission. When 'object_create' exists, only one"
+" other CRUD permission is allowed."
+msgstr ""
+
+#: controllers/object_permissions.py:296
+msgid ""
+"The {entity_type} already has a CRUD permission for {object_type} "
+"({object_display}). Only one CRUD permission per object is allowed, "
+"except when combining object_create with one other CRUD permission."
+msgstr ""
+
+#: controllers/policies.py:134
+msgid "User already agreed to this policy."
+msgstr ""
+
+#: controllers/policies.py:167
+msgid "Unable to delete PoliciesUser relations with Policy ID: {id}."
+msgstr ""
+
+#: controllers/sub_tasks.py:177
+msgid "Unknown periodic task: {job_id}"
+msgstr ""
+
+#: controllers/sub_tasks.py:193
+msgid "{subtask} job could not be found in Redis queue."
+msgstr ""
+
+#: controllers/templates.py:323 controllers/virtual_machines.py:632
+msgid "Source VirtualMachine has no proxmoxId"
+msgstr ""
+
+#: controllers/templates.py:327
+msgid ""
+"The provided source_vm may only be cloned and converted in status "
+"'stopped'."
+msgstr ""
+
+#: controllers/templates.py:581
+msgid "Template with {proxmox_id} already exists as {temp_in_db.name}"
+msgstr ""
+
+#: controllers/templates.py:598
+msgid "Unable to retrieve Template from PVE"
+msgstr ""
+
+#: controllers/templates.py:609
+msgid "The provided proxmox_id is a VirtualMachine, not a Template"
+msgstr ""
+
+#: controllers/users.py:221
+msgid "Please repeat your password."
+msgstr ""
+
+#: controllers/users.py:333
+msgid "The password you have entered is incorrect. Please try again."
+msgstr ""
+
+#: controllers/users.py:343
+msgid "Your new password cannot be the same as your old password."
+msgstr ""
+
+#: controllers/users.py:416
+msgid "External Users may not update their {field}."
+msgstr ""
+
+#: controllers/virtual_machines.py:135
+msgid "Source Template has no proxmoxId"
+msgstr ""
+
+#: controllers/virtual_machines.py:636
+msgid "VirtualMachines may only be cloned in status 'stopped'."
+msgstr ""
+
+#: controllers/virtual_machines.py:1059
+msgid "VirtualMachine is already on node: '{target_node}'"
+msgstr ""
+
+#: controllers/virtual_machines.py:1290
+msgid "VirtualMachine is already paused."
+msgstr ""
+
+#: controllers/virtual_machines.py:1332
+msgid "Only VirtualMachines in status 'running' my be reset."
+msgstr ""
+
+#: controllers/virtual_machines.py:1375
+msgid "Only VirtualMachines in status 'running' my be rebooted."
+msgstr ""
+
+#: controllers/virtual_machines.py:1531
+msgid "VirtualMachine is already hibernated."
+msgstr ""
+
+#: controllers/virtual_machines.py:2214
+msgid "Unable to retrieve ipv4 from PVE as VirtualMachine is not running"
+msgstr ""
+
+#: controllers/virtual_machines.py:2227
+msgid "VirtualMachine is not in PVE VirtualMachine Subnet {subnet}"
+msgstr ""
+
+#: controllers/virtual_machines.py:2273 routes/proxmox.py:303
+msgid "Either the consolidation function or timeframe entered is invalid."
+msgstr ""
+
+#: core/exceptions.py:20
+msgid "Unable to login as system user in production environment"
+msgstr ""
+
+#: core/exceptions.py:31
+msgid "Email/Username already registered"
+msgstr ""
+
+#: core/exceptions.py:40
+msgid "Could not validate credentials"
+msgstr ""
+
+#: core/exceptions.py:50
+msgid "Invalid token"
+msgstr ""
+
+#: core/exceptions.py:60
+msgid ""
+"This account needs to agree to all outstanding policies before performing"
+" this action."
+msgstr ""
+
+#: core/exceptions.py:71
+msgid "Incorrect username or password"
+msgstr ""
+
+#: core/exceptions.py:80
+msgid "You do not have permission to perform this action"
+msgstr ""
+
+#: core/exceptions.py:99
+msgid "Service temporarily unavailable."
+msgstr ""
+
+#: core/exceptions.py:109 core/exceptions.py:118
+msgid "Database temporarily unavailable."
+msgstr ""
+
+#: core/exceptions.py:127
+msgid "Cache temporarily unavailable."
+msgstr ""
+
+#: core/exceptions.py:140
+msgid "{model_name} with ID: {id} not found."
+msgstr ""
+
+#: core/exceptions.py:144
+msgid "{model_name} with slug: {slug} not found."
+msgstr ""
+
+#: core/exceptions.py:148
+msgid "{model_name} with key: {key} not found."
+msgstr ""
+
+#: core/exceptions.py:159
+msgid "The following {model_name}s ID's could not be found: {ids}"
+msgstr ""
+
+#: core/exceptions.py:170
+msgid "Requirement for bulk action not met: {message}"
+msgstr ""
+
+#: core/exceptions.py:181
+msgid "Mail generation failed. {message}"
+msgstr ""
+
+#: core/exceptions.py:192
+msgid ""
+"Mail subject exceeds the maximum allowed length of {max_length} "
+"characters (got {actual_length})."
+msgstr ""
+
+#: core/exceptions.py:203
+msgid ""
+"Mail subject contains '{event.slug}' placeholder but no event could be "
+"found to render it."
+msgstr ""
+
+#: core/exceptions.py:214
+msgid ""
+"'{field}' exceeds the maximum length of {max_length} characters (got "
+"{actual_length})."
+msgstr ""
+
+#: core/exceptions.py:235
+msgid "Invalid {field} value: {value}. Supported values: {supported_values}"
+msgstr ""
+
+#: core/exceptions.py:241
+msgid ""
+"Field '{field}' with value '{value}' is invalid. {field} must follow the "
+"following format: {format}"
+msgstr ""
+
+#: core/exceptions.py:245
+msgid "Invalid {field} value: '{value}'. {message}"
+msgstr ""
+
+#: core/exceptions.py:249
+msgid "Invalid {field} value: {value}."
+msgstr ""
+
+#: core/exceptions.py:260
+msgid "An error occurred during object initialization: {message}"
+msgstr ""
+
+#: core/exceptions.py:271
+msgid ""
+"An error occurred while committing {model_name} object changes to "
+"MariaDB: {message}"
+msgstr ""
+
+#: core/exceptions.py:282
+msgid "The 'limit' parameter cannot be more than {limit}"
+msgstr ""
+
+#: core/exceptions.py:293
+msgid "The 'page' parameter cannot be less than 1."
+msgstr ""
+
+#: core/exceptions.py:302
+msgid "The page you are trying to access is out of range of the response."
+msgstr ""
+
+#: core/exceptions.py:313
+msgid "Field '{field_name}' could not be found for {model_name} model."
+msgstr ""
+
+#: core/exceptions.py:324
+msgid "Model with name: {model_name} does not exist."
+msgstr ""
+
+#: core/exceptions.py:335
+msgid ""
+"Could not delete {model_name} object as it the subject of 1 or more "
+"relations."
+msgstr ""
+
+#: core/exceptions.py:346
+msgid "Required parameter '{parameter_name}' not provided."
+msgstr ""
+
+#: core/exceptions.py:357
+msgid "There was an error uploading the file."
+msgstr ""
+
+#: core/exceptions.py:366
+msgid "Unsupported file type: {content_type}"
+msgstr ""
+
+#: core/exceptions.py:377
+msgid ""
+"The '{parent_model}' model has no association with the {child_model} "
+"model."
+msgstr ""
+
+#: core/exceptions.py:388
+msgid "Unable to add {job_key} job to worker queue."
+msgstr ""
+
+#: core/exceptions.py:402
+msgid ""
+"Action {action} is only permitted when the event status is one of the "
+"following: {valid_statuses}. Current status: {current_status}."
+msgstr ""
+
+#: core/exceptions.py:417
+msgid "This User is already assigned to this Event."
+msgstr ""
+
+#: core/exceptions.py:438 core/exceptions.py:565
+msgid "An unexpected error has occurred while processing your request."
+msgstr ""
+
+#: core/exceptions.py:449
+msgid "Operation condition not met: "
+msgstr ""
+
+#: core/exceptions.py:458
+msgid ""
+"The requested operation {operation} is not possible for object of type "
+"{object_type}."
+msgstr ""
+
+#: core/exceptions.py:475
+msgid ""
+"Could not find relation between {model_name_1} '{obj_id_1}' and "
+"{model_name_2} '{obj_id_2}'."
+msgstr ""
+
+#: core/exceptions.py:494
+msgid ""
+"{operation} operation not possible as {model_name} is protected on "
+"{source}."
+msgstr ""
+
+#: core/exceptions.py:498
+msgid "{operation} operation not possible as {model_name} is protected."
+msgstr ""
+
+#: core/exceptions.py:509
+msgid "{field} already exists"
+msgstr ""
+
+#: core/exceptions.py:519
+msgid "Connection to PVE could not be made."
+msgstr ""
+
+#: core/exceptions.py:528
+msgid ""
+"{resource_type} with {field_type} '{field_value}' on Proxmox resource "
+"could not be found."
+msgstr ""
+
+#: core/exceptions.py:543
+msgid "Request to PVE failed."
+msgstr ""
+
+#: core/exceptions.py:553
+msgid "Connection to Guacamole server could not be made."
+msgstr ""
+
+#: core/exceptions.py:577
+msgid "Connection to LDAP server could not be made."
+msgstr ""
+
+#: core/exceptions.py:587
+msgid "Redirect URL {redirect_url} not allowed."
+msgstr ""
+
+#: core/exceptions.py:598
+msgid "Mismatching CSRF state in request and response."
+msgstr ""
+
+#: core/exceptions.py:608
+msgid "Connection to Moodle could not be made."
+msgstr ""
+
+#: core/exceptions.py:620
+msgid "An unexpected error has occurred while processing your Moodle request."
+msgstr ""
+
+#: core/exceptions.py:632
+msgid "Moodle integration is not enabled."
+msgstr ""
+
+#: core/guacamole.py:559
+msgid "Error creating Guacamole User"
+msgstr ""
+
+#: core/guacamole.py:595
+msgid "Unable to grant user access to Guacamole connection"
+msgstr ""
+
+#: core/guacamole.py:610
+msgid "Error creating default sharing profiles for Guacamole connection"
+msgstr ""
+
+#: core/guacamole.py:631
+msgid "Unable to grant user access to sharing profiles for Guacamole connection"
+msgstr ""
+
+#: routes/proxmox.py:251
+msgid ""
+"Either the consolidation function or datasource or timeframe entered is "
+"invalid."
+msgstr ""
+

@@ -1,0 +1,174 @@
+---
+id: vendors
+sidebar_label: Vendors
+sidebar_position: 140
+status: finished
+tags:
+  - infrastructure
+  - vendors
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Vendors
+
+In the **Vendors** section, you manage providers, organizations, or developers from whom applications or operating systems originate.  
+This information serves **categorization**, **traceability**, and **filtering** within the OpenVLE infrastructure.
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Infrastructure → Vendors"
+  alternative="Linked from Applications or Operating systems"
+/>
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'View, create, edit, and delete vendor entries',
+    'Assign vendors to applications or operating systems',
+    'Filter content by vendor',
+    'Centrally maintain consistent naming across the entire system',
+  ]}
+/>
+
+---
+
+## Important fields at a glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Name of the vendor or organization, e.g. "inett GmbH", "Proxmox Server Solutions GmbH", or "Decisio".',
+    },
+    {
+      name: 'Description',
+      description:
+        'Optional brief description of the vendor, e.g. location, product lines, or supported platforms.',
+    },
+  ]}
+/>
+
+---
+
+## Creating a vendor
+
+1. Open the **Infrastructure → Vendors** section from the main menu.
+2. Click **Add** to create a new vendor.
+3. Enter a **name** and a **description** for the vendor.
+4. Save the vendor.
+5. Then switch to the **Applications** or **Operating systems** tab to add the desired objects.
+
+---
+
+## Editing a vendor
+
+1. Open the **Infrastructure → Vendors** section from the main menu.
+2. Find the desired vendor in the list.
+3. Click **Edit**, or open the context menu of the vendor and select **Edit**.
+4. The form displays all current data of the vendor.
+5. Adjust the desired fields -- for example **Name** or **Description**.
+6. Save the changes.
+
+---
+
+## Deleting a vendor
+
+1. Open the **Infrastructure → Vendors** section from the main menu.
+2. Find the desired vendor in the list.
+3. Click **Delete**, or open the context menu of the vendor and select **Delete**.
+4. Confirm the deletion in the displayed dialog.
+5. The vendor is then permanently removed.
+
+:::warning
+Only vendors that are no longer assigned to any application or operating system can be deleted.
+:::
+
+---
+
+## Example or use case
+
+<Example title="Create a vendor for a new application">
+  An administrator wants to create a new application from a vendor that has not yet been recorded.  
+  She opens the **Infrastructure → Vendors** section, clicks **Add**, and enters:
+  - Name: *The Document Foundation*  
+  - Description: *Non-profit organization behind LibreOffice*
+
+After that, this vendor can be directly selected when creating the application "LibreOffice".
+
+</Example>
+
+---
+
+## Notes / special considerations
+
+- Vendors are linked to applications and operating systems.
+- Consistent maintenance of vendors facilitates later filtering and reporting.
+- It is recommended to keep vendor names unambiguous (e.g. "Microsoft Corporation" rather than just "Microsoft").
+
+---
+
+## Relationships to other objects
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Applications',
+      description: 'Any number of applications can be assigned to a vendor.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'Operating systems',
+      description:
+        'Any number of operating systems can be assigned to a vendor.',
+      behavior: 'No automations.',
+    },
+  ]}
+/>
+
+---
+
+## Required permissions
+
+<Permissions
+  data={[
+    { action: 'View vendors', permission: 'vendors_read', scoped: true },
+    { action: 'Create vendors', permission: 'vendors_create' },
+    {
+      action: 'Edit vendors',
+      permission: 'vendors_update',
+      scoped: true,
+    },
+    {
+      action: 'Delete vendors',
+      permission: 'vendors_delete',
+      scoped: true,
+    },
+  ]}
+/>
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Applications', href: './applications' },
+    { label: 'Operating systems', href: './os' },
+    { label: 'Virtual Machines', href: '../vms' },
+    { label: 'VM templates', href: '../vm-templates' },
+  ]}
+/>

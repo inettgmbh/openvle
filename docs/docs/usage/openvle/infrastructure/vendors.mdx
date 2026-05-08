@@ -1,0 +1,175 @@
+---
+id: vendors
+sidebar_label: Hersteller
+sidebar_position: 140
+status: finished
+tags:
+  - infrastructure
+  - vendors
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Hersteller
+
+Im Bereich **Hersteller** verwaltest du Anbieter, Organisationen oder Entwickler, von denen Anwendungen oder Betriebssysteme stammen.  
+Diese Informationen dienen der **Kategorisierung**, **Nachvollziehbarkeit** und **Filterung** innerhalb der OpenVLE-Infrastruktur.
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="Infrastruktur → Hersteller"
+  alternative="Über Anwendungen oder Betriebssysteme verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeigen, Erstellen, Bearbeiten und Löschen von Herstellereinträgen',
+    'Zuordnung zu Anwendungen oder Betriebssystemen',
+    'Filterung von Inhalten nach Hersteller',
+    'Zentrale Pflege für konsistente Namensverwendung im gesamten System',
+  ]}
+/>
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Name des Herstellers oder der Organisation, z. B. „inett GmbH“, „Proxmox Server Solutions GmbH“ oder „Decisio.',
+    },
+    {
+      name: 'Beschreibung',
+      description:
+        'Optionale Kurzbeschreibung des Herstellers, z. B. Sitz, Produktlinien oder unterstützte Plattformen.',
+    },
+  ]}
+/>
+
+---
+
+## Erstellen eines Herstellers
+
+1. Öffne im Hauptmenü den Bereich **Infrastruktur → Hersteller**.
+2. Klicke auf **Hinzufügen**, um einen neuen Hersteller zu erstellen.
+3. Gib einen **Namen** und eine **Beschreibung** für den Hersteller an.
+4. Speichere den Hersteller.
+5. Wechsle anschließend in den Tab **Anwendungen** oder **Betriebssysteme**, um die gewünschten Objekte hinzuzufügen.
+
+---
+
+## Bearbeiten eines Herstellers
+
+1. Öffne im Hauptmenü den Bereich **Infrastruktur → Hersteller**.
+2. Suche in der Liste nach dem gewünschten Hersteller.
+3. Klicke auf **Bearbeiten**, oder öffne das Kontextmenü des Herstellers und wähle **Bearbeiten**.
+4. Im Formular werden alle aktuellen Daten des Herstellers angezeigt.
+5. Passe die gewünschten Felder an – beispielsweise **Name** oder **Beschreibung**.
+6. Speichere die Änderungen.
+
+---
+
+## Löschen eines Herstellers
+
+1. Öffne im Hauptmenü den Bereich **Infrastruktur → Hersteller**.
+2. Suche in der Liste nach dem gewünschten Hersteller.
+3. Klicke auf **Löschen**, oder öffne das Kontextmenü des Herstellers und wähle **Löschen**.
+4. Bestätige den Löschvorgang im angezeigten Dialog.
+5. Der Hersteller wird daraufhin dauerhaft entfernt.
+
+:::warning
+Es können nur Hersteller gelöscht werden, die keiner Anwendung und keinem Betriebssystem mehr zugewiesen sind.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Hersteller für neue Anwendung anlegen">
+  Eine Administratorin möchte eine neue Anwendung anlegen, die von einem noch nicht hinterlegten Hersteller stammt.  
+  Sie öffnet den Bereich **Infrastruktur → Hersteller**, klickt auf **Hinzufügen**, gibt ein:
+  - Name: *The Document Foundation*  
+  - Beschreibung: *Gemeinnützige Organisation hinter LibreOffice*
+
+Danach kann dieser Hersteller beim Anlegen der Anwendung „LibreOffice“ direkt ausgewählt werden.
+
+</Example>
+
+---
+
+## Hinweise / Besonderheiten
+
+- Hersteller werden mit Anwendungen und Betriebssystemen verknüpft.
+- Eine konsistente Pflege der Hersteller erleichtert spätere Filterungen und Berichte.
+- Es ist empfehlenswert, Herstellerbezeichnungen eindeutig zu halten (z. B. „Microsoft Corporation“ statt nur „Microsoft“).
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Anwendungen',
+      description:
+        'Einem Hersteller können beliebig viele Anwendungen zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'Betriebssysteme',
+      description:
+        'Einem Hersteller können beliebig viele Betriebssysteme zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  data={[
+    { action: 'Hersteller anzeigen', permission: 'vendors_read', scoped: true },
+    { action: 'Hersteller anlegen', permission: 'vendors_create' },
+    {
+      action: 'Hersteller bearbeiten',
+      permission: 'vendors_update',
+      scoped: true,
+    },
+    {
+      action: 'Hersteller löschen',
+      permission: 'vendors_delete',
+      scoped: true,
+    },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Anwendungen', href: './applications' },
+    { label: 'Betriebssysteme', href: './os' },
+    { label: 'Virtuelle Maschinen', href: '../vms' },
+    { label: 'VM-Vorlagen', href: '../vm-templates' },
+  ]}
+/>

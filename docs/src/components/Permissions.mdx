@@ -1,0 +1,180 @@
+import Admonition from '@theme/Admonition'
+import { translate } from '@docusaurus/Translate'
+
+export function Permissions({ data = [], showAdmonition = true }) {
+  return (
+    <>
+      <p>
+        {translate({
+          id: 'component.permissions.intro',
+          message:
+            'Die für Aktionen benötigten Berechtigungen können über Rollen oder individuell vergeben werden. Fehlen Ihnen bestimmte Rechte, sind die entsprechenden Funktionen in der Benutzeroberfläche ausgeblendet oder deaktiviert.',
+        })}
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>
+              {translate({
+                id: 'component.permissions.header.action',
+                message: 'Aktion',
+              })}
+            </th>
+            <th>
+              {translate({
+                id: 'component.permissions.header.permission',
+                message: 'Benötigte Berechtigung',
+              })}
+            </th>
+            <th>
+              {translate({
+                id: 'component.permissions.header.path',
+                message: 'Pfad',
+              })}
+            </th>
+            <th>
+              {translate({
+                id: 'component.permissions.header.info',
+                message: 'Weitere Informationen',
+              })}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map(
+            ({
+              action,
+              permission,
+              path,
+              scoped,
+              deprecated,
+              version,
+              beta,
+            }) => (
+              <tr key={`${action}-${permission}`}>
+                <td>{action}</td>
+                <td>
+                  <code>{permission}</code>
+                </td>
+                <td>
+                  {path ? (
+                    <code>{path}</code>
+                  ) : scoped ? (
+                    <>
+                      <code>/</code>{' '}
+                      {translate({
+                        id: 'component.permissions.or',
+                        message: 'oder',
+                      })}{' '}
+                      <code>/&lt;objectID&gt;</code>
+                    </>
+                  ) : (
+                    <code>/</code>
+                  )}
+                </td>
+                <td>
+                  {deprecated && (
+                    <span
+                      title={translate({
+                        id: 'component.permissions.deprecated.tooltip',
+                        message:
+                          'Diese Berechtigung ist veraltet und sollte nicht mehr verwendet werden.',
+                      })}
+                      style={{
+                        backgroundColor: '#f4cccc',
+                        color: '#a61c00',
+                        borderRadius: '6px',
+                        padding: '2px 6px',
+                        fontSize: '0.85em',
+                        marginRight: '6px',
+                        fontWeight: 600,
+                        cursor: 'help',
+                      }}
+                    >
+                      Deprecated
+                    </span>
+                  )}
+                  {version && (
+                    <span
+                      title={translate(
+                        {
+                          id: 'component.permissions.version.tooltip',
+                          message: 'Eingeführt in Version {version}',
+                        },
+                        { version },
+                      )}
+                      style={{
+                        backgroundColor: '#cfe2ff',
+                        color: '#084298',
+                        borderRadius: '6px',
+                        padding: '2px 6px',
+                        fontSize: '0.85em',
+                        fontWeight: 600,
+                        cursor: 'help',
+                      }}
+                    >
+                      Version: {version}
+                    </span>
+                  )}
+                  {beta && (
+                    <span
+                      title={translate({
+                        id: 'component.permissions.beta.tooltip',
+                        message:
+                          'Diese Berechtigung sollte aktuell noch nicht verwendet werden.',
+                      })}
+                      style={{
+                        backgroundColor: '#E0E7FF',
+                        borderRadius: '6px',
+                        color: '#1E3A8A',
+                        padding: '2px 6px',
+                        fontSize: '0.85em',
+                        marginRight: '6px',
+                        fontWeight: 600,
+                        cursor: 'help',
+                      }}
+                    >
+                      Beta
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ),
+          )}
+        </tbody>
+      </table>
+      {showAdmonition && (
+        <Admonition type="info">
+          {translate({
+            id: 'component.permissions.admonition.scope',
+            message:
+              'Die Berechtigungen *_read, *_update und *_delete können auf einen bestimmten Pfad gesetzt werden, also auf die UUID eines Objekts.',
+          })}
+          <br />
+          {translate({
+            id: 'component.permissions.admonition.example',
+            message: 'Beispiel:',
+          })}{' '}
+          <code>/4a3bc312-d1af-4b3f-b222-f5e9cecbf007</code> –{' '}
+          {translate({
+            id: 'component.permissions.admonition.exampleDesc',
+            message:
+              'So erhält der Benutzer nur Zugriff auf dieses eine Objekt.',
+          })}
+          <br />
+          {translate({
+            id: 'component.permissions.admonition.global',
+            message:
+              'Wird als Pfad / verwendet, gilt die Berechtigung global für alle Objekte dieses Typs.',
+          })}
+          <br />
+          {translate({
+            id: 'component.permissions.admonition.create',
+            message:
+              'Für *_create-Berechtigungen ist nur der globale Pfad / zulässig.',
+          })}
+        </Admonition>
+      )}
+    </>
+  )
+}

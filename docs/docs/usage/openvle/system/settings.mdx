@@ -1,0 +1,146 @@
+---
+id: settings
+sidebar_label: Einstellungen
+sidebar_position: 20
+status: finished
+tags:
+  - system
+  - settings
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Einstellungen
+
+Im Bereich **Einstellungen** verwaltest du systemweite Parameter und Konfigurationen, die das Verhalten von OpenVLE steuern.  
+Hier können Administratorinnen und Administratoren grundlegende Optionen festlegen, wie z. B. Systemverhalten oder Integrationen mit externen Diensten.
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint path="System → Einstellungen" />
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anpassung globaler Systemeinstellungen und Standardwerte',
+    'Verwaltung von SMTP-, API- und SSO-Konfigurationen',
+    'Steuerung des Systemverhaltens, z. B. Logging-Optionen oder Datenspeicherung',
+    'Bearbeitung zentraler UI- oder Branding-Einstellungen (Titel, Kontaktinformationen)',
+  ]}
+/>
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Einstellung',
+      description:
+        'Bezeichner der Einstellung, z. B. „smtp.host“ oder „default.policy“. Wird zur systemweiten Identifikation verwendet. Dieser Wert kann nicht geändert werden.',
+    },
+    {
+      name: 'Wert',
+      description:
+        'Der tatsächliche Wert der Einstellung. Kann Text, Zahl, Boolean oder JSON enthalten – abhängig vom jeweiligen Parameter.',
+    },
+    {
+      name: 'Beschreibung',
+      description:
+        'Kurzbeschreibung der Bedeutung der Einstellung. Erklärt Zweck und mögliche Auswirkungen einer Änderung. Dieser Wert kann nicht geändert werden.',
+    },
+    {
+      name: 'Datentyp',
+      description:
+        'Gibt den erwarteten Typ des Werts an. Unterstützte Datentypen sind **string**, **integer**, **float**, **boolean** und **json**. Der Datentyp wird beim Speichern validiert. Dieser Wert kann nicht geändert werden.',
+    },
+    {
+      name: 'Sichtbarkeit',
+      description:
+        'Legt fest, wer die Einstellung sehen kann. Zulässige Werte sind **admins**, **authenticated**, **internal** oder **public**. Dieser Wert kann nicht geändert werden.',
+    },
+  ]}
+/>
+
+---
+
+## Bearbeiten einer Einstellung
+
+1. Öffne im Hauptmenü den Bereich **System → Einstellungen**.
+2. Suche in der Liste nach der gewünschten Einstellung.
+3. Klicke auf **Bearbeiten**.
+4. Im Formular werden alle aktuellen Daten der Einstellung angezeigt.
+5. Passe den Wert nach Bedarf an.
+6. Speichere die Änderungen.
+7. Die Änderungen werden in der Regel **sofort wirksam**.
+
+:::warning
+Einstellungen mit der Sichtbarkeit `internal` können **nicht** bearbeitet werden.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="SMTP-Server ändern">
+  Eine Administratorin möchte den Standard-Mailserver für Benachrichtigungen
+  anpassen. Im Bereich **System → Einstellungen** sucht sie nach dem Eintrag mit
+  dem Schlüssel *smtp.host* und trägt dort den neuen Hostnamen ein – z. B.
+  `mail.example.com`. Nach dem Speichern werden alle zukünftigen E-Mails über
+  diesen Server versendet.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel SMTP-Server */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Änderungen an Einstellungen wirken sich sofort auf das gesamte System aus.
+- Sensible Werte wie API-Schlüssel oder Passwörter sind aus Sicherheitsgründen teilweise maskiert.
+- Falsche Änderungen können unerwartetes Verhalten verursachen – bitte mit Bedacht vornehmen.
+- Einige Konfigurationen erfordern nach der Änderung einen Neustart von Diensten oder Workern. Dies wird in der Beschreibung der Einstellung angezeigt.
+- Werte werden persistent gespeichert und bleiben auch nach Updates oder Neustarts erhalten.
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    {
+      action: 'System Einstellungen anzeigen',
+      permission: 'system_read',
+      scoped: false,
+    },
+    {
+      action: 'System Einstellungen aktualisieren',
+      permission: 'system_update',
+      scoped: false,
+    },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Aufgaben', href: './tasks' },
+    { label: 'Aktivitäten', href: './activities' },
+    { label: 'Virtuelle Maschinen', href: '../vms' },
+  ]}
+/>

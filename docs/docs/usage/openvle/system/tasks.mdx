@@ -1,0 +1,321 @@
+---
+id: tasks
+sidebar_label: Tasks
+sidebar_position: 30
+status: finished
+tags:
+  - system
+  - tasks
+  - subtasks
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+# Tasks
+
+Der Bereich **Tasks** (Aufgaben) zeigt automatisierte oder manuell angestoßene Prozesse innerhalb des Systems an – beispielsweise das Erstellen einer VM, das Ausrollen einer Veranstaltung oder das Senden von E-Mails.  
+Hier kannst du laufende Tasks überwachen, Fehler erkennen und abgeschlossene Prozesse nachvollziehen.
+
+---
+
+## Unterschied zwischen Tasks und SubTasks
+
+Ein **Task** repräsentiert einen übergeordneten Prozess, wie z. B. das „Erstellen einer VM“ oder das „Versenden einer E-Mail“.  
+Ein **SubTask** ist hingegen ein einzelner Arbeitsschritt innerhalb dieses Prozesses – beispielsweise das Klonen einer VM-Vorlage oder das Aktualisieren einer Datenbank.  
+Mehrere SubTasks können gemeinsam zu einem Task gehören und bilden zusammen den vollständigen Ablauf.
+
+- **Tasks** dienen der Übersicht und Nachverfolgung des gesamten Prozesses.
+- **SubTasks** ermöglichen eine detaillierte Analyse einzelner Schritte, inklusive Fehlerbehandlung und Wiederholungen.
+- Bei einem Fehlschlag eines SubTasks kann dieser einzeln erneut ausgeführt werden, ohne den gesamten Task neu zu starten.
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="System → Tasks"
+  alternative="Über Benachrichtigungen oder die Detailansicht von Objekten verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeige aller laufenden, geplanten und abgeschlossenen Tasks im System',
+    'Filterung nach Status, Benutzer oder Zeitraum',
+    'Einsicht in Fehlerprotokolle und Systemmeldungen',
+    'Überwachung des Fortschritts einzelner Prozesse',
+    'Automatische Aktualisierung laufender Tasks',
+  ]}
+/>
+
+---
+
+## Wichtige Felder im Überblick
+
+<Tabs groupId="model" queryString="model">
+  <TabItem value="task" label="Task" default>
+    <FieldReference
+      fields={[
+        {
+          name: 'ID',
+          description:
+            'Eindeutige Kennung des Tasks. Wird automatisch vergeben und dient der Nachverfolgung einzelner Prozesse.',
+        },
+        {
+          name: 'Name',
+          description:
+            'Bezeichnung oder Typ des Tasks, z. B. „VM erstellen“ oder „E-Mail senden“. Erleichtert die Identifizierung im Taskprotokoll.',
+        },
+        {
+          name: 'Status',
+          description:
+            'Aktueller Status des Tasks, z. B. *running*, *queued*, *failed* oder *success*.',
+        },
+        {
+          name: 'Veranstaltung',
+          description:
+            '(Optional) Zugewiesene Veranstaltung, durch die dieser Task ausgelöst wurde.',
+        },
+        {
+          name: 'Erstellt am',
+          description:
+            '(Standardfeld) Zeitpunkt, zu dem der Task erstellt wurde.',
+        },
+        {
+          name: 'Erstellt von',
+          description: '(Standardfeld) Benutzer, der den Task erstellt hat.',
+        },
+        {
+          name: 'Aktualisiert am',
+          description:
+            '(Standardfeld) Zeitpunkt, zu dem der Task abgeschlossen oder zuletzt aktualisiert wurde.',
+        },
+      ]}
+    />
+  </TabItem>
+  <TabItem value="subtask" label="SubTask">
+    <FieldReference
+      fields={[
+        {
+          name: 'ID',
+          description:
+            'Eindeutige Kennung des SubTasks. Wird automatisch vergeben und dient der Nachverfolgung einzelner Prozesse.',
+        },
+        {
+          name: 'Name',
+          description:
+            'Bezeichnung oder Typ des SubTasks, z. B. „VM erstellen“ oder „E-Mail senden“. Erleichtert die Identifizierung im Taskprotokoll.',
+        },
+        {
+          name: 'Status',
+          description:
+            'Aktueller Status des SubTasks, z. B. *running*, *queued*, *failed* oder *success*.',
+        },
+        {
+          name: 'Erstellt am',
+          description:
+            '(Standardfeld) Zeitpunkt, zu dem der SubTask erstellt wurde.',
+        },
+        {
+          name: 'Erstellt von',
+          description: '(Standardfeld) Benutzer, der den SubTask erstellt hat.',
+        },
+        {
+          name: 'Aktualisiert am',
+          description:
+            '(Standardfeld) Zeitpunkt, zu dem der SubTask abgeschlossen oder zuletzt aktualisiert wurde.',
+        },
+        {
+          name: 'Objekt Typ',
+          description:
+            'Typ des Objekts, auf das sich der SubTask bezieht, z. B. **vm**, **template**, **event** oder **mail**.',
+        },
+        {
+          name: 'Objekt ID',
+          description:
+            'Eindeutige Kennung (UUID) des Objekts, auf das sich der SubTask bezieht.',
+        },
+        {
+          name: 'Aktion',
+          description: 'Aktion, die im Rahmen des SubTasks ausgeführt wird.',
+        },
+        {
+          name: 'Versuch',
+          description:
+            'Zähler, der angibt, wie oft der SubTask bereits ausgeführt wurde. Wird bei jedem Wiederholungsversuch automatisch erhöht.',
+        },
+        {
+          name: 'Übergeordneter Task',
+          description:
+            'Eindeutige Kennung des übergeordneten Tasks, zu dem dieser SubTask gehört.',
+        },
+        {
+          name: 'Job ID',
+          description:
+            'Interne Referenz-ID des Hintergrundjobs (RQ-Job), mit dem der SubTask verknüpft ist.',
+        },
+        {
+          name: 'Antwort Code',
+          description:
+            'Antwortcode des SubTasks nach Abschluss der Aktion, z. B. HTTP-Statuscode oder systemspezifischer Rückgabewert.',
+        },
+        {
+          name: 'Antwort Meldung',
+          description:
+            'Ausgabe- oder Fehlermeldung, die während der Ausführung des SubTasks generiert wurde. Dient der Nachvollziehbarkeit und Fehleranalyse.',
+        },
+      ]}
+    />
+  </TabItem>
+</Tabs>
+
+---
+
+## Anzeigen eines Tasks / SubTasks
+
+1. Öffne im Hauptmenü den Bereich **System → Tasks**.
+2. Suche in der Liste nach dem gewünschten Task.
+3. Klicke auf den gewünschten Task, um die Details anzuzeigen.
+4. Im Detailbereich siehst du den Status, die Beschreibung und die zugehörigen SubTasks.
+
+---
+
+## Wiederholen eines SubTasks
+
+1. Öffne im Hauptmenü den Bereich **System → Tasks**.
+2. Suche in der Liste nach dem gewünschten Task und öffne diesen.
+3. Wechsle in den Tab **SubTasks** und öffne den gewünschten SubTask.
+4. Klicke auf **Wiederholen**.
+5. Bestätige den Vorgang im angezeigten Dialog.
+6. Der SubTask wird nun erneut ausgeführt.
+
+:::warning
+Aktuell können nur SubTasks wiederholt werden, die nicht älter als 24 Stunden sind.
+:::
+
+:::warning
+Wenn aufgrund eines fehlgeschlagenen SubTasks nachgelagerte Tasks nicht ausgeführt werden konnten, führt das erfolgreiche Wiederholen des SubTasks zur Ausführung dieser abhängigen Tasks.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Überwachung einer laufenden VM-Erstellung">
+  Eine Administratorin startet die Erstellung mehrerer virtueller Maschinen. Im
+  Bereich **System → Tasks** sieht sie, dass der Task *„VM erstellen“* läuft und
+  bereits ein Teil abgeschlossen ist. Bei einem Fehler könnte sie das Protokoll
+  öffnen, um den Grund (z. B. unzureichende Ressourcen) direkt zu identifizieren
+  und zu beheben.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel: Taskübersicht */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Tasks werden vom System automatisch erstellt, wenn ein Prozess gestartet wird.
+- Bei Systemfehlern wird der Status auf _failed_ gesetzt; die Details findest du im Taskprotokoll.
+- Tasks mit dem Status _queued_ warten auf verfügbare Ressourcen oder abhängige Prozesse.
+- Abgeschlossene Tasks bleiben für eine begrenzte Zeit einsehbar und werden danach automatisch gelöscht.
+- Die Anzeige aktualisiert sich regelmäßig, solange der Bereich geöffnet ist.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  showChangelogs={false}
+  showTags={false}
+  showPermissions={false}
+  items={[
+    {
+      object: 'Veranstaltungen',
+      description:
+        'Einer Veranstaltung können beliebig viele Tasks zugewiesen werden.',
+      behavior:
+        'Tasks werden bei bestimmten Aktionen der Veranstaltung automatisch erstellt.',
+    },
+    {
+      object: 'VM-Vorlagen',
+      description:
+        'Einer VM-Vorlage können beliebig viele Tasks zugewiesen werden.',
+      behavior:
+        'Tasks werden bei bestimmten Aktionen der VM-Vorlage automatisch erstellt.',
+    },
+    {
+      object: 'VMs',
+      description: 'Einer VM können beliebig viele Tasks zugewiesen werden.',
+      behavior:
+        'Tasks werden bei bestimmten Aktionen der VM automatisch erstellt.',
+    },
+    {
+      object: 'Verbindungen',
+      description:
+        'Einer Verbindung können beliebig viele Tasks zugewiesen werden.',
+      behavior:
+        'Tasks werden bei bestimmten Aktionen der Verbindung automatisch erstellt.',
+    },
+    {
+      object: 'E-Mails',
+      description:
+        'Einer E-Mail können beliebig viele Tasks zugewiesen werden.',
+      behavior:
+        'Tasks werden bei bestimmten Aktionen der E-Mail automatisch erstellt.',
+    },
+    {
+      object: 'Tasks',
+      description:
+        'Einem Task können beliebig viele SubTasks zugewiesen werden.',
+      behavior:
+        'Tasks & SubTasks werden bei bestimmten Aktionen automatisch erstellt.',
+    },
+    {
+      object: 'SubTasks',
+      description: 'Einem SubTask kann genau ein Task zugewiesen werden',
+      behavior:
+        'Tasks & SubTasks werden bei bestimmten Aktionen automatisch erstellt.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    { action: 'Tasks anzeigen', permission: 'tasks_read', scoped: false },
+    {
+      action: 'Subtasks anzeigen',
+      permission: 'sub_tasks_read',
+      scoped: false,
+    },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Aktivitäten', href: './activities' },
+    { label: 'Einstellungen', href: './settings' },
+    { label: 'Virtuelle Maschinen', href: '../vms' },
+  ]}
+/>

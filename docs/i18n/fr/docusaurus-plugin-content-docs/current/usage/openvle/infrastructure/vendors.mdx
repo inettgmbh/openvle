@@ -1,0 +1,179 @@
+---
+id: vendors
+sidebar_label: Fabricants
+sidebar_position: 140
+status: finished
+tags:
+  - infrastructure
+  - vendors
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Fabricants
+
+Dans la section **Fabricants**, vous gérez les fournisseurs, organisations ou développeurs dont proviennent les applications ou les systèmes d'exploitation.  
+Ces informations servent à la **catégorisation**, à la **traçabilité** et au **filtrage** au sein de l'infrastructure OpenVLE.
+
+---
+
+## Où trouver cette section ?
+
+<NavigationHint
+  path="Infrastructure → Fabricants"
+  alternative="Accessible via les applications ou les systèmes d'exploitation"
+/>
+
+---
+
+## Fonctionnalités en un coup d'oeil
+
+<FeatureList
+  items={[
+    "Affichage, création, modification et suppression d'entrées de fabricants",
+    "Attribution aux applications ou systèmes d'exploitation",
+    'Filtrage du contenu par fabricant',
+    "Gestion centralisée pour une utilisation cohérente des noms dans l'ensemble du système",
+  ]}
+/>
+
+---
+
+## Aperçu des champs importants
+
+<FieldReference
+  fields={[
+    {
+      name: 'Nom',
+      description:
+        "Nom du fabricant ou de l'organisation, par ex. « inett GmbH », « Proxmox Server Solutions GmbH » ou « Decisio ».",
+    },
+    {
+      name: 'Description',
+      description:
+        'Description courte optionnelle du fabricant, par ex. siège, gammes de produits ou plateformes prises en charge.',
+    },
+  ]}
+/>
+
+---
+
+## Créer un fabricant
+
+1. Ouvrez dans le menu principal la section **Infrastructure → Fabricants**.
+2. Cliquez sur **Ajouter** pour créer un nouveau fabricant.
+3. Indiquez un **nom** et une **description** pour le fabricant.
+4. Enregistrez le fabricant.
+5. Basculez ensuite dans l'onglet **Applications** ou **Systèmes d'exploitation** pour ajouter les objets souhaités.
+
+---
+
+## Modifier un fabricant
+
+1. Ouvrez dans le menu principal la section **Infrastructure → Fabricants**.
+2. Recherchez le fabricant souhaité dans la liste.
+3. Cliquez sur **Modifier**, ou ouvrez le menu contextuel du fabricant et sélectionnez **Modifier**.
+4. Le formulaire affiche toutes les données actuelles du fabricant.
+5. Adaptez les champs souhaités, par exemple le **nom** ou la **description**.
+6. Enregistrez les modifications.
+
+---
+
+## Supprimer un fabricant
+
+1. Ouvrez dans le menu principal la section **Infrastructure → Fabricants**.
+2. Recherchez le fabricant souhaité dans la liste.
+3. Cliquez sur **Supprimer**, ou ouvrez le menu contextuel du fabricant et sélectionnez **Supprimer**.
+4. Confirmez la suppression dans le dialogue affiché.
+5. Le fabricant est alors définitivement supprimé.
+
+:::warning
+Seuls les fabricants qui ne sont plus attribués à aucune application ni aucun système d'exploitation peuvent être supprimés.
+:::
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Créer un fabricant pour une nouvelle application">
+  Une administratrice souhaite créer une nouvelle application provenant d'un fabricant non encore enregistré.  
+  Elle ouvre la section **Infrastructure → Fabricants**, clique sur **Ajouter** et saisit :
+  - Nom : *The Document Foundation*  
+  - Description : *Organisation à but non lucratif derrière LibreOffice*
+
+Ce fabricant peut ensuite être sélectionné directement lors de la création de l'application « LibreOffice ».
+
+</Example>
+
+---
+
+## Remarques / Particularités
+
+- Les fabricants sont associés aux applications et aux systèmes d'exploitation.
+- Une gestion cohérente des fabricants facilite les filtrages et les rapports ultérieurs.
+- Il est recommandé de garder les noms de fabricants univoques (par ex. « Microsoft Corporation » plutôt que simplement « Microsoft »).
+
+---
+
+## Relations avec d'autres objets
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Applications',
+      description:
+        "Un nombre illimité d'applications peut être attribué à un fabricant.",
+      behavior: 'Aucune automatisation.',
+    },
+    {
+      object: "Systèmes d'exploitation",
+      description:
+        "Un nombre illimité de systèmes d'exploitation peut être attribué à un fabricant.",
+      behavior: 'Aucune automatisation.',
+    },
+  ]}
+/>
+
+---
+
+## Permissions requises
+
+<Permissions
+  data={[
+    {
+      action: 'Afficher les fabricants',
+      permission: 'vendors_read',
+      scoped: true,
+    },
+    { action: 'Créer des fabricants', permission: 'vendors_create' },
+    {
+      action: 'Modifier les fabricants',
+      permission: 'vendors_update',
+      scoped: true,
+    },
+    {
+      action: 'Supprimer les fabricants',
+      permission: 'vendors_delete',
+      scoped: true,
+    },
+  ]}
+/>
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: 'Applications', href: './applications' },
+    { label: "Systèmes d'exploitation", href: './os' },
+    { label: 'Machines virtuelles', href: '../vms' },
+    { label: 'Modèles de VM', href: '../vm-templates' },
+  ]}
+/>

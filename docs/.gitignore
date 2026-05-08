@@ -1,0 +1,6 @@
+# Docusaurus
+node_modules/
+dist/
+builds/
+.docusaurus
+.cache-loader

@@ -1,0 +1,102 @@
+[project]
+name = "openvle-backend"
+version = "1.0.0"
+description = "OpenVLE Backend (FastAPI)"
+requires-python = ">=3.10"
+
+[tool.ruff]
+line-length = 80
+target-version = "py310"
+
+# Lint default rules
+[tool.ruff.lint]
+select = [
+  "B",   # bugbear
+  "C4",  # comprehensions
+  "E",   # pycodestyle
+  "ERA", # commented-out code
+  "F",   # pyflakes
+  "I",   # isort (import sort)
+  "PL",  # pylint (subset)
+  "RUF", # ruff
+  "SIM", # simplifiable
+  "TRY", # exception patterns
+  "UP",  # pyupgrade
+]
+
+# Lint ignore rules
+ignore = [
+  "PLR2004", # hard-coded value used in comparison
+  "E501",    # line too long (84 > 80)
+  "F405",    # var may be undefined, or defined from star imports
+  "ERA001",  # commented-out code
+  "B008",    # depends as default arg in functions
+  "F403",    # wildcard imports
+  "E722",    # bare `except` ~ 200
+  "PLC0415", # import not at top-level ~ 20
+  "E402",    # module level import not at top of file ~ 2
+  "B904",    # raise exceptions with `raise ... from err` or `raise ... from None` ~ 100
+  "E721",    # use `is` and `is not` for type comparisons, or `isinstance()` for isinstance checks ~ 3
+  "F811",    # Redefinition of _unused_ functions ~ 6
+  "F401",    # unused import ~ 3
+  "F841",    # variable assigned but never used ~ 37
+  "TRY003",  # avoid specifying long messages outside the exception class (correct) ~ 9
+  "PLW2901", # for loop variable  overwritten by assignment target ~ 13
+  "RUF013",  # var default values don't match type ~ 41 (!!!)
+  "PLW0127", # self-assignment of variable
+  "PLR0912", # too many branches ~ 11
+  "PLR0915", # too many statements ~ 7
+  "TRY300",  # move this statement to an `else` block ~ 8
+  "SIM102",  # use a single `if` statement instead of nested `if` statements ~ 2
+  "TRY301",  # Abstract `raise` to an inner function ~ 3
+  "SIM210",  # use `bool(...)` instead of `True if ... else False` ~ 2
+  "UP035",   # `typing.List` is deprecated, use `list` instead ~ 46
+]
+
+# Formatter rules
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+# isort rules
+[tool.ruff.lint.isort]
+known-first-party = ["app", "kvs", "backend"]
+combine-as-imports = true
+
+# Set custom lint rules
+[tool.ruff.lint.pylint]
+max-args = 15
+max-returns = 25
+
+[dependency-groups]
+test = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "pytest-xdist>=3.5",
+    "pytest-timeout>=2.3",
+    "pytest-mock>=3.14",
+    "testcontainers[mysql]>=4.10",
+    "factory-boy>=3.3",
+    "responses>=0.25",
+    "fakeredis>=2.21",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["../tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+    "--timeout=30",
+]
+markers = [
+    "unit: Unit tests (MariaDB Testcontainer)",
+    "integration: Integration tests (TestClient + DB)",
+    "worker: Worker function tests",
+    "e2e: End-to-end tests (Docker Stack)",
+    "slow: Tests > 5 Sekunden",
+]

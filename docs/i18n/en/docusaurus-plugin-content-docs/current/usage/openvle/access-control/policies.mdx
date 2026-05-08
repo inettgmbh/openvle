@@ -1,0 +1,217 @@
+---
+id: policies
+sidebar_label: Policies
+sidebar_position: 90
+status: finished
+tags:
+  - access-control
+  - policies
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Policies
+
+Policies are rules or terms of use that users must accept before they can use certain features in OpenVLE.  
+This can include, for example, privacy policies, IT usage guidelines, or liability disclaimers.  
+Active policies are displayed at login.
+
+{/* TODO: Add screenshot – Example of a displayed policy at login */}
+
+---
+
+## Where can I find this section?
+
+<NavigationHint path="Access Control -> Policies" />
+
+---
+
+## Features at a Glance
+
+<FeatureList
+  items={[
+    'View and manage existing policies',
+    'Create new policies with title, description, and content',
+    'Specify whether a policy is active or inactive',
+    'See which users have already agreed to a policy',
+    'Delete or deactivate policies that are no longer needed',
+  ]}
+/>
+
+{/* TODO: Add screenshot – Policy list or detail view */}
+
+---
+
+## Key Fields at a Glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Name of the policy. Displayed in lists, dialogs, and when users give their consent.',
+    },
+    {
+      name: 'Content',
+      description:
+        'Full text of the policy that is shown to users when accepting. Supports **Markdown** formatting (e.g., headings, lists, links, emphasis).',
+    },
+    {
+      name: 'Description',
+      description:
+        'Brief description of the policy, e.g., "Privacy policy for students" or "General terms of use for administrators".',
+    },
+    {
+      name: 'Status',
+      description:
+        'Current status of the policy, either "Inactive" or "Active".',
+    },
+  ]}
+/>
+
+---
+
+## Creating a Policy
+
+1. Open the **Access Control -> Policies** section in the main menu.
+2. Click **Add** to create a new policy.
+3. Enter the name, description, and text content of the policy.  
+   The text content supports Markdown formatting, so you can use headings, lists, links, or emphasis.
+4. Save the policy.
+
+---
+
+## Activating or Deactivating a Policy
+
+1. Open the **Access Control -> Policies** section in the main menu.
+2. Search for the desired policy in the list and open it.
+3. In the policy's action bar, you will see either a **red "Inactive" button** (to activate) or a **green "Active" button** (to deactivate).  
+   Click the respective button to activate or deactivate the policy.
+
+:::info
+Policies can be activated and deactivated any number of times.
+:::
+
+:::info
+After activation, the policy will only be displayed at the **next login** of users.  
+Users who are already logged in will remain signed in until the end of their current session.  
+To log out all users at once, see [Administration -> Operations and Management -> FAQ](/docs/admin/operations/faq#logout-all-users).
+:::
+
+---
+
+## Editing a Policy
+
+1. Open the **Access Control -> Policies** section in the main menu.
+2. Search for the desired policy in the list.
+3. Click **Edit**, or open the policy's context menu and select **Edit**.
+4. The form displays all current policy data.
+5. Adjust the desired fields — for example, **Name**, **Description**, or **Text content**.
+6. Save the changes.
+
+:::note
+A policy can only be edited if it is **inactive** and **no users** have already agreed to it.  
+Active policies or policies with existing consents **can no longer be modified**.
+
+If, for example, your privacy policy has changed, create a **new policy** (e.g., "Privacy Policy v2"),  
+deactivate the old policy, and then activate the new version.
+:::
+
+---
+
+## Deleting a Policy
+
+1. Open the **Access Control -> Policies** section in the main menu.
+2. Search for the desired policy in the list.
+3. Click **Delete**, or open the policy's context menu and select **Delete**.
+4. Confirm the deletion in the displayed dialog.
+5. The policy will then be permanently removed.
+
+:::warning
+Only **inactive policies** can be deleted.
+:::
+
+---
+
+## Example or Use Case
+
+<Example title="Create a privacy policy for all users">
+  An administrator wants to ensure that all users have read and accepted the
+  privacy terms. They create a new policy in the **Policies** section with the
+  title "Privacy Policy". The policy is marked as active, so all users will be
+  prompted for confirmation at their next login.
+</Example>
+
+{/* TODO: Add screenshot – Example display of the privacy policy */}
+
+---
+
+## Notes / Special Considerations
+
+- Users can only **read and accept** active policies, not edit them.
+- Policies are marked as **accepted** per user in the policy detail view.
+- Active policies are enforced exclusively within **OpenVLE** — not within **Apache Guacamole**.
+- A policy can be deactivated without deleting it.
+- Changes to already active policies are no longer possible.
+- In the **Users** tab, administrators can check who has already accepted a policy.
+
+---
+
+## Relationships to Other Objects
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Users',
+      description: 'Any number of users can agree to a policy.',
+      behavior: 'No automations.',
+    },
+  ]}
+/>
+
+---
+
+## Required Permissions
+
+<Permissions
+  data={[
+    {
+      action: 'View policies',
+      permission: 'policies_read',
+      scoped: true,
+    },
+    { action: 'Create policies', permission: 'policies_create' },
+    {
+      action: 'Edit policies',
+      permission: 'policies_update',
+      scoped: true,
+    },
+    {
+      action: 'Delete policies',
+      permission: 'policies_delete',
+      scoped: true,
+    },
+    {
+      action: 'View user consents',
+      permission: 'policies_users_read',
+    },
+  ]}
+/>
+
+---
+
+## Related Topics
+
+<RelatedLinks
+  items={[
+    { label: 'User Management', href: './users' },
+    { label: 'Roles', href: './roles' },
+    { label: 'Permissions', href: './permissions' },
+  ]}
+/>

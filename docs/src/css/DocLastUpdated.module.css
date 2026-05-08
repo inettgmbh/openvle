@@ -1,0 +1,13 @@
+.container {
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.8rem;
+  color: #555;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.item strong {
+  font-weight: 600;
+}

@@ -1,0 +1,75 @@
+---
+id: system
+sidebar_label: System
+sidebar_position: 50
+status: finished
+tags:
+  - system
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# System
+
+Der Bereich **System** umfasst alle zentralen Verwaltungs- und Hintergrundfunktionen von OpenVLE.  
+Hier findest du systemweite Protokolle, Aufgaben, Konfigurationen und Aktivitäten, die das Verhalten und den Betrieb der gesamten Plattform betreffen.
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="System"
+  alternative="Über die Dashboard-Startseite oder Administratorlinks verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Überwachung aller Aktivitäten innerhalb der Plattform',
+    'Verwaltung und Einsicht von Systemaufgaben (z. B. automatisierte Prozesse, Wartung)',
+    'Anpassung von globalen Systemeinstellungen',
+    'Nachvollziehbare Änderungsprotokolle und Audit-Informationen',
+    'Einblicke in Systemzustand und Nutzung für Administratoren',
+  ]}
+/>
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Systemaktivitäten prüfen">
+  Eine Administratorin möchte nachvollziehen, wann Benutzer zuletzt Änderungen
+  an VM-Vorlagen vorgenommen haben. Sie öffnet den Bereich **System →
+  Aktivitäten** und filtert dort nach dem Objekt „VM-Vorlagen“. Anschließend
+  kann sie genau sehen, welcher Benutzer welche Aktion wann durchgeführt hat.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel Aktivitätenübersicht */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Der Systembereich ist in der Regel nur für Benutzer mit erweiterten Berechtigungen sichtbar.
+- Änderungen an globalen Einstellungen wirken sich auf alle Benutzer aus.
+- Aufgaben und Aktivitäten können zur Analyse von Problemen oder zur Überwachung des Systemzustands genutzt werden.
+- Die Protokollierung erfolgt fortlaufend – ältere Einträge können nach definierten Aufbewahrungsfristen automatisch gelöscht werden.
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Aktivitäten', href: './activities' },
+    { label: 'Aufgaben', href: './tasks' },
+    { label: 'Einstellungen', href: './settings' },
+  ]}
+/>

@@ -1,0 +1,222 @@
+---
+id: connection
+sidebar_label: Connections
+sidebar_position: 10
+status: finished
+tags:
+  - connections
+  - guacamole
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Connections
+
+In **OpenVLE**, connections define **which users** can connect to which **virtual machines**.  
+These connections are provided via **Apache Guacamole** and enable remote access directly in the browser -- without any additional software installation.
+
+Each connection contains information such as the **virtual machine**, **connection template**, and **user**.  
+Administrators can create, delete, or monitor connections here.
+
+{/* TODO: Add screenshot -- Guacamole connection overview */}
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Connections → Connections"
+  alternative="Linked from Virtual Machines or VM templates"
+/>
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'View existing Guacamole connections',
+    'Create new connections for users based on connection templates',
+    'Use connection templates as a foundation',
+    'Delete outdated or no longer needed connections',
+  ]}
+/>
+
+{/* TODO: Add screenshot -- Connection detail view */}
+
+---
+
+## Important fields at a glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Display name of the connection. Shown in lists and dialogs -- this is also the connection name in Apache Guacamole that users see when logging in.',
+    },
+    {
+      name: 'User',
+      description:
+        'User account to which this connection is assigned. Only this user can access the VM via Apache Guacamole.',
+    },
+    {
+      name: 'Virtual Machine (VM)',
+      description:
+        'Reference to the VM that the user can connect to via this connection.',
+    },
+    {
+      name: 'Connection template',
+      description:
+        'The connection template used, which defines the protocol, port, and credentials.',
+    },
+    {
+      name: 'Event',
+      description:
+        '(Optional) Assigned event, if the connection was automatically created as part of an event.',
+    },
+  ]}
+/>
+
+---
+
+## Creating a connection
+
+1. Open the **Connections → Connections** section from the main menu.
+2. Click **Add** to create a new connection.
+3. Select the desired **connection template**.
+4. Select the **user** who should have access to the connection.
+5. Save the connection.
+6. The user can then immediately connect to the associated VM via **Apache Guacamole**.
+
+---
+
+## Deleting a connection
+
+1. Open the **Connections → Connections** section from the main menu.
+2. Find the desired connection in the list.
+3. Click **Delete**, or open the context menu and select **Delete**.
+4. Confirm the deletion in the displayed dialog.
+5. The connection is then permanently removed.
+
+:::danger
+After deletion, the user **immediately** loses access to the virtual machine in Apache Guacamole.
+:::
+
+---
+
+## Example or use case
+
+<Example title="Create an SSH connection to a Linux VM">
+  An administrator wants to give developers access to a Linux VM. She opens the
+  **Connections** section and creates a new connection for each user based on a
+  suitable **connection template** for the desired VM. The users can then start
+  the connection directly in the browser -- securely and without local SSH
+  software.
+</Example>
+
+{/* TODO: Add screenshot -- SSH connection example */}
+
+---
+
+## Notes / special considerations
+
+- Every connection is based on a **connection template**.
+- Changes to a connection take effect **immediately**.
+- Sensitive data (e.g. passwords) **cannot be viewed again**.
+- Active sessions can be viewed and terminated if needed via the **Apache Guacamole server**.
+- Only **administrators** are allowed to create or delete connections.
+- Connections are **user-specific** and cannot be assigned to multiple users.
+
+---
+
+## Relationships to other objects
+
+<ObjectRelations
+  showChangelogs={false}
+  showPermissions={false}
+  showTasks={true}
+  items={[
+    {
+      object: 'Virtual Machine (VM)',
+      description: 'Each connection is assigned to exactly one VM.',
+      behavior:
+        'When the VM is deleted, all associated connections are automatically deleted.',
+    },
+    {
+      object: 'Connection template',
+      description:
+        'Each connection is based on exactly one connection template.',
+      behavior: 'No automatic changes when the template is updated or deleted.',
+    },
+    {
+      object: 'User',
+      description: 'Each connection is assigned to exactly one user.',
+      behavior:
+        'When the user is deleted, all associated connections are automatically deleted.',
+    },
+    {
+      object: 'Event',
+      description: '(Optional) A connection can be assigned to an event.',
+      behavior:
+        'When the event is deleted, all associated connections are automatically deleted.',
+    },
+  ]}
+/>
+
+---
+
+## Required permissions
+
+<Permissions
+  data={[
+    {
+      action: 'View connections',
+      permission: 'guacamoles_read',
+      scoped: true,
+    },
+    {
+      action: 'Create connections',
+      permission: 'guacamoles_create',
+    },
+    {
+      action: 'Delete connections',
+      permission: 'guacamoles_delete',
+      scoped: true,
+    },
+    {
+      action: 'View connection templates',
+      permission: 'guacamole_connection_profiles_read',
+      scoped: true,
+    },
+    {
+      action: 'Create connection templates',
+      permission: 'guacamole_connection_profiles_create',
+    },
+    {
+      action: 'Delete connection templates',
+      permission: 'guacamole_connection_profiles_delete',
+      scoped: true,
+    },
+    { action: 'View virtual machines', permission: 'vms_read' },
+  ]}
+/>
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Connections (Overview)', href: './' },
+    { label: 'Connection templates', href: './templates' },
+    { label: 'Virtual Machines', href: '../vms' },
+    { label: 'VM templates', href: '../vm-templates' },
+  ]}
+/>

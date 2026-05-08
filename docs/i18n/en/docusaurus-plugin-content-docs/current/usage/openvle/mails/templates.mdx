@@ -1,0 +1,292 @@
+---
+id: templates
+sidebar_label: Templates
+sidebar_position: 20
+status: finished
+tags:
+  - mails
+  - templates
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Email templates
+
+Email templates define the content and layout of messages automatically sent by the system -- e.g. notifications about new events or VM creations.  
+They ensure a consistent appearance and make sure that all system emails are clearly and understandably formulated.
+
+---
+
+## Where can I find this section?
+
+<NavigationHint
+  path="Emails → Templates"
+  alternative="Accessible from the detail view of sent emails or from system tasks"
+/>
+
+---
+
+## Features at a glance
+
+<FeatureList
+  items={[
+    'Create and edit email templates with subject, text, and HTML layout',
+    'Use placeholders for dynamic content (e.g. username, event title)',
+    'Test send individual templates to verify content',
+    'Link the template to specific system events (e.g. VM creation)',
+    'Display all emails sent using this email template',
+  ]}
+/>
+
+---
+
+## Important fields at a glance
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Display name of the template. Used for identification and linking with system actions.',
+    },
+    {
+      name: 'Description',
+      description:
+        'Brief description of what the template is used for (e.g. "Notification for new VM").',
+    },
+    {
+      name: 'Subject',
+      description: 'Subject line of the email.',
+    },
+    {
+      name: 'Content (HTML)',
+      description:
+        'Main content of the email in text or HTML format. Can contain dynamic placeholders.',
+    },
+    {
+      name: 'Reply-to email',
+      description:
+        'Email address to which users can reply to automatically sent messages.',
+    },
+    {
+      name: 'Email action',
+      description:
+        'Assigned email action of the email template. Can be left empty to not use the email template.',
+    },
+  ]}
+/>
+
+---
+
+## Available placeholders
+
+To allow emails to be personalized, various placeholders are available for email template content.  
+Which placeholders are available depends on the assigned email action.  
+The "Availability" column in the following table shows in which contexts the individual placeholders can be used.
+
+:::warning
+Please note that **no additional permission checks** are performed when sending emails.  
+This means that email templates may also **contain data or information that should not actually be visible** to the respective recipient.
+
+This particularly applies to **emails sent to students**, as they typically have limited permissions in OpenVLE.
+
+**Example:**  
+If the placeholder `{{ virtualmachine.ipv4 }}` or `{{ virtualmachine.proxmoxNode }}` is used in an email template sent to students,  
+the email will contain technical details such as the **internal IP address** or the **server name (node)** of the provisioned VM.  
+This information is normally only visible to administrators or instructors in OpenVLE -- students could however view it via the email.
+
+Therefore, only use placeholders in email templates that are intended for and non-critical for the respective recipient group.
+:::
+
+<div style={{overflowX: 'auto'}} className="compact-table">
+  | Object model   | Placeholder                           | Description                                                                  | Availability                  |
+  |----------------|---------------------------------------|------------------------------------------------------------------------------|-------------------------------|
+  | User           | `{{ user.email }}`                    | Email address of the user receiving the message.                             | Always (Events & VMs)         |
+  | User           | `{{ user.name }}`                     | Full name of the user receiving the message.                                 | Always (Events & VMs)         |
+  | User           | `{{ user.username }}`                 | Username of the user receiving the message.                                  | Always (Events & VMs)         |
+  | Project        | `{{ project.name }}`                  | Internal name of the project.                                                | Always (Events & VMs)         |
+  | Project        | `{{ project.title }}`                 | Publicly visible title of the project.                                       | Always (Events & VMs)         |
+  | SubTask        | `{{ subtask.action }}`                | Executed action.                                                             | Events                        |
+  | SubTask        | `{{ subtask.attempt }}`               | Number of retry attempts for this SubTask so far.                            | Events                        |
+  | SubTask        | `{{ subtask.createdAt }}`             | Timestamp when the SubTask was created.                                      | Events                        |
+  | SubTask        | `{{ subtask.createdById }}`           | User ID of the SubTask creator.                                              | Events                        |
+  | SubTask        | `{{ subtask.id }}`                    | Unique identifier (UUID) of the SubTask.                                     | Events                        |
+  | SubTask        | `{{ subtask.job_id }}`                | Internal ID of the background job (RQ job) executing this SubTask.           | Events                        |
+  | SubTask        | `{{ subtask.name }}`                  | Name or type of the SubTask.                                                 | Events                        |
+  | SubTask        | `{{ subtask.object_id }}`             | Identifier (UUID) of the object the SubTask refers to.                       | Events                        |
+  | SubTask        | `{{ subtask.object_type }}`           | Type of the object the SubTask refers to.                                    | Events                        |
+  | SubTask        | `{{ subtask.parent_task }}`           | Identifier of the parent task this SubTask belongs to.                       | Events                        |
+  | SubTask        | `{{ subtask.response_code }}`         | Response or status code after SubTask execution.                             | Events                        |
+  | SubTask        | `{{ subtask.response_message }}`      | Return or error message from the SubTask execution.                          | Events                        |
+  | SubTask        | `{{ subtask.status }}`                | Current status, e.g. *queued*, *running*, *failed*, or *success*.            | Events                        |
+  | SubTask        | `{{ subtask.updatedAt }}`             | Timestamp of the last update or completion of the SubTask.                   | Events                        |
+  | SubTask        | `{{ subtask.updatedById }}`           | User ID of the last editor of the SubTask.                                   | Events                        |
+  | Event          | `{{ event.course }}`                  | Associated course assigned to the event.                                     | Events                        |
+  | Event          | `{{ event.createdAt }}`               | Timestamp when the event was created.                                        | Events                        |
+  | Event          | `{{ event.createdById }}`             | User ID of the event creator.                                                | Events                        |
+  | Event          | `{{ event.dateEnd }}`                 | End date of the event.                                                       | Events                        |
+  | Event          | `{{ event.dateStart }}`               | Start date of the event.                                                     | Events                        |
+  | Event          | `{{ event.deployment_status }}`       | Deployment status of the event, e.g. *pending* or *ready*.                   | Events                        |
+  | Event          | `{{ event.description }}`             | Description or additional information about the event.                       | Events                        |
+  | Event          | `{{ event.guacamole }}`               | Whether Guacamole is active for this event (default: True).                  | Events                        |
+  | Event          | `{{ event.id }}`                      | Unique identifier (UUID) of the event.                                       | Events                        |
+  | Event          | `{{ event.name }}`                    | Name of the event.                                                           | Events                        |
+  | Event          | `{{ event.slug }}`                    | Short name of the event.                                                     | Events                        |
+  | Event          | `{{ event.status }}`                  | Current status ID of the event.                                              | Events                        |
+  | Event          | `{{ event.updatedAt }}`               | Timestamp of the last update of the event.                                   | Events                        |
+  | Event          | `{{ event.updatedById }}`             | User ID of the last editor of the event.                                     | Events                        |
+  | VM             | `{{ virtualmachine.cpu }}`            | Number of allocated CPU cores of the virtual machine.                        | VMs                           |
+  | VM             | `{{ virtualmachine.createdAt }}`      | Timestamp when the VM was created.                                           | VMs                           |
+  | VM             | `{{ virtualmachine.createdById }}`    | User ID of the VM creator.                                                   | VMs                           |
+  | VM             | `{{ virtualmachine.description }}`    | Description or purpose of the VM.                                            | VMs                           |
+  | VM             | `{{ virtualmachine.disk }}`           | Size of the allocated disk space in GB.                                      | VMs                           |
+  | VM             | `{{ virtualmachine.event }}`          | Associated event in whose context the VM was created.                        | VMs                           |
+  | VM             | `{{ virtualmachine.id }}`             | Unique identifier (UUID) of the VM.                                          | VMs                           |
+  | VM             | `{{ virtualmachine.ipv4 }}`           | IPv4 address of the VM, if available.                                        | VMs                           |
+  | VM             | `{{ virtualmachine.name }}`           | Name of the virtual machine.                                                 | VMs                           |
+  | VM             | `{{ virtualmachine.os }}`             | Assigned operating system ID of the VM.                                      | VMs                           |
+  | VM             | `{{ virtualmachine.prevent_delete }}` | Indicates whether deletion of the VM is prevented (*true/false*).            | VMs                           |
+  | VM             | `{{ virtualmachine.proxmoxId }}`      | Internal ID of the VM in the Proxmox cluster.                                | VMs                           |
+  | VM             | `{{ virtualmachine.proxmoxNode }}`    | Name of the Proxmox node on which the VM is running.                         | VMs                           |
+  | VM             | `{{ virtualmachine.ram }}`            | Allocated RAM of the VM in MB.                                               | VMs                           |
+  | VM             | `{{ virtualmachine.status }}`         | Current status of the VM, e.g. *running*, *stopped*, or *error*.             | VMs                           |
+  | VM             | `{{ virtualmachine.template }}`       | VM template on which the virtual machine is based.                           | VMs                           |
+  | VM             | `{{ virtualmachine.updatedAt }}`      | Timestamp of the last update of the VM.                                      | VMs                           |
+  | VM             | `{{ virtualmachine.updatedById }}`    | User ID of the last editor of the VM.                                        | VMs                           |
+</div>
+
+---
+
+## Creating an email template
+
+1. Open the **Emails → Templates** section from the main menu.
+2. Click **Add** to create a new email template.
+3. Enter a **name**, a **subject**, a **description**, and **content** for the email template.
+4. For the **content**, you can also use the **placeholders** listed above to display content dynamically and personalized.
+5. Optionally, you can display an **HTML preview** of the content.
+6. Optionally, you can already assign the email template to an **email action** -- this is also possible at a later time.
+7. Save the email template.
+
+---
+
+## Editing an email template
+
+1. Open the **Emails → Templates** section from the main menu.
+2. Find the desired email template in the list.
+3. Click **Edit**, or open the context menu of the email template and select **Edit**.
+4. The form displays all current data of the email template.
+5. Adjust the desired fields -- for example **Name**, **Subject**, or **Content**.
+6. If you want to remove the assignment of an **email template** to an **email action**, you can simply leave the **Email action** field empty.
+7. Save the changes.
+
+:::note
+If you want to test changes to an email template first, it is recommended to create a **new email template** without assigning it to an email action.  
+This ensures that production emails are not accidentally sent with the new template.
+:::
+
+---
+
+## Deleting an email template
+
+1. Open the **Emails → Templates** section from the main menu.
+2. Find the desired email template in the list.
+3. Click **Delete**, or open the context menu of the email template and select **Delete**.
+4. Confirm the deletion in the displayed dialog.
+5. The email template is then permanently removed.
+
+:::warning
+If the email template was assigned to an email action and **no other email template** is assigned to that action,  
+**no more emails will be sent** for this email action.
+:::
+
+---
+
+## Example or use case
+
+<Example title="Customize a notification about a new event">
+  An administrator wants to adjust the text that is sent when a new event
+  starts. In the **Emails → Templates** section, she opens the template *Event
+  successfully deployed*, adds a personal greeting, and tests the dispatch with
+  a sample address. After saving, the modified version will be used for all
+  future events.
+</Example>
+
+{/* TODO: Add screenshot -- Example: Email template editor */}
+
+---
+
+## Notes / special considerations
+
+- Placeholders in templates are automatically replaced with actual values at the time of dispatch.
+- Changes only affect future emails -- already sent messages remain unchanged.
+- HTML templates support basic styling, inline images, and dynamic content.
+- Both plain text and HTML templates can be created.
+- The preview and test send features help you verify layout and placeholders before changes go live.
+
+---
+
+## Relationships to other objects
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Email action',
+      description:
+        'Exactly one email action can be assigned to an email template.',
+      behavior: 'No automations.',
+    },
+    {
+      object: 'Sent email',
+      description:
+        'Any number of sent emails can be associated with an email template.',
+      behavior: 'No automations.',
+    },
+  ]}
+/>
+
+---
+
+## Required permissions
+
+<Permissions
+  data={[
+    {
+      action: 'View email templates',
+      permission: 'mailtemplates_read',
+      scoped: true,
+    },
+    {
+      action: 'Create email templates',
+      permission: 'mailtemplates_create',
+      scoped: false,
+    },
+    {
+      action: 'Edit email templates',
+      permission: 'mailtemplates_update',
+      scoped: true,
+    },
+    {
+      action: 'Delete email templates',
+      permission: 'mailtemplates_delete',
+      scoped: true,
+    },
+  ]}
+/>
+
+---
+
+## Related topics
+
+<RelatedLinks
+  items={[
+    { label: 'Sent emails', href: './sent' },
+    { label: 'System settings', href: '../system/settings' },
+    { label: 'Tasks', href: '../system/tasks' },
+  ]}
+/>

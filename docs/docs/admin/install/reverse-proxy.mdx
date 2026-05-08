@@ -1,0 +1,308 @@
+---
+id: reverse-proxy
+sidebar_label: Reverse Proxy
+sidebar_position: 60
+status: finished
+tags:
+  - installation
+  - reverse-proxy
+---
+
+# Reverse Proxy {#reverse-proxy}
+
+```mdx-code-block
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+```
+
+Vor dem OpenVLE-Backend und -Frontend sollte ein Reverse Proxy eingesetzt werden. Dieser übernimmt die SSL-Terminierung, leitet Anfragen an die richtigen Dienste weiter und kann optional Load Balancing bereitstellen.
+
+## Voraussetzungen {#prerequisites}
+
+- **Drei Dienste** müssen über den Reverse Proxy erreichbar sein:
+  - **Backend API** (Port 8000) — Pfad `/v1/`
+  - **Frontend** (Port 80) — alle übrigen Pfade
+  - **Apache Guacamole** (Port 8080) — separate Subdomain (z. B. `desktop.example.com`) _(optional, nur wenn Guacamole über diesen Reverse Proxy erreichbar sein soll)_
+- **Zwei Hostnamen** müssen konfiguriert sein (z. B. `openvle.example.com` und `desktop.example.com`) — ohne Guacamole reicht ein einzelner Hostname
+- **SSL-Zertifikate** für beide Hostnamen (z. B. via Let's Encrypt)
+- **WebSocket-Support** für Guacamole (erforderlich für Remote-Desktop-Verbindungen) _(nur bei Guacamole-Anbindung)_
+
+:::info Guacamole optional
+Die Guacamole-Konfiguration in den folgenden Beispielen ist optional. Falls du Guacamole nicht verwendest oder Guacamole über einen eigenen Reverse Proxy auf einem separaten Server betreibst, kannst du die Guacamole-bezogenen Abschnitte (Subdomain `desktop.example.com`, Port 8080) weglassen.
+:::
+
+## Konfiguration {#configuration}
+
+Wir empfehlen **Traefik**, da es nativ als Docker-Container betrieben werden kann und sich dynamisch über Docker-Labels konfigurieren lässt — ideal für ein Docker-Compose-basiertes Setup wie OpenVLE. Alternativ sind auch HAProxy, Caddy, Nginx oder Apache möglich.
+
+<Tabs groupId="reverse-proxy" queryString="reverse-proxy">
+  <TabItem value="traefik" label="Traefik (empfohlen)" default>
+
+    Traefik lässt sich als zusätzlicher Service direkt im Docker-Compose-Stack betreiben. Die Konfiguration erfolgt über Labels an den einzelnen Services — es sind keine separaten Konfigurationsdateien nötig.
+
+    :::note
+    Dies ist eine **`docker-compose.override.yml`** — die eigentliche **`docker-compose.yml`** des Backends und Frontends wird weiterhin benötigt.
+    :::
+
+    ```yaml
+    ---
+    services:
+
+      traefik:
+        image: traefik:v3.1
+        container_name: traefik
+        restart: unless-stopped
+        ports:
+          - 0.0.0.0:80:80
+          - 0.0.0.0:443:443
+        command:
+          # Provider
+          - --providers.docker=true
+          - --providers.docker.exposedbydefault=false
+          # EntryPoints
+          - --entrypoints.web.address=:80
+          - --entrypoints.websecure.address=:443
+          # HTTP → HTTPS Redirect
+          - --entrypoints.web.http.redirections.entrypoint.to=websecure
+          - --entrypoints.web.http.redirections.entrypoint.scheme=https
+          # ACME (Let's Encrypt)
+          - --certificatesresolvers.letsencrypt.acme.email=admin@example.com
+          - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+          - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+          - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+          - ./certs:/letsencrypt
+        labels:
+          - traefik.enable=true
+
+      backend:
+        labels:
+          - traefik.enable=true
+          - traefik.http.routers.backend.rule=Host(`openvle.example.com`) && PathPrefix(`/v1/`)
+          - traefik.http.routers.backend.entrypoints=websecure
+          - traefik.http.routers.backend.tls=true
+          - traefik.http.routers.backend.tls.certresolver=letsencrypt
+          - traefik.http.routers.backend.priority=200
+          - traefik.http.services.backend.loadbalancer.server.port=8000
+
+      frontend:
+        labels:
+          - traefik.enable=true
+          - traefik.http.routers.frontend.rule=Host(`openvle.example.com`) && PathPrefix(`/`)
+          - traefik.http.routers.frontend.entrypoints=websecure
+          - traefik.http.routers.frontend.tls=true
+          - traefik.http.routers.frontend.tls.certresolver=letsencrypt
+          - traefik.http.routers.frontend.priority=100
+          - traefik.http.services.frontend.loadbalancer.server.port=80
+
+      # Optional: Nur erforderlich wenn Guacamole über diesen Reverse Proxy erreichbar sein soll
+      guacamole:
+        labels:
+          - traefik.enable=true
+          - traefik.http.routers.guacamole.rule=Host(`desktop.example.com`)
+          - traefik.http.routers.guacamole.entrypoints=websecure
+          - traefik.http.routers.guacamole.tls=true
+          - traefik.http.routers.guacamole.tls.certresolver=letsencrypt
+          - traefik.http.services.guacamole.loadbalancer.server.port=8080
+    ```
+
+    :::note Anpassungen
+    - Ersetze `openvle.example.com` und `desktop.example.com` mit deinen Hostnamen
+    - Ersetze `admin@example.com` mit deiner E-Mail-Adresse für Let's Encrypt
+    - Die `priority` des Backend-Routers muss höher sein als die des Frontends, damit `/v1/`-Anfragen korrekt geroutet werden
+    :::
+
+  </TabItem>
+  <TabItem value="haproxy" label="HAProxy">
+
+    Diese HAProxy-Konfiguration richtet einen Reverse Proxy ein, der SSL-Terminierung durchführt, HTTP-Anfragen zu HTTPS umleitet und Anfragen basierend auf Hostnamen und URL-Pfaden an die drei Dienste weiterleitet.
+
+    :::note Anpassungen
+    - Ersetze `/your-ssl-certs.certlist` durch den Pfad zu deiner SSL-Zertifikatsliste
+    - Ersetze `desktop.example.com` und `openvle.example.com` mit deinen Hostnamen
+    - Ersetze `10.1.1.10` mit der IP-Adresse deines OpenVLE-Servers
+    :::
+
+    ```haproxy
+    global
+        [...]
+
+    defaults
+        [...]
+
+    frontend frontend_http
+        bind 0.0.0.0:80 name 0.0.0.0:80
+        mode http
+        option http-keep-alive
+        option httplog
+
+        http-request redirect code 301 location https://%[hdr(host)]%[capture.req.uri]
+
+    frontend frontend_https
+        bind 0.0.0.0:443 name 0.0.0.0:443 ssl alpn h2,http/1.1 crt-list /your-ssl-certs.certlist
+        mode http
+        option http-keep-alive
+        option httplog
+
+        acl condition_path_openvle_backend_v1 path_beg -i /v1/
+        acl condition_path_openvle_frontend_v1 path_beg -i /v1/
+
+        # Optional: Nur erforderlich wenn Guacamole über diesen Reverse Proxy erreichbar sein soll
+        acl condition_host_guacamole hdr(host) -i desktop.example.com
+        acl condition_host_openvle hdr(host) -i openvle.example.com
+
+        http-request set-header X-Forwarded-Proto https
+        use_backend openvle-backend if condition_host_openvle condition_path_openvle_backend_v1
+        use_backend openvle-frontend if condition_host_openvle !condition_path_openvle_frontend_v1
+        use_backend openvle-guacamole if condition_host_guacamole
+
+    backend openvle-backend
+        mode http
+        balance source
+        stick-table type ip size 50k expire 30m
+        stick on src
+        http-reuse safe
+        option forwardfor
+        server openvle-backend01 10.1.1.10:8000
+
+    backend openvle-frontend
+        option httpchk
+        http-check send meth OPTIONS uri / ver HTTP/1.1 hdr Host localhost
+        mode http
+        balance source
+        stick-table type ip size 50k expire 30m
+        stick on src
+        http-reuse safe
+        option forwardfor
+        server openvle-frontend01 10.1.1.10:80 check inter 10s
+
+    # Optional: Nur erforderlich wenn Guacamole über diesen Reverse Proxy erreichbar sein soll
+    backend openvle-guacamole
+        option httpchk
+        http-check send meth OPTIONS uri / ver HTTP/1.1 hdr Host localhost
+        mode http
+        balance source
+        stick-table type ip size 50k expire 30m
+        stick on src
+        http-reuse safe
+        option forwardfor
+        server openvle-guacamole01 10.1.1.10:8080 check inter 10s
+    ```
+
+  </TabItem>
+  <TabItem value="caddy" label="Caddy">
+
+    Caddy übernimmt die SSL-Terminierung automatisch via Let's Encrypt — es ist keine manuelle Zertifikatskonfiguration nötig.
+
+    :::note Anpassungen
+    - Ersetze `openvle.example.com` und `desktop.example.com` mit deinen Hostnamen
+    - Ersetze `10.1.1.10` mit der IP-Adresse deines OpenVLE-Servers
+    :::
+
+    ```caddyfile
+    openvle.example.com {
+        handle /v1/* {
+            reverse_proxy 10.1.1.10:8000
+        }
+
+        handle {
+            reverse_proxy 10.1.1.10:80
+        }
+    }
+
+    # Optional: Nur erforderlich wenn Guacamole über diesen Reverse Proxy erreichbar sein soll
+    desktop.example.com {
+        reverse_proxy 10.1.1.10:8080
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="nginx" label="Nginx">
+
+    Diese Nginx-Konfiguration richtet einen Reverse Proxy mit SSL-Terminierung ein und leitet Anfragen an die drei Dienste weiter.
+
+    :::note Anpassungen
+    - Ersetze die Pfade unter `ssl_certificate` und `ssl_certificate_key` mit deinen Zertifikatspfaden (z. B. von Let's Encrypt)
+    - Ersetze `openvle.example.com` und `desktop.example.com` mit deinen Hostnamen
+    - Ersetze `10.1.1.10` mit der IP-Adresse deines OpenVLE-Servers
+    :::
+
+    ```nginx
+    # HTTP → HTTPS Redirect
+    server {
+        listen 80;
+        server_name openvle.example.com desktop.example.com;
+        return 301 https://$host$request_uri;
+    }
+
+    # OpenVLE (Backend + Frontend)
+    server {
+        listen 443 ssl;
+        server_name openvle.example.com;
+
+        ssl_certificate     /etc/letsencrypt/live/openvle.example.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/openvle.example.com/privkey.pem;
+
+        # Backend API
+        location /v1/ {
+            proxy_pass http://10.1.1.10:8000;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        # Frontend
+        location / {
+            proxy_pass http://10.1.1.10:80;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+    }
+
+    # Optional: Nur erforderlich wenn Guacamole über diesen Reverse Proxy erreichbar sein soll
+    server {
+        listen 443 ssl;
+        server_name desktop.example.com;
+
+        ssl_certificate     /etc/letsencrypt/live/desktop.example.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/desktop.example.com/privkey.pem;
+
+        location / {
+            proxy_pass http://10.1.1.10:8080;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            # WebSocket-Support (erforderlich für Apache Guacamole)
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+        }
+    }
+    ```
+
+  </TabItem>
+</Tabs>
+
+## Verifizierung {#verification}
+
+Nach der Konfiguration des Reverse Proxys:
+
+1. **HTTPS-Zugang prüfen** — `https://openvle.example.com` sollte das Frontend anzeigen
+2. **API-Zugang prüfen** — `https://openvle.example.com/v1/system/settings` sollte eine JSON-Antwort mit den aktuellen Systemeinstellungen zurückgeben. Eine leere oder fehlerhafte Antwort deutet auf eine falsche Routing-Konfiguration hin.
+3. **Guacamole-Zugang prüfen** _(falls konfiguriert)_ — `https://desktop.example.com` sollte die Guacamole-Anmeldeseite anzeigen
+4. **HTTP-Redirect prüfen** — `http://openvle.example.com` sollte auf HTTPS umleiten
+
+## Fehlerbehebung {#troubleshooting}
+
+| Problem                                      | Lösung                                                                                                                                                                                 |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SSL-Zertifikatsfehler                        | Stelle sicher, dass die Zertifikatspfade korrekt konfiguriert sind und die Zertifikate gültig sind. Bei Let's Encrypt: prüfe ob Port 80 von außen erreichbar ist.                      |
+| 502 Bad Gateway                              | Der Zieldienst ist nicht erreichbar. Prüfe ob die Container laufen (`docker ps -a`) und die IP-Adressen/Ports in der Proxy-Konfiguration stimmen.                                      |
+| WebSocket-Fehler bei Guacamole               | Stelle sicher, dass die WebSocket-Headers (`Upgrade`, `Connection`) in der Proxy-Konfiguration gesetzt sind (siehe Nginx-Beispiel).                                                    |
+| Frontend erreichbar, API-Calls schlagen fehl | Prüfe ob die Routing-Regeln für `/v1/` korrekt zum Backend weiterleiten und nicht ans Frontend. Bei Traefik: die `priority` des Backend-Routers muss höher sein als die des Frontends. |

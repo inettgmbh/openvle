@@ -1,0 +1,75 @@
+---
+id: auth
+sidebar_label: Connexion
+sidebar_position: 10
+status: finished
+tags:
+  - authentication
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Connexion
+
+Pour vous connecter à **OpenVLE**, veuillez ouvrir l'adresse du portail individuelle de votre installation.  
+Cette URL vous est généralement communiquée par votre **service informatique**, votre **organisation** ou via un **e-mail d'invitation** correspondant.
+
+Si vous n'êtes pas encore connecté, vous serez automatiquement redirigé vers la page de connexion.
+
+---
+
+## Connexion avec un compte externe
+
+Les utilisateurs disposant d'un **compte externe** se connectent avec leurs identifiants habituels :
+
+- **Nom d'utilisateur :** votre nom d'utilisateur centralisé
+- **Mot de passe :** votre mot de passe personnel
+
+Ces données sont gérées en externe.  
+En cas de problème de connexion, veuillez contacter votre service informatique ou le support technique.
+
+---
+
+## Connexion avec un accès local
+
+Si vous ne disposez pas d'un compte externe (par ex. personnes externes ou utilisateurs de test), vous pouvez vous connecter avec un **accès local**.  
+Celui-ci se compose d'un **nom d'utilisateur** et d'un **mot de passe** distincts qui vous ont été attribués individuellement.  
+Les comptes locaux sont gérés exclusivement au sein d'**OpenVLE**.
+
+---
+
+## Exemple ou cas d'utilisation
+
+<Example title="Connexion via la page de connexion">
+  Après avoir ouvert l'adresse de votre portail OpenVLE individuel, le masque de
+  connexion apparaît. Saisissez votre **nom d'utilisateur** et votre **mot de
+  passe**, puis cliquez sur **Se connecter**. En cas de connexion réussie, vous
+  accédez automatiquement au **tableau de bord**.
+</Example>
+
+{/* TODO: Screenshot ![Exemple de la page de connexion](/screens/auth/login.png) */}
+
+---
+
+## Remarques / Particularités
+
+- Les mots de passe sont transmis et stockés de manière chiffrée et sécurisée.
+- Après plusieurs saisies erronées, l'accès peut être temporairement bloqué.
+- Les comptes utilisateur locaux sont indépendants du système de connexion centralisé.
+- Après la connexion, votre session reste active jusqu'à ce que vous vous déconnectiez manuellement ou que le navigateur soit fermé.
+- Pour des raisons de sécurité, il est recommandé de vous déconnecter manuellement après utilisation — en particulier sur les appareils publics.
+
+---
+
+## Sujets connexes
+
+<RelatedLinks
+  items={[
+    { label: 'Gestion des utilisateurs', href: '../access-control/users' },
+    { label: "Contrôle d'accès", href: '../access-control' },
+    { label: 'Tableau de bord', href: '../dashboard' },
+  ]}
+/>

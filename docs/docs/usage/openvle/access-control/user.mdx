@@ -1,0 +1,283 @@
+---
+id: users
+sidebar_label: Benutzer
+sidebar_position: 20
+status: finished
+tags:
+  - access-control
+  - users
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Benutzer
+
+Die Benutzerverwaltung ist ein zentraler Bestandteil von OpenVLE.  
+Hier verwaltest du alle Personen, die Zugriff auf das System haben – sowohl Benutzer mit einem **OIDC- / LDAP-Account** als auch **lokale Accounts** (z. B. externe Personen oder Testnutzer).
+
+{/* TODO: Screenshot hinzufügen – Benutzerübersicht */}
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="Zugriffskontrolle → Benutzer"
+  alternative="Über Rollen oder Berechtigungen verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeigen, Anlegen, Bearbeiten und Löschen von Benutzerkonten',
+    'Zuweisen oder Entfernen von Rollen',
+    'Vergeben individueller Berechtigungen auf Objekt- oder Modellebene',
+    'Sperren und Entsperren von Benutzerkonten',
+    'Einsehen verbundener Verbindungen, VMs, Aktivitäten',
+    'Nachverfolgen von Änderungen über Changelogs',
+  ]}
+/>
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Vollständiger Name des Benutzers. Wird in Listen, Detailansichten und bei der Kommunikation (z. B. in E-Mails) angezeigt.',
+    },
+    {
+      name: 'Benutzername',
+      description:
+        'Eindeutiger Anmeldename des Benutzers. Wird zur Authentifizierung verwendet und kann nach der Erstellung nicht mehr geändert werden.',
+    },
+    {
+      name: 'E-Mail',
+      description:
+        'Primäre E-Mail-Adresse des Benutzers. Wird für Benachrichtigungen, Systemmails und Passwortzurücksetzungen verwendet.',
+    },
+    {
+      name: 'Status',
+      description:
+        'Aktueller Zustand des Benutzerkontos. Mögliche Werte sind *active* (Aktiv), *inactive* (Inaktiv), *email pending* (E-Mail-Bestätigung ausstehend) oder *banned* (Gesperrt).',
+    },
+    {
+      name: 'Sprache',
+      description:
+        'Bevorzugte Systemsprache des Benutzers. Bestimmt, in welcher Sprache Benachrichtigungen und Oberflächentexte angezeigt werden.',
+    },
+    {
+      name: 'Auth Backend',
+      description:
+        'Authentifizierungsmethode des Benutzers. Kann *internal* (lokal verwaltet) oder *external* (über einen externen Identity Provider wie LDAP oder OIDC) sein.',
+    },
+  ]}
+/>
+
+---
+
+## Erstellen eines Benutzers
+
+1. Öffne im Hauptmenü den Bereich **Zugriffskontrolle → Benutzer**.
+2. Klicke auf **Hinzufügen**, um ein neues Benutzerkonto anzulegen.
+3. Gib die gewünschten Daten ein (**Name**, **Benutzername**, **E-Mail** und **Status**).  
+   Wenn es sich um einen **extern authentifizierten Benutzer** (z. B. LDAP oder OIDC) handelt, muss die Option **Zugang** auf **Ja** stehen.  
+   Wenn es sich um einen **lokal authentifizierten Benutzer** handelt, muss die Option **Zugang** auf **Nein** stehen.  
+   **In der Regel sollte diese Einstellung auf „Ja“ belassen werden.**
+4. Speichere den neuen Benutzer.
+5. Weise dem Benutzer **Rollen** oder **individuelle Berechtigungen** zu.
+
+{/* TODO: Screenshot hinzufügen – Benutzerformular */}
+
+> 💡 **Tipp:**  
+> Die meisten Benutzer werden automatisch erstellt, wenn sie sich erstmals mit ihrem externen Konto anmelden.
+
+:::info
+Extern authentifizierte Benutzer werden anhand ihres **Benutzernamens** identifiziert.  
+Stelle daher sicher, dass der Benutzername exakt mit dem Wert im externen Identity Provider (IdP) übereinstimmt.  
+Felder wie **Name** und **E-Mail-Adresse** werden bei der Anmeldung des Benutzers automatisch mit den Informationen aus dem externen IdP aktualisiert.
+:::
+
+:::warning
+Extern authentifizierte Benutzer können nach der Erstellung **nicht mehr bearbeitet** werden.  
+Lediglich der **Status** (aktiv/inaktiv) kann geändert und der Benutzer **gelöscht** werden.  
+Der **Benutzername** kann **nicht nachträglich geändert** werden.
+:::
+
+---
+
+## Aktivieren oder Deaktivieren eines Benutzers
+
+1. Öffne im Hauptmenü den Bereich **Zugriffskontrolle → Benutzer**.
+2. Suche in der Liste nach dem gewünschten Benutzer und öffne diesen.
+3. In der Aktionsleiste des Benutzers siehst du entweder einen **gelben Button „Sperren“** (zum Sperren) oder einen **gelben Button „Entsperren“** (zum Entsperren).
+4. Durch Klicken auf den jeweiligen Button kannst du den Benutzerzugang sperren oder wieder freigeben.
+
+:::warning
+Nach der Sperrung kann der Benutzer **sofort keine weiteren Aktionen** innerhalb von OpenVLE ausführen – auch dann nicht, wenn er derzeit angemeldet ist und eine noch gültige Sitzung hat.
+:::
+
+:::danger
+Der Zugang zu **Apache Guacamole** wird aktuell **nicht automatisch gesperrt**.  
+Diese Funktionalität wird in einer zukünftigen Version nachgeliefert.
+:::
+
+---
+
+## Zurücksetzen des Passworts eines Benutzers (nur lokale Accounts)
+
+1. Öffne im Hauptmenü den Bereich **Zugriffskontrolle → Benutzer**.
+2. Suche in der Liste nach dem gewünschten Benutzer und öffne diesen.
+3. Klicke auf den **gelben Button „Passwort setzen“** in der Aktionsleiste.
+4. Gib das neue Passwort zweimal ein.
+5. Speichere die Änderungen.
+
+:::warning
+Aktuelle Sitzungen des Benutzers bleiben hiervon **unberührt** – der Benutzer wird **nicht automatisch abgemeldet**.
+:::
+
+:::note
+Das Zurücksetzen des Passworts ist nur für **lokal authentifizierte Benutzer** möglich.  
+Bei externen Authentifizierungsmethoden (z. B. LDAP oder SSO) kann das Passwort nicht geändert werden.
+:::
+
+---
+
+## Bearbeiten eines Benutzers (nur lokale Accounts)
+
+1. Öffne im Hauptmenü den Bereich **Zugriffskontrolle → Benutzer**.
+2. Suche in der Liste nach dem gewünschten Benutzer.
+3. Klicke auf **Bearbeiten**, oder öffne das Kontextmenü des Benutzers und wähle **Bearbeiten**.
+4. Im Formular werden alle aktuellen Daten des Benutzers angezeigt.
+5. Passe die gewünschten Felder an – beispielsweise **Name** oder **E-Mail**.
+6. Speichere die Änderungen.
+
+:::note
+Nur **lokal authentifizierte Benutzer** können bearbeitet werden.  
+Bei **extern authentifizierten Benutzern** (z. B. LDAP oder SSO) können lediglich der **Status** geändert und der Benutzer **gelöscht** werden.
+:::
+
+---
+
+## Löschen eines Benutzers
+
+1. Öffne im Hauptmenü den Bereich **Zugriffskontrolle → Benutzer**.
+2. Suche in der Liste nach dem gewünschten Benutzer.
+3. Klicke auf **Löschen**, oder öffne das Kontextmenü des Benutzers und wähle **Löschen**.
+4. Es erscheint ein erweiterter Löschdialog, in dem alle **verknüpften Objekte** angezeigt werden, die ebenfalls gelöscht werden (sofern vorhanden).
+5. Bestätige den Löschvorgang im angezeigten Dialog.
+6. Der Benutzer wird daraufhin **dauerhaft entfernt**.
+
+:::danger
+Dieser Vorgang kann **nicht rückgängig gemacht** werden.  
+Wenn der Benutzer nur vorübergehend keinen Zugriff haben soll, empfiehlt es sich, den **Benutzer zu sperren**, anstatt ihn zu löschen.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Lokalen Testbenutzer anlegen">
+  Eine Administratorin möchte für interne Tests einen temporären Benutzer
+  erstellen. Sie öffnet den Bereich **Benutzer**, klickt auf **Hinzufügen** und
+  legt ein lokales Konto an. Anschließend weist sie dem Benutzer die Rolle
+  **Tester** zu, die den Zugriff auf ausgewählte virtuelle Maschinen ermöglicht.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel: Benutzeranlage */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Benutzer mit externen Accounts werden beim ersten Login automatisch angelegt.
+- Lokale Benutzer müssen manuell erstellt werden.
+- Ein Benutzer kann mehrere Rollen besitzen – deren Berechtigungen werden kombiniert.
+- Individuell vergebene Berechtigungen ergänzen die Rechte aus Rollen.
+- Gesperrte Benutzer bleiben im System sichtbar, können sich jedoch nicht mehr anmelden.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  items={[
+    {
+      object: 'Rollen',
+      description:
+        'Einem Benutzer können beliebig viele Rollen zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'Veranstaltungen',
+      description:
+        'Ein Benutzer kann in beliebig viele Veranstaltungen zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'Verbindungen',
+      description:
+        'Einem Benutzer können beliebig viele Verbindungen zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'Aktivitäten',
+      description:
+        'Einem Benutzer können beliebig viele Aktivitäten zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'E-Mails',
+      description:
+        'Einem Benutzer können beliebig viele gesendete E-Mails zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  data={[
+    { action: 'Benutzer anzeigen', permission: 'users_read', scoped: true },
+    { action: 'Benutzer anlegen', permission: 'users_create' },
+    { action: 'Benutzer bearbeiten', permission: 'users_update', scoped: true },
+    { action: 'Benutzer löschen', permission: 'users_delete', scoped: true },
+    { action: 'Rollen anzeigen', permission: 'roles_read' },
+    { action: 'Berechtigungen anzeigen', permission: 'permissions_read' },
+    {
+      action: 'Berechtigungen zuweisen',
+      permission: 'objectpermissions_create',
+    },
+    {
+      action: 'Berechtigungen entfernen',
+      permission: 'objectpermissions_delete',
+    },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Rollen', href: './roles' },
+    { label: 'Berechtigungen', href: './permissions' },
+    { label: 'Richtlinien', href: './policies' },
+  ]}
+/>

@@ -1,0 +1,142 @@
+---
+id: infrastructure
+sidebar_label: Infrastruktur
+sidebar_position: 10
+status: finished
+tags:
+  - infrastructure
+---
+
+# Infrastruktur {#infrastructure}
+
+OpenVLE besteht aus mehreren Docker-Containern, die gemeinsam als Docker-Compose-Stack betrieben werden. Zusätzlich werden externe Systeme (Proxmox VE, optional Apache Guacamole und Moodle) angebunden. Dieser Bereich beschreibt die Architektur, die verwendeten Komponenten und ihre Zusammenhänge.
+
+## Architekturdiagramm {#architecture-diagram}
+
+```mermaid
+flowchart LR
+
+  browser["Browser / Client"]
+  proxy["Reverse Proxy"]
+
+  subgraph Guacamole ["Guacamole Stack"]
+    direction TB
+    guacweb["Guacamole Web"]
+    guacd["guacd"]
+    guacdb["Guacamole DB"]
+  end
+
+  subgraph OpenVLE ["OpenVLE System"]
+    direction TB
+
+    subgraph Frontend ["Frontend"]
+      fe["Vue.js + Nginx"]
+    end
+
+    subgraph BackendTasks ["Backend + Tasks"]
+      direction TB
+      be["Backend (FastAPI)"]
+      worker["Worker"]
+      scheduler["Scheduler"]
+      subgraph Datenbanken ["Datenbanken"]
+        mariadb["MariaDB"]
+        mongodb["MongoDB"]
+        redis["Redis"]
+      end
+    end
+  end
+
+  subgraph ProxmoxCluster ["Proxmox VE Cluster"]
+    direction TB
+    proxmox1["proxmox01"]
+    proxmox2["proxmox02"]
+    proxmox3["proxmox03"]
+    more["... n"]
+  end
+
+  moodle["Moodle LMS (optional)"]
+
+  proxy <--> browser
+  proxy <--> fe
+  proxy <--> be
+  proxy <--> guacweb
+
+  be --> Datenbanken
+  worker --> mariadb
+  worker --> redis
+  scheduler --> redis
+
+  guacweb --> guacd
+  guacweb --> guacdb
+  worker --> proxy
+
+  be --> ProxmoxCluster
+  worker --> ProxmoxCluster
+
+  be --> moodle
+  worker --> moodle
+
+  classDef external fill:#b8860b,stroke:#d4aa00,color:#fff,stroke-dasharray: 4;
+  classDef frontend fill:#4682b4,stroke:#6baed6,color:#fff;
+  classDef backend fill:#2171b5,stroke:#00aaff,color:#fff;
+  classDef db fill:#2e8b57,stroke:#3d9970,color:#fff;
+  classDef infra fill:#d2691e,stroke:#e67e22,color:#fff;
+
+  class proxy,guacweb,guacd,guacdb,moodle external;
+  class fe frontend;
+  class be,worker,scheduler backend;
+  class mariadb,mongodb,redis db;
+  class proxmox1,proxmox2,proxmox3,more infra;
+```
+
+**Legende:**
+
+| Farbe              | Bedeutung                                                    |
+| ------------------ | ------------------------------------------------------------ |
+| Gelb (gestrichelt) | Externe Komponenten (Reverse Proxy, Guacamole Stack, Moodle) |
+| Blau (hell)        | Frontend — Vue.js-Anwendung mit Nginx                        |
+| Blau (dunkel)      | Backend / Tasks — FastAPI, Worker, Scheduler                 |
+| Grün               | Datenbanken — MariaDB, MongoDB, Redis                        |
+| Orange             | Proxmox VE Cluster — Hypervisor-Infrastruktur (extern)       |
+
+## Komponenten auf einen Blick {#components-overview}
+
+### OpenVLE Docker-Stack {#internal-components}
+
+| Komponente           | Typ            | Zweck                                                                      |
+| -------------------- | -------------- | -------------------------------------------------------------------------- |
+| **Backend**          | Python/FastAPI | REST-API, Geschäftslogik, Proxmox-Integration                              |
+| **Frontend**         | Vue.js/Nginx   | Weboberfläche                                                              |
+| **Worker** (3 Typen) | RQ Worker      | Asynchrone Hintergrundaufgaben (VM-Operationen, E-Mail, Guacamole, Moodle) |
+| **Scheduler**        | RQ Cron        | Periodische Aufgaben nach Zeitplan                                         |
+| **MariaDB**          | Relationale DB | Kernentitäten (Benutzer, Rollen, Umgebungen, VMs, ...)                     |
+| **MongoDB**          | Dokumenten-DB  | Aktivitäten, System-Events, Audit-Logs                                     |
+| **Redis**            | In-Memory      | Task-Queue und Cache                                                       |
+
+### Externe Systeme {#external-systems}
+
+| System               | Erforderlich        | Zweck                                     |
+| -------------------- | ------------------- | ----------------------------------------- |
+| **Proxmox VE**       | Ja                  | Hypervisor-Cluster zur VM-Verwaltung      |
+| **Reverse Proxy**    | Empfohlen           | SSL-Terminierung und Routing              |
+| **Apache Guacamole** | Optional, empfohlen | Webbasierter Remote-Desktop-Zugang zu VMs |
+| **Moodle**           | Optional            | Lernmanagementsystem-Anbindung            |
+| **SMTP-Server**      | Ja                  | E-Mail-Versand                            |
+| **LDAP-Server**      | Optional            | Benutzer-Authentifizierung                |
+| **OIDC-Provider**    | Optional            | Single Sign-On                            |
+
+:::info Externe Abhängigkeiten
+**Proxmox VE**, **Apache Guacamole** und **Moodle** werden nicht im OpenVLE Docker-Compose-Stack betrieben. Sie müssen separat installiert und konfiguriert werden. Siehe [Proxmox VE Integration](../install/proxmoxve), [Apache Guacamole Integration](../install/guacamole) und [Moodle Integration](../install/moodle) für die Einrichtung.
+:::
+
+## Weiter lesen {#topics}
+
+1. [Verwendete Komponenten](components) — Docker-Container im Detail: SERVICE_ROLE, Ports, Health Checks, Persistenz
+2. [Netzwerk & Docker](networking) — Docker-Netzwerk, Ports und Kommunikationspfade
+3. [Datenbanken](databases) — MariaDB, MongoDB und Redis: Aufgabenteilung und Datenhaltung
+4. [Task-System](task-system) — Worker, Scheduler und die Redis-Queue für Hintergrundaufgaben
+5. [Authentifizierung](authentication) — Lokale Anmeldung, LDAP und OIDC
+6. [Berechtigungssystem](permission-system) — Rollen, Berechtigungen und Zugriffskontrolle
+7. [Proxmox VE](proxmoxve) — VM-Verwaltung, Node-Management und Cluster-Integration **(erforderlich)**
+8. [Apache Guacamole](guacamole) — Remote-Desktop-Zugang über Apache Guacamole _(optional, empfohlen)_
+9. [Moodle](moodle) — Anbindung an das Lernmanagementsystem Moodle _(optional)_

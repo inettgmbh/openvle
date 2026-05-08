@@ -1,0 +1,82 @@
+{
+  "version.label": {
+    "message": "Version 1.0",
+    "description": "The label for version current"
+  },
+  "sidebar.docsUsage.category.Benutzerverwaltung": {
+    "message": "Benutzerverwaltung",
+    "description": "The label for category Benutzerverwaltung in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Virtuelle Maschinen": {
+    "message": "Virtuelle Maschinen",
+    "description": "The label for category Virtuelle Maschinen in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Umgebungen": {
+    "message": "Umgebungen",
+    "description": "The label for category Umgebungen in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Veranstaltungen": {
+    "message": "Veranstaltungen",
+    "description": "The label for category Veranstaltungen in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Guacamole": {
+    "message": "Guacamole",
+    "description": "The label for category Guacamole in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Richtlinien": {
+    "message": "Richtlinien",
+    "description": "The label for category Richtlinien in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.E-Mails": {
+    "message": "E-Mails",
+    "description": "The label for category E-Mails in sidebar docsUsage"
+  },
+  "sidebar.docsAdmins.category.Infrastruktur": {
+    "message": "Infrastruktur",
+    "description": "The label for category Infrastruktur in sidebar docsAdmins"
+  },
+  "sidebar.docsAdmins.category.Installation": {
+    "message": "Installation",
+    "description": "The label for category Installation in sidebar docsAdmins"
+  },
+  "sidebar.docsAdmins.category.Updates": {
+    "message": "Updates",
+    "description": "The label for category Updates in sidebar docsAdmins"
+  },
+  "sidebar.docsAdmins.category.OpenVLE - Backend": {
+    "message": "OpenVLE - Backend",
+    "description": "The label for category OpenVLE - Backend in sidebar docsAdmins"
+  },
+  "sidebar.docsAdmins.category.Betrieb und Verwaltung": {
+    "message": "Betrieb und Verwaltung",
+    "description": "The label for category Betrieb und Verwaltung in sidebar docsAdmins"
+  },
+  "sidebar.docsAdmins.category.Entwicklung": {
+    "message": "Entwicklung",
+    "description": "The label for category Entwicklung in sidebar docsAdmins"
+  },
+  "sidebar.docsUsage.category.Verwaltungssoftware": {
+    "message": "Verwaltungssoftware",
+    "description": "The label for category Verwaltungssoftware in sidebar docsUsage"
+  },
+  "sidebar.docsChangelogs.category.Changelogs": {
+    "message": "Changelogs",
+    "description": "The label for category Changelogs in sidebar docsChangelogs"
+  },
+  "sidebar.docsUsage.category.Infrastruktur": {
+    "message": "Infrastruktur",
+    "description": "The label for category Infrastruktur in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.System": {
+    "message": "System",
+    "description": "The label for category System in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Verbindungen": {
+    "message": "Verbindungen",
+    "description": "The label for category Verbindungen in sidebar docsUsage"
+  },
+  "sidebar.docsUsage.category.Zugriffskontrolle": {
+    "message": "Zugriffskontrolle",
+    "description": "The label for category Zugriffskontrolle in sidebar docsUsage"
+  }
+}

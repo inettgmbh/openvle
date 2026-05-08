@@ -1,0 +1,171 @@
+---
+name: openvle
+
+services:
+  mariadb:
+    image: mariadb:${MARIADB_IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    networks:
+      - internal
+    ports:
+      - 0.0.0.0:3306:3306
+    healthcheck:
+      test: mariadb-admin -u${MARIADB_USER} -p${MARIADB_PASSWORD} ping -h localhost
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  mongodb:
+    image: mongo:${MONGODB_IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
+    volumes:
+      - ./mongodb:/data/db
+    networks:
+      - internal
+    ports:
+      - 0.0.0.0:27017:27017
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  redis:
+    image: redis:${REDIS_IMAGE_TAG}
+    restart: unless-stopped
+    command: /bin/sh -c 'redis-server --appendonly yes --save 60 1 --loglevel warning --requirepass ${REDIS_PASSWORD}'
+    volumes:
+      - ./redis:/data
+    networks:
+      - internal
+    ports:
+      - 0.0.0.0:6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "--raw", "incr", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  worker:
+    build: .
+    restart: unless-stopped
+    environment:
+      SERVICE_ROLE: worker-all
+    volumes:
+      - ./.env:/usr/src/.env:ro
+    networks:
+      - internal
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  scheduler:
+    build: .
+    restart: unless-stopped
+    environment:
+      SERVICE_ROLE: scheduler
+    volumes:
+      - ./.env:/usr/src/.env:ro
+    networks:
+      - internal
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  backend:
+    build: .
+    restart: unless-stopped
+    environment:
+      SERVICE_ROLE: backend
+    volumes:
+      - ./.env:/usr/src/.env:ro
+    networks:
+      - internal
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - 0.0.0.0:8000:80
+
+  phpmyadmin:
+    profiles: [phpmyadmin]
+    image: phpmyadmin:latest
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mariadb
+    networks:
+      - internal
+    ports:
+      - 0.0.0.0:8888:80
+    depends_on:
+      - mariadb
+
+  fake-smtp-server:
+    profiles: [smtp]
+    image: reachfive/fake-smtp-server
+    restart: unless-stopped
+    command: node index.js --headers
+    networks:
+      - internal
+    ports:
+      - 0.0.0.0:1025:1025
+      - 0.0.0.0:8088:1080
+
+  moodle-db:
+    profiles: [moodle]
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: moodle
+      POSTGRES_USER: moodle
+      POSTGRES_PASSWORD: moodle
+    volumes:
+      - ./moodle/db:/var/lib/postgresql/data
+    networks:
+      - internal
+
+  moodle-app:
+    profiles: [moodle]
+    image: moodlehq/moodle-php-apache:8.3
+    restart: unless-stopped
+    environment:
+      MOODLE_DB_TYPE: pgsql
+      MOODLE_DB_HOST: moodle-db
+      MOODLE_DB_NAME: moodle
+      MOODLE_DB_USER: moodle
+      MOODLE_DB_PASSWORD: moodle
+      MOODLE_DB_PORT: 5432
+    volumes:
+      - ./moodle/data:/var/www/moodledata
+      - ./moodle/code:/var/www/html
+    networks:
+      - internal
+    ports:
+      - 0.0.0.0:8080:80
+    depends_on:
+      - moodle-db
+
+networks:
+  internal:

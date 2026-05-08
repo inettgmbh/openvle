@@ -1,0 +1,195 @@
+---
+id: roles
+sidebar_label: Rollen
+sidebar_position: 100
+status: finished
+tags:
+  - access-control
+  - roles
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Rollen
+
+In OpenVLE dienen Rollen dazu, systemweite Berechtigungen zu bündeln und zentral zu verwalten.  
+Rollen vereinfachen die Zuordnung von Rechten zu Benutzergruppen und sorgen dafür, dass ähnliche Benutzer (z. B. Dozenten, Administratoren, Teilnehmer) automatisch die passenden Zugriffsrechte erhalten.
+
+{/* TODO: Screenshot hinzufügen – Rollenübersicht */}
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="Zugriffskontrolle → Rollen"
+  alternative="Über Benutzer- oder Berechtigungsansichten verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Erstellen und Verwalten von Rollen für unterschiedliche Benutzergruppen',
+    'Zuweisen und Entfernen von Berechtigungen innerhalb einer Rolle',
+    'Anzeigen, welche Benutzer einer Rolle zugeordnet sind',
+    'Kopieren bestehender Rollen zur schnelleren Erstellung ähnlicher Berechtigungssätze',
+    'Löschen nicht mehr benötigter Rollen (sofern nicht in Verwendung)',
+  ]}
+/>
+
+{/* TODO: Screenshot hinzufügen – Beispiel einer Rollen-Detailansicht */}
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Der Name der Rolle, z. B. „Umgebungsleiter“ oder „1st Level Support“. Wird in Listen und Verknüpfungen angezeigt.',
+    },
+    {
+      name: 'Key (Slug)',
+      description:
+        'Kurzname der Rolle. Wird intern innerhalb von OpenVLE verwendet, z. B. für API- oder Berechtigungszuordnungen.',
+    },
+    {
+      name: 'Beschreibung',
+      description:
+        'Kurze Erläuterung der Aufgaben oder Zuständigkeiten dieser Rolle, z. B. „Verantwortlich für das Erstellen und Verwalten von Kursumgebungen“.',
+    },
+  ]}
+/>
+
+---
+
+## Erstellen einer Rolle
+
+1. Öffne im Hauptmenü den Bereich **Zugriffskontrolle → Rollen**.
+2. Klicke auf **Hinzufügen**, um eine neue Rolle anzulegen.
+3. Gib einen aussagekräftigen **Namen** und eine **optionale Beschreibung** an.
+4. Speichere die Rolle, um sie verfügbar zu machen.
+5. Weise der Rolle die gewünschten **Berechtigungen** zu.
+6. Weise anschließend **Benutzer** dieser Rolle zu.
+
+---
+
+## Bearbeiten einer Rolle
+
+1. Öffne im Hauptmenü den Bereich **Zugriffskontrolle → Rollen**.
+2. Suche in der Liste nach der gewünschten Rolle.
+3. Klicke auf **Bearbeiten**, oder öffne das Kontextmenü der Rolle und wähle **Bearbeiten**.
+4. Im Formular werden alle aktuellen Daten der Rolle angezeigt.
+5. Passe die gewünschten Felder an – beispielsweise **Name** oder **Beschreibung**.
+6. Speichere die Änderungen.
+
+:::note
+Änderungen an Rollen wirken sich unmittelbar auf alle Benutzer aus, die dieser Rolle zugewiesen sind.  
+Prüfe daher Berechtigungsänderungen sorgfältig, bevor du sie übernimmst.
+:::
+
+---
+
+## Löschen einer Rolle
+
+1. Öffne im Hauptmenü den Bereich **Zugriffskontrolle → Rollen**.
+2. Suche in der Liste nach der gewünschten Rolle.
+3. Klicke auf **Löschen**, oder öffne das Kontextmenü der Rolle und wähle **Löschen**.
+4. Bestätige den Löschvorgang im angezeigten Dialog.
+5. Die Rolle wird daraufhin dauerhaft entfernt.
+
+:::warning
+Eine Rolle kann nur gelöscht werden, wenn ihr **keine Benutzer mehr zugewiesen** sind.  
+Falls Benutzer mit dieser Rolle vorhanden sind, entferne zuerst die Zuweisungen, bevor du die Rolle löscht.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="Rolle für Umgebungsleiter erstellen">
+  Eine Administratorin möchte allen Umgebungsleitern identische Rechte geben,
+  ohne jeden Benutzer einzeln konfigurieren zu müssen. Sie erstellt die Rolle
+  **Umgebungsleiter**, fügt Berechtigungen zum Anzeigen und Bearbeiten von
+  Umgebungen, VM-Vorlagen und VMs hinzu und weist diese Rolle anschließend allen
+  entsprechenden Benutzern zu.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel einer Rollenerstellung */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Rollen können nur globale Berechtigungen enthalten.
+- Systemrollen (z. B. Administrator) können nicht gelöscht oder in ihrem Kern verändert werden.
+- Rollen, die aktuell Benutzern zugewiesen sind, lassen sich nur löschen, wenn sie vorher entfernt wurden.
+- Änderungen an einer Rolle wirken sich automatisch auf alle zugehörigen Benutzer aus.
+- Beim Kopieren einer Rolle werden alle Berechtigungen übernommen, jedoch keine Benutzerzuweisungen.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  showPermissions={false}
+  items={[
+    {
+      object: 'Benutzer',
+      description:
+        'Einer Rolle können beliebig viele Benutzer zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'Berechtigungen',
+      description:
+        'Einer Rolle können beliebig viele Berechtigungen zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  showAdmonition={false}
+  data={[
+    { action: 'Rollen anzeigen', permission: 'roles_read' },
+    { action: 'Rollen anlegen', permission: 'roles_create' },
+    { action: 'Rollen bearbeiten', permission: 'roles_update' },
+    { action: 'Rollen löschen', permission: 'roles_delete' },
+    {
+      action: 'Berechtigungen zuweisen',
+      permission: 'objectpermissions_create',
+    },
+    {
+      action: 'Berechtigungen entfernen',
+      permission: 'objectpermissions_delete',
+    },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'Benutzerverwaltung', href: './users' },
+    { label: 'Berechtigungen', href: './permissions' },
+    { label: 'Richtlinien', href: './policies' },
+  ]}
+/>

@@ -1,0 +1,323 @@
+---
+id: vms
+sidebar_label: Virtuelle Maschinen
+sidebar_position: 100
+status: finished
+tags:
+  - infrastructure
+  - vms
+---
+
+import { Example } from '@site/src/components/Example.mdx'
+import { FeatureList } from '@site/src/components/FeatureList.mdx'
+import { FieldReference } from '@site/src/components/FieldReference.mdx'
+import { NavigationHint } from '@site/src/components/NavigationHint.mdx'
+import { ObjectRelations } from '@site/src/components/ObjectRelations.mdx'
+import { Permissions } from '@site/src/components/Permissions.mdx'
+import { RelatedLinks } from '@site/src/components/RelatedLinks.mdx'
+
+# Virtuelle Maschinen
+
+Virtuelle Maschinen (VMs) stellen in OpenVLE die eigentlichen Arbeitsumgebungen für **Veranstaltungen**, **Tests** oder **Projekte** dar.  
+Sie basieren auf VM-Vorlagen und können individuell gestartet, gestoppt, pausiert oder zurückgesetzt werden.  
+Jede VM wird zentral verwaltet und kann über eine Guacamole-Verbindung direkt im Browser genutzt werden.
+
+{/* TODO: Screenshot hinzufügen – Übersicht der VMs */}
+
+---
+
+## Wo finde ich den Bereich?
+
+<NavigationHint
+  path="VMs"
+  alternative="Über Veranstaltungen, Umgebungen oder Vorlagen verlinkt"
+/>
+
+---
+
+## Funktionen im Überblick
+
+<FeatureList
+  items={[
+    'Anzeigen, Starten, Stoppen und Neustarten virtueller Maschinen',
+    'Erstellen neuer VMs auf Basis bestehender Vorlagen',
+    'Verknüpfen mit Umgebungen oder Nutzenden',
+    'Überwachen des aktuellen Status (laufend, pausiert, gestoppt)',
+    'Zugriff über integrierte Guacamole-Verbindungen (RDP, SSH)',
+    'Zurücksetzen auf Ausgangszustand der Vorlage',
+    'Anzeigen von Ressourceninformationen wie CPU, RAM oder Speicherverbrauch',
+  ]}
+/>
+
+{/* TODO: Screenshot hinzufügen – Detailansicht einer VM */}
+
+---
+
+## Wichtige Felder im Überblick
+
+<FieldReference
+  fields={[
+    {
+      name: 'Name',
+      description:
+        'Bezeichnung der virtuellen Maschine. Wird im System, in Listen und in Verbindungen angezeigt. Der Name sollte eindeutig und aussagekräftig gewählt werden (z. B. „IT-Schulung-Win10-01“).',
+    },
+    {
+      name: 'Betriebssystem',
+      description:
+        'Das installierte Betriebssystem der VM. Dieses wird automatisch aus der zugehörigen Vorlage übernommen und dient der Kategorisierung und Filterung.',
+    },
+    {
+      name: 'CPU',
+      description:
+        'Anzahl der vCPU-Kerne, die der virtuellen Maschine zugewiesen werden. Mehr Kerne verbessern die Leistung, erhöhen aber den Ressourcenverbrauch auf dem Host.',
+    },
+    {
+      name: 'Arbeitsspeicher',
+      description:
+        'Zugewiesener Arbeitsspeicher (RAM) in Gigabyte. Bestimmt, wie viele Anwendungen gleichzeitig in der VM ausgeführt werden können.',
+    },
+    {
+      name: 'Festplatte',
+      description:
+        'Zugewiesener Speicherplatz in Gigabyte. Dieser Wert wird in der Regel aus der Vorlage übernommen und kann nicht angepasst werden.',
+    },
+    {
+      name: 'IPv4-Adresse',
+      description:
+        'Automatisch zugewiesene IP-Adresse der VM. Sie wird automatisch erkannt und angezeigt, sobald der Qemu Guest Agent aktiv ist. Dient der Identifikation und Fernverbindung zur Maschine.',
+    },
+    {
+      name: 'Proxmox VE Infos',
+      description:
+        'Systeminterne Zuordnungen zu Proxmox VE, bestehend aus der **VMID** (eindeutige ID auf dem Host) und dem **Node-Namen** (Hostsystem innerhalb des Clusters). Diese Felder werden automatisch gepflegt und sind schreibgeschützt.',
+    },
+    {
+      name: 'Beschreibung',
+      description:
+        'Freitextfeld zur Dokumentation oder Kommentierung der VM. Unterstützt Markdown-Syntax (z. B. für Listen oder Hervorhebungen).',
+    },
+    {
+      name: 'Status',
+      description:
+        'Aktueller Betriebszustand der VM. Mögliche Werte sind: `running`, `stopped`, `cloning`, `starting`, `stopping`, `deleting`. Der Status wird durch Aktionen (Start, Stop, Klonen, Löschen) oder automatische Prozesse gesteuert.',
+    },
+  ]}
+/>
+
+---
+
+## Erstellen einer virtuellen Maschine
+
+1. Öffne im Hauptmenü den Bereich **VMs**.
+2. Klicke auf **Hinzufügen**, um eine neue VM zu erstellen.
+3. Wähle die gewünschte **VM-Vorlage** als Basis.
+4. Gib einen **Namen** für die VM an.
+5. Die restlichen Felder werden automatisch auf Basis der gewählten VM-Vorlage vorausgefüllt. Bei Bedarf können diese angepasst werden.
+6. Speichere die VM.
+7. Die VM wird nun im Hintergrund automatisch erstellt. Sobald der Vorgang abgeschlossen ist, wird der Status der VM auf `Running` gesetzt.
+8. Wechsle zum Tab **Verbindungen**, um dort eine Verbindung zur VM anzulegen.
+9. Anschließend kannst du dich über **Apache Guacamole** mit der VM verbinden.
+
+:::info
+Beim Erstellen einer VM werden folgende Zuordnungen automatisch angelegt oder vererbt:
+
+- **Anwendungen ↔ VM-Vorlage**: Alle der VM-Vorlage zugewiesenen Anwendungen werden automatisch auch der neuen VM zugewiesen.
+- **Verbindungsvorlagen ↔ VM-Vorlage**: Alle Verbindungsvorlagen der VM-Vorlage werden kopiert und der VM zugewiesen.
+
+Dadurch können die neu erstellten Verbindungsvorlagen genutzt werden, um Verbindungen zur VM zu erstellen – entweder manuell oder im Rahmen einer Veranstaltung.
+:::
+
+---
+
+## Bearbeiten einer virtuellen Maschine
+
+1. Öffne im Hauptmenü den Bereich **VMs**.
+2. Suche in der Liste nach der gewünschten VM.
+3. Klicke auf **Bearbeiten** oder öffne das Kontextmenü der VM und wähle **Bearbeiten**.
+4. Im Formular werden alle aktuellen VM-Daten angezeigt.
+5. Passe die gewünschten Felder an – z. B. Name, Beschreibung, CPU, Arbeitsspeicher oder Betriebssystem.
+6. Speichere die Änderungen.
+7. Die Aktualisierung wird im Hintergrund übernommen; je nach Änderung kann ein Neustart der VM erforderlich sein.
+8. Nach erfolgreicher Aktualisierung werden der neue Status und die geänderten Werte in der Übersicht angezeigt.
+9. Optional: Öffne den Tab **Verbindungen**, um bestehende Zugänge zu prüfen oder bei Bedarf anzupassen.
+
+:::info
+Änderungen an **CPU** oder **Arbeitsspeicher** erfordern einen **Neustart der VM**, damit sie wirksam werden.  
+Der Neustart kann entweder direkt beim Bearbeiten mit ausgewählt oder zu einem späteren Zeitpunkt durchgeführt werden.
+:::
+
+---
+
+## Löschen einer virtuellen Maschine
+
+1. Öffne im Hauptmenü den Bereich **VMs**.
+2. Suche in der Liste nach der gewünschten VM.
+3. Klicke auf **Löschen** oder öffne das Kontextmenü der VM und wähle **Löschen**.
+4. Bestätige den Löschvorgang im angezeigten Dialog.
+5. Die VM wird daraufhin dauerhaft entfernt.
+6. Nach Abschluss des Vorgangs verschwindet die VM aus der Übersicht.
+
+:::danger
+Beim Löschen einer VM werden auch alle damit verknüpften Verbindungen und Verbindungsvorlagen **automatisch gelöscht**.  
+Dieser Vorgang kann nicht rückgängig gemacht werden.
+:::
+
+---
+
+## Aktionen einer virtuellen Maschine
+
+Im Kontextmenü einer VM stehen verschiedene Aktionen zur Verfügung, mit denen der aktuelle Status oder die Konfiguration der VM gesteuert werden kann.
+
+1. **Starten** – Schaltet eine ausgeschaltete VM ein und versetzt sie in den Status `running`.
+2. **Herunterfahren** – Fährt die VM kontrolliert über das Betriebssystem herunter.
+3. **Neustarten** – Führt einen kontrollierten Neustart der VM durch.
+4. **Stoppen** – Beendet die VM sofort, ohne ein reguläres Herunterfahren (entspricht einem Hard-Power-Off).
+5. **Reset** – Führt einen sofortigen Neustart durch, vergleichbar mit dem Betätigen des Reset-Knopfs einer physischen Maschine.
+6. **IP aktualisieren** – Aktualisiert die in OpenVLE hinterlegte IP-Adresse der VM, falls sich diese geändert hat oder nicht mehr aktuell ist.
+
+:::warning
+Einige Aktionen – wie **Stoppen** oder **Reset** – greifen direkt auf die Virtualisierungsumgebung zu und können zu Datenverlust führen, falls noch nicht gespeicherte Änderungen in der VM vorhanden sind.  
+Diese Aktionen sollten nur durchgeführt werden, wenn ein reguläres Herunterfahren oder Neustarten nicht möglich ist.
+:::
+
+---
+
+## Beispiel oder Anwendungsfall
+
+<Example title="VM für eine Schulung bereitstellen">
+  Eine Systemverwaltungsperson möchte für eine Schulung eine individuelle VM
+  bereitstellen. Diese Person öffnet den Bereich **Virtuelle Maschinen**, klickt
+  auf **Hinzufügen**, wählt die VM-Vorlage „Windows 10 – Schulung“ und startet
+  sie. Nun wird die virtuelle Maschine erstellt und kann weiter verwendet
+  werden.
+</Example>
+
+{/* TODO: Screenshot hinzufügen – Beispiel: Bereitstellung einer VM */}
+
+---
+
+## Hinweise / Besonderheiten
+
+- Virtuelle Maschinen werden auf Basis der gewählten Vorlage automatisch erzeugt.
+- Eine VM kann jederzeit gestartet, pausiert oder heruntergefahren werden.
+- Aktionen wie **Reset** oder **Shutdown** wirken sich sofort auf das Gastsystem aus.
+- Laufende VMs belegen Ressourcen auf dem Hostsystem – stoppe ungenutzte Maschinen, um Kapazität zu sparen.
+- Nutzende können nur auf VMs zugreifen, für die entsprechende Berechtigungen vorhanden sind.
+- Änderungen an einer VM (z. B. Name, Zuweisung) erfordern entsprechende Rechte.
+- Die Anzeige aktualisiert sich regelmäßig, solange der Bereich geöffnet ist.
+
+---
+
+## Beziehungen zu anderen Objekten
+
+<ObjectRelations
+  showTasks={true}
+  items={[
+    {
+      object: 'Anwendungen',
+      description:
+        'Einer VM können beliebig viele Anwendungen zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'Veranstaltung',
+      description:
+        'Bei der Erstellung im Rahmen einer Veranstaltung wird die VM genau einer Veranstaltung zugeordnet.',
+      behavior:
+        'Automatisches Löschen bei bestimmten Aktionen innerhalb der Veranstaltung.',
+    },
+    {
+      object: 'Betriebssystem',
+      description: 'Einer VM kann genau ein Betriebssystem zugewiesen werden.',
+      behavior: 'Keine Automatisierungen.',
+    },
+    {
+      object: 'Verbindungsvorlagen',
+      description:
+        'Einer VM können beliebig viele Verbindungsvorlagen zugewiesen werden.',
+      behavior: 'Automatisches Löschen beim Entfernen der VM.',
+    },
+    {
+      object: 'Verbindungen',
+      description:
+        'Einer VM können beliebig viele Verbindungen zugewiesen werden.',
+      behavior: 'Automatisches Löschen beim Entfernen der VM.',
+    },
+  ]}
+/>
+
+---
+
+## Erforderliche Berechtigungen
+
+<Permissions
+  data={[
+    {
+      action: 'Virtuelle Maschinen anzeigen',
+      permission: 'vms_read',
+      scoped: true,
+    },
+    { action: 'Virtuelle Maschinen anlegen', permission: 'vms_create' },
+    {
+      action: 'Virtuelle Maschinen bearbeiten',
+      permission: 'vms_update',
+      scoped: true,
+    },
+    {
+      action: 'Virtuelle Maschinen löschen',
+      permission: 'vms_delete',
+      scoped: true,
+    },
+    {
+      action: 'VM-Aktion: Hibernate',
+      permission: 'vms_actions_hibernate',
+      scoped: true,
+    },
+    {
+      action: 'VM-Aktion: Pause',
+      permission: 'vms_actions_pause',
+      scoped: true,
+    },
+    {
+      action: 'VM-Aktion: Reboot',
+      permission: 'vms_actions_reboot',
+      scoped: true,
+    },
+    {
+      action: 'VM-Aktion: Reset',
+      permission: 'vms_actions_reset',
+      scoped: true,
+    },
+    {
+      action: 'VM-Aktion: Resume',
+      permission: 'vms_actions_resume',
+      scoped: true,
+    },
+    {
+      action: 'VM-Aktion: Shutdown',
+      permission: 'vms_actions_shutdown',
+      scoped: true,
+    },
+    {
+      action: 'VM-Aktion: Start',
+      permission: 'vms_actions_start',
+      scoped: true,
+    },
+    { action: 'VM-Aktion: Stop', permission: 'vms_actions_stop', scoped: true },
+    { action: 'VM-Vorlagen anzeigen', permission: 'templates_read' },
+  ]}
+/>
+
+---
+
+## Verwandte Themen
+
+<RelatedLinks
+  items={[
+    { label: 'VM-Vorlagen', href: '../vm-templates' },
+    { label: 'Verbindungen', href: '../connections' },
+    { label: 'Umgebungen', href: '../courses' },
+    { label: 'Veranstaltungen', href: '../events' },
+  ]}
+/>

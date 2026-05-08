@@ -1,0 +1,109 @@
+{
+  "name": "openvle-docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OpenVLE Documentation",
+  "homepage": "https://docs.openvle.org",
+  "bugs": {
+    "url": "https://github.com/inettgmbh/openvle/issues",
+    "email": "support@inett.de"
+  },
+  "license": "AGPL-3.0",
+  "author": {
+    "name": "Pascal Hauch",
+    "email": "phauch@inett.de"
+  },
+  "contributors": [
+    {
+      "name": "Sascha Zinn",
+      "email": "szinn@inett.de"
+    }
+  ],
+  "os": [
+    "!win32"
+  ],
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "dev": "docusaurus start --locale de --no-open",
+    "dev:en": "docusaurus start --locale en --no-open",
+    "dev:fr": "docusaurus start --locale fr --no-open",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy",
+    "clear": "docusaurus clear",
+    "serve": "docusaurus serve --no-open",
+    "write-translations:de": "docusaurus write-translations --locale de",
+    "write-translations:en": "docusaurus write-translations --locale en",
+    "write-translations:fr": "docusaurus write-translations --locale fr",
+    "write-translations:locale:override": "docusaurus write-translations --override --locale",
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "lint:ci": "eslint --format gitlab",
+    "lint:fix": "eslint --format stylish --fix",
+    "lint": "eslint --format stylish",
+    "format:ci": "prettier --check src/ docs/ i18n/",
+    "format:fix": "prettier --write src/ docs/ i18n/",
+    "format": "prettier --check src/ docs/ i18n/"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.10.0",
+    "@docusaurus/plugin-client-redirects": "3.10.0",
+    "@docusaurus/preset-classic": "3.10.0",
+    "@docusaurus/theme-mermaid": "3.10.0",
+    "@mdx-js/react": "^3.0.0",
+    "clsx": "^2.0.0",
+    "docusaurus-lunr-search": "^3.4.0",
+    "prism-react-renderer": "^2.3.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@docusaurus/eslint-plugin": "3.10.0",
+    "@docusaurus/module-type-aliases": "3.10.0",
+    "@docusaurus/types": "3.10.0",
+    "@eslint/compat": "^1.2.0",
+    "eslint": "^9.12.0",
+    "eslint-config-prettier": "^10.0.0",
+    "eslint-formatter-gitlab": "^5.1.0",
+    "globals": "^16.0.0",
+    "prettier": "^3.3.3"
+  },
+  "overrides": {
+    "@typescript-eslint/utils": "^8.0.0"
+  },
+  "prettier": {
+    "semi": false,
+    "tabWidth": 2,
+    "useTabs": false,
+    "singleQuote": true,
+    "printWidth": 80,
+    "trailingComma": "all",
+    "vueIndentScriptAndStyle": false,
+    "quoteProps": "as-needed",
+    "jsxSingleQuote": false,
+    "bracketSpacing": true,
+    "bracketSameLine": false,
+    "arrowParens": "always",
+    "endOfLine": "lf",
+    "embeddedLanguageFormatting": "auto",
+    "singleAttributePerLine": false
+  },
+  "browserslist": {
+    "production": [
+      "> 1%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:inettgmbh/openvle.git"
+  }
+}
