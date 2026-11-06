@@ -1,6 +1,6 @@
 [project]
 name = "openvle-backend"
-version = "1.0.1"
+version = "1.0.2"
 description = "OpenVLE Backend (FastAPI)"
 requires-python = ">=3.10"
 

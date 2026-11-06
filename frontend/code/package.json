@@ -1,6 +1,6 @@
 {
   "name": "openvle-frontend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "OpenVLE Frontend",
   "homepage": "https://docs.openvle.org",
@@ -72,7 +72,7 @@
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.0",
-    "@inett/semantic-release-unsquash": "^2.0.1",
+    "@inett/semantic-release-unsquash": "^2.0.2",
     "@pinia/testing": "^1.0.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/exec": "^7.0.3",

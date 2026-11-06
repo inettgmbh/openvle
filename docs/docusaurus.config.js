@@ -9,7 +9,7 @@ import { themes as prismThemes } from 'prism-react-renderer'
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'OpenVLE',
-  tagline: 'Dokumentation von OpenVLE',
+  tagline: 'Dokumentation',
   favicon: 'img/logo.svg',
 
   url: 'https://docs.openvle.org',

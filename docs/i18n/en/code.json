@@ -362,7 +362,7 @@
     "message": "Documentation"
   },
   "homepage.tagline": {
-    "message": "OpenVLE"
+    "message": "Documentation"
   },
   "homepage.description": {
     "message": "Documentation of OpenVLE - a course management software based on Proxmox VE and Apache Guacamole"
