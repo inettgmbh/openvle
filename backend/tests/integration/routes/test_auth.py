@@ -36,7 +36,9 @@ class TestReauthenticate:
 
     def test_expired_token_returns_401(self, client, expired_auth_headers):
         """An expired JWT should be rejected."""
-        resp = client.post(f"{API}/auth/reauthenticate", headers=expired_auth_headers)
+        resp = client.post(
+            f"{API}/auth/reauthenticate", headers=expired_auth_headers
+        )
         assert resp.status_code in (401, 403)
 
     def test_bearer_token_rejected(self, client, auth_headers):

@@ -3,14 +3,13 @@
 import json
 
 import pytest
-from fastapi import HTTPException, Request
-from sqlalchemy.exc import SQLAlchemyError
-from starlette.exceptions import HTTPException as StarletteHTTPException
-
 from core.exception_handler import (
     http_exception_handler,
     sqlalchemy_exception_handler,
 )
+from fastapi import HTTPException, Request
+from sqlalchemy.exc import SQLAlchemyError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 
 def _make_request(state: dict | None = None) -> Request:
@@ -42,7 +41,7 @@ class TestHttpExceptionHandler:
         assert body["detail"] == "Boom"
         assert body["error_code"] == "UNKNOWN_ERROR"
         assert "request_id" not in body
-        assert "x-request-id" not in {k.lower() for k in response.headers.keys()}
+        assert "x-request-id" not in {k.lower() for k in response.headers}
 
     @pytest.mark.anyio
     async def test_404_defaults_to_not_found_error_code(self):
@@ -124,7 +123,7 @@ class TestSqlalchemyExceptionHandler:
 
         body = _body_json(response)
         assert "request_id" not in body
-        assert "x-request-id" not in {k.lower() for k in response.headers.keys()}
+        assert "x-request-id" not in {k.lower() for k in response.headers}
 
     @pytest.mark.anyio
     async def test_includes_request_id_in_body_and_header(self):

@@ -5,13 +5,14 @@ from sqlalchemy.orm import Session
 from controllers.languages import *
 from core import dependencies
 from core.exceptions import PermissionDenied
+from core.responses import CRUD_RESPONSES
 from models.languages import Language as LanguageModel
 from schemas.languages import Language, LanguageList
 
 router = APIRouter(
     prefix="/languages",
     tags=["languages"],
-    responses={404: {"detail": "Not found"}},
+    responses=CRUD_RESPONSES,
 )
 
 

@@ -1,6 +1,6 @@
 <script setup>
 import { mdiImport, mdiPlus, mdiVectorArrangeAbove } from '@mdi/js'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
@@ -50,7 +50,6 @@ const {
   handlePaginationChanged,
   handleSortOrderChanged,
   handleSearch,
-  handleDeleteObject,
   initialFetch,
 } = usePaginationList({
   initialPage: 1,
@@ -90,7 +89,62 @@ async function fetchObjects() {
   }
 }
 
+const BLOCKING_ITEMS_LIMIT = 5
+const blockingItems = ref([])
+const blockingItemsTotal = ref(0)
+
+async function openDeleteModal(object) {
+  objToRemove.value = object
+  blockingItems.value = []
+  blockingItemsTotal.value = 0
+  backend.beginSilent()
+  try {
+    const [vms, courses] = await Promise.all([
+      backend.templates.getVMs(object.id, {
+        page: 1,
+        limit: BLOCKING_ITEMS_LIMIT,
+      }),
+      backend.templates.getCourses(object.id, {
+        page: 1,
+        limit: BLOCKING_ITEMS_LIMIT,
+      }),
+    ])
+    const vmItems = (vms?.items ?? []).map((vm) => ({
+      label: vm.name ?? vm.id,
+      sublabel: t('objectTypes.virtualMachine.singular'),
+    }))
+    const courseItems = (courses?.items ?? []).map((course) => ({
+      label: course.name ?? course.id,
+      sublabel: t('objectTypes.course.singular'),
+    }))
+    blockingItems.value = [...vmItems, ...courseItems].slice(
+      0,
+      BLOCKING_ITEMS_LIMIT,
+    )
+    blockingItemsTotal.value =
+      (vms?.pageDetails?.totalCount ?? vmItems.length) +
+      (courses?.pageDetails?.totalCount ?? courseItems.length)
+  } catch {
+    // Fail open: the backend 409 pre-check still blocks the delete
+  } finally {
+    backend.endSilent()
+  }
+  modals.deleteObject.value = true
+}
+
+const blockingItemRows = computed(() => {
+  const items = blockingItems.value.slice()
+  const more = blockingItemsTotal.value - items.length
+  if (more > 0) {
+    items.push({
+      label: t('views.templates.delete.moreItems', { count: more }, more),
+    })
+  }
+  return items
+})
+
 async function deleteObject(id) {
+  backend.beginSilent()
   try {
     await backend.templates.delete(id)
     fetchObjects()
@@ -98,9 +152,20 @@ async function deleteObject(id) {
       t('common.deleteSuccess', { entity: t('objectTypes.template.singular') }),
     )
   } catch (error) {
-    toast.error(
-      t('common.deleteError', { entity: t('objectTypes.template.singular') }),
-    )
+    const errorCode = error?.response?.data?.error_code
+    if (
+      errorCode === 'OBJECT_IN_USE' ||
+      errorCode === 'OBJECT_DELETE_INTEGRITY_ERROR'
+    ) {
+      toast.error(t('views.templates.delete.blockedError'), { timeout: 8400 })
+    } else {
+      const detail = String(error?.response?.data?.detail || '')
+      toast.error(
+        `${t('common.deleteError', { entity: t('objectTypes.template.singular') })}${detail ? '\n' + detail : ''}`,
+      )
+    }
+  } finally {
+    backend.endSilent()
   }
 }
 
@@ -131,6 +196,19 @@ onMounted(async () => {
       v-model="modals.deleteObject.value"
       :name="objToRemove.name"
       :checkvalue="objToRemove.name"
+      :blocked="blockingItemsTotal > 0"
+      :warning="
+        blockingItemsTotal > 0
+          ? $t(
+              'views.templates.delete.relatedWarning',
+              { count: blockingItemsTotal },
+              blockingItemsTotal,
+            )
+          : null
+      "
+      :related-items="blockingItemRows"
+      :related-label="$t('views.templates.delete.relatedLabel')"
+      :related-count="blockingItemsTotal"
       @form-submitted="deleteObject(objToRemove.id)"
     />
 
@@ -207,7 +285,7 @@ onMounted(async () => {
             },
           ]"
           @search-triggered="handleSearch"
-          @delete-object="handleDeleteObject"
+          @delete-object="openDeleteModal"
           @sort-order-changed="handleSortOrderChanged"
           @pagination-changed="handlePaginationChanged"
         />

@@ -1,9 +1,8 @@
 """Tests for schemas/vendor.py - Vendor schema validation."""
 
-from pydantic import ValidationError
 import pytest
-
 from core.exceptions import FieldValueTooLong
+from pydantic import ValidationError
 from schemas.vendor import VendorCreate, VendorUpdate
 
 

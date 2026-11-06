@@ -3,10 +3,10 @@
 import uuid
 from datetime import datetime, timezone
 
-
 from controllers.vendor import CRUDVendor
 from models import ObjectPermission, Vendor
 from schemas.vendor import VendorCreate, VendorUpdate
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -73,14 +73,18 @@ class TestCRUDVendorUpdate:
     def test_update_vendor(self, db_session, active_user):
         """Update name and description on a vendor."""
         request = create_mock_request(active_user)
-        obj_in = VendorCreate(name="Original Vendor", description="Original desc")
+        obj_in = VendorCreate(
+            name="Original Vendor", description="Original desc"
+        )
         vendor = self.crud.create(db_session, request, obj_in=obj_in)
 
         updated = self.crud.update(
             vendor.id,
             db_session,
             request,
-            obj_in=VendorUpdate(name="Updated Vendor", description="Updated desc"),
+            obj_in=VendorUpdate(
+                name="Updated Vendor", description="Updated desc"
+            ),
         )
         assert updated.name == "Updated Vendor"
         assert updated.description == "Updated desc"
@@ -111,7 +115,9 @@ class TestCRUDVendorGetMulti:
         """Create several vendors, get_multi returns all."""
         request = create_mock_request(active_user)
         for i in range(3):
-            obj_in = VendorCreate(name=f"MultiVendor{i}", description=f"Desc {i}")
+            obj_in = VendorCreate(
+                name=f"MultiVendor{i}", description=f"Desc {i}"
+            )
             self.crud.create(db_session, request, obj_in=obj_in)
 
         result = self.crud.get_multi(db_session)

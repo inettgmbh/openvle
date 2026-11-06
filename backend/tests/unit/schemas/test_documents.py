@@ -1,8 +1,7 @@
 """Tests for schemas/documents.py - Document schema validation."""
 
-from pydantic import ValidationError
 import pytest
-
+from pydantic import ValidationError
 from schemas.documents import DocumentCreate, DocumentUpdate, allowed_mime_types
 
 

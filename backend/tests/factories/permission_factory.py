@@ -3,7 +3,6 @@
 import uuid
 
 import factory
-
 from models import ObjectPermission
 
 from .base import BaseFactory

@@ -1,7 +1,6 @@
 """Factory for Course model."""
 
 import factory
-
 from models import Course
 
 from .base import BaseFactory

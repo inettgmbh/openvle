@@ -5,10 +5,10 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from controllers.templates import CRUDTemplate
 from core.exceptions import (
     BadRequestError,
+    ObjectInUseError,
     ObjectNotFound,
     OperationDependencyMissing,
     ProtectedObjectError,
@@ -21,10 +21,11 @@ from models import (
     SubTask,
     Task,
     Template,
-    VirtualMachine,
     Vendor,
+    VirtualMachine,
 )
 from schemas.templates import TemplateCreate, TemplateUpdate
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -293,7 +294,9 @@ class TestCRUDTemplateUpdate:
         crud = CRUDTemplate(db=db_session, id=sample_template.id)
         request = create_mock_request(active_user)
         obj_in = TemplateUpdate(cpu=4)
-        result = crud.update(sample_template.id, db_session, request, obj_in=obj_in)
+        result = crud.update(
+            sample_template.id, db_session, request, obj_in=obj_in
+        )
         assert result.cpu == 4
 
     def test_update_creates_task(
@@ -341,7 +344,12 @@ class TestCRUDTemplateUpdateApps:
 class TestCRUDTemplateDelete:
     @patch("controllers.templates.ProxmoxCluster")
     def test_delete_template(
-        self, mock_cluster, db_session, active_user, mock_redis_queues, sample_template
+        self,
+        mock_cluster,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        sample_template,
     ):
         mock_cluster.return_value.pve_get_node.return_value = "pve-node-1"
         mock_cluster.return_value.proxmox.nodes.return_value.qemu.return_value.config.get.return_value = {
@@ -364,7 +372,12 @@ class TestCRUDTemplateDelete:
 
     @patch("controllers.templates.ProxmoxCluster")
     def test_delete_proceeds_when_pve_config_raises_resource_exception(
-        self, mock_cluster, db_session, active_user, mock_redis_queues, sample_template
+        self,
+        mock_cluster,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        sample_template,
     ):
         """Template not found on PVE during protection check — deletion still proceeds."""
         from proxmoxer.core import ResourceException
@@ -382,7 +395,12 @@ class TestCRUDTemplateDelete:
 
     @patch("controllers.templates.ProxmoxCluster")
     def test_delete_no_proxmox_id_proceeds(
-        self, mock_cluster, db_session, active_user, mock_redis_queues, system_user
+        self,
+        mock_cluster,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        system_user,
     ):
         """Template with no proxmoxId skips PVE protection check and proceeds."""
         from datetime import datetime, timezone
@@ -449,7 +467,7 @@ class TestCRUDTemplateDelete:
 
         crud = CRUDTemplate(db=db_session, id=sample_template.id)
         request = create_mock_request(active_user)
-        with pytest.raises(BadRequestError):
+        with pytest.raises(ObjectInUseError):
             crud.delete(db_session, request, id=sample_template.id)
 
 
@@ -476,7 +494,9 @@ class TestCRUDTemplateLoadFromPve:
         assert result.status == "available"
 
     @patch("controllers.templates.CRUDTemplate.get_pve_template")
-    def test_load_from_pve_no_disk_match(self, mock_get_pve, db_session, active_user):
+    def test_load_from_pve_no_disk_match(
+        self, mock_get_pve, db_session, active_user
+    ):
         """When no disk key matches, disk defaults to 0."""
         mock_get_pve.return_value = {
             "name": "pve-template-02",
@@ -498,7 +518,9 @@ class TestCRUDTemplateGetPveTemplate:
         """If a template with the given proxmoxId already exists, raise BadRequestError."""
         crud = CRUDTemplate()
         with pytest.raises(BadRequestError):
-            crud.get_pve_template(db_session, proxmox_id=sample_template.proxmoxId)
+            crud.get_pve_template(
+                db_session, proxmox_id=sample_template.proxmoxId
+            )
 
     @patch("controllers.templates.ProxmoxCluster")
     def test_proxmox_connection_failure_raises(
@@ -523,7 +545,9 @@ class TestCRUDTemplateGetPveTemplate:
             crud.get_pve_template(db_session, proxmox_id=999)
 
     @patch("controllers.templates.ProxmoxCluster")
-    def test_empty_config_raises(self, mock_cluster_cls, db_session, system_user):
+    def test_empty_config_raises(
+        self, mock_cluster_cls, db_session, system_user
+    ):
         """If PVE returns empty config, ProxmoxResourceNotFound is raised."""
         mock_cluster = MagicMock()
         mock_cluster_cls.return_value = mock_cluster
@@ -534,7 +558,9 @@ class TestCRUDTemplateGetPveTemplate:
             crud.get_pve_template(db_session, proxmox_id=999)
 
     @patch("controllers.templates.ProxmoxCluster")
-    def test_non_template_vm_raises(self, mock_cluster_cls, db_session, system_user):
+    def test_non_template_vm_raises(
+        self, mock_cluster_cls, db_session, system_user
+    ):
         """If the PVE resource is a VM (not a template), BadRequestError is raised."""
         mock_cluster = MagicMock()
         mock_cluster_cls.return_value = mock_cluster
@@ -550,7 +576,9 @@ class TestCRUDTemplateGetPveTemplate:
             crud.get_pve_template(db_session, proxmox_id=999)
 
     @patch("controllers.templates.ProxmoxCluster")
-    def test_successful_retrieval(self, mock_cluster_cls, db_session, system_user):
+    def test_successful_retrieval(
+        self, mock_cluster_cls, db_session, system_user
+    ):
         """A valid PVE template config is returned successfully."""
         mock_cluster = MagicMock()
         mock_cluster_cls.return_value = mock_cluster

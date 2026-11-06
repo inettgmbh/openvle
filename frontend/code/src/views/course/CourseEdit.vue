@@ -15,6 +15,7 @@ import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import UnsavedChangesModal from '@/components/UnsavedChangesModal.vue'
 import { useUnsavedChanges } from '@/composables/useUnsavedChanges'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -101,6 +102,7 @@ function onCancel() {
           <FormControl
             v-model="course.name"
             :icon="mdiRename"
+            :maxlength="FIELD_LIMITS.course.name"
             :placeholder="$t('views.courses.form.namePlaceholder')"
             required
           />
@@ -110,7 +112,11 @@ function onCancel() {
           :label="$t('common.description')"
           :help="$t('views.courses.form.descriptionHelp')"
         >
-          <FormControl v-model="course.description" :icon="mdiTextBox" />
+          <FormControl
+            v-model="course.description"
+            :icon="mdiTextBox"
+            :maxlength="FIELD_LIMITS.course.description"
+          />
         </FormField>
 
         <!-- Moodle course picker (feature-gated) -->

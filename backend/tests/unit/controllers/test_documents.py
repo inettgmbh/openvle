@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from controllers.documents import CRUDDocument
 from core.exceptions import (
     BadRequestError,
@@ -14,6 +13,7 @@ from core.exceptions import (
     ObjectNotFound,
 )
 from models import Application, Changelog, Document, ObjectPermission, Vendor
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -148,7 +148,9 @@ class TestUpload:
         mock_file.content_type = "application/pdf"
 
         with pytest.raises(BadRequestError):
-            self.crud.upload(sample_document.id, db_session, request, file_in=mock_file)
+            self.crud.upload(
+                sample_document.id, db_session, request, file_in=mock_file
+            )
 
 
 class TestDelete:
@@ -346,7 +348,9 @@ class TestGetMultiForObjectAuth:
                 db=db_session,
             )
 
-    def test_returns_permitted_documents_for_application(self, db_session, active_user):
+    def test_returns_permitted_documents_for_application(
+        self, db_session, active_user
+    ):
         app = self._create_app_with_vendor(db_session, active_user)
         doc = self._create_document_for_app(db_session, active_user, app)
         self._create_object_permission(db_session, active_user, doc)

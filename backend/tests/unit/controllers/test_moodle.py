@@ -3,13 +3,13 @@
 from unittest.mock import MagicMock
 
 import pytest
-
 from core.exceptions import (
     MoodleConnectionError,
     MoodleNotEnabledError,
     MoodleRequestError,
 )
 from core.moodlelib import MoodleAPIError
+
 from tests.helpers.mock_moodle import MockMoodleClient
 
 
@@ -161,7 +161,9 @@ class TestMoodleSearchCourses:
         mock_moodle_enabled,
         mock_moodle_client,
     ):
-        mock_moodle_client._errors["search_courses"] = MoodleAPIError("err", "fail")
+        mock_moodle_client._errors["search_courses"] = MoodleAPIError(
+            "err", "fail"
+        )
 
         from controllers.moodle import search_courses
 

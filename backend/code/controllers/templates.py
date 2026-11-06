@@ -14,6 +14,7 @@ from core.config import Settings
 from core.exceptions import (
     BadRequestError,
     JobEnqueueError,
+    ObjectInUseError,
     ObjectNotFound,
     OperationDependencyMissing,
     ProtectedObjectError,
@@ -26,6 +27,8 @@ from core.redis import queue_pve_vm_actions, queue_pve_vm_clone
 from models import (
     OS,
     Application,
+    Course,
+    Event,
     GuacamoleConnectionProfile,
     ObjectPermission,
     Tag,
@@ -502,14 +505,17 @@ class CRUDTemplate(CRUDBase[Template, TemplateCreate, TemplateUpdate]):
             .scalar()
         )
 
-        if vm_count or course_count or event_count:
-            raise BadRequestError(
-                message=(
-                    "Template cannot be deleted because it is in use: "
-                    f"{vm_count} VirtualMachine(s), "
-                    f"{course_count} Course(s), "
-                    f"{event_count} Event(s). "
-                )
+        references = {
+            VirtualMachine.__name__: vm_count,
+            Course.__name__: course_count,
+            Event.__name__: event_count,
+        }
+        references = {
+            name: count for name, count in references.items() if count
+        }
+        if references:
+            raise ObjectInUseError(
+                model_name=Template.__name__, references=references
             )
         # Create Task object
         new_task = CRUDTask(TaskModel).create(

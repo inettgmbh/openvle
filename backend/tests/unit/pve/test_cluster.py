@@ -4,7 +4,6 @@ import uuid
 from unittest.mock import MagicMock
 
 import pytest
-
 from core.exceptions import ProxmoxConnectionError
 
 
@@ -79,7 +78,9 @@ class TestProxmoxClusterInit:
         monkeypatch.setattr("pve.cluster.settings", mock_settings)
         monkeypatch.setattr(
             "pve.cluster.ProxmoxAPI",
-            MagicMock(side_effect=requests.exceptions.ConnectionError("refused")),
+            MagicMock(
+                side_effect=requests.exceptions.ConnectionError("refused")
+            ),
         )
 
         from pve.cluster import ProxmoxCluster
@@ -92,7 +93,9 @@ class TestPveGetNode:
     def _make_cluster(self, monkeypatch, resource_list):
         """Helper to create a ProxmoxCluster with mocked resource_list."""
         mock_pve_api = MagicMock()
-        mock_pve_api.return_value.cluster.resources.get.return_value = resource_list
+        mock_pve_api.return_value.cluster.resources.get.return_value = (
+            resource_list
+        )
         monkeypatch.setattr("pve.cluster.ProxmoxAPI", mock_pve_api)
 
         from core.config import Settings
@@ -170,7 +173,9 @@ class TestNextVmId:
         result = cluster.next_vm_id(db_session)
         assert result == 100
 
-    def test_next_vm_id_skips_reserved(self, monkeypatch, db_session, system_user):
+    def test_next_vm_id_skips_reserved(
+        self, monkeypatch, db_session, system_user
+    ):
         """Skips IDs already used in the DB."""
         from datetime import datetime, timezone
 

@@ -10,7 +10,11 @@ from fastapi.responses import JSONResponse
 
 
 def _make_mock_request(
-    method="GET", headers=None, url_path="/v1/test", user_id=None, query_params=None
+    method="GET",
+    headers=None,
+    url_path="/v1/test",
+    user_id=None,
+    query_params=None,
 ):
     """Create a mock request for activityLogging."""
     request = MagicMock()
@@ -32,7 +36,9 @@ def _make_mock_request(
     request.body = mock_body
 
     # request.scope needs 'type' and 'client' for Request() re-creation inside activityLogging
-    raw_headers = [(k.lower().encode(), v.encode()) for k, v in req_headers.items()]
+    raw_headers = [
+        (k.lower().encode(), v.encode()) for k, v in req_headers.items()
+    ]
     query_string = urlencode(query_params).encode() if query_params else b""
     request.scope = {
         "type": "http",
@@ -238,11 +244,15 @@ class TestLoginPathLogging:
         # Mock SessionLocal to avoid DB calls
         mock_session = MagicMock()
         mock_session.query.return_value.filter.return_value.first.return_value = None
-        monkeypatch.setattr("middlewares.logging.SessionLocal", lambda: mock_session)
+        monkeypatch.setattr(
+            "middlewares.logging.SessionLocal", lambda: mock_session
+        )
 
         from middlewares.logging import activityLogging
 
-        body = json.dumps({"username": "testuser", "password": "secret"}).encode()
+        body = json.dumps(
+            {"username": "testuser", "password": "secret"}
+        ).encode()
         request = _make_mock_request(
             method="POST",
             url_path="/v1/auth/login",
@@ -272,7 +282,9 @@ class TestLoginPathLogging:
         )
         mock_session = MagicMock()
         mock_session.query.return_value.filter.return_value.first.return_value = None
-        monkeypatch.setattr("middlewares.logging.SessionLocal", lambda: mock_session)
+        monkeypatch.setattr(
+            "middlewares.logging.SessionLocal", lambda: mock_session
+        )
 
         from middlewares.logging import activityLogging
 
@@ -310,14 +322,16 @@ class TestLoginPathLogging:
         mock_user = MagicMock()
         mock_user.id = uuid.uuid4()
         mock_session = MagicMock()
-        mock_session.query.return_value.filter.return_value.first.return_value = (
-            mock_user
+        mock_session.query.return_value.filter.return_value.first.return_value = mock_user
+        monkeypatch.setattr(
+            "middlewares.logging.SessionLocal", lambda: mock_session
         )
-        monkeypatch.setattr("middlewares.logging.SessionLocal", lambda: mock_session)
 
         from middlewares.logging import activityLogging
 
-        body = json.dumps({"username": "loginuser", "password": "pass"}).encode()
+        body = json.dumps(
+            {"username": "loginuser", "password": "pass"}
+        ).encode()
         request = _make_mock_request(
             method="POST",
             url_path="/v1/auth/login",

@@ -1,0 +1,4 @@
+# Tests follow the same ruff rules as the backend code.
+# Without this file, ruff's config discovery would not find
+# backend/code/pyproject.toml from here and fall back to defaults.
+extend = "../code/pyproject.toml"

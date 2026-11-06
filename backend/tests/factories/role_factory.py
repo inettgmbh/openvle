@@ -1,7 +1,6 @@
 """Factory for Role model."""
 
 import factory
-
 from models import Role
 
 from .base import BaseFactory

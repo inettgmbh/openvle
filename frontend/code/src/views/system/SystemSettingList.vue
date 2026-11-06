@@ -29,6 +29,7 @@ import PillTag from '@/components/PillTag.vue'
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import { SearchOperators } from '@/components/Tables/searchOperators'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import backend from '@/services'
 import { useMainStore } from '@/stores/main'
@@ -542,7 +543,7 @@ onMounted(async () => {
             <FormControl
               v-if="objSingle.inputType !== 'boolean'"
               v-model="objSingle.value"
-              maxlength="250"
+              :maxlength="FIELD_LIMITS.system.value"
               :icon="mdiDatabase"
               :type="objSingle.inputType"
               :validate="(val) => valueValidator(val, objSingle.type)"

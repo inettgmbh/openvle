@@ -1,5 +1,5 @@
 <script setup>
-import { mdiAlert, mdiClose, mdiPencil } from '@mdi/js'
+import { mdiAlert, mdiClose, mdiInformation, mdiPencil } from '@mdi/js'
 import { mdiContentCopy } from '@mdi/js'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -10,6 +10,7 @@ import CardBox from '@/components/CardBox.vue'
 import CardBoxComponentTitle from '@/components/CardBoxComponentTitle.vue'
 import FormControl from '@/components/FormControl.vue'
 import FormField from '@/components/FormField.vue'
+import NotificationBar from '@/components/NotificationBar.vue'
 import OverlayLayer from '@/components/OverlayLayer.vue'
 import { useStyleStore } from '@/stores/style.js'
 import { useAutofocusInput } from '@/utils/useAutofocusInput'
@@ -34,12 +35,20 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  info: {
+    type: String,
+    default: null,
+  },
   relatedItems: {
     type: Array,
     default: () => [],
   },
   relatedLabel: {
     type: String,
+    default: null,
+  },
+  relatedCount: {
+    type: Number,
     default: null,
   },
   requireExtraConfirm: {
@@ -49,6 +58,10 @@ const props = defineProps({
   extraConfirmLabel: {
     type: String,
     default: null,
+  },
+  blocked: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -85,6 +98,7 @@ const { autoFocusInputRef } = useAutofocusInput(value)
 const isNameMatch = computed(() => confirmationName.value === props.checkvalue)
 
 const canConfirm = computed(() => {
+  if (props.blocked) return false
   if (!isNameMatch.value) return false
   if (props.requireExtraConfirm && !extraConfirmed.value) return false
   return true
@@ -92,6 +106,7 @@ const canConfirm = computed(() => {
 
 const confirmTooltip = computed(() => {
   if (canConfirm.value) return null
+  if (props.blocked) return t('components.deleteModal.tooltipBlocked')
   const needsExtra = props.requireExtraConfirm && !extraConfirmed.value
   if (!isNameMatch.value && needsExtra) {
     return t('components.deleteModal.tooltipBothMissing')
@@ -154,44 +169,60 @@ onBeforeUnmount(() => {
           }}
         </p>
 
-        <div
-          v-if="warning"
-          class="flex items-start gap-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700/50 text-amber-900 dark:text-amber-200 text-sm"
+        <NotificationBar
+          v-if="info"
+          :dismissable="false"
+          color="info"
+          :icon="mdiInformation"
+          class="!mb-0"
         >
-          <svg
-            viewBox="0 0 24 24"
-            class="w-5 h-5 flex-none mt-0.5 fill-current"
-            aria-hidden="true"
-          >
-            <path :d="mdiAlert" />
-          </svg>
+          {{ info }}
+        </NotificationBar>
 
-          <p class="leading-snug">{{ warning }}</p>
-        </div>
+        <NotificationBar
+          v-if="warning"
+          :dismissable="false"
+          :color="blocked ? 'danger' : 'warning'"
+          :icon="mdiAlert"
+          class="!mb-0"
+        >
+          {{ warning }}
+        </NotificationBar>
 
-        <div v-if="relatedItems.length > 0" class="space-y-1">
-          <p
+        <div
+          v-if="relatedItems.length > 0"
+          class="border border-gray-200 dark:border-slate-700 rounded-lg overflow-hidden divide-y divide-gray-200 dark:divide-slate-700 bg-white dark:bg-slate-900/30"
+        >
+          <div
             v-if="relatedLabel"
-            class="text-sm font-medium text-gray-700 dark:text-gray-200"
+            class="flex items-center justify-between gap-2 px-3 py-2.5 bg-gray-50 dark:bg-slate-800/40"
           >
-            {{ relatedLabel }}
-          </p>
+            <span class="font-medium text-sm truncate">{{ relatedLabel }}</span>
+
+            <span
+              class="inline-flex items-center shrink-0 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-700 dark:bg-slate-700 dark:text-slate-200"
+            >
+              {{ relatedCount ?? relatedItems.length }}
+            </span>
+          </div>
 
           <ul
-            class="text-sm space-y-1 max-h-40 overflow-y-auto rounded border border-gray-200 dark:border-gray-700 p-2 bg-gray-50 dark:bg-slate-800/50"
+            class="divide-y divide-gray-100 dark:divide-slate-800 max-h-40 overflow-y-auto"
           >
             <li
               v-for="(item, idx) in relatedItems"
               :key="idx"
-              class="flex items-baseline gap-2"
+              class="flex items-baseline justify-between gap-2 text-sm px-4 py-2 min-w-0 hover:bg-gray-50 dark:hover:bg-slate-800/40"
             >
-              <span class="text-gray-900 dark:text-gray-100">{{
-                item.label
-              }}</span>
+              <span
+                class="truncate min-w-0 flex-1 text-gray-900 dark:text-gray-100"
+              >
+                {{ item.label }}
+              </span>
 
               <span
                 v-if="item.sublabel"
-                class="text-xs text-gray-500 dark:text-gray-400"
+                class="text-xs text-gray-500 dark:text-gray-400 shrink-0"
                 >{{ item.sublabel }}</span
               >
             </li>
@@ -208,34 +239,36 @@ onBeforeUnmount(() => {
           }}</span>
         </label>
 
-        <hr />
+        <template v-if="!blocked">
+          <hr />
 
-        {{ t('components.deleteModal.confirmPrompt') }}<br />
+          {{ t('components.deleteModal.confirmPrompt') }}<br />
 
-        <p class="flex items-center gap-2">
-          <b>"{{ props.checkvalue }}"</b>
+          <p class="flex items-center gap-2">
+            <b>"{{ props.checkvalue }}"</b>
 
-          <BaseButton
-            :icon="mdiContentCopy"
-            color="light"
-            small
-            rounded-full
-            :class="[
-              'transition-colors duration-300',
-              copied ? 'bg-green-500 text-white' : '',
-            ]"
-            @click="copyToClipboard(props.checkvalue)"
-          />
-        </p>
+            <BaseButton
+              :icon="mdiContentCopy"
+              color="light"
+              small
+              rounded-full
+              :class="[
+                'transition-colors duration-300',
+                copied ? 'bg-green-500 text-white' : '',
+              ]"
+              @click="copyToClipboard(props.checkvalue)"
+            />
+          </p>
 
-        <FormField>
-          <FormControl
-            v-model="confirmationName"
-            :icon="mdiPencil"
-            :placeholder="props.checkvalue"
-            @set-ref="(el) => (autoFocusInputRef = el)"
-          />
-        </FormField>
+          <FormField>
+            <FormControl
+              v-model="confirmationName"
+              :icon="mdiPencil"
+              :placeholder="props.checkvalue"
+              @set-ref="(el) => (autoFocusInputRef = el)"
+            />
+          </FormField>
+        </template>
       </div>
 
       <template #footer>

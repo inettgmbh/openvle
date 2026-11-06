@@ -51,7 +51,9 @@ class TestCreatePolicy:
             "description": "A brand new policy",
             "content": "Policy content here.",
         }
-        resp = client.post(f"{API}/policies/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/policies/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 201
         data = resp.json()
         assert data["name"] == "New Policy"
@@ -75,7 +77,9 @@ class TestCreatePolicy:
             "description": "desc",
             "content": "content",
         }
-        resp = client.post(f"{API}/policies/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/policies/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 403
 
 
@@ -116,14 +120,18 @@ class TestGetPolicyById:
         mock_permission_allow,
         sample_policy,
     ):
-        resp = client.get(f"{API}/policies/{sample_policy.id}", headers=auth_headers)
+        resp = client.get(
+            f"{API}/policies/{sample_policy.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["id"] == str(sample_policy.id)
         assert data["name"] == "Test Policy"
         assert data["content"] == "You must accept these terms."
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/policies/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404
@@ -154,7 +162,9 @@ class TestUpdatePolicy:
         data = resp.json()
         assert data["name"] == "Updated Policy Name"
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.put(
             f"{API}/policies/{fake_id}",
@@ -184,7 +194,9 @@ class TestDeletePolicy:
         mock_permission_allow,
         sample_policy,
     ):
-        resp = client.delete(f"{API}/policies/{sample_policy.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/policies/{sample_policy.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
 
     def test_delete_not_found_returns_404(
@@ -277,7 +289,9 @@ class TestGetPolicyUserStatus:
         resp = client.get(f"{API}/policies/{fake_id}/users/{fake_user_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_policy):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_policy
+    ):
         """Without mock_permission_allow, policies_user_read is denied."""
         fake_user_id = uuid.uuid4()
         resp = client.get(

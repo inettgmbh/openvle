@@ -1,8 +1,7 @@
 """Tests for schemas/policies.py - Policy schema validation."""
 
-from pydantic import ValidationError
 import pytest
-
+from pydantic import ValidationError
 from schemas.policies import PolicyCreate, PolicyUpdate, PolicyUserAgree
 
 

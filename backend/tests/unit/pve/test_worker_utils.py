@@ -8,7 +8,9 @@ class TestFormatPveExceptionForUser:
         """ResourceException with status_code and message is formatted correctly."""
         from proxmoxer.core import ResourceException
 
-        exc = ResourceException(500, "Internal Server Error", "node unreachable")
+        exc = ResourceException(
+            500, "Internal Server Error", "node unreachable"
+        )
         from pve.worker_utils import format_pve_exception_for_user
 
         status, msg = format_pve_exception_for_user(exc, prefix="Clone failed")
@@ -89,7 +91,9 @@ class TestPveTaskGet:
 
         from pve.worker_utils import pve_task_get
 
-        upid = "UPID:my-node-02:00123456:0ABCDEF0:6789ABCD:qmclone:200:user@pve:"
+        upid = (
+            "UPID:my-node-02:00123456:0ABCDEF0:6789ABCD:qmclone:200:user@pve:"
+        )
         pve_task_get(upid)
 
         # Verify the correct node name was extracted

@@ -4,7 +4,6 @@ from unittest.mock import MagicMock
 
 import httpx
 import pytest
-
 from core.moodlelib import MoodleAPIError, MoodleClient
 
 
@@ -131,7 +130,9 @@ class TestMoodleClientCall:
 
         client = MoodleClient(url="https://m.test", token="t")
         client._call(
-            "core_course_search_courses", criterianame="search", criteriavalue="python"
+            "core_course_search_courses",
+            criterianame="search",
+            criteriavalue="python",
         )
         data = captured["kwargs"]["data"]
         assert data["criterianame"] == "search"

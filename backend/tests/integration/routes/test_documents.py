@@ -34,7 +34,9 @@ class TestCreateDocument:
             "name": "New Document",
             "description": "A brand new document",
         }
-        resp = client.post(f"{API}/documents/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/documents/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 201
         data = resp.json()
         assert data["name"] == "New Document"
@@ -54,7 +56,9 @@ class TestCreateDocument:
             "name": "Denied Document",
             "description": "desc",
         }
-        resp = client.post(f"{API}/documents/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/documents/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 403
 
 
@@ -112,7 +116,9 @@ class TestGetDocumentById:
         assert data["name"] == "Test Document"
         assert data["description"] == "A test document"
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/documents/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404
@@ -122,7 +128,9 @@ class TestGetDocumentById:
         resp = client.get(f"{API}/documents/{fake_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_document):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_document
+    ):
         """Without mock_permission_allow, documents_read is denied."""
         resp = client.get(
             f"{API}/documents/{sample_document.id}",
@@ -151,7 +159,9 @@ class TestUpdateDocument:
         data = resp.json()
         assert data["description"] == "Updated description"
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.put(
             f"{API}/documents/{fake_id}",

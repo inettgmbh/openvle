@@ -34,7 +34,9 @@ class TestClusterResources:
         assert resp.status_code in (401, 403)
 
     def test_permission_denied_returns_403(self, client, auth_headers):
-        resp = client.get(f"{API}/proxmox/cluster/resources", headers=auth_headers)
+        resp = client.get(
+            f"{API}/proxmox/cluster/resources", headers=auth_headers
+        )
         assert resp.status_code == 403
 
 

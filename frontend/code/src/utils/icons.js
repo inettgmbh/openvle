@@ -44,7 +44,14 @@ import {
   mdiProgressHelper,
   mdiRemoteDesktop,
   mdiShieldAccount,
+  mdiShieldAlert,
+  mdiShieldCheck,
   mdiShieldCrown,
+  mdiShieldHalfFull,
+  mdiShieldOff,
+  mdiShieldOffOutline,
+  mdiShieldOutline,
+  mdiShieldSync,
   mdiStopCircle,
   mdiSync,
   mdiTrashCanOutline,
@@ -348,6 +355,49 @@ export const vmStatusIcon = (status) => {
       return mdiProgressClock
   }
   return undefined
+}
+
+/**
+ * Returns a Material Design Icon (MDI) representing the given Proxmox HA state
+ * of a VM.
+ *
+ * State-to-icon mappings:
+ * - `'started'` → `mdiShieldCheck`
+ * - `'stopped'` → `mdiShieldOutline`
+ * - `'disabled'` → `mdiShieldOff`
+ * - `'ignored'` → `mdiShieldOffOutline`
+ * - `'error'` / `'fence'` → `mdiShieldAlert`
+ * - transient CRM states → `mdiShieldSync`
+ *
+ * Unlike `vmStatusIcon` this returns a fallback icon (`mdiShieldHalfFull`)
+ * for unknown states so the HA badge always renders an icon.
+ *
+ * @param {string} state - The Proxmox HA state (case-insensitive).
+ * @returns {string} The corresponding MDI icon path.
+ */
+export const haStateIconVM = (state) => {
+  switch (String(state ?? '').toLowerCase()) {
+    case 'started':
+      return mdiShieldCheck
+    case 'stopped':
+      return mdiShieldOutline
+    case 'disabled':
+      return mdiShieldOff
+    case 'ignored':
+      return mdiShieldOffOutline
+    case 'error':
+    case 'fence':
+      return mdiShieldAlert
+    case 'migrate':
+    case 'relocate':
+    case 'recovery':
+    case 'request_start':
+    case 'request_stop':
+    case 'queued':
+    case 'freeze':
+      return mdiShieldSync
+  }
+  return mdiShieldHalfFull
 }
 
 /**

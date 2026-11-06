@@ -1,3 +1,197 @@
 [tools]
 python = "3.10"
 node = "24"
+
+# --- Aggregates (all components) ---------------------------------------
+
+[tasks.install]
+description = "Install dependencies for all components"
+depends = ["backend:install", "frontend:install", "docs:install"]
+
+[tasks.test]
+description = "Run backend and frontend test suites"
+depends = ["backend:test", "frontend:test"]
+
+[tasks.lint]
+description = "Lint all components (check only)"
+depends = ["backend:lint", "frontend:lint", "docs:lint"]
+
+[tasks."lint:fix"]
+description = "Lint all components and auto-fix"
+depends = ["backend:lint:fix", "frontend:lint:fix", "docs:lint:fix"]
+
+[tasks.format]
+description = "Check formatting of all components"
+depends = ["backend:format", "frontend:format", "docs:format"]
+
+[tasks."format:fix"]
+description = "Format all components"
+depends = ["backend:format:fix", "frontend:format:fix", "docs:format:fix"]
+
+[tasks.build]
+description = "Build frontend and docs"
+depends = ["frontend:build", "docs:build"]
+
+[tasks.check]
+description = "Run everything CI checks: format, lint and tests"
+depends = ["format", "lint", "test"]
+
+# --- Backend (FastAPI) --------------------------------------------------
+
+[tasks."backend:install"]
+description = "Install backend deps incl. test group and Babel"
+dir = "backend/code"
+run = "pip install -r requirements.txt --group test Babel"
+
+[tasks."backend:dev"]
+description = "Run backend dev server (expects DB stack, see backend:stack)"
+dir = "backend/code"
+run = "uvicorn main:app --reload"
+
+[tasks."backend:test"]
+description = "Run backend tests (needs Docker for testcontainers)"
+dir = "backend/code"
+run = "python -m pytest"
+
+[tasks."backend:lint"]
+description = "Lint backend with ruff"
+run = "ruff check backend/code backend/tests"
+
+[tasks."backend:lint:fix"]
+description = "Lint backend with ruff and auto-fix"
+run = "ruff check --fix backend/code backend/tests"
+
+[tasks."backend:format"]
+description = "Check backend formatting with ruff"
+run = "ruff format --check backend/code backend/tests"
+
+[tasks."backend:format:fix"]
+description = "Format backend with ruff"
+run = "ruff format backend/code backend/tests"
+
+[tasks."backend:i18n"]
+description = "Extract + update translation catalogs (what CI checks)"
+dir = "backend/code"
+run = ["./scripts/i18n.sh extract", "./scripts/i18n.sh update"]
+
+[tasks."backend:i18n:compile"]
+description = "Compile .mo files"
+dir = "backend/code"
+run = "./scripts/i18n.sh compile"
+
+[tasks."backend:stack"]
+description = "Start local dev DB stack (MariaDB, Redis, ...)"
+dir = "backend"
+run = "docker compose -f docker-compose.dev.yml up -d"
+
+[tasks."backend:stack:down"]
+description = "Stop local dev DB stack"
+dir = "backend"
+run = "docker compose -f docker-compose.dev.yml down"
+
+# --- Frontend (Vue/Vite) ------------------------------------------------
+
+[tasks."frontend:install"]
+description = "Install frontend deps"
+dir = "frontend/code"
+run = "npm install"
+
+[tasks."frontend:dev"]
+description = "Run frontend dev server (vite)"
+dir = "frontend/code"
+run = "npm run dev"
+
+[tasks."frontend:build"]
+description = "Build frontend"
+dir = "frontend/code"
+run = "npm run build"
+
+[tasks."frontend:test"]
+description = "Run frontend unit tests (single run)"
+dir = "frontend/code"
+run = "npm run test:unit:ci"
+
+[tasks."frontend:test:watch"]
+description = "Run frontend unit tests in watch mode"
+dir = "frontend/code"
+run = "npm run test:unit"
+
+[tasks."frontend:coverage"]
+description = "Run frontend unit tests with coverage"
+dir = "frontend/code"
+run = "npm run test:coverage:ci"
+
+[tasks."frontend:lint"]
+description = "Lint frontend with eslint"
+dir = "frontend/code"
+run = "npm run lint"
+
+[tasks."frontend:lint:fix"]
+description = "Lint frontend with eslint and auto-fix"
+dir = "frontend/code"
+run = "npm run lint:fix"
+
+[tasks."frontend:format"]
+description = "Check frontend formatting with prettier"
+dir = "frontend/code"
+run = "npm run format"
+
+[tasks."frontend:format:fix"]
+description = "Format frontend with prettier"
+dir = "frontend/code"
+run = "npm run format:fix"
+
+# --- Docs (Docusaurus) --------------------------------------------------
+
+[tasks."docs:install"]
+description = "Install docs deps"
+dir = "docs"
+run = "npm install"
+
+[tasks."docs:dev"]
+description = "Run docs dev server (locale de)"
+dir = "docs"
+run = "npm run dev"
+
+[tasks."docs:build"]
+description = "Build docs (all locales)"
+dir = "docs"
+run = "npm run build"
+
+[tasks."docs:lint"]
+description = "Lint docs with eslint"
+dir = "docs"
+run = "npm run lint"
+
+[tasks."docs:lint:fix"]
+description = "Lint docs with eslint and auto-fix"
+dir = "docs"
+run = "npm run lint:fix"
+
+[tasks."docs:format"]
+description = "Check docs formatting with prettier"
+dir = "docs"
+run = "npm run format"
+
+[tasks."docs:format:fix"]
+description = "Format docs with prettier"
+dir = "docs"
+run = "npm run format:fix"
+
+# --- CI scripts ---------------------------------------------------------
+
+[tasks."ci:test"]
+description = "Run tests for the CI helper scripts (node:test, no deps)"
+run = "node --test scripts/ci/*.test.cjs"
+
+[tasks."ci:mr-comment:preview"]
+description = "Render the MR release-preview comment locally (posts nothing)"
+run = """
+BASE="$(git merge-base origin/develop HEAD)"
+MR_COMMENT_DRY_RUN=1 \
+CI_MERGE_REQUEST_TARGET_BRANCH_NAME=develop \
+CI_MERGE_REQUEST_DIFF_BASE_SHA="$BASE" \
+CI_SERVER_URL=https://gitlab.inett.de \
+CI_PROJECT_PATH=inett/openvle \
+node scripts/ci/mr-release-comment.cjs
+"""

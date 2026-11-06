@@ -22,7 +22,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -37,7 +36,9 @@ def _mock_response(text_content):
 
 def _create_client(mock_post):
     """Create a guacamolelib.session with mocked token generation."""
-    mock_post.return_value = _mock_response(json.dumps({"authToken": "test-token-abc"}))
+    mock_post.return_value = _mock_response(
+        json.dumps({"authToken": "test-token-abc"})
+    )
     from core.guacamolelib import session
 
     client = session("http://guac.local", "mysql", "guacadmin", "guacpass")
@@ -85,7 +86,9 @@ class TestGenerateToken:
     def test_json_decode_error_returns_raw(self, mock_post):
         """Should return raw text when response is not valid JSON."""
         # First call for __init__
-        mock_post.return_value = _mock_response(json.dumps({"authToken": "init-token"}))
+        mock_post.return_value = _mock_response(
+            json.dumps({"authToken": "init-token"})
+        )
         from core.guacamolelib import session
 
         client = session("http://guac.local", "mysql", "admin", "pass")
@@ -505,9 +508,9 @@ class TestUpdateConnectionPermissions:
         assert result == {}
 
         # Check that the JSON body contains a list of permissions
-        sent_json = mock_patch.call_args.kwargs.get("json") or mock_patch.call_args[
-            1
-        ].get("json")
+        sent_json = mock_patch.call_args.kwargs.get(
+            "json"
+        ) or mock_patch.call_args[1].get("json")
         assert isinstance(sent_json, list)
         assert len(sent_json) == 1
         assert sent_json[0]["path"].endswith("123")

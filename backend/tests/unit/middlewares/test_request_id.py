@@ -6,7 +6,6 @@ import uuid
 import pytest
 from fastapi import Request
 from fastapi.responses import JSONResponse, Response
-
 from middlewares.request_id import request_id_middleware
 
 UUID_RE = re.compile(
@@ -57,7 +56,9 @@ class TestRequestIdMiddleware:
         request = _make_request()
         observed = {}
 
-        response = await request_id_middleware(request, _call_next_factory(observed))
+        response = await request_id_middleware(
+            request, _call_next_factory(observed)
+        )
 
         assert response.headers["X-Request-Id"] == observed["request_id"]
         assert UUID_RE.match(response.headers["X-Request-Id"])
@@ -82,7 +83,9 @@ class TestRequestIdMiddleware:
         request = _make_request()
         observed = {}
 
-        response = await request_id_middleware(request, _call_next_factory(observed))
+        response = await request_id_middleware(
+            request, _call_next_factory(observed)
+        )
 
         parsed = uuid.UUID(response.headers["X-Request-Id"])
         assert parsed.version == 4
@@ -95,7 +98,9 @@ class TestRequestIdMiddleware:
         def fake_set_tag(key, value):
             captured[key] = value
 
-        monkeypatch.setattr("middlewares.request_id.sentry_sdk.set_tag", fake_set_tag)
+        monkeypatch.setattr(
+            "middlewares.request_id.sentry_sdk.set_tag", fake_set_tag
+        )
 
         request = _make_request()
         observed = {}
@@ -124,7 +129,9 @@ class TestRequestIdMiddleware:
         request = _make_request()
         observed = {}
 
-        response = await request_id_middleware(request, _call_next_factory(observed))
+        response = await request_id_middleware(
+            request, _call_next_factory(observed)
+        )
 
         assert response.headers["X-Request-Id"] == observed["request_id"]
         assert request.state.request_id == observed["request_id"]

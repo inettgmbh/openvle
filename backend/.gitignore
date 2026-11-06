@@ -15,7 +15,8 @@ __pycache__/
 htmlcov/
 cover/
 coverage.xml
-report.xml
+junit-*.xml
+cobertura-*.xml
 .cache
 
 # Virtualenv
@@ -25,6 +26,9 @@ env/
 ENV/
 .python-version
 *pyvenv.cfg
+
+# Compiled gettext catalogs
+*.mo
 
 # Project-specific
 bin/

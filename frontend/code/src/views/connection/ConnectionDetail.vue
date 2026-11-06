@@ -35,6 +35,7 @@ import SearchControl from '@/components/SearchControl.vue'
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import TablePermissions from '@/components/Tables/TablePermissions.vue'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import backend from '@/services'
 import { useMainStore } from '@/stores/main'
@@ -352,6 +353,7 @@ onMounted(async () => {
       <FormControl
         v-model="objToAdd"
         :icon="mdiRename"
+        :maxlength="FIELD_LIMITS.guacamole.name"
         :placeholder="$t('views.connections.detail.namePlaceholder')"
         required
         @set-ref="

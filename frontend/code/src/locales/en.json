@@ -43,6 +43,7 @@
     "label": "Label",
     "loading": "Loading...",
     "manual": "Manual",
+    "maxChars": "Maximum {max} characters",
     "memory": "Memory",
     "name": "Name",
     "next": "Next",
@@ -146,7 +147,6 @@
       "addTag": "Add tag",
       "tagExample": "department: 3",
       "formatHelp": "Preview",
-      "maxChars": "Maximum {max} characters",
       "nameRequired": "Tag name is required",
       "preview": "Preview",
       "tagAdded": "Tag added",
@@ -254,6 +254,7 @@
     "deleteModal": {
       "confirmAction": "Confirm action",
       "confirmPrompt": "Please enter to confirm:",
+      "tooltipBlocked": "Cannot delete while related objects exist",
       "tooltipBothMissing": "Enter confirmation text and enable additional confirmation",
       "tooltipExtraMissing": "Enable the additional confirmation above",
       "tooltipNameMissing": "Enter the confirmation text to delete",
@@ -1261,6 +1262,13 @@
       }
     },
     "courses": {
+      "delete": {
+        "blockedError": "The course cannot be deleted because events are still assigned to it. Please delete the assigned events first.",
+        "cascadeInfo": "Deleting the course also automatically removes its changelogs, object permissions and tags. Assigned VM templates are kept; only the assignment is removed.",
+        "moreEvents": "… and one more event | … and {count} more events",
+        "relatedLabel": "Assigned events:",
+        "relatedWarning": "This course still has one event assigned. The course cannot be deleted while it exists. | This course still has {count} events assigned. The course cannot be deleted while they exist."
+      },
       "detail": {
         "assignTemplate": "Add VM template",
         "cloneNameLabel": "Name of the new course",
@@ -1309,6 +1317,12 @@
       "create": {
         "errorDuplicate": "This name or slug is already taken. Please choose a different one.",
         "errorInvalidSlug": "Short name (slug) invalid. Allowed: 4–8 characters (a-z, 0-9, -, _)"
+      },
+      "delete": {
+        "blockedError": "The event cannot be deleted because VMs are still assigned to it. Please decommission them first.",
+        "moreVms": "… and one more VM | … and {count} more VMs",
+        "relatedLabel": "Assigned VMs:",
+        "relatedWarning": "This event still has one VM assigned. The event cannot be deleted while it exists. | This event still has {count} VMs assigned. The event cannot be deleted while they exist."
       },
       "detail": {
         "actions": {
@@ -1902,6 +1916,12 @@
         "vmMustBeStopped": "VM templates can only be created from virtual machines that are currently powered off. Please shut down / stop the VM first.",
         "vmNotStopped": "The source VM is not in status \"Stopped\" (current status: {status})."
       },
+      "delete": {
+        "blockedError": "The VM template cannot be deleted because it is still in use (VMs, courses or events). Please remove the references first.",
+        "moreItems": "… and one more object | … and {count} more objects",
+        "relatedLabel": "Linked objects:",
+        "relatedWarning": "This VM template is still used by one object. It cannot be deleted while it exists. | This VM template is still used by {count} objects. It cannot be deleted while they exist."
+      },
       "detail": {
         "applicationAdded": "Application added",
         "applicationRemoved": "Application removed from VM template",
@@ -2042,8 +2062,13 @@
       "import": {
         "email": "Email",
         "firstname": "First name",
+        "fullname": "Full name",
         "invalidEmail": "Invalid email",
         "lastname": "Last name",
+        "nameFormat": "Name format",
+        "nameFormatFull": "Full name",
+        "nameFormatHint": "Choose whether your CSV holds the name in a single column (“Full name”) or split into first and last name. Switching resets an import already in progress.",
+        "nameFormatSplit": "First and last name separately",
         "unknownError": "Unknown error",
         "username": "Username"
       },
@@ -2127,6 +2152,49 @@
         "customChart": "Custom Chart",
         "disk": "Disk",
         "event": "Event",
+        "ha": {
+          "actions": {
+            "configure": "Configure HA",
+            "configureTooltip": "Configure high availability (HA) for this VM on Proxmox",
+            "noProxmoxTooltip": "VM does not exist on Proxmox (yet)"
+          },
+          "applyError": "HA configuration for {name} could not be applied",
+          "applySuccess": "HA configuration for {name} is being applied",
+          "fetchError": "HA state could not be retrieved, action cancelled",
+          "modal": {
+            "enabledHelp": "Automatic recovery of the VM after a node failure",
+            "enabledLabel": "High availability enabled",
+            "limitTooltip": "Allowed values: {min} to {max}",
+            "maxRelocateHelp": "Relocations to other nodes on failure (max_relocate)",
+            "maxRelocateLabel": "Max. relocations",
+            "maxRestartHelp": "Restart attempts on failure (max_restart)",
+            "maxRestartLabel": "Max. restarts",
+            "removeWarning": "The HA configuration will be removed on confirm. The VM will no longer be restarted automatically after a node failure.",
+            "stateHelp": "Desired target state of the VM under HA management",
+            "stateLabel": "Requested state",
+            "stateTooltip": "Started: the VM runs and is restarted automatically after a node failure. Stopped: the VM stays powered off but remains managed by HA.",
+            "stopWarning": "The VM is currently running and will be stopped immediately when confirming."
+          },
+          "removeError": "HA configuration for {name} could not be removed",
+          "removeSuccess": "HA configuration for {name} is being removed",
+          "specLabel": "HA state",
+          "states": {
+            "disabled": "Disabled",
+            "error": "Error",
+            "fence": "Fencing (isolation)",
+            "freeze": "Frozen",
+            "ignored": "Not enabled",
+            "migrate": "Migrating",
+            "queued": "Queued",
+            "recovery": "Recovery",
+            "relocate": "Relocating",
+            "request_start": "Start requested",
+            "request_stop": "Stop requested",
+            "started": "Started",
+            "stopped": "Stopped",
+            "unknown": "Unknown"
+          }
+        },
         "ipv4Address": "IPv4 Address",
         "ipv4UpdateError": "IPv4 could not be updated",
         "ipv4UpdateSuccess": "IPv4 updated",

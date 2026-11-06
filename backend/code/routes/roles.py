@@ -9,6 +9,13 @@ from core.exceptions import (
     PermissionDenied,
     ProtectedObjectError,
 )
+from core.responses import (
+    BASE_RESPONSES,
+    CRUD_RESPONSES,
+    READ_RESPONSES,
+    WRITE_RESPONSES,
+    build_description,
+)
 from models.roles import Role as RoleModel
 from schemas.roles import *
 from schemas.users import UserList
@@ -16,7 +23,7 @@ from schemas.users import UserList
 router = APIRouter(
     prefix="/roles",
     tags=["roles"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -26,8 +33,13 @@ router = APIRouter(
     status_code=201,
     response_model=Role,
     operation_id="roles_create",
+    responses=CRUD_RESPONSES,
     summary="Create Role",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Creates a new role.",
+        permission="roles_create",
+    ),
 )
 def create_role(
     *,
@@ -56,6 +68,10 @@ def create_role(
     operation_id="roles_read_all",
     summary="Get Roles",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a paginated list of all roles.",
+        permission="roles_read",
+    ),
 )
 def get_roles(
     request: Request,
@@ -89,8 +105,13 @@ def get_roles(
     status_code=200,
     response_model=Role,
     operation_id="roles_read_one",
+    responses=READ_RESPONSES,
     summary="Get Role",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a single role by ID.",
+        permission="roles_read",
+    ),
 )
 def get_role(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -109,8 +130,16 @@ def get_role(
     status_code=200,
     response_model=Role,
     operation_id="roles_update",
+    responses=WRITE_RESPONSES,
     summary="Update Role",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Updates a role's metadata.",
+        permission="roles_update",
+        notes=[
+            "Protected roles cannot be updated.",
+        ],
+    ),
 )
 def update_role(
     *,
@@ -139,8 +168,17 @@ def update_role(
     status_code=200,
     response_model=Role,
     operation_id="roles_object_permissions_put",
+    responses=WRITE_RESPONSES,
     summary="Set Role ObjectPermissions",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Replaces all object-level permissions on a role.",
+        permission="roles_update",
+        notes=[
+            "Protected roles cannot be modified.",
+            "This overwrites all existing object permissions for the role — use POST to append instead.",
+        ],
+    ),
 )
 def set_role_object_permissions(
     *,
@@ -169,8 +207,16 @@ def set_role_object_permissions(
     status_code=200,
     response_model=Role,
     operation_id="roles_object_permissions_update",
+    responses=WRITE_RESPONSES,
     summary="Update Role ObjectPermissions",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Appends object-level permissions to a role without removing existing ones.",
+        permission="roles_update",
+        notes=[
+            "Protected roles cannot be modified.",
+        ],
+    ),
 )
 def update_role_object_permissions(
     *,
@@ -199,8 +245,13 @@ def update_role_object_permissions(
     status_code=200,
     response_model=UserList,
     operation_id="roles_members_read",
+    responses=READ_RESPONSES,
     summary="Get Role members",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all users assigned to a role.",
+        permission="roles_read",
+    ),
 )
 def get_role(
     request: Request,
@@ -235,8 +286,16 @@ def get_role(
     "/{id}",
     status_code=200,
     operation_id="roles_delete",
+    responses=WRITE_RESPONSES,
     summary="Delete Role",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Deletes a role by ID.",
+        permission="roles_delete",
+        notes=[
+            "Protected roles cannot be deleted.",
+        ],
+    ),
 )
 def delete_role(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)

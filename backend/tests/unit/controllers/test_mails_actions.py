@@ -4,10 +4,10 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from controllers.mails_actions import CRUDMailAction
 from models import MailAction, ObjectPermission
 from schemas.mails_actions import MailActionCreate
+
 from tests.helpers.mock_request import create_mock_request
 
 

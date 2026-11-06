@@ -23,6 +23,7 @@ import SearchControl from '@/components/SearchControl.vue'
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import TemplateCreateWarning from '@/components/TemplateCreateWarning.vue'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -202,7 +203,12 @@ onMounted(() => {
               :label="$t('common.name')"
               :help="$t('views.templates.form.nameHelp')"
             >
-              <FormControl v-model="template.name" :icon="mdiRename" required />
+              <FormControl
+                v-model="template.name"
+                :icon="mdiRename"
+                :maxlength="FIELD_LIMITS.template.name"
+                required
+              />
             </FormField>
 
             <FormField
@@ -259,9 +265,16 @@ onMounted(() => {
           <FormField
             :label="$t('common.description')"
             :help="$t('views.templates.form.descriptionHelp')"
+            :tooltip="
+              $t('common.maxChars', { max: FIELD_LIMITS.template.description })
+            "
           />
 
-          <BaseMarkdown v-model="template.description" action="edit" />
+          <BaseMarkdown
+            v-model="template.description"
+            action="edit"
+            :maxlength="FIELD_LIMITS.template.description"
+          />
 
           <BaseDivider />
         </div>

@@ -25,6 +25,7 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import UnsavedChangesModal from '@/components/UnsavedChangesModal.vue'
 import { useMailTemplatePlaceholders } from '@/composables/useMailTemplatePlaceholders'
 import { useUnsavedChanges } from '@/composables/useUnsavedChanges'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -164,6 +165,7 @@ function onCancel() {
           <FormControl
             v-model="mailTemplate.name"
             :icon="mdiRename"
+            :maxlength="FIELD_LIMITS.mailtemplate.name"
             :placeholder="$t('views.mailTemplates.form.namePlaceholder')"
             required
           />
@@ -173,7 +175,11 @@ function onCancel() {
           :label="$t('common.description')"
           :help="$t('views.mailTemplates.form.descriptionHelp')"
         >
-          <FormControl v-model="mailTemplate.description" :icon="mdiTextBox" />
+          <FormControl
+            v-model="mailTemplate.description"
+            :icon="mdiTextBox"
+            :maxlength="FIELD_LIMITS.mailtemplate.description"
+          />
         </FormField>
 
         <FormField>
@@ -184,6 +190,7 @@ function onCancel() {
             <FormControl
               v-model="mailTemplate.subject"
               :icon="mdiTextBox"
+              :maxlength="FIELD_LIMITS.mailtemplate.subject"
               required
             />
           </FormField>
@@ -196,6 +203,7 @@ function onCancel() {
               v-model="mailTemplate.replyTo"
               placeholder="replyto@example.com"
               :icon="mdiTextBox"
+              :maxlength="FIELD_LIMITS.mailtemplate.replyTo"
               type="email"
             />
           </FormField>

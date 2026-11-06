@@ -4,7 +4,6 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from controllers.tags import CRUDTag
 from core.exceptions import ModelNotFound, ObjectNotFound
 from models import (
@@ -16,6 +15,7 @@ from models import (
     VirtualMachine,
 )
 from schemas.tags import TagCreate
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -98,7 +98,9 @@ class TestCRUDTagGetMultiAuth:
     def setup_method(self):
         self.crud = CRUDTag(TagModel)
 
-    def test_returns_authorized_tags(self, db_session, active_user, sample_app_tag):
+    def test_returns_authorized_tags(
+        self, db_session, active_user, sample_app_tag
+    ):
         """Tags are visible when user has ObjectPermission on the tagged object."""
         now = datetime.now(timezone.utc)
         # Create tag
@@ -830,7 +832,9 @@ class TestCRUDTagCreateForPveTagsList:
         assert result[0].createdById == system_user.id
         assert result[0].updatedById == system_user.id
 
-    def test_skips_invalid_pve_tags(self, db_session, system_user, sample_app_tag):
+    def test_skips_invalid_pve_tags(
+        self, db_session, system_user, sample_app_tag
+    ):
         """PVE tags without underscore are skipped; valid ones are created."""
         result = self.crud._create_for_pve_tags_list(
             db=db_session,

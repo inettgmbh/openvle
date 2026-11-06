@@ -5,13 +5,14 @@ from sqlalchemy.orm import Session
 from controllers.event_status import *
 from core import dependencies
 from core.exceptions import PermissionDenied
+from core.responses import CRUD_RESPONSES
 from models.event_status import EventStatus as EventStatusModel
 from schemas.event_status import *
 
 router = APIRouter(
     prefix="/status/events",
     tags=["status/events"],
-    responses={404: {"detail": "Not found"}},
+    responses=CRUD_RESPONSES,
 )
 
 

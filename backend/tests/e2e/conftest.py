@@ -17,7 +17,7 @@ import pytest
 from tests.helpers.auth_helpers import create_test_token
 
 # Re-export integration fixtures so pytest discovers them here.
-from tests.integration.conftest import (  # noqa: F401
+from tests.integration.conftest import (
     API,
     admin_headers,
     admin_user,
@@ -25,7 +25,6 @@ from tests.integration.conftest import (  # noqa: F401
     client,
     expired_auth_headers,
 )
-
 
 # ------------------------------------------------------------------
 # Helper

@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from unittest.mock import patch
 
 import pytest
-
 from controllers.guacamole import CRUDGuacamole
 from core.exceptions import (
     BadRequestError,
@@ -19,10 +18,11 @@ from models import (
     SubTask,
     Task,
     Template,
-    VirtualMachine,
     Vendor,
+    VirtualMachine,
 )
 from schemas.guacamole import GuacamoleCreate, GuacamoleUpdate
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -148,7 +148,12 @@ def sample_gcp_template(db_session, system_user):
 
 class TestCRUDGuacamoleCreate:
     def test_create_guacamole(
-        self, db_session, active_user, mock_redis_queues, sample_vm, sample_gcp_vm
+        self,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        sample_vm,
+        sample_gcp_vm,
     ):
         crud = CRUDGuacamole(db=db_session)
         request = create_mock_request(active_user)
@@ -163,7 +168,12 @@ class TestCRUDGuacamoleCreate:
         assert result.connection_profile == sample_gcp_vm.id
 
     def test_create_creates_task_and_subtask(
-        self, db_session, active_user, mock_redis_queues, sample_vm, sample_gcp_vm
+        self,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        sample_vm,
+        sample_gcp_vm,
     ):
         crud = CRUDGuacamole(db=db_session)
         request = create_mock_request(active_user)
@@ -251,7 +261,9 @@ class TestCRUDGuacamoleProvision:
         db_session.flush()
 
         crud = CRUDGuacamole(db=db_session, id=guac.id)
-        with patch("controllers.base.get_system_user", return_value=system_user):
+        with patch(
+            "controllers.base.get_system_user", return_value=system_user
+        ):
             result = crud.provision(db_session, id=guac.id)
         assert result.identifier == 42
 
@@ -281,7 +293,12 @@ class TestCRUDGuacamoleProvision:
 class TestCRUDGuacamoleDelete:
     @patch("controllers.guacamole.guacamole_delete", return_value=True)
     def test_delete_guacamole(
-        self, mock_guac_delete, db_session, active_user, sample_vm, sample_gcp_vm
+        self,
+        mock_guac_delete,
+        db_session,
+        active_user,
+        sample_vm,
+        sample_gcp_vm,
     ):
         now = datetime.now(timezone.utc)
         guac = Guacamole(
@@ -307,7 +324,12 @@ class TestCRUDGuacamoleDelete:
 class TestCRUDGuacamoleUpdateHostname:
     @patch("controllers.guacamole.guacamole_hostname_update", return_value=None)
     def test_update_hostname(
-        self, mock_hostname_update, db_session, active_user, sample_vm, sample_gcp_vm
+        self,
+        mock_hostname_update,
+        db_session,
+        active_user,
+        sample_vm,
+        sample_gcp_vm,
     ):
         now = datetime.now(timezone.utc)
         guac = Guacamole(
@@ -325,7 +347,9 @@ class TestCRUDGuacamoleUpdateHostname:
         db_session.flush()
 
         crud = CRUDGuacamole(db=db_session, id=guac.id)
-        result = crud.update_hostname(db_session, id=guac.id, hostname="10.0.0.200")
+        result = crud.update_hostname(
+            db_session, id=guac.id, hostname="10.0.0.200"
+        )
         assert result.connection_hostname == "10.0.0.200"
 
     def test_update_hostname_not_provisioned_raises(
@@ -352,7 +376,9 @@ class TestCRUDGuacamoleUpdateHostname:
 
 
 class TestCRUDGuacamoleGetByName:
-    def test_get_by_name_found(self, db_session, active_user, sample_vm, sample_gcp_vm):
+    def test_get_by_name_found(
+        self, db_session, active_user, sample_vm, sample_gcp_vm
+    ):
         now = datetime.now(timezone.utc)
         guac = Guacamole(
             id=uuid.uuid4(),
@@ -381,7 +407,9 @@ class TestCRUDGuacamoleGetByName:
 
 
 class TestCRUDGuacamoleUpdate:
-    def test_update_name(self, db_session, active_user, sample_vm, sample_gcp_vm):
+    def test_update_name(
+        self, db_session, active_user, sample_vm, sample_gcp_vm
+    ):
         now = datetime.now(timezone.utc)
         guac = Guacamole(
             id=uuid.uuid4(),
@@ -403,7 +431,9 @@ class TestCRUDGuacamoleUpdate:
         result = crud.update(guac.id, db_session, request, obj_in=obj_in)
         assert result.name == "guac-updated-name"
 
-    def test_update_guacd_port(self, db_session, active_user, sample_vm, sample_gcp_vm):
+    def test_update_guacd_port(
+        self, db_session, active_user, sample_vm, sample_gcp_vm
+    ):
         now = datetime.now(timezone.utc)
         guac = Guacamole(
             id=uuid.uuid4(),

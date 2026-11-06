@@ -118,6 +118,83 @@ Der **Benutzername** kann **nicht nachträglich geändert** werden.
 
 ---
 
+## Benutzer per CSV importieren {#import-users}
+
+Über den **Benutzer-Import** kannst du viele Benutzerkonten in einem Schritt aus einer **CSV-Datei anlegen** – ideal, um zu Beginn einer Schulung eine ganze Teilnehmergruppe als lokale Konten einzurichten.
+
+<NavigationHint
+  path="Zugriffskontrolle → Benutzer → Importieren"
+  alternative="Über den Button „Importieren“ in der Benutzerübersicht"
+/>
+
+Der Import führt dich durch einen **vierstufigen Assistenten**:
+
+1. **Hochladen** – CSV-Datei auswählen.
+2. **Spalten zuordnen** – die Spalten der Datei den erwarteten Feldern zuordnen.
+3. **Vorschau & Import** – Daten prüfen und den Import starten.
+4. **Ergebnis** – Zusammenfassung mit erfolgreichen und fehlerhaften Zeilen.
+
+### Namensformat wählen
+
+Vor dem Zuordnen legst du über einen Umschalter fest, wie der **Name** in deiner Datei aufgebaut ist:
+
+- **Vor- und Nachname getrennt** – zwei Spalten `firstname` und `lastname` (werden beim Import zu einem einzigen Namen zusammengefügt).
+- **Vollständiger Name** – eine einzelne Spalte `fullname`.
+
+OpenVLE speichert intern ohnehin nur **einen** Namen; die Wahl betrifft ausschließlich das Format deiner CSV-Datei. Die zum **Download** angebotene Vorlage passt sich automatisch dem gewählten Format an.
+
+### CSV-Spalten
+
+<FieldReference
+  fields={[
+    {
+      name: 'email',
+      description:
+        'Pflichtfeld. E-Mail-Adresse des Benutzers. Muss ein „@“ enthalten – andernfalls wird die Zeile abgewiesen.',
+    },
+    {
+      name: 'username',
+      description:
+        'Pflichtfeld. Eindeutiger Anmeldename. Kann nach der Anlage nicht mehr geändert werden.',
+    },
+    {
+      name: 'fullname',
+      description:
+        'Nur im Format „Vollständiger Name“. Vollständiger Name des Benutzers in einer einzigen Spalte.',
+    },
+    {
+      name: 'firstname',
+      description:
+        'Nur im Format „Vor- und Nachname getrennt“. Vorname; wird mit `lastname` zum Namen zusammengefügt.',
+    },
+    {
+      name: 'lastname',
+      description:
+        'Nur im Format „Vor- und Nachname getrennt“. Nachname; wird mit `firstname` zum Namen zusammengefügt.',
+    },
+  ]}
+/>
+
+:::note
+In der zum Download angebotenen Vorlage tragen die Spaltenüberschriften die übersetzten Bezeichnungen (z. B. **E-Mail**, **Vorname**, **Nachname**, **Benutzername**) – nicht die hier gezeigten internen Feldnamen.
+:::
+
+### Grenzen und Ergebnis
+
+- Pro Import werden maximal **5000 Zeilen** verarbeitet; zusätzlich gilt eine maximale Dateigröße von **5 MB**.
+- Angelegte Benutzer erhalten den Status **Aktiv** und die Standard-Sprache des Systems.
+- Nach dem Import zeigt die Ergebnisansicht je Zeile an, ob sie erfolgreich angelegt oder mit einem Fehler abgewiesen wurde. Häufige Fehler:
+  - **Ungültige E-Mail** – die Adresse enthält kein „@“.
+  - **Bereits vorhanden** – Benutzername oder E-Mail existieren bereits (die genaue Meldung stammt vom Server).
+
+Der Import erfordert dieselbe Berechtigung wie das manuelle Anlegen eines Benutzers (`users_create`, siehe [Erforderliche Berechtigungen](#erforderliche-berechtigungen)).
+
+:::info Anlegen vs. Hinzufügen
+Der Benutzer-Import **legt neue Benutzerkonten an**. Um **bereits vorhandene** Benutzer einer Veranstaltung hinzuzufügen, nutze stattdessen den [Teilnehmenden-Import](/docs/usage/openvle/events/#import-participants) – dieser legt keine Benutzer an, sondern fügt vorhandene hinzu.
+:::
+
+---
+
 ## Aktivieren oder Deaktivieren eines Benutzers
 
 1. Öffne im Hauptmenü den Bereich **Zugriffskontrolle → Benutzer**.

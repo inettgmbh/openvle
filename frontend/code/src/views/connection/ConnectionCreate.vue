@@ -28,6 +28,7 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import UnsavedChangesModal from '@/components/UnsavedChangesModal.vue'
 import { useConnectionForm } from '@/composables/useConnectionForm'
 import { useUnsavedChanges } from '@/composables/useUnsavedChanges'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -509,6 +510,7 @@ onMounted(async () => {
                 <FormControl
                   v-model="connection.username"
                   :icon="mdiAccountBox"
+                  :maxlength="FIELD_LIMITS.connectionprofile.username"
                   :placeholder="$t('views.connections.form.exampleUsername')"
                   :disabled="currentStep < 3"
                   :validate="validateUsername"
@@ -523,6 +525,7 @@ onMounted(async () => {
                 <FormControl
                   v-model="connection.password"
                   :icon="mdiKey"
+                  :maxlength="FIELD_LIMITS.connectionprofile.password"
                   type="password"
                   placeholder="••••••••"
                   :disabled="currentStep < 3"

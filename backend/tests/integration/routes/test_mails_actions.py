@@ -12,7 +12,9 @@ def sample_mail_action(db_session, system_user):
     """Create a mail action in the test DB."""
     from tests.factories.mail_factory import MailActionFactory
 
-    return MailActionFactory(createdById=system_user.id, updatedById=system_user.id)
+    return MailActionFactory(
+        createdById=system_user.id, updatedById=system_user.id
+    )
 
 
 class TestGetMailActions:
@@ -60,7 +62,9 @@ class TestGetMailActionById:
         data = resp.json()
         assert data["id"] == str(sample_mail_action.id)
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/mailactions/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404

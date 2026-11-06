@@ -1,7 +1,6 @@
 """Factory for Policy model."""
 
 import factory
-
 from models import Policy
 
 from .base import BaseFactory

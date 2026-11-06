@@ -3,10 +3,9 @@
 import re
 import uuid
 
-from pydantic import ValidationError
 import pytest
-
 from core.exceptions import MailSubjectTooLong
+from pydantic import ValidationError
 from schemas.mails_templates import MailTemplateCreate, MailTemplateUpdate
 
 
@@ -115,7 +114,9 @@ class TestSubjectLengthValidation:
 
     def test_subject_placeholder_with_surrounding_text(self):
         """Realistic subject with placeholder fits in budget."""
-        subject = "Deine Veranstaltung {{event.slug}} wurde erfolgreich ausgerollt."
+        subject = (
+            "Deine Veranstaltung {{event.slug}} wurde erfolgreich ausgerollt."
+        )
         remaining = re.sub(r"\{\{\s*event\.slug\s*\}\}", "", subject)
         assert len(remaining) <= 67
         mt = self._make_create(subject)

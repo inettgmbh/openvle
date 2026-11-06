@@ -127,7 +127,9 @@ class TestGetVirtualMachineById:
         assert data["ram"] == sample_vm.ram
         assert data["disk"] == sample_vm.disk
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(
             f"{API}/virtual_machines/{fake_id}",
@@ -140,7 +142,9 @@ class TestGetVirtualMachineById:
         resp = client.get(f"{API}/virtual_machines/{fake_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_vm):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_vm
+    ):
         """Without mock_permission_allow, vms_read is denied."""
         resp = client.get(
             f"{API}/virtual_machines/{sample_vm.id}",
@@ -316,7 +320,9 @@ class TestGetVirtualMachineIpv4:
         resp = client.get(f"{API}/virtual_machines/{fake_id}/ipv4")
         assert resp.status_code in (401, 403)
 
-    def test_ipv4_permission_denied_returns_403(self, client, auth_headers, sample_vm):
+    def test_ipv4_permission_denied_returns_403(
+        self, client, auth_headers, sample_vm
+    ):
         """Without mock_permission_allow, vms_read is denied."""
         resp = client.get(
             f"{API}/virtual_machines/{sample_vm.id}/ipv4",
@@ -345,7 +351,9 @@ class TestVirtualMachineActionClone:
         )
         assert resp.status_code in (401, 403)
 
-    def test_clone_permission_denied_returns_403(self, client, auth_headers, sample_vm):
+    def test_clone_permission_denied_returns_403(
+        self, client, auth_headers, sample_vm
+    ):
         payload = {
             "name": "clone-vm",
             "description": "cloned",
@@ -460,7 +468,9 @@ class TestVirtualMachineActionStop:
         resp = client.post(f"{API}/virtual_machines/{fake_id}/actions/stop")
         assert resp.status_code in (401, 403)
 
-    def test_stop_permission_denied_returns_403(self, client, auth_headers, sample_vm):
+    def test_stop_permission_denied_returns_403(
+        self, client, auth_headers, sample_vm
+    ):
         resp = client.post(
             f"{API}/virtual_machines/{sample_vm.id}/actions/stop",
             headers=auth_headers,
@@ -476,7 +486,9 @@ class TestVirtualMachineActionStart:
         resp = client.post(f"{API}/virtual_machines/{fake_id}/actions/start")
         assert resp.status_code in (401, 403)
 
-    def test_start_permission_denied_returns_403(self, client, auth_headers, sample_vm):
+    def test_start_permission_denied_returns_403(
+        self, client, auth_headers, sample_vm
+    ):
         resp = client.post(
             f"{API}/virtual_machines/{sample_vm.id}/actions/start",
             headers=auth_headers,
@@ -510,7 +522,9 @@ class TestVirtualMachineActionReset:
         resp = client.post(f"{API}/virtual_machines/{fake_id}/actions/reset")
         assert resp.status_code in (401, 403)
 
-    def test_reset_permission_denied_returns_403(self, client, auth_headers, sample_vm):
+    def test_reset_permission_denied_returns_403(
+        self, client, auth_headers, sample_vm
+    ):
         resp = client.post(
             f"{API}/virtual_machines/{sample_vm.id}/actions/reset",
             headers=auth_headers,
@@ -526,7 +540,9 @@ class TestVirtualMachineActionPause:
         resp = client.post(f"{API}/virtual_machines/{fake_id}/actions/pause")
         assert resp.status_code in (401, 403)
 
-    def test_pause_permission_denied_returns_403(self, client, auth_headers, sample_vm):
+    def test_pause_permission_denied_returns_403(
+        self, client, auth_headers, sample_vm
+    ):
         resp = client.post(
             f"{API}/virtual_machines/{sample_vm.id}/actions/pause",
             headers=auth_headers,
@@ -606,7 +622,9 @@ class TestBulkActionStart:
         )
         assert resp.status_code in (401, 403)
 
-    def test_bulk_start_permission_denied_returns_403(self, client, auth_headers):
+    def test_bulk_start_permission_denied_returns_403(
+        self, client, auth_headers
+    ):
         payload = {"vms": [str(uuid.uuid4())]}
         resp = client.post(
             f"{API}/virtual_machines/bulk-actions/start",
@@ -627,7 +645,9 @@ class TestBulkActionStop:
         )
         assert resp.status_code in (401, 403)
 
-    def test_bulk_stop_permission_denied_returns_403(self, client, auth_headers):
+    def test_bulk_stop_permission_denied_returns_403(
+        self, client, auth_headers
+    ):
         payload = {"vms": [str(uuid.uuid4())]}
         resp = client.post(
             f"{API}/virtual_machines/bulk-actions/stop",
@@ -648,7 +668,9 @@ class TestBulkActionPause:
         )
         assert resp.status_code in (401, 403)
 
-    def test_bulk_pause_permission_denied_returns_403(self, client, auth_headers):
+    def test_bulk_pause_permission_denied_returns_403(
+        self, client, auth_headers
+    ):
         payload = {"vms": [str(uuid.uuid4())]}
         resp = client.post(
             f"{API}/virtual_machines/bulk-actions/pause",
@@ -669,7 +691,9 @@ class TestBulkActionReset:
         )
         assert resp.status_code in (401, 403)
 
-    def test_bulk_reset_permission_denied_returns_403(self, client, auth_headers):
+    def test_bulk_reset_permission_denied_returns_403(
+        self, client, auth_headers
+    ):
         payload = {"vms": [str(uuid.uuid4())]}
         resp = client.post(
             f"{API}/virtual_machines/bulk-actions/reset",
@@ -690,7 +714,9 @@ class TestBulkActionReboot:
         )
         assert resp.status_code in (401, 403)
 
-    def test_bulk_reboot_permission_denied_returns_403(self, client, auth_headers):
+    def test_bulk_reboot_permission_denied_returns_403(
+        self, client, auth_headers
+    ):
         payload = {"vms": [str(uuid.uuid4())]}
         resp = client.post(
             f"{API}/virtual_machines/bulk-actions/reboot",
@@ -711,7 +737,9 @@ class TestBulkActionShutdown:
         )
         assert resp.status_code in (401, 403)
 
-    def test_bulk_shutdown_permission_denied_returns_403(self, client, auth_headers):
+    def test_bulk_shutdown_permission_denied_returns_403(
+        self, client, auth_headers
+    ):
         payload = {"vms": [str(uuid.uuid4())]}
         resp = client.post(
             f"{API}/virtual_machines/bulk-actions/shutdown",
@@ -732,7 +760,9 @@ class TestBulkActionResume:
         )
         assert resp.status_code in (401, 403)
 
-    def test_bulk_resume_permission_denied_returns_403(self, client, auth_headers):
+    def test_bulk_resume_permission_denied_returns_403(
+        self, client, auth_headers
+    ):
         payload = {"vms": [str(uuid.uuid4())]}
         resp = client.post(
             f"{API}/virtual_machines/bulk-actions/resume",
@@ -756,7 +786,9 @@ class TestBulkActionHaAdd:
         )
         assert resp.status_code in (401, 403)
 
-    def test_bulk_ha_add_permission_denied_returns_403(self, client, auth_headers):
+    def test_bulk_ha_add_permission_denied_returns_403(
+        self, client, auth_headers
+    ):
         payload = {
             "vms": [str(uuid.uuid4())],
             "ha_state": "started",
@@ -780,7 +812,9 @@ class TestBulkActionHaRemove:
         )
         assert resp.status_code in (401, 403)
 
-    def test_bulk_ha_remove_permission_denied_returns_403(self, client, auth_headers):
+    def test_bulk_ha_remove_permission_denied_returns_403(
+        self, client, auth_headers
+    ):
         payload = {"vms": [str(uuid.uuid4())]}
         resp = client.delete(
             f"{API}/virtual_machines/bulk-actions/ha",
@@ -804,7 +838,9 @@ class TestBulkActionMigrate:
         )
         assert resp.status_code in (401, 403)
 
-    def test_bulk_migrate_permission_denied_returns_403(self, client, auth_headers):
+    def test_bulk_migrate_permission_denied_returns_403(
+        self, client, auth_headers
+    ):
         payload = {
             "vms": [str(uuid.uuid4())],
             "targetNode": "pve1",

@@ -4,7 +4,6 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from controllers.system import CRUDSystemSetting
 from core.exceptions import InvalidFieldValue, ProtectedObjectError
 from models import SystemSetting as SystemSettingModel
@@ -13,6 +12,7 @@ from schemas.system import (
     SystemSettingValueType,
     SystemSettingVisibility,
 )
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -99,22 +99,32 @@ class TestCRUDSystemSettingUpdate:
     def test_update_value(self, db_session, active_user, public_setting):
         request = create_mock_request(active_user)
         obj_in = SystemSettingUpdate(value="NewAppName")
-        result = self.crud.update(public_setting.id, db_session, request, obj_in=obj_in)
+        result = self.crud.update(
+            public_setting.id, db_session, request, obj_in=obj_in
+        )
         assert result.value == "NewAppName"
 
-    def test_update_prevents_type_change(self, db_session, active_user, auth_setting):
+    def test_update_prevents_type_change(
+        self, db_session, active_user, auth_setting
+    ):
         """Updating a string value with a dict should raise."""
         request = create_mock_request(active_user)
         obj_in = SystemSettingUpdate(value={"nested": "object"})
         with pytest.raises(InvalidFieldValue):
-            self.crud.update(auth_setting.id, db_session, request, obj_in=obj_in)
+            self.crud.update(
+                auth_setting.id, db_session, request, obj_in=obj_in
+            )
 
-    def test_update_internal_raises(self, db_session, active_user, internal_setting):
+    def test_update_internal_raises(
+        self, db_session, active_user, internal_setting
+    ):
         """Internal settings cannot be updated."""
         request = create_mock_request(active_user)
         obj_in = SystemSettingUpdate(value="hacked")
         with pytest.raises(ProtectedObjectError):
-            self.crud.update(internal_setting.id, db_session, request, obj_in=obj_in)
+            self.crud.update(
+                internal_setting.id, db_session, request, obj_in=obj_in
+            )
 
 
 class TestGetMultiVisibility:
@@ -132,7 +142,12 @@ class TestGetMultiVisibility:
         assert "app.auth.timeout" not in keys
 
     def test_filters_public_and_authenticated(
-        self, db_session, system_user, public_setting, auth_setting, internal_setting
+        self,
+        db_session,
+        system_user,
+        public_setting,
+        auth_setting,
+        internal_setting,
     ):
         result = self.crud.get_multi_visibility(
             db_session,
@@ -160,7 +175,12 @@ class TestGetFiltered:
         assert "app.auth.timeout" not in keys
 
     def test_authenticated_sees_public_and_auth(
-        self, db_session, active_user, public_setting, auth_setting, internal_setting
+        self,
+        db_session,
+        active_user,
+        public_setting,
+        auth_setting,
+        internal_setting,
     ):
         result = self.crud.get_filtered(
             db_session, current_user=active_user, permissionSet=False
@@ -206,7 +226,10 @@ class TestHelpers:
         assert self.crud._json_type(None) == SystemSettingValueType.null
 
     def test_json_type_object(self):
-        assert self.crud._json_type('{"key": "val"}') == SystemSettingValueType.object
+        assert (
+            self.crud._json_type('{"key": "val"}')
+            == SystemSettingValueType.object
+        )
 
     def test_json_type_array(self):
         assert self.crud._json_type("[1, 2]") == SystemSettingValueType.array
@@ -254,7 +277,7 @@ class TestNormalizeResult:
         """When items key is missing, rows should default to empty list."""
         result_dict = {"pageDetails": {"totalCount": 0}}
 
-        pd, rows = self.crud._normalize_result(result_dict)
+        _pd, rows = self.crud._normalize_result(result_dict)
         assert rows == []
 
     def test_normalize_dict_without_page_details(self):
@@ -298,7 +321,7 @@ class TestNormalizeResult:
                 self.items = None
 
         result_obj = NoneItemsResult()
-        pd, rows = self.crud._normalize_result(result_obj)
+        _pd, rows = self.crud._normalize_result(result_obj)
         assert rows == []
 
 

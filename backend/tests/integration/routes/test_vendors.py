@@ -78,7 +78,9 @@ class TestCreateVendor:
         self, client, auth_headers, mock_permission_allow
     ):
         payload = {"name": "New Vendor", "description": "Brand new vendor"}
-        resp = client.post(f"{API}/vendors/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/vendors/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 201
         data = resp.json()
         assert data["name"] == "New Vendor"
@@ -90,10 +92,14 @@ class TestCreateVendor:
         resp = client.post(f"{API}/vendors/", json=payload)
         assert resp.status_code in (401, 403)
 
-    def test_create_vendor_permission_denied_returns_403(self, client, auth_headers):
+    def test_create_vendor_permission_denied_returns_403(
+        self, client, auth_headers
+    ):
         """Without mock_permission_allow, vendors_create is denied."""
         payload = {"name": "Denied Vendor", "description": "desc"}
-        resp = client.post(f"{API}/vendors/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/vendors/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 403
 
 
@@ -133,13 +139,17 @@ class TestGetVendorById:
     def test_returns_vendor(
         self, client, auth_headers, mock_permission_allow, sample_vendor
     ):
-        resp = client.get(f"{API}/vendors/{sample_vendor.id}", headers=auth_headers)
+        resp = client.get(
+            f"{API}/vendors/{sample_vendor.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["id"] == str(sample_vendor.id)
         assert data["name"] == sample_vendor.name
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/vendors/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404
@@ -149,9 +159,13 @@ class TestGetVendorById:
         resp = client.get(f"{API}/vendors/{fake_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_vendor):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_vendor
+    ):
         """Without mock_permission_allow, vendors_read is denied."""
-        resp = client.get(f"{API}/vendors/{sample_vendor.id}", headers=auth_headers)
+        resp = client.get(
+            f"{API}/vendors/{sample_vendor.id}", headers=auth_headers
+        )
         assert resp.status_code == 403
 
 
@@ -202,7 +216,9 @@ class TestDeleteVendor:
     def test_delete_vendor_returns_200(
         self, client, auth_headers, mock_permission_allow, sample_vendor
     ):
-        resp = client.delete(f"{API}/vendors/{sample_vendor.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/vendors/{sample_vendor.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
 
     def test_delete_not_found_returns_404(

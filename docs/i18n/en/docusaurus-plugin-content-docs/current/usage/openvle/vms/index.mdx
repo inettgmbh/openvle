@@ -46,6 +46,7 @@ Each VM is centrally managed and can be accessed directly in the browser via a G
     'Access via integrated Guacamole connections (RDP, SSH)',
     'Reset to the initial state of the template',
     'View resource information such as CPU, RAM, or storage usage',
+    'Manage high availability (HA) via the Proxmox HA manager',
   ]}
 />
 
@@ -101,6 +102,11 @@ Each VM is centrally managed and can be accessed directly in the browser via a G
       name: 'Status',
       description:
         'Current operational state of the VM. Possible values are: `running`, `stopped`, `cloning`, `starting`, `stopping`, `deleting`. The status is controlled by actions (start, stop, clone, delete) or automatic processes.',
+    },
+    {
+      name: 'HA state',
+      description:
+        'Current high-availability state of the VM on Proxmox (e.g., "Started", "Stopped", "Not enabled"). Shown as a tile in the detail view and queried live once when the view is opened. Only visible when the VM already exists on Proxmox.',
     },
   ]}
 />
@@ -175,11 +181,30 @@ Various actions are available in the context menu of a VM to control the current
 4. **Stop** — Terminates the VM immediately without a regular shutdown (equivalent to a hard power-off).
 5. **Reset** — Performs an immediate reboot, comparable to pressing the reset button on a physical machine.
 6. **Refresh IP** — Updates the IP address stored in OpenVLE for the VM, in case it has changed or is no longer current.
+7. **Configure HA** — Opens the dialog for managing the VM's [high availability (HA)](#ha).
 
 :::warning
 Some actions — such as **Stop** or **Reset** — directly access the virtualization environment and can lead to data loss if there are unsaved changes in the VM.  
 These actions should only be performed when a regular shutdown or reboot is not possible.
 :::
+
+---
+
+## High Availability (HA) {#ha}
+
+The **Configure HA** action in the detail view controls the high availability of a VM. While HA is enabled, the Proxmox HA manager monitors the VM and automatically restarts it or relocates it to another node after a node failure.
+
+The dialog offers the following settings:
+
+- **High availability enabled** — Toggle that enables or disables HA management for the VM. Switching it off for a managed VM and confirming removes the HA configuration.
+- **Requested state** — `Started`: the VM runs and is restarted automatically after a node failure. `Stopped`: the VM stays powered off but remains managed by HA.
+- **Max. restarts / Max. relocations** — Defines how often the VM is restarted on the current node or relocated to another node in case of failure (0–20).
+
+:::warning
+If the requested state of a running VM is set to **Stopped**, the HA manager stops the VM right after confirming.
+:::
+
+Changes to the HA configuration are executed as a background job and can be tracked in the VM's **Tasks** tab. The HA state tile updates automatically once the change has been applied.
 
 ---
 
@@ -301,6 +326,11 @@ These actions should only be performed when a regular shutdown or reboot is not 
       scoped: true,
     },
     { action: 'VM action: Stop', permission: 'vms_actions_stop', scoped: true },
+    {
+      action: 'Configure / remove HA',
+      permission: 'vms_update',
+      scoped: true,
+    },
     { action: 'View VM templates', permission: 'templates_read' },
   ]}
 />

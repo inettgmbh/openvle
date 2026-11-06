@@ -1,6 +1,6 @@
 <script setup>
 import { mdiPlus, mdiSchoolOutline } from '@mdi/js'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
@@ -40,7 +40,6 @@ const {
   handlePaginationChanged,
   handleSortOrderChanged,
   handleSearch,
-  handleDeleteObject,
   initialFetch,
 } = usePaginationList({
   initialPage: 1,
@@ -78,7 +77,48 @@ async function fetchObjects() {
   }
 }
 
+const BLOCKING_EVENTS_LIMIT = 5
+const blockingEvents = ref([])
+const blockingEventsTotal = ref(0)
+
+async function openDeleteModal(object) {
+  objToRemove.value = object
+  blockingEvents.value = []
+  blockingEventsTotal.value = 0
+  backend.beginSilent()
+  try {
+    const result = await backend.events.list({
+      page: 1,
+      limit: BLOCKING_EVENTS_LIMIT,
+      search_field: 'course',
+      search_value: object.id,
+    })
+    blockingEvents.value = result?.items ?? []
+    blockingEventsTotal.value =
+      result?.pageDetails?.totalCount ?? blockingEvents.value.length
+  } catch {
+    // Fail open: without the pre-check the backend 409 still blocks the delete
+  } finally {
+    backend.endSilent()
+  }
+  modals.deleteObject.value = true
+}
+
+const blockingEventItems = computed(() => {
+  const items = blockingEvents.value.map((event) => ({
+    label: event.name ?? event.id,
+  }))
+  const more = blockingEventsTotal.value - blockingEvents.value.length
+  if (more > 0) {
+    items.push({
+      label: t('views.courses.delete.moreEvents', { count: more }, more),
+    })
+  }
+  return items
+})
+
 async function deleteObject(id) {
+  backend.beginSilent()
   try {
     await backend.courses.delete(id)
     fetchObjects()
@@ -86,9 +126,20 @@ async function deleteObject(id) {
       t('common.deleteSuccess', { entity: t('objectTypes.course.singular') }),
     )
   } catch (error) {
-    toast.error(
-      t('common.deleteError', { entity: t('objectTypes.course.singular') }),
-    )
+    const errorCode = error?.response?.data?.error_code
+    if (
+      errorCode === 'OBJECT_IN_USE' ||
+      errorCode === 'OBJECT_DELETE_INTEGRITY_ERROR'
+    ) {
+      toast.error(t('views.courses.delete.blockedError'), { timeout: 8400 })
+    } else {
+      const detail = String(error?.response?.data?.detail || '')
+      toast.error(
+        `${t('common.deleteError', { entity: t('objectTypes.course.singular') })}${detail ? '\n' + detail : ''}`,
+      )
+    }
+  } finally {
+    backend.endSilent()
   }
 }
 
@@ -113,6 +164,22 @@ onMounted(async () => {
       v-model="modals.deleteObject.value"
       :name="objToRemove.name"
       :checkvalue="objToRemove.name"
+      :blocked="blockingEventsTotal > 0"
+      :info="
+        blockingEventsTotal > 0 ? null : $t('views.courses.delete.cascadeInfo')
+      "
+      :warning="
+        blockingEventsTotal > 0
+          ? $t(
+              'views.courses.delete.relatedWarning',
+              { count: blockingEventsTotal },
+              blockingEventsTotal,
+            )
+          : null
+      "
+      :related-items="blockingEventItems"
+      :related-label="$t('views.courses.delete.relatedLabel')"
+      :related-count="blockingEventsTotal"
       @form-submitted="deleteObject(objToRemove.id)"
     />
 
@@ -162,7 +229,7 @@ onMounted(async () => {
             },
           ]"
           @search-triggered="handleSearch"
-          @delete-object="handleDeleteObject"
+          @delete-object="openDeleteModal"
           @sort-order-changed="handleSortOrderChanged"
           @pagination-changed="handlePaginationChanged"
         />

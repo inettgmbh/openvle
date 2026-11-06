@@ -16,6 +16,7 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import UnsavedChangesModal from '@/components/UnsavedChangesModal.vue'
 import VendorCreateModal from '@/components/VendorCreateModal.vue'
 import { useUnsavedChanges } from '@/composables/useUnsavedChanges'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -120,6 +121,7 @@ onMounted(async () => {
           <FormControl
             v-model="application.name"
             :icon="mdiRename"
+            :maxlength="FIELD_LIMITS.application.name"
             :autofocus="true"
             :placeholder="$t('views.applications.form.namePlaceholder')"
             required
@@ -158,7 +160,11 @@ onMounted(async () => {
           :label="$t('common.description')"
           :help="$t('views.applications.form.descriptionHelp')"
         >
-          <FormControl v-model="application.description" :icon="mdiTextBox" />
+          <FormControl
+            v-model="application.description"
+            :icon="mdiTextBox"
+            :maxlength="FIELD_LIMITS.application.description"
+          />
         </FormField>
 
         <template #footer>

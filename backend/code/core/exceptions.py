@@ -333,8 +333,41 @@ class ObjectDeleteIntegrityError(HTTPException):
     def __init__(self, model_name: str):
         self.status_code = 409
         self.detail = _(
-            "Could not delete {model_name} object as it the subject of 1 or more relations."
+            "Could not delete {model_name} object as it is the subject of 1 or more relations."
         ).format(model_name=model_name)
+
+
+# Exception: Object cannot be deleted while other objects still reference it
+class ObjectInUseError(HTTPException):
+    error_code = "OBJECT_IN_USE"
+
+    def __init__(
+        self,
+        model_name: str,
+        references: dict[str, int] | None = None,
+        detail: str | None = None,
+    ):
+        self.status_code = 409
+        references = references or {}
+        if detail is not None:
+            self.detail = detail
+        elif len(references) == 1:
+            dependent_model_name, count = next(iter(references.items()))
+            self.detail = _(
+                "Cannot delete {model_name} because {count} {dependent_model_name} object(s) still reference it."
+            ).format(
+                model_name=model_name,
+                dependent_model_name=dependent_model_name,
+                count=count,
+            )
+        else:
+            formatted_references = ", ".join(
+                f"{count} {dependent_model_name}"
+                for dependent_model_name, count in references.items()
+            )
+            self.detail = _(
+                "Cannot delete {model_name} because it is still referenced by: {references}."
+            ).format(model_name=model_name, references=formatted_references)
 
 
 # Exception: Required parameter not provided

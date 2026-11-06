@@ -3,13 +3,14 @@ from fastapi import APIRouter, Depends
 from controllers.changelog import *
 from core import dependencies
 from core.exceptions import PermissionDenied
+from core.responses import BASE_RESPONSES, READ_RESPONSES, build_description
 from models import Changelog as ChangelogModel, object_type_map
 from schemas.changelog import *
 
 router = APIRouter(
     prefix="/changelogs",
     tags=["changelogs"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -21,6 +22,10 @@ router = APIRouter(
     operation_id="changelogs_read_all",
     summary="Get Changelogs",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a paginated list of changelog entries filtered to objects the requesting user has access to.",
+        permission="changelogs_read",
+    ),
 )
 def get_changelogs(
     request: Request,
@@ -55,8 +60,16 @@ def get_changelogs(
     status_code=200,
     response_model=Changelog,
     operation_id="changelogs_read_one",
+    responses=READ_RESPONSES,
     summary="Get Changelog",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a single changelog entry by ID.",
+        permission="changelogs_read",
+        notes=[
+            "Access is additionally gated by the requesting user's read permission on the referenced object.",
+        ],
+    ),
 )
 def get_changelog(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -91,8 +104,13 @@ def get_changelog(
     status_code=200,
     response_model=ChangelogList,
     operation_id="changelog_object_read_all",
+    responses=READ_RESPONSES,
     summary="Get Changelogs for objectId",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all changelog entries for a specific object.",
+        permission="changelogs_read",
+    ),
 )
 def get_changelogs_for_objectId(
     request: Request,

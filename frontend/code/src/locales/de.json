@@ -43,6 +43,7 @@
     "label": "Label",
     "loading": "Laden...",
     "manual": "Manuell",
+    "maxChars": "Maximal {max} Zeichen",
     "memory": "Arbeitsspeicher",
     "name": "Name",
     "next": "Weiter",
@@ -146,7 +147,6 @@
       "addTag": "Tag hinzufügen",
       "tagExample": "fachbereich: 3",
       "formatHelp": "Vorschau",
-      "maxChars": "Maximal {max} Zeichen",
       "nameRequired": "Tag Name wird benötigt",
       "preview": "Vorschau",
       "tagAdded": "Tag hinzugefügt",
@@ -254,6 +254,7 @@
     "deleteModal": {
       "confirmAction": "Aktion bestätigen",
       "confirmPrompt": "Zur Bestätigung bitte eingeben:",
+      "tooltipBlocked": "Löschen nicht möglich, solange zugeordnete Objekte existieren",
       "tooltipBothMissing": "Bestätigungstext eingeben und Zusatzbestätigung aktivieren",
       "tooltipExtraMissing": "Zusatzbestätigung oberhalb aktivieren",
       "tooltipNameMissing": "Bestätigungstext eingeben um zu löschen",
@@ -1261,6 +1262,13 @@
       }
     },
     "courses": {
+      "delete": {
+        "blockedError": "Die Umgebung kann nicht gelöscht werden, da ihr noch Veranstaltungen zugeordnet sind. Bitte löschen Sie zuerst die zugehörigen Veranstaltungen.",
+        "cascadeInfo": "Mit der Umgebung werden auch ihre Changelogs, objektbezogenen Berechtigungen und Tags automatisch gelöscht. Zugeordnete VM-Vorlagen bleiben erhalten, nur die Zuordnung wird entfernt.",
+        "moreEvents": "… und eine weitere Veranstaltung | … und {count} weitere Veranstaltungen",
+        "relatedLabel": "Zugeordnete Veranstaltungen:",
+        "relatedWarning": "Dieser Umgebung ist noch eine Veranstaltung zugeordnet. Solange diese existiert, kann die Umgebung nicht gelöscht werden. | Dieser Umgebung sind noch {count} Veranstaltungen zugeordnet. Solange diese existieren, kann die Umgebung nicht gelöscht werden."
+      },
       "detail": {
         "assignTemplate": "VM Vorlage hinzufügen",
         "cloneNameLabel": "Name der neuen Umgebung",
@@ -1309,6 +1317,12 @@
       "create": {
         "errorDuplicate": "Dieser Name oder Slug ist bereits vergeben. Bitte wähle einen anderen aus.",
         "errorInvalidSlug": "Kurzname (Slug) ungültig. Erlaubt sind 4–8 Zeichen (a-z, 0-9, -, _)"
+      },
+      "delete": {
+        "blockedError": "Die Veranstaltung kann nicht gelöscht werden, da ihr noch VMs zugewiesen sind. Bitte dekommissionieren Sie diese zuerst.",
+        "moreVms": "… und eine weitere VM | … und {count} weitere VMs",
+        "relatedLabel": "Zugewiesene VMs:",
+        "relatedWarning": "Der Veranstaltung ist noch eine VM zugewiesen. Solange diese existiert, kann die Veranstaltung nicht gelöscht werden. | Der Veranstaltung sind noch {count} VMs zugewiesen. Solange diese existieren, kann die Veranstaltung nicht gelöscht werden."
       },
       "detail": {
         "actions": {
@@ -1902,6 +1916,12 @@
         "vmMustBeStopped": "VM-Vorlagen können nur aus virtuellen Maschinen erstellt werden, die derzeit ausgeschaltet sind. Bitte zuerst die VM herunterfahren / stoppen.",
         "vmNotStopped": "Die Quell-VM befindet sich nicht im Status \"Stopped\" (aktueller Status: {status})."
       },
+      "delete": {
+        "blockedError": "Die VM-Vorlage kann nicht gelöscht werden, da sie noch verwendet wird (VMs, Umgebungen oder Veranstaltungen). Bitte entfernen Sie zuerst die Verknüpfungen.",
+        "moreItems": "… und ein weiteres Objekt | … und {count} weitere Objekte",
+        "relatedLabel": "Verknüpfte Objekte:",
+        "relatedWarning": "Diese VM-Vorlage wird noch von einem Objekt verwendet. Solange dieses existiert, kann die Vorlage nicht gelöscht werden. | Diese VM-Vorlage wird noch von {count} Objekten verwendet. Solange diese existieren, kann die Vorlage nicht gelöscht werden."
+      },
       "detail": {
         "applicationAdded": "Anwendung hinzugefügt",
         "applicationRemoved": "Anwendung aus VM Vorlage wurde entfernt",
@@ -2042,8 +2062,13 @@
       "import": {
         "email": "E-Mail",
         "firstname": "Vorname",
+        "fullname": "Vollständiger Name",
         "invalidEmail": "Ungültige E-Mail",
         "lastname": "Nachname",
+        "nameFormat": "Name-Format",
+        "nameFormatFull": "Vollständiger Name",
+        "nameFormatHint": "Lege fest, ob deine CSV den Namen in einer Spalte („Vollständiger Name“) oder getrennt als Vor- und Nachname enthält. Ein Wechsel setzt einen bereits begonnenen Import zurück.",
+        "nameFormatSplit": "Vor- und Nachname getrennt",
         "unknownError": "Unbekannter Fehler",
         "username": "Benutzername"
       },
@@ -2127,6 +2152,49 @@
         "customChart": "Benutzerdefinierter Graph",
         "disk": "Festplatte",
         "event": "Veranstaltung",
+        "ha": {
+          "actions": {
+            "configure": "HA konfigurieren",
+            "configureTooltip": "Hochverfügbarkeit (High Availability) für diese VM auf Proxmox konfigurieren",
+            "noProxmoxTooltip": "VM ist (noch) nicht auf Proxmox vorhanden"
+          },
+          "applyError": "HA-Konfiguration für {name} konnte nicht angewendet werden",
+          "applySuccess": "HA-Konfiguration für {name} wird angewendet",
+          "fetchError": "HA-Status konnte nicht abgerufen werden, Aktion abgebrochen",
+          "modal": {
+            "enabledHelp": "Automatische Wiederherstellung der VM bei einem Node-Ausfall",
+            "enabledLabel": "Hochverfügbarkeit aktiv",
+            "limitTooltip": "Erlaubte Werte: {min} bis {max}",
+            "maxRelocateHelp": "Verschiebungen auf andere Nodes im Fehlerfall (max_relocate)",
+            "maxRelocateLabel": "Max. Verschiebungen",
+            "maxRestartHelp": "Neustart-Versuche im Fehlerfall (max_restart)",
+            "maxRestartLabel": "Max. Neustarts",
+            "removeWarning": "Die HA-Konfiguration wird beim Bestätigen entfernt. Die VM wird bei einem Node-Ausfall nicht mehr automatisch neu gestartet.",
+            "stateHelp": "Gewünschter Zielzustand der VM unter HA-Verwaltung",
+            "stateLabel": "Angeforderter Status",
+            "stateTooltip": "Gestartet: Die VM läuft und wird bei einem Node-Ausfall automatisch neu gestartet. Gestoppt: Die VM bleibt ausgeschaltet, wird aber weiterhin von HA verwaltet.",
+            "stopWarning": "Die VM läuft aktuell und wird beim Bestätigen direkt gestoppt."
+          },
+          "removeError": "HA-Konfiguration für {name} konnte nicht entfernt werden",
+          "removeSuccess": "HA-Konfiguration für {name} wird entfernt",
+          "specLabel": "HA-Status",
+          "states": {
+            "disabled": "Deaktiviert",
+            "error": "Fehler",
+            "fence": "Fencing (Isolierung)",
+            "freeze": "Eingefroren",
+            "ignored": "Nicht aktiviert",
+            "migrate": "Migration",
+            "queued": "In Warteschlange",
+            "recovery": "Wiederherstellung",
+            "relocate": "Verschiebung",
+            "request_start": "Start angefordert",
+            "request_stop": "Stopp angefordert",
+            "started": "Gestartet",
+            "stopped": "Gestoppt",
+            "unknown": "Unbekannt"
+          }
+        },
         "ipv4Address": "IPv4 Adresse",
         "ipv4UpdateError": "IPv4 konnte nicht aktualisiert werden",
         "ipv4UpdateSuccess": "IPv4 aktualisiert",

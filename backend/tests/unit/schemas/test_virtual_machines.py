@@ -3,7 +3,6 @@
 import uuid
 
 import pytest
-
 from core.exceptions import InvalidFieldValue
 from schemas.virtual_machines import (
     VirtualMachineBulkHaAdd,
@@ -180,7 +179,9 @@ class TestVirtualMachineBulkMigrate:
             VirtualMachineBulkMigrate()
 
     def test_valid_bulk_migrate(self):
-        m = VirtualMachineBulkMigrate(targetNode="pve-node-02", vms=[uuid.uuid4()])
+        m = VirtualMachineBulkMigrate(
+            targetNode="pve-node-02", vms=[uuid.uuid4()]
+        )
         assert m.targetNode == "pve-node-02"
 
 

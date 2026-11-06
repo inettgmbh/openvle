@@ -4,7 +4,6 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from controllers.roles import CRUDRole
 from core.exceptions import (
     ObjectNotFound,
@@ -19,6 +18,7 @@ from schemas.roles import (
     RoleCreate,
     RoleUpdateObjectPermissions,
 )
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -75,7 +75,9 @@ class TestCRUDRoleCreate:
 
     def test_create_role(self, db_session, active_user):
         request = create_mock_request(active_user)
-        obj_in = RoleCreate(name="New Role", key="new_role", description="A new role")
+        obj_in = RoleCreate(
+            name="New Role", key="new_role", description="A new role"
+        )
         result = self.crud.create(db_session, request, obj_in=obj_in)
         assert result.name == "New Role"
         assert result.key == "new_role"
@@ -101,7 +103,9 @@ class TestCRUDRoleGetMembers:
         # System user should be excluded
         assert system_user.id not in user_ids
 
-    def test_returns_empty_when_no_members(self, db_session, system_user, normal_role):
+    def test_returns_empty_when_no_members(
+        self, db_session, system_user, normal_role
+    ):
         result = self.crud.get_members(db_session, id=normal_role.id)
         assert len(result["items"]) == 0
 
@@ -132,7 +136,9 @@ class TestCRUDRoleDelete:
         with pytest.raises(ProtectedObjectError):
             self.crud.delete(db_session, id=protected_role.id)
 
-    def test_delete_cascades_changelogs(self, db_session, system_user, normal_role):
+    def test_delete_cascades_changelogs(
+        self, db_session, system_user, normal_role
+    ):
         cl = Changelog(
             id=uuid.uuid4(),
             timestamp=datetime.now(timezone.utc),
@@ -219,12 +225,16 @@ class TestCRUDRoleSetObjectPermissions:
 
         request = create_mock_request(active_user)
         # First set perm_1
-        obj_in_1 = RoleUpdateObjectPermissions(object_permissions=[obj_perm_1.id])
+        obj_in_1 = RoleUpdateObjectPermissions(
+            object_permissions=[obj_perm_1.id]
+        )
         self.crud.set_object_permissions(
             normal_role.id, db_session, request, obj_in=obj_in_1
         )
         # Then replace with perm_2
-        obj_in_2 = RoleUpdateObjectPermissions(object_permissions=[obj_perm_2.id])
+        obj_in_2 = RoleUpdateObjectPermissions(
+            object_permissions=[obj_perm_2.id]
+        )
         result = self.crud.set_object_permissions(
             normal_role.id, db_session, request, obj_in=obj_in_2
         )
@@ -305,12 +315,16 @@ class TestCRUDRoleUpdateObjectPermissions:
 
         request = create_mock_request(active_user)
         # First set perm_1
-        obj_in_1 = RoleUpdateObjectPermissions(object_permissions=[obj_perm_1.id])
+        obj_in_1 = RoleUpdateObjectPermissions(
+            object_permissions=[obj_perm_1.id]
+        )
         self.crud.set_object_permissions(
             normal_role.id, db_session, request, obj_in=obj_in_1
         )
         # Then update (append) perm_2
-        obj_in_2 = RoleUpdateObjectPermissions(object_permissions=[obj_perm_2.id])
+        obj_in_2 = RoleUpdateObjectPermissions(
+            object_permissions=[obj_perm_2.id]
+        )
         result = self.crud.update_object_permissions(
             normal_role.id, db_session, request, obj_in=obj_in_2
         )
@@ -384,7 +398,9 @@ class TestCRUDRoleUpdateObjectPermissions:
         db_session.flush()
 
         request = create_mock_request(active_user)
-        obj_in_setup = RoleUpdateObjectPermissions(object_permissions=[valid_perm.id])
+        obj_in_setup = RoleUpdateObjectPermissions(
+            object_permissions=[valid_perm.id]
+        )
         self.crud.set_object_permissions(
             normal_role.id, db_session, request, obj_in=obj_in_setup
         )

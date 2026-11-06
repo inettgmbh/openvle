@@ -5,12 +5,12 @@ from datetime import date, datetime, timedelta, timezone
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from controllers.events import CRUDEvent
 from core.exceptions import (
     BadRequestError,
     DuplicateEventUserRoleError,
     InvalidStatusError,
+    ObjectInUseError,
     ObjectNotFound,
     OperationDependencyMissing,
 )
@@ -35,6 +35,7 @@ from schemas.events import (
     EventVirtualMachinesHaAdd,
 )
 from schemas.events_user import EventsUserCreate
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -42,7 +43,9 @@ class TestCRUDEventCreate:
     def setup_method(self):
         self.crud = CRUDEvent(Event)
 
-    def test_create_event(self, db_session, active_user, event_statuses, sample_course):
+    def test_create_event(
+        self, db_session, active_user, event_statuses, sample_course
+    ):
         request = create_mock_request(active_user)
         obj_in = EventCreate(
             name="Test Event 001",
@@ -439,7 +442,9 @@ class TestCRUDEventActionsStart:
             with_teacher=True,
             with_student=False,
         )
-        db_session.query(RoleModel).filter(RoleModel.key == "studierende").delete()
+        db_session.query(RoleModel).filter(
+            RoleModel.key == "studierende"
+        ).delete()
         db_session.flush()
 
         request = create_mock_request(active_user)
@@ -467,7 +472,9 @@ class TestCRUDEventActionsStart:
             role_teacher,
             role_student,
         )
-        db_session.query(EventStatus).filter(EventStatus.name == "Deploying").delete()
+        db_session.query(EventStatus).filter(
+            EventStatus.name == "Deploying"
+        ).delete()
         db_session.flush()
 
         request = create_mock_request(active_user)
@@ -572,7 +579,9 @@ class TestCRUDEventActionsEnd:
         db_session.add(event)
         db_session.flush()
 
-        db_session.query(EventStatus).filter(EventStatus.name == "Archiving").delete()
+        db_session.query(EventStatus).filter(
+            EventStatus.name == "Archiving"
+        ).delete()
         db_session.flush()
 
         request = create_mock_request(active_user)
@@ -704,6 +713,54 @@ class TestCRUDEventDelete:
         result = db_session.get(Event, event_id)
         assert result is None
 
+    def test_delete_blocked_when_vms_assigned(
+        self,
+        db_session,
+        active_user,
+        event_statuses,
+        sample_course,
+        role_teacher,
+    ):
+        now = datetime.now(timezone.utc)
+        event = Event(
+            id=uuid.uuid4(),
+            name="Del VMs",
+            slug="delv",
+            description="T",
+            dateStart=date.today(),
+            dateEnd=date.today() + timedelta(days=7),
+            guacamole=False,
+            status=event_statuses["Geplant"].id,
+            course=sample_course.id,
+            createdAt=now,
+            updatedAt=now,
+            createdById=active_user.id,
+            updatedById=active_user.id,
+        )
+        db_session.add(event)
+        db_session.flush()
+        vm = VirtualMachine(
+            id=uuid.uuid4(),
+            name="vm-using-event",
+            status="running",
+            proxmoxId=301,
+            cpu=2,
+            ram=4096,
+            disk=32,
+            event=event.id,
+            createdAt=now,
+            updatedAt=now,
+            createdById=active_user.id,
+            updatedById=active_user.id,
+        )
+        db_session.add(vm)
+        db_session.flush()
+
+        with pytest.raises(ObjectInUseError):
+            self.crud.delete(db_session, id=event.id)
+        # The event must still exist after the rejected delete
+        assert db_session.get(Event, event.id) is not None
+
     def test_delete_blocked_when_aktiv(
         self,
         db_session,
@@ -755,9 +812,13 @@ class TestCRUDEventDelete:
         now = datetime.now(timezone.utc)
 
         # Use the seeded MailAction + MailTemplate for "events_delete".
-        mail_action = db_session.query(MailAction).filter_by(slug="events_delete").one()
+        mail_action = (
+            db_session.query(MailAction).filter_by(slug="events_delete").one()
+        )
         mail_template = (
-            db_session.query(MailTemplate).filter_by(mail_action=mail_action.id).first()
+            db_session.query(MailTemplate)
+            .filter_by(mail_action=mail_action.id)
+            .first()
         )
 
         # Create an event
@@ -819,7 +880,8 @@ class TestCRUDEventDelete:
         # Should succeed without IntegrityError
         result = self.crud.delete(db_session, id=event_id)
         assert (
-            "deleted" in result["detail"].lower() or str(event_id) in result["detail"]
+            "deleted" in result["detail"].lower()
+            or str(event_id) in result["detail"]
         )
 
         # Event must be gone
@@ -848,9 +910,13 @@ class TestCRUDEventDelete:
         now = datetime.now(timezone.utc)
 
         # Use seeded MailAction + MailTemplate for "events_delete"
-        mail_action = db_session.query(MailAction).filter_by(slug="events_delete").one()
+        mail_action = (
+            db_session.query(MailAction).filter_by(slug="events_delete").one()
+        )
         mail_template = (
-            db_session.query(MailTemplate).filter_by(mail_action=mail_action.id).first()
+            db_session.query(MailTemplate)
+            .filter_by(mail_action=mail_action.id)
+            .first()
         )
 
         event = Event(
@@ -1058,7 +1124,9 @@ class TestCRUDEventUpdateEndDatetime:
             timeEnd="18:00:00",
         )
         with pytest.raises(InvalidStatusError):
-            self.crud.update_end_datetime(event.id, db_session, request, obj_in=obj_in)
+            self.crud.update_end_datetime(
+                event.id, db_session, request, obj_in=obj_in
+            )
 
     def test_update_end_datetime_resets_core_fehler_to_geplant(
         self, db_session, active_user, event_statuses, sample_course
@@ -1138,7 +1206,9 @@ class TestCRUDEventAddTemplates:
         obj_in = EventUpdateTemplate(
             templates=[{"id": str(template.id)}],
         )
-        result = self.crud.add_templates(event.id, db_session, request, obj_in=obj_in)
+        result = self.crud.add_templates(
+            event.id, db_session, request, obj_in=obj_in
+        )
         assert len(result.templates) == 1
         assert result.templates[0].id == template.id
 
@@ -1157,7 +1227,9 @@ class TestCRUDEventAddTemplates:
             templates=[{"id": str(template.id)}],
         )
         with pytest.raises(InvalidStatusError):
-            self.crud.add_templates(event.id, db_session, request, obj_in=obj_in)
+            self.crud.add_templates(
+                event.id, db_session, request, obj_in=obj_in
+            )
 
     def test_add_templates_raises_when_template_not_found(
         self, db_session, active_user, event_statuses, sample_course
@@ -1176,7 +1248,9 @@ class TestCRUDEventAddTemplates:
             templates=[{"id": fake_template_id}],
         )
         with pytest.raises(ObjectNotFound):
-            self.crud.add_templates(event.id, db_session, request, obj_in=obj_in)
+            self.crud.add_templates(
+                event.id, db_session, request, obj_in=obj_in
+            )
 
     def test_add_templates_raises_when_no_proxmox_id(
         self, db_session, active_user, event_statuses, sample_course
@@ -1187,13 +1261,17 @@ class TestCRUDEventAddTemplates:
             event_statuses["Geplant"].id,
             sample_course.id,
         )
-        template = self._create_template(db_session, active_user, proxmox_id=None)
+        template = self._create_template(
+            db_session, active_user, proxmox_id=None
+        )
         request = create_mock_request(active_user)
         obj_in = EventUpdateTemplate(
             templates=[{"id": str(template.id)}],
         )
         with pytest.raises(OperationDependencyMissing):
-            self.crud.add_templates(event.id, db_session, request, obj_in=obj_in)
+            self.crud.add_templates(
+                event.id, db_session, request, obj_in=obj_in
+            )
 
     def test_add_templates_resets_core_fehler_to_geplant(
         self, db_session, active_user, event_statuses, sample_course
@@ -1209,7 +1287,9 @@ class TestCRUDEventAddTemplates:
         obj_in = EventUpdateTemplate(
             templates=[{"id": str(template.id)}],
         )
-        result = self.crud.add_templates(event.id, db_session, request, obj_in=obj_in)
+        result = self.crud.add_templates(
+            event.id, db_session, request, obj_in=obj_in
+        )
         assert result.status == event_statuses["Geplant"].id
 
 
@@ -1217,7 +1297,9 @@ class TestCRUDEventDeleteVirtualMachine:
     def setup_method(self):
         self.crud = CRUDEvent(Event)
 
-    def _create_event_with_vm(self, db_session, active_user, status_id, course_id):
+    def _create_event_with_vm(
+        self, db_session, active_user, status_id, course_id
+    ):
         now = datetime.now(timezone.utc)
         event = Event(
             id=uuid.uuid4(),
@@ -1267,7 +1349,9 @@ class TestCRUDEventDeleteVirtualMachine:
         obj_in = EventUpdateVirtualMachine(
             vms=[{"id": str(vm.id)}],
         )
-        self.crud.delete_virtual_machine(event.id, db_session, request, obj_in=obj_in)
+        self.crud.delete_virtual_machine(
+            event.id, db_session, request, obj_in=obj_in
+        )
         db_session.refresh(vm)
         assert vm.event is None
 
@@ -1287,18 +1371,20 @@ class TestCRUDEventDeleteVirtualMachine:
         # EventUpdateVirtualMachine requires 'vms', but after merge if the key
         # is not in update_data the method raises RequiredParameterMissingError.
         # We mock the merge to simulate missing 'vms' key.
-        with patch.object(
-            self.crud,
-            "_merge_request_with_db_object",
-            return_value={"name": "test"},
+        with (
+            patch.object(
+                self.crud,
+                "_merge_request_with_db_object",
+                return_value={"name": "test"},
+            ),
+            pytest.raises(RequiredParameterMissingError),
         ):
-            with pytest.raises(RequiredParameterMissingError):
-                obj_in = EventUpdateVirtualMachine(
-                    vms=[{"id": str(vm.id)}],
-                )
-                self.crud.delete_virtual_machine(
-                    event.id, db_session, request, obj_in=obj_in
-                )
+            obj_in = EventUpdateVirtualMachine(
+                vms=[{"id": str(vm.id)}],
+            )
+            self.crud.delete_virtual_machine(
+                event.id, db_session, request, obj_in=obj_in
+            )
 
 
 class TestCRUDEventDeleteEventUser:
@@ -1354,7 +1440,7 @@ class TestCRUDEventDeleteEventUser:
         sample_course,
         role_teacher,
     ):
-        event, eu = self._create_event_with_user(
+        event, _eu = self._create_event_with_user(
             db_session,
             active_user,
             event_statuses["Geplant"].id,
@@ -1570,7 +1656,9 @@ class TestCRUDEventGetEventStudents:
 
         from models import Role as RoleModel
 
-        db_session.query(RoleModel).filter(RoleModel.key == "studierende").delete()
+        db_session.query(RoleModel).filter(
+            RoleModel.key == "studierende"
+        ).delete()
         db_session.flush()
 
         with pytest.raises(ObjectNotFound):
@@ -1652,7 +1740,7 @@ class TestCRUDEventVirtualMachinesBulkActions:
         action_method,
         bulk_method,
     ):
-        event, vm = self._create_active_event_with_vm(
+        event, _vm = self._create_active_event_with_vm(
             db_session, active_user, event_statuses, sample_course
         )
         request = self._make_request_with_route(active_user)
@@ -1712,7 +1800,7 @@ class TestCRUDEventVirtualMachinesBulkActions:
         sample_course,
         mock_redis_queues,
     ):
-        event, vm = self._create_active_event_with_vm(
+        event, _vm = self._create_active_event_with_vm(
             db_session, active_user, event_statuses, sample_course
         )
         request = self._make_request_with_route(active_user)
@@ -1796,7 +1884,7 @@ class TestCRUDEventVirtualMachinesHaOperations:
         sample_course,
         mock_redis_queues,
     ):
-        event, vm = self._create_active_event_with_vm(
+        event, _vm = self._create_active_event_with_vm(
             db_session, active_user, event_statuses, sample_course
         )
         request = self._make_request_with_route(active_user)
@@ -1869,7 +1957,7 @@ class TestCRUDEventVirtualMachinesHaOperations:
         sample_course,
         mock_redis_queues,
     ):
-        event, vm = self._create_active_event_with_vm(
+        event, _vm = self._create_active_event_with_vm(
             db_session, active_user, event_statuses, sample_course
         )
         request = self._make_request_with_route(active_user)
@@ -1883,7 +1971,9 @@ class TestCRUDEventVirtualMachinesHaOperations:
             "controllers.events.CRUDVirtualMachine.bulk_ha_remove",
             return_value=expected_result,
         ) as mock_ha_remove:
-            result = self.crud.virtual_machines_ha_remove(db_session, event.id, request)
+            result = self.crud.virtual_machines_ha_remove(
+                db_session, event.id, request
+            )
             assert result == expected_result
             mock_ha_remove.assert_called_once()
             call_kwargs = mock_ha_remove.call_args
@@ -1928,7 +2018,12 @@ class TestCRUDEventGuacamoleOperations:
         self.crud = CRUDEvent(Event)
 
     def _create_active_event(
-        self, db_session, active_user, event_statuses, sample_course, guacamole=True
+        self,
+        db_session,
+        active_user,
+        event_statuses,
+        sample_course,
+        guacamole=True,
     ):
         now = datetime.now(timezone.utc)
         event = Event(
@@ -2160,7 +2255,9 @@ class TestCRUDEventDeleteEmptyParents:
     ):
         fake_id = uuid.uuid4()
         with pytest.raises(BadRequestError):
-            self.crud._delete_empty_parents(db=db_session, parent_task_id=fake_id)
+            self.crud._delete_empty_parents(
+                db=db_session, parent_task_id=fake_id
+            )
 
 
 class TestCRUDEventGetEventAdmin:
@@ -2377,7 +2474,9 @@ class TestCRUDEventAddVirtualMachines:
         obj_in = EventUpdateVirtualMachine(
             vms=[{"id": str(vm.id)}],
         )
-        self.crud.add_virtual_machines(event.id, db_session, request, obj_in=obj_in)
+        self.crud.add_virtual_machines(
+            event.id, db_session, request, obj_in=obj_in
+        )
         db_session.refresh(vm)
         assert vm.event == event.id
 
@@ -2423,7 +2522,9 @@ class TestCRUDEventAddVirtualMachines:
             vms=[{"id": fake_vm_id}],
         )
         with pytest.raises((ObjectNotFound, BadRequestError)):
-            self.crud.add_virtual_machines(event.id, db_session, request, obj_in=obj_in)
+            self.crud.add_virtual_machines(
+                event.id, db_session, request, obj_in=obj_in
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -2481,7 +2582,13 @@ class TestCRUDEventGetStatus:
         return task
 
     def _create_subtask(
-        self, db, user, task, status="queued", object_type="Event", object_id=None
+        self,
+        db,
+        user,
+        task,
+        status="queued",
+        object_type="Event",
+        object_id=None,
     ):
         now = datetime.now(timezone.utc)
         subtask = SubTaskModel(
@@ -2503,7 +2610,13 @@ class TestCRUDEventGetStatus:
         return subtask
 
     def _create_vm(
-        self, db, user, event, status="running", ipv4="10.0.0.1", prevent_delete=False
+        self,
+        db,
+        user,
+        event,
+        status="running",
+        ipv4="10.0.0.1",
+        prevent_delete=False,
     ):
         now = datetime.now(timezone.utc)
         vm = VirtualMachine(
@@ -2569,7 +2682,12 @@ class TestCRUDEventGetStatus:
     # ------------------------------------------------------------------
 
     def test_initiator_geplant_is_creator(
-        self, db_session, active_user, system_user, event_statuses, sample_course
+        self,
+        db_session,
+        active_user,
+        system_user,
+        event_statuses,
+        sample_course,
     ):
         """For Geplant, the initiator is the event creator, not updatedById."""
         event = self._create_event(
@@ -2584,12 +2702,22 @@ class TestCRUDEventGetStatus:
         assert result.statusInitiator == system_user.id
 
     def test_initiator_deploying_is_start_task_creator(
-        self, db_session, active_user, system_user, event_statuses, sample_course
+        self,
+        db_session,
+        active_user,
+        system_user,
+        event_statuses,
+        sample_course,
     ):
         event = self._create_event(
-            db_session, active_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
-        task = self._create_task(db_session, system_user, event, name="Start Event")
+        task = self._create_task(
+            db_session, system_user, event, name="Start Event"
+        )
         self._create_subtask(db_session, active_user, task)
 
         result = self.crud.get_status(db_session, event.id)
@@ -2597,12 +2725,22 @@ class TestCRUDEventGetStatus:
         assert result.statusInitiator == system_user.id
 
     def test_initiator_aktiv_is_start_task_creator(
-        self, db_session, active_user, system_user, event_statuses, sample_course
+        self,
+        db_session,
+        active_user,
+        system_user,
+        event_statuses,
+        sample_course,
     ):
         event = self._create_event(
-            db_session, active_user, event_statuses["Aktiv"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Aktiv"].id,
+            sample_course.id,
         )
-        task = self._create_task(db_session, system_user, event, name="Start Event")
+        task = self._create_task(
+            db_session, system_user, event, name="Start Event"
+        )
         self._create_subtask(db_session, active_user, task)
 
         result = self.crud.get_status(db_session, event.id)
@@ -2610,7 +2748,12 @@ class TestCRUDEventGetStatus:
         assert result.statusInitiator == system_user.id
 
     def test_initiator_deployment_fehler_is_start_task_creator(
-        self, db_session, active_user, system_user, event_statuses, sample_course
+        self,
+        db_session,
+        active_user,
+        system_user,
+        event_statuses,
+        sample_course,
     ):
         event = self._create_event(
             db_session,
@@ -2618,7 +2761,9 @@ class TestCRUDEventGetStatus:
             event_statuses["Deployment Fehler"].id,
             sample_course.id,
         )
-        task = self._create_task(db_session, system_user, event, name="Start Event")
+        task = self._create_task(
+            db_session, system_user, event, name="Start Event"
+        )
         self._create_subtask(db_session, active_user, task, status="failed")
 
         result = self.crud.get_status(db_session, event.id)
@@ -2626,12 +2771,22 @@ class TestCRUDEventGetStatus:
         assert result.statusInitiator == system_user.id
 
     def test_initiator_archiving_is_end_task_creator(
-        self, db_session, active_user, system_user, event_statuses, sample_course
+        self,
+        db_session,
+        active_user,
+        system_user,
+        event_statuses,
+        sample_course,
     ):
         event = self._create_event(
-            db_session, active_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
-        task = self._create_task(db_session, system_user, event, name="End Event")
+        task = self._create_task(
+            db_session, system_user, event, name="End Event"
+        )
         self._create_subtask(db_session, active_user, task)
 
         result = self.crud.get_status(db_session, event.id)
@@ -2639,12 +2794,22 @@ class TestCRUDEventGetStatus:
         assert result.statusInitiator == system_user.id
 
     def test_initiator_archiviert_is_end_task_creator(
-        self, db_session, active_user, system_user, event_statuses, sample_course
+        self,
+        db_session,
+        active_user,
+        system_user,
+        event_statuses,
+        sample_course,
     ):
         event = self._create_event(
-            db_session, active_user, event_statuses["Archiviert"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Archiviert"].id,
+            sample_course.id,
         )
-        task = self._create_task(db_session, system_user, event, name="End Event")
+        task = self._create_task(
+            db_session, system_user, event, name="End Event"
+        )
         self._create_subtask(db_session, active_user, task, status="success")
 
         result = self.crud.get_status(db_session, event.id)
@@ -2652,7 +2817,12 @@ class TestCRUDEventGetStatus:
         assert result.statusInitiator == system_user.id
 
     def test_initiator_archival_fehler_is_end_task_creator(
-        self, db_session, active_user, system_user, event_statuses, sample_course
+        self,
+        db_session,
+        active_user,
+        system_user,
+        event_statuses,
+        sample_course,
     ):
         event = self._create_event(
             db_session,
@@ -2660,7 +2830,9 @@ class TestCRUDEventGetStatus:
             event_statuses["Archival Fehler"].id,
             sample_course.id,
         )
-        task = self._create_task(db_session, system_user, event, name="End Event")
+        task = self._create_task(
+            db_session, system_user, event, name="End Event"
+        )
         self._create_subtask(db_session, active_user, task, status="failed")
 
         result = self.crud.get_status(db_session, event.id)
@@ -2668,11 +2840,19 @@ class TestCRUDEventGetStatus:
         assert result.statusInitiator == system_user.id
 
     def test_initiator_core_fehler_falls_back_to_updated_by(
-        self, db_session, active_user, system_user, event_statuses, sample_course
+        self,
+        db_session,
+        active_user,
+        system_user,
+        event_statuses,
+        sample_course,
     ):
         """Core Fehler has no associated task, so initiator falls back to updatedById."""
         event = self._create_event(
-            db_session, system_user, event_statuses["Core Fehler"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Core Fehler"].id,
+            sample_course.id,
         )
         # updatedById is active_user (set by _create_event), createdById is system_user
         result = self.crud.get_status(db_session, event.id)
@@ -2680,23 +2860,39 @@ class TestCRUDEventGetStatus:
         assert result.statusInitiator == system_user.id  # updatedById
 
     def test_initiator_inaktiv_falls_back_to_updated_by(
-        self, db_session, active_user, system_user, event_statuses, sample_course
+        self,
+        db_session,
+        active_user,
+        system_user,
+        event_statuses,
+        sample_course,
     ):
         """Inaktiv is not in any lifecycle set, so initiator falls back to updatedById."""
         event = self._create_event(
-            db_session, system_user, event_statuses["Inaktiv"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Inaktiv"].id,
+            sample_course.id,
         )
         result = self.crud.get_status(db_session, event.id)
         assert result.currentStatus == "Inaktiv"
         assert result.statusInitiator == system_user.id  # updatedById
 
     def test_initiator_uses_most_recent_start_task(
-        self, db_session, active_user, system_user, event_statuses, sample_course
+        self,
+        db_session,
+        active_user,
+        system_user,
+        event_statuses,
+        sample_course,
     ):
         """When an event has been restarted, initiator should be from the latest task."""
         now = datetime.now(timezone.utc)
         event = self._create_event(
-            db_session, active_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
         # Older task created by system_user
         old_task = TaskModel(
@@ -2736,7 +2932,10 @@ class TestCRUDEventGetStatus:
         self, db_session, active_user, event_statuses, sample_course
     ):
         event = self._create_event(
-            db_session, active_user, event_statuses["Geplant"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Geplant"].id,
+            sample_course.id,
         )
         result = self.crud.get_status(db_session, event.id)
         assert result.vmStats.total == 0
@@ -2749,7 +2948,10 @@ class TestCRUDEventGetStatus:
         self, db_session, active_user, event_statuses, sample_course
     ):
         event = self._create_event(
-            db_session, active_user, event_statuses["Aktiv"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Aktiv"].id,
+            sample_course.id,
         )
         self._create_vm(
             db_session, active_user, event, status="running", ipv4="10.0.0.1"
@@ -2774,7 +2976,10 @@ class TestCRUDEventGetStatus:
         self, db_session, active_user, event_statuses, sample_course
     ):
         event = self._create_event(
-            db_session, active_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
         self._create_vm(
             db_session, active_user, event, ipv4="10.0.0.1", prevent_delete=True
@@ -2783,7 +2988,11 @@ class TestCRUDEventGetStatus:
             db_session, active_user, event, ipv4="10.0.0.2", prevent_delete=True
         )
         self._create_vm(
-            db_session, active_user, event, ipv4="10.0.0.3", prevent_delete=False
+            db_session,
+            active_user,
+            event,
+            ipv4="10.0.0.3",
+            prevent_delete=False,
         )
 
         result = self.crud.get_status(db_session, event.id)
@@ -2794,10 +3003,16 @@ class TestCRUDEventGetStatus:
         self, db_session, active_user, event_statuses, sample_course
     ):
         event_a = self._create_event(
-            db_session, active_user, event_statuses["Aktiv"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Aktiv"].id,
+            sample_course.id,
         )
         event_b = self._create_event(
-            db_session, active_user, event_statuses["Aktiv"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Aktiv"].id,
+            sample_course.id,
         )
         self._create_vm(db_session, active_user, event_a, ipv4="10.0.0.1")
         self._create_vm(db_session, active_user, event_b, ipv4="10.0.0.2")
@@ -2814,7 +3029,10 @@ class TestCRUDEventGetStatus:
         self, db_session, active_user, event_statuses, sample_course
     ):
         event = self._create_event(
-            db_session, active_user, event_statuses["Geplant"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Geplant"].id,
+            sample_course.id,
         )
         result = self.crud.get_status(db_session, event.id)
         assert result.connectionStats.total == 0
@@ -2825,12 +3043,21 @@ class TestCRUDEventGetStatus:
         self, db_session, active_user, event_statuses, sample_course
     ):
         event = self._create_event(
-            db_session, active_user, event_statuses["Aktiv"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Aktiv"].id,
+            sample_course.id,
         )
         gcp = self._create_guac_profile(db_session, active_user)
-        self._create_guacamole(db_session, active_user, event, gcp, identifier=42)
-        self._create_guacamole(db_session, active_user, event, gcp, identifier=43)
-        self._create_guacamole(db_session, active_user, event, gcp, identifier=None)
+        self._create_guacamole(
+            db_session, active_user, event, gcp, identifier=42
+        )
+        self._create_guacamole(
+            db_session, active_user, event, gcp, identifier=43
+        )
+        self._create_guacamole(
+            db_session, active_user, event, gcp, identifier=None
+        )
 
         result = self.crud.get_status(db_session, event.id)
         assert result.connectionStats.total == 3
@@ -2841,15 +3068,27 @@ class TestCRUDEventGetStatus:
         self, db_session, active_user, event_statuses, sample_course
     ):
         event_a = self._create_event(
-            db_session, active_user, event_statuses["Aktiv"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Aktiv"].id,
+            sample_course.id,
         )
         event_b = self._create_event(
-            db_session, active_user, event_statuses["Aktiv"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Aktiv"].id,
+            sample_course.id,
         )
         gcp = self._create_guac_profile(db_session, active_user)
-        self._create_guacamole(db_session, active_user, event_a, gcp, identifier=1)
-        self._create_guacamole(db_session, active_user, event_b, gcp, identifier=2)
-        self._create_guacamole(db_session, active_user, event_b, gcp, identifier=None)
+        self._create_guacamole(
+            db_session, active_user, event_a, gcp, identifier=1
+        )
+        self._create_guacamole(
+            db_session, active_user, event_b, gcp, identifier=2
+        )
+        self._create_guacamole(
+            db_session, active_user, event_b, gcp, identifier=None
+        )
 
         result = self.crud.get_status(db_session, event_a.id)
         assert result.connectionStats.total == 1
@@ -2864,7 +3103,10 @@ class TestCRUDEventGetStatus:
         self, db_session, active_user, event_statuses, sample_course
     ):
         event = self._create_event(
-            db_session, active_user, event_statuses["Geplant"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Geplant"].id,
+            sample_course.id,
         )
         result = self.crud.get_status(db_session, event.id)
         assert result.taskStats.total == 0
@@ -2877,9 +3119,14 @@ class TestCRUDEventGetStatus:
         self, db_session, active_user, event_statuses, sample_course
     ):
         event = self._create_event(
-            db_session, active_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
-        task = self._create_task(db_session, active_user, event, name="Start Event")
+        task = self._create_task(
+            db_session, active_user, event, name="Start Event"
+        )
         self._create_subtask(db_session, active_user, task, status="queued")
         self._create_subtask(db_session, active_user, task, status="queued")
         self._create_subtask(db_session, active_user, task, status="processing")
@@ -2898,15 +3145,26 @@ class TestCRUDEventGetStatus:
     ):
         """Counts subtasks across all tasks for the event (start + end lifecycle)."""
         event = self._create_event(
-            db_session, active_user, event_statuses["Archiviert"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Archiviert"].id,
+            sample_course.id,
         )
         start_task = self._create_task(
             db_session, active_user, event, name="Start Event"
         )
-        end_task = self._create_task(db_session, active_user, event, name="End Event")
-        self._create_subtask(db_session, active_user, start_task, status="success")
-        self._create_subtask(db_session, active_user, start_task, status="success")
-        self._create_subtask(db_session, active_user, end_task, status="success")
+        end_task = self._create_task(
+            db_session, active_user, event, name="End Event"
+        )
+        self._create_subtask(
+            db_session, active_user, start_task, status="success"
+        )
+        self._create_subtask(
+            db_session, active_user, start_task, status="success"
+        )
+        self._create_subtask(
+            db_session, active_user, end_task, status="success"
+        )
         self._create_subtask(db_session, active_user, end_task, status="failed")
 
         result = self.crud.get_status(db_session, event.id)
@@ -2918,14 +3176,26 @@ class TestCRUDEventGetStatus:
         self, db_session, active_user, event_statuses, sample_course
     ):
         event_a = self._create_event(
-            db_session, active_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
         event_b = self._create_event(
-            db_session, active_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
-        task_a = self._create_task(db_session, active_user, event_a, name="Start Event")
-        task_b = self._create_task(db_session, active_user, event_b, name="Start Event")
-        self._create_subtask(db_session, active_user, task_a, status="processing")
+        task_a = self._create_task(
+            db_session, active_user, event_a, name="Start Event"
+        )
+        task_b = self._create_task(
+            db_session, active_user, event_b, name="Start Event"
+        )
+        self._create_subtask(
+            db_session, active_user, task_a, status="processing"
+        )
         self._create_subtask(db_session, active_user, task_b, status="failed")
         self._create_subtask(db_session, active_user, task_b, status="failed")
 
@@ -2942,10 +3212,17 @@ class TestCRUDEventGetStatus:
         self, db_session, active_user, event_statuses, sample_course
     ):
         event = self._create_event(
-            db_session, active_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
-        task = self._create_task(db_session, active_user, event, name="Start Event")
-        st = self._create_subtask(db_session, active_user, task, status="processing")
+        task = self._create_task(
+            db_session, active_user, event, name="Start Event"
+        )
+        st = self._create_subtask(
+            db_session, active_user, task, status="processing"
+        )
 
         result = self.crud.get_status(db_session, event.id)
         assert len(result.tasks) == 1
@@ -2960,7 +3237,10 @@ class TestCRUDEventGetStatus:
     ):
         """Tasks whose name is not Start/End Event are excluded from the list."""
         event = self._create_event(
-            db_session, active_user, event_statuses["Aktiv"].id, sample_course.id
+            db_session,
+            active_user,
+            event_statuses["Aktiv"].id,
+            sample_course.id,
         )
         # Task attached to the event but not a lifecycle task
         task = self._create_task(

@@ -1,7 +1,6 @@
 """Factory for Language model."""
 
 import factory
-
 from models import Language
 
 from .base import BaseFactory

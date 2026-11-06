@@ -6,13 +6,14 @@ from sqlalchemy.orm import Session
 from controllers.documents import *
 from core import dependencies
 from core.exceptions import DuplicateFieldException, PermissionDenied
+from core.responses import CRUD_RESPONSES
 from models import Document as DocumentModel
 from schemas.documents import *
 
 router = APIRouter(
     prefix="/documents",
     tags=["documents"],
-    responses={404: {"detail": "Not found"}},
+    responses=CRUD_RESPONSES,
 )
 
 
@@ -24,6 +25,7 @@ router = APIRouter(
     operation_id="documents_create",
     summary="Create Document",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `documents_create`",
 )
 def create_document(
     *,
@@ -55,6 +57,7 @@ def create_document(
     operation_id="documents_upload",
     summary="Upload Document",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `documents_create`",
 )
 def upload_document(
     *,
@@ -81,6 +84,7 @@ def upload_document(
     operation_id="documents_read_all",
     summary="Get Documents",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `documents_read`",
 )
 def get_documents(
     request: Request,
@@ -125,6 +129,7 @@ def get_documents(
     operation_id="documents_read_one",
     summary="Get Document",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `documents_read`",
 )
 def get_document(
     id: UUID4, request: Request, db: Session = Depends(dependencies.get_db)
@@ -144,6 +149,7 @@ def get_document(
     operation_id="documents_file_read_one",
     summary="Returns file for Document object",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `documents_read`",
 )
 def get_document_file(
     id: UUID4, request: Request, db: Session = Depends(dependencies.get_db)
@@ -171,6 +177,7 @@ def get_document_file(
     operation_id="documents_update",
     summary="Update Document",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `documents_update`",
 )
 def update_document(
     *,
@@ -196,6 +203,7 @@ def update_document(
     operation_id="documents_delete",
     summary="Delete Document",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `documents_delete`",
 )
 def delete_document(
     id: UUID4, request: Request, db: Session = Depends(dependencies.get_db)
@@ -216,6 +224,7 @@ def delete_document(
     operation_id="documents_object_read_all",
     summary="Get all Documents for an object_id of an object_type",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `documents_read`",
 )
 def get_documents_for_object(
     object_type: str,

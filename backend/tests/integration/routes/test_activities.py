@@ -35,12 +35,16 @@ class TestGetActivityById:
         assert resp.status_code in (401, 403)
 
     def test_permission_denied_returns_403(self, client, auth_headers):
-        resp = client.get(f"{API}/activities/{FAKE_OBJECT_ID}", headers=auth_headers)
+        resp = client.get(
+            f"{API}/activities/{FAKE_OBJECT_ID}", headers=auth_headers
+        )
         assert resp.status_code == 403
 
     def test_invalid_id_format_returns_422(self, client, auth_headers):
         """MongoDB ObjectId must be exactly 24 hex chars."""
-        resp = client.get(f"{API}/activities/not-a-valid-id", headers=auth_headers)
+        resp = client.get(
+            f"{API}/activities/not-a-valid-id", headers=auth_headers
+        )
         assert resp.status_code == 422
 
 

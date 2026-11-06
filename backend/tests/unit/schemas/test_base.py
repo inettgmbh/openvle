@@ -25,7 +25,9 @@ class TestDBBase:
 
 class TestPaginationPageDetails:
     def test_valid_page_details(self):
-        details = PaginationPageDetails(page=1, perPage=10, pageCount=5, totalCount=50)
+        details = PaginationPageDetails(
+            page=1, perPage=10, pageCount=5, totalCount=50
+        )
         assert details.page == 1
         assert details.perPage == 10
         assert details.pageCount == 5

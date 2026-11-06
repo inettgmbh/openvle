@@ -22,6 +22,7 @@ import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import UnsavedChangesModal from '@/components/UnsavedChangesModal.vue'
 import { useUnsavedChanges } from '@/composables/useUnsavedChanges'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -109,6 +110,7 @@ onMounted(() => {
             <FormControl
               v-model="user.name"
               :icon="mdiAccountOutline"
+              :maxlength="FIELD_LIMITS.user.name"
               :placeholder="$t('common.name')"
               required
             />
@@ -120,6 +122,7 @@ onMounted(() => {
             <FormControl
               v-model="user.username"
               :icon="mdiAccount"
+              :maxlength="FIELD_LIMITS.user.username"
               :placeholder="$t('views.users.form.username')"
               required
             />
@@ -130,6 +133,7 @@ onMounted(() => {
               v-model="user.email"
               type="email"
               :icon="mdiMail"
+              :maxlength="FIELD_LIMITS.user.email"
               :placeholder="$t('views.users.form.emailAddress')"
               required
             />

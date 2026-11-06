@@ -3,7 +3,6 @@
 import uuid
 
 import factory
-
 from models import Mail, MailAction, MailTemplate
 
 from .base import BaseFactory
@@ -29,7 +28,9 @@ class MailTemplateFactory(BaseFactory):
     fromMail = "test@example.com"
     contentHTML = "<p>Hello {{ user.name }}</p>"
     contentPlain = "Hello {{ user.name }}"
-    language = factory.LazyFunction(uuid.uuid4)  # Must be set to actual Language.id
+    language = factory.LazyFunction(
+        uuid.uuid4
+    )  # Must be set to actual Language.id
     protected = False
     replyTo = None
     mail_action = None

@@ -9,13 +9,14 @@ from core.exceptions import (
     PermissionDenied,
     ProtectedObjectError,
 )
+from core.responses import CRUD_RESPONSES
 from models.mails_templates import MailTemplate as MailTemplateModel
 from schemas.mails_templates import MailTemplate, MailTemplateList
 
 router = APIRouter(
     prefix="/mailtemplates",
     tags=["mailtemplates"],
-    responses={404: {"detail": "Not found"}},
+    responses=CRUD_RESPONSES,
 )
 
 
@@ -27,6 +28,7 @@ router = APIRouter(
     operation_id="mail_templates_create",
     summary="Create MailTemplate",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `mail_templates_create`",
 )
 def create_mail_template(
     *,
@@ -58,6 +60,7 @@ def create_mail_template(
     operation_id="mail_templates_read_all",
     summary="Get MailTemplates",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `mail_templates_read`",
 )
 def get_mail_templates(
     request: Request,
@@ -102,6 +105,7 @@ def get_mail_templates(
     operation_id="mail_templates_read_one",
     summary="Get MailTemplate",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `mail_templates_read`",
 )
 def get_mail_template(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -122,6 +126,7 @@ def get_mail_template(
     operation_id="mail_templates_update",
     summary="Update MailTemplate",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `mail_templates_update`",
 )
 def update_mail_template(
     *,
@@ -153,6 +158,7 @@ def update_mail_template(
     operation_id="mail_templates_delete",
     summary="Delete MailTemplate",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `mail_templates_delete`",
 )
 def delete_mail_template(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)

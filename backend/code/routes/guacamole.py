@@ -7,13 +7,19 @@ from controllers.guacamole import *
 from controllers.os import *
 from core import dependencies
 from core.exceptions import PermissionDenied
+from core.responses import (
+    BASE_RESPONSES,
+    READ_RESPONSES,
+    WRITE_RESPONSES,
+    build_description,
+)
 from models.guacamole import Guacamole as GuacamoleModel
 from schemas.guacamole import Guacamole, GuacamoleList
 
 router = APIRouter(
     prefix="/guacamole",
     tags=["guacamole"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -23,8 +29,18 @@ router = APIRouter(
     status_code=201,
     response_model=Guacamole,
     operation_id="guacamoles_create",
+    responses=WRITE_RESPONSES,
     summary="Create Guacamole",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Creates a Guacamole connection record and enqueues provisioning of the connection on the Guacamole server.",
+        permission="guacamoles_create",
+        is_async=True,
+        notes=[
+            "The referenced `GuacamoleConnectionProfile` must be linked to a VirtualMachine with a valid IPv4 address.",
+            "The assigned user is automatically granted `object_full` permission on the new Guacamole connection.",
+        ],
+    ),
 )
 def create_guacamole(
     *,
@@ -50,6 +66,10 @@ def create_guacamole(
     operation_id="guacamoles_read_all",
     summary="Get Guacamoles",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a paginated list of all Guacamole connections visible to the requesting user.",
+        permission="guacamoles_read",
+    ),
 )
 def get_guacamoles(
     request: Request,
@@ -92,8 +112,13 @@ def get_guacamoles(
     status_code=200,
     response_model=Guacamole,
     operation_id="guacamoles_read_one",
+    responses=READ_RESPONSES,
     summary="Get Guacamole",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a single Guacamole connection by ID.",
+        permission="guacamoles_read",
+    ),
 )
 def get_guacamole(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -111,8 +136,16 @@ def get_guacamole(
     "/{id}",
     status_code=200,
     operation_id="guacamoles_delete",
+    responses=WRITE_RESPONSES,
     summary="Delete Guacamole",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Deletes a Guacamole connection from both the database and the Guacamole server.",
+        permission="guacamoles_delete",
+        notes=[
+            "Also removes associated changelogs, object permissions, and tags.",
+        ],
+    ),
 )
 def delete_guacamole(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -131,8 +164,17 @@ def delete_guacamole(
     status_code=201,
     response_model=Guacamole,
     operation_id="guacamoles_provision",
+    responses=WRITE_RESPONSES,
     summary="Provision Guacamole connection",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Manually provisions an unprovisioned Guacamole connection on the Guacamole server.",
+        permission="guacamoles_create",
+        notes=[
+            "Only works on connections that have not yet been provisioned (no `identifier`).",
+            "The linked virtual machine must have a valid IPv4 address.",
+        ],
+    ),
 )
 def provision_guacamole(
     *, id: UUID4, db: Session = Depends(dependencies.get_db), request: Request

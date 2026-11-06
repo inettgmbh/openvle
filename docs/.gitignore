@@ -2,5 +2,6 @@
 node_modules/
 dist/
 builds/
+build/
 .docusaurus
 .cache-loader

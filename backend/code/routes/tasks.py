@@ -6,6 +6,7 @@ from controllers.sub_tasks import CRUDSubTask
 from controllers.tasks import *
 from core import dependencies
 from core.exceptions import PermissionDenied
+from core.responses import BASE_RESPONSES, READ_RESPONSES, build_description
 from models import SubTask as SubTaskModel, Task as TaskModel
 from schemas.sub_tasks import SubTaskList
 from schemas.tasks import Task, TaskList
@@ -13,7 +14,7 @@ from schemas.tasks import Task, TaskList
 router = APIRouter(
     prefix="/tasks",
     tags=["tasks"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -25,6 +26,10 @@ router = APIRouter(
     operation_id="tasks_read_all",
     summary="Get Tasks",
     dependencies=[Depends(dependencies.PermissionChecker())],
+    description=build_description(
+        description="Returns a paginated list of all tasks.",
+        permission="tasks_read",
+    ),
 )
 def get_tasks(
     request: Request,
@@ -58,8 +63,13 @@ def get_tasks(
     status_code=200,
     response_model=Task,
     operation_id="tasks_read_one",
+    responses=READ_RESPONSES,
     summary="Get Task",
     dependencies=[Depends(dependencies.PermissionChecker())],
+    description=build_description(
+        description="Returns a single task by ID.",
+        permission="tasks_read",
+    ),
 )
 def get_task(
     id: UUID4, request: Request, db: Session = Depends(dependencies.get_db)
@@ -78,8 +88,13 @@ def get_task(
     status_code=200,
     response_model=SubTaskList,
     operation_id="tasks_sub_tasks_read_all",
+    responses=READ_RESPONSES,
     summary="Get SubTasks for Task",
     dependencies=[Depends(dependencies.PermissionChecker())],
+    description=build_description(
+        description="Returns all sub-tasks belonging to a task.",
+        permission="tasks_read",
+    ),
 )
 def get_sub_tasks_for_task(
     id: UUID4,

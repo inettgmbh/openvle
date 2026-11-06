@@ -2,6 +2,7 @@
 
 import uuid
 from datetime import date, datetime, timedelta, timezone
+
 from models import (
     Event,
     EventStatus,
@@ -34,7 +35,9 @@ def _make_task(db, system_user, name="test-task", event_id=None):
     return task
 
 
-def _make_subtask(db, system_user, parent_task, action="test_action", job_id=None):
+def _make_subtask(
+    db, system_user, parent_task, action="test_action", job_id=None
+):
     now = datetime.now(timezone.utc)
     subtask = SubTask(
         id=uuid.uuid4(),
@@ -57,7 +60,13 @@ def _make_subtask(db, system_user, parent_task, action="test_action", job_id=Non
 
 
 def _make_event(
-    db, system_user, event_statuses, sample_course, status_name, date_start, date_end
+    db,
+    system_user,
+    event_statuses,
+    sample_course,
+    status_name,
+    date_start,
+    date_end,
 ):
     now = datetime.now(timezone.utc)
     event = Event(
@@ -149,9 +158,9 @@ def _make_mail_objects(db, system_user, event_id, action_slug):
 def _patch_periodic_session(monkeypatch, db_session):
     """Patch SessionLocal in periodic_tasks and related modules."""
     monkeypatch.setattr("core.periodic_tasks.SessionLocal", lambda: db_session)
-    import core.mariadb as m
     import controllers.sub_tasks as st
     import core.mail_automated as ma
+    import core.mariadb as m
 
     monkeypatch.setattr(m, "SessionLocal", lambda: db_session)
     monkeypatch.setattr(st, "SessionLocal", lambda: db_session)
@@ -175,11 +184,15 @@ class TestCheckForEventMailSimple:
             date.today(),
             date.today(),
         )
-        _make_mail_objects(db_session, system_user, event.id, "events_pre_start")
+        _make_mail_objects(
+            db_session, system_user, event.id, "events_pre_start"
+        )
 
         from core.periodic_tasks import check_for_event_mail_simple
 
-        result = check_for_event_mail_simple(db_session, event.id, "events_pre_start")
+        result = check_for_event_mail_simple(
+            db_session, event.id, "events_pre_start"
+        )
         assert result is True
 
     def test_returns_false_when_no_mail(
@@ -198,7 +211,9 @@ class TestCheckForEventMailSimple:
 
         from core.periodic_tasks import check_for_event_mail_simple
 
-        result = check_for_event_mail_simple(db_session, event.id, "events_pre_start")
+        result = check_for_event_mail_simple(
+            db_session, event.id, "events_pre_start"
+        )
         assert result is False
 
 
@@ -225,7 +240,12 @@ class TestEventsPeriodic:
         assert result is True
 
     def test_geplant_too_early(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """Geplant event with dateStart far in future -> no action triggered."""
         _patch_periodic_session(monkeypatch, db_session)
@@ -259,7 +279,12 @@ class TestEventsPeriodic:
         assert result is True
 
     def test_geplant_due_to_start(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """Geplant event past prep time -> calls actions_start."""
         _patch_periodic_session(monkeypatch, db_session)
@@ -303,7 +328,12 @@ class TestEventsPeriodic:
         assert event.id in started_events
 
     def test_aktiv_too_early(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """Aktiv event with dateEnd far in future -> no end action triggered."""
         _patch_periodic_session(monkeypatch, db_session)
@@ -346,7 +376,12 @@ class TestEventsPeriodic:
         assert len(ended_events) == 0
 
     def test_aktiv_due_to_end(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """Aktiv event past dateEnd + prep time -> calls actions_stop."""
         _patch_periodic_session(monkeypatch, db_session)
@@ -389,7 +424,12 @@ class TestEventsPeriodic:
         assert event.id in ended_events
 
     def test_start_error_sets_core_fehler(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """actions_start raising exception sets event status to 'Core Fehler'."""
         _patch_periodic_session(monkeypatch, db_session)
@@ -437,9 +477,11 @@ class TestEventsPeriodic:
         """When SessionLocal() raises, returns error string."""
 
         def raise_connection_error():
-            raise Exception("DB connection failed")
+            raise RuntimeError("DB connection failed")
 
-        monkeypatch.setattr("core.periodic_tasks.SessionLocal", raise_connection_error)
+        monkeypatch.setattr(
+            "core.periodic_tasks.SessionLocal", raise_connection_error
+        )
 
         from core.periodic_tasks import events_periodic
 
@@ -549,7 +591,9 @@ class TestMailPeriodicDelete:
 # Tests: tasks_enqueue
 # ---------------------------------------------------------------------------
 class TestTasksEnqueue:
-    def test_creates_tasks_and_subtasks(self, db_session, system_user, monkeypatch):
+    def test_creates_tasks_and_subtasks(
+        self, db_session, system_user, monkeypatch
+    ):
         """tasks_enqueue creates Task/SubTask pairs in the database."""
         _patch_periodic_session(monkeypatch, db_session)
 

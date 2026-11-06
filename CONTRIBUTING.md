@@ -180,7 +180,7 @@ Optional body explaining the why, wrapped at ~72 characters.
 BREAKING CHANGE: only if applicable, in the body.
 ```
 
-Common types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `ci`.
+Common types: `feat`, `perf`, `change`, `fix`, `hotfix`, `refactor`, `docs`, `test`, `style`, `chore`.
 
 Effect on versioning:
 
@@ -188,7 +188,6 @@ Effect on versioning:
 - `fix:` → patch version bump
 - `BREAKING CHANGE:` in the body, or `!` after the type (e.g. `feat!:`) →
   major version bump
-- `chore:`, `docs:`, `test:`, `refactor:` → no release
 
 Examples from the project:
 
@@ -196,7 +195,7 @@ Examples from the project:
 feat(scheduler): support recurring weekly events
 fix(auth): reject expired refresh tokens
 refactor(backend): rename internal kvs identifiers to openvle
-ci(deploy): unify deploy/restart jobs onto compose-ssh template
+chore(ci): unify deploy/restart jobs onto compose-ssh template
 ```
 
 ### Opening a pull request

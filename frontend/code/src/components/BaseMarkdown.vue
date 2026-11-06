@@ -29,6 +29,12 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  // Max character count for the editor (edit mode). Bound from FIELD_LIMITS;
+  // md-editor-v3 hard-caps typing and rejects over-long paste. Undefined = no limit.
+  maxlength: {
+    type: Number,
+    default: undefined,
+  },
 })
 
 const emit = defineEmits(['update:modelValue', 'scrolled'])
@@ -79,6 +85,7 @@ const componentProps = computed(() => {
   return {
     modelValue: props.modelValue,
     'onUpdate:modelValue': (val) => emit('update:modelValue', val),
+    maxLength: props.maxlength,
     language: 'en-US',
     'html-preview': false,
     'no-mermaid': true,

@@ -12,7 +12,6 @@ from datetime import datetime, timezone
 
 from tests.e2e.conftest import API
 
-
 # ------------------------------------------------------------------
 # Helpers
 # ------------------------------------------------------------------
@@ -124,7 +123,9 @@ class TestObjectResetGrantsReadVisibility:
             permission_key="object_reset",
         )
 
-        resp = client.get(f"{API}/virtual_machines/{vm.id}", headers=user_b_headers)
+        resp = client.get(
+            f"{API}/virtual_machines/{vm.id}", headers=user_b_headers
+        )
         assert resp.status_code == 200
         assert resp.json()["id"] == str(vm.id)
 
@@ -154,7 +155,9 @@ class TestObjectResetGrantsReadVisibility:
         """GET single VM without any permission returns 403 (baseline)."""
         vm = _create_vm(db_session, system_user, ipv4="10.0.2.13")
 
-        resp = client.get(f"{API}/virtual_machines/{vm.id}", headers=user_b_headers)
+        resp = client.get(
+            f"{API}/virtual_machines/{vm.id}", headers=user_b_headers
+        )
         assert resp.status_code == 403
 
 
@@ -178,7 +181,9 @@ class TestObjectResetFiltering:
         vm_visible = _create_vm(
             db_session, system_user, name="visible", ipv4="10.0.3.10"
         )
-        vm_hidden = _create_vm(db_session, system_user, name="hidden", ipv4="10.0.3.11")
+        vm_hidden = _create_vm(
+            db_session, system_user, name="hidden", ipv4="10.0.3.11"
+        )
 
         _create_object_permission(
             db_session,
@@ -208,8 +213,12 @@ class TestObjectResetFiltering:
         vm_reset = _create_vm(
             db_session, system_user, name="reset-vm", ipv4="10.0.3.20"
         )
-        vm_read = _create_vm(db_session, system_user, name="read-vm", ipv4="10.0.3.21")
-        vm_none = _create_vm(db_session, system_user, name="none-vm", ipv4="10.0.3.22")
+        vm_read = _create_vm(
+            db_session, system_user, name="read-vm", ipv4="10.0.3.21"
+        )
+        vm_none = _create_vm(
+            db_session, system_user, name="none-vm", ipv4="10.0.3.22"
+        )
 
         _create_object_permission(
             db_session,
@@ -351,7 +360,9 @@ class TestObjectResetViaRole:
             permission_key="object_reset",
         )
 
-        resp = client.get(f"{API}/virtual_machines/{vm.id}", headers=teacher_headers)
+        resp = client.get(
+            f"{API}/virtual_machines/{vm.id}", headers=teacher_headers
+        )
         assert resp.status_code == 200
         assert resp.json()["id"] == str(vm.id)
 
@@ -373,8 +384,12 @@ class TestGlobalObjectReset:
         user_b_headers,
     ):
         """Global object_reset lists all VMs of that type."""
-        vm_a = _create_vm(db_session, system_user, name="global-a", ipv4="10.0.6.10")
-        vm_b = _create_vm(db_session, system_user, name="global-b", ipv4="10.0.6.11")
+        vm_a = _create_vm(
+            db_session, system_user, name="global-a", ipv4="10.0.6.10"
+        )
+        vm_b = _create_vm(
+            db_session, system_user, name="global-b", ipv4="10.0.6.11"
+        )
 
         # Global permission (object_id=None)
         _create_object_permission(
@@ -411,7 +426,9 @@ class TestObjectResetComparedToStandardPerms:
         user_b_headers,
     ):
         """Both object_read and object_reset allow GET on a VM."""
-        vm_read = _create_vm(db_session, system_user, name="cmp-read", ipv4="10.0.7.10")
+        vm_read = _create_vm(
+            db_session, system_user, name="cmp-read", ipv4="10.0.7.10"
+        )
         vm_reset = _create_vm(
             db_session, system_user, name="cmp-reset", ipv4="10.0.7.11"
         )
@@ -454,7 +471,9 @@ class TestObjectResetComparedToStandardPerms:
         vm_update = _create_vm(
             db_session, system_user, name="cmp-upd", ipv4="10.0.7.20"
         )
-        vm_reset = _create_vm(db_session, system_user, name="cmp-rst", ipv4="10.0.7.21")
+        vm_reset = _create_vm(
+            db_session, system_user, name="cmp-rst", ipv4="10.0.7.21"
+        )
 
         _create_object_permission(
             db_session,

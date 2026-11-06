@@ -73,7 +73,9 @@ class TestGetChangelogById:
         data = resp.json()
         assert data["id"] == str(sample_changelog.id)
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/changelogs/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404

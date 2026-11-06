@@ -4,7 +4,6 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from controllers.apps import CRUDApplication
 from core.exceptions import ObjectNotFound
 from models import Application, Document, ObjectPermission, Vendor
@@ -13,6 +12,7 @@ from schemas.apps import (
     ApplicationUpdate,
     ApplicationUpdateDocuments,
 )
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -151,13 +151,17 @@ class TestCRUDApplicationUpdateDocuments:
         db_session.flush()
         return doc
 
-    def test_update_documents_appends(self, db_session, active_user, sample_vendor):
+    def test_update_documents_appends(
+        self, db_session, active_user, sample_vendor
+    ):
         app = self._create_app(db_session, active_user, sample_vendor)
         doc = self._create_document(db_session, active_user)
 
         request = create_mock_request(active_user)
         obj_in = ApplicationUpdateDocuments(documents=[{"id": str(doc.id)}])
-        result = self.crud.update_documents(app.id, db_session, request, obj_in=obj_in)
+        result = self.crud.update_documents(
+            app.id, db_session, request, obj_in=obj_in
+        )
         assert len(result.documents) == 1
         assert result.documents[0].id == doc.id
 
@@ -174,7 +178,9 @@ class TestCRUDApplicationUpdateDocuments:
         self.crud.update_documents(app.id, db_session, request, obj_in=obj_in1)
         # Append second document
         obj_in2 = ApplicationUpdateDocuments(documents=[{"id": str(doc2.id)}])
-        result = self.crud.update_documents(app.id, db_session, request, obj_in=obj_in2)
+        result = self.crud.update_documents(
+            app.id, db_session, request, obj_in=obj_in2
+        )
         assert len(result.documents) == 2
 
     def test_update_documents_nonexistent_doc_raises(
@@ -183,15 +189,25 @@ class TestCRUDApplicationUpdateDocuments:
         app = self._create_app(db_session, active_user, sample_vendor)
 
         request = create_mock_request(active_user)
-        obj_in = ApplicationUpdateDocuments(documents=[{"id": str(uuid.uuid4())}])
+        obj_in = ApplicationUpdateDocuments(
+            documents=[{"id": str(uuid.uuid4())}]
+        )
         with pytest.raises(ObjectNotFound):
-            self.crud.update_documents(app.id, db_session, request, obj_in=obj_in)
+            self.crud.update_documents(
+                app.id, db_session, request, obj_in=obj_in
+            )
 
-    def test_update_documents_nonexistent_app_raises(self, db_session, active_user):
+    def test_update_documents_nonexistent_app_raises(
+        self, db_session, active_user
+    ):
         request = create_mock_request(active_user)
-        obj_in = ApplicationUpdateDocuments(documents=[{"id": str(uuid.uuid4())}])
+        obj_in = ApplicationUpdateDocuments(
+            documents=[{"id": str(uuid.uuid4())}]
+        )
         with pytest.raises(ObjectNotFound):
-            self.crud.update_documents(uuid.uuid4(), db_session, request, obj_in=obj_in)
+            self.crud.update_documents(
+                uuid.uuid4(), db_session, request, obj_in=obj_in
+            )
 
 
 class TestCRUDApplicationSetDocuments:
@@ -232,22 +248,32 @@ class TestCRUDApplicationSetDocuments:
 
     def test_set_documents_sets(self, db_session, active_user, sample_vendor):
         app = self._create_app(db_session, active_user, sample_vendor)
-        doc1 = self._create_document(db_session, active_user, name="set-doc1.pdf")
-        doc2 = self._create_document(db_session, active_user, name="set-doc2.pdf")
+        doc1 = self._create_document(
+            db_session, active_user, name="set-doc1.pdf"
+        )
+        doc2 = self._create_document(
+            db_session, active_user, name="set-doc2.pdf"
+        )
 
         request = create_mock_request(active_user)
         obj_in = ApplicationUpdateDocuments(
             documents=[{"id": str(doc1.id)}, {"id": str(doc2.id)}]
         )
-        result = self.crud.set_documents(app.id, db_session, request, obj_in=obj_in)
+        result = self.crud.set_documents(
+            app.id, db_session, request, obj_in=obj_in
+        )
         assert len(result.documents) == 2
         doc_ids = {d.id for d in result.documents}
         assert doc1.id in doc_ids
         assert doc2.id in doc_ids
 
-    def test_set_documents_empty_list(self, db_session, active_user, sample_vendor):
+    def test_set_documents_empty_list(
+        self, db_session, active_user, sample_vendor
+    ):
         app = self._create_app(db_session, active_user, sample_vendor)
-        doc = self._create_document(db_session, active_user, name="set-empty.pdf")
+        doc = self._create_document(
+            db_session, active_user, name="set-empty.pdf"
+        )
 
         request = create_mock_request(active_user)
         # Add a document first
@@ -257,7 +283,9 @@ class TestCRUDApplicationSetDocuments:
 
         # Set to empty
         obj_in2 = ApplicationUpdateDocuments(documents=[])
-        result = self.crud.set_documents(app.id, db_session, request, obj_in=obj_in2)
+        result = self.crud.set_documents(
+            app.id, db_session, request, obj_in=obj_in2
+        )
         assert len(result.documents) == 0
 
     def test_set_documents_nonexistent_doc_raises(
@@ -266,12 +294,20 @@ class TestCRUDApplicationSetDocuments:
         app = self._create_app(db_session, active_user, sample_vendor)
 
         request = create_mock_request(active_user)
-        obj_in = ApplicationUpdateDocuments(documents=[{"id": str(uuid.uuid4())}])
+        obj_in = ApplicationUpdateDocuments(
+            documents=[{"id": str(uuid.uuid4())}]
+        )
         with pytest.raises(ObjectNotFound):
             self.crud.set_documents(app.id, db_session, request, obj_in=obj_in)
 
-    def test_set_documents_nonexistent_app_raises(self, db_session, active_user):
+    def test_set_documents_nonexistent_app_raises(
+        self, db_session, active_user
+    ):
         request = create_mock_request(active_user)
-        obj_in = ApplicationUpdateDocuments(documents=[{"id": str(uuid.uuid4())}])
+        obj_in = ApplicationUpdateDocuments(
+            documents=[{"id": str(uuid.uuid4())}]
+        )
         with pytest.raises(ObjectNotFound):
-            self.crud.set_documents(uuid.uuid4(), db_session, request, obj_in=obj_in)
+            self.crud.set_documents(
+                uuid.uuid4(), db_session, request, obj_in=obj_in
+            )

@@ -5,7 +5,6 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from controllers.object_permissions import CRUDObjectPermission
 from core.exceptions import (
     DuplicateObjectPermission,
@@ -17,6 +16,7 @@ from core.exceptions import (
 from models import Application, Changelog, ObjectPermission, Role, User, Vendor
 from models.associations import user_role_association_table
 from schemas.object_permissions import ObjectPermissionCreate
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -141,7 +141,9 @@ class TestCreateValidation:
         with pytest.raises(DuplicateObjectPermission):
             self.crud.create(db_session, request, obj_in=obj_in2)
 
-    def test_object_create_with_crud_allowed(self, db_session, active_user, sample_app):
+    def test_object_create_with_crud_allowed(
+        self, db_session, active_user, sample_app
+    ):
         """object_create can coexist with one basic CRUD permission."""
         request = create_mock_request(active_user)
         # First add a basic CRUD perm
@@ -218,7 +220,9 @@ class TestCreateValidation:
         new = json.loads(cl.valueNew)
         assert new["permissions"][0]["object_id"] is None
 
-    def test_invalid_entity_type_raises(self, db_session, active_user, sample_app):
+    def test_invalid_entity_type_raises(
+        self, db_session, active_user, sample_app
+    ):
         request = create_mock_request(active_user)
         obj_in = ObjectPermissionCreate(
             object_type="Application",
@@ -230,7 +234,9 @@ class TestCreateValidation:
         with pytest.raises(InvalidFieldValue):
             self.crud.create(db_session, request, obj_in=obj_in)
 
-    def test_nonexistent_entity_raises(self, db_session, active_user, sample_app):
+    def test_nonexistent_entity_raises(
+        self, db_session, active_user, sample_app
+    ):
         request = create_mock_request(active_user)
         fake_id = uuid.uuid4()
         obj_in = ObjectPermissionCreate(
@@ -246,7 +252,9 @@ class TestCreateValidation:
     def test_protected_role_entity_raises(
         self, db_session, active_user, sample_app, system_user
     ):
-        protected_role = db_session.query(Role).filter_by(key="admin_full").one()
+        protected_role = (
+            db_session.query(Role).filter_by(key="admin_full").one()
+        )
 
         request = create_mock_request(active_user)
         obj_in = ObjectPermissionCreate(
@@ -317,7 +325,9 @@ class TestGetMultiTypeId:
         db_session.add(global_perm)
         db_session.flush()
 
-        result = self.crud.get_multi_type_id("Application", sample_app.id, db_session)
+        result = self.crud.get_multi_type_id(
+            "Application", sample_app.id, db_session
+        )
         assert len(result["items"]) >= 2
 
 
@@ -325,7 +335,9 @@ class TestDelete:
     def setup_method(self):
         self.crud = CRUDObjectPermission(ObjectPermission)
 
-    def test_delete_creates_changelog(self, db_session, active_user, sample_app):
+    def test_delete_creates_changelog(
+        self, db_session, active_user, sample_app
+    ):
         request = create_mock_request(active_user)
         perm = self.crud.create_full(
             db_session, request, "Application", sample_app.id, active_user.id

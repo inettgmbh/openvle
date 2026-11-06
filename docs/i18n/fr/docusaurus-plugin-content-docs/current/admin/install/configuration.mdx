@@ -26,19 +26,20 @@ Toutes les variables du backend doivent être définies entre **guillemets (`" "
 
 Paramètres de base de l'application. `CORS_ORIGINS` est la seule variable requise dans cette catégorie — elle doit contenir l'URL à laquelle le frontend est accessible, sinon le navigateur bloquera les requêtes API. Les autres variables contrôlent le nom du projet affiché, les informations de contact et l'environnement (production/développement).
 
-| Variable              | Valeur par défaut                     | Requis  | Description                                                        |
-| --------------------- | ------------------------------------- | ------- | ------------------------------------------------------------------ |
-| `API_HEALTH_TOKEN`    | `""`                                  | Non     | Jeton d'authentification pour les requêtes de health check         |
-| `APP_ENV`             | `"prod"`                              | Non     | Environnement (par ex. `prod`, `dev`)                              |
-| `CONTACT_MAIL`        | `"support@inett.de"`                  | Non     | E-mail de contact                                                  |
-| `CONTACT_NAME`        | `"inett GmbH"`                        | Non     | Nom de la personne/organisation de contact                         |
-| `CONTACT_URL`         | `"https://inett.de"`                  | Non     | Site web de contact                                                |
-| `CORS_ORIGINS`        | `[""]`                                | **Oui** | Origines autorisées pour CORS (URL du frontend)                    |
-| `DOCS_ENABLED`        | `False`                               | Non     | Activer les endpoints OpenAPI (`/docs`, `/redoc`, `/openapi.json`) |
-| `PROJECT_DESCRIPTION` | `"Kursverwaltungssoftware - Backend"` | Non     | Description du projet                                              |
-| `PROJECT_NAME`        | `"OpenVLE"`                           | Non     | Nom interne du projet                                              |
-| `PROJECT_TITLE`       | `"OpenVLE"`                           | Non     | Titre affiché dans l'interface                                     |
-| `PROJECT_VERSION`     | `1.0`                                 | Non     | Version du projet                                                  |
+| Variable              | Valeur par défaut                     | Requis  | Description                                                                                                                                                         |
+| --------------------- | ------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `API_HEALTH_TOKEN`    | `""`                                  | Non     | Jeton d'authentification pour les requêtes de health check                                                                                                          |
+| `APP_ENV`             | `"prod"`                              | Non     | Environnement (par ex. `prod`, `dev`)                                                                                                                               |
+| `BACKEND_PROXY_IPS`   | `"*"`                                 | Non     | Adresses IP du reverse proxy en amont dont les en-têtes `X-Forwarded-*` sont acceptés. Liste séparée par des virgules, `*` = toutes. Exemple : `10.0.1.2,10.1.2.10` |
+| `CONTACT_MAIL`        | `"support@inett.de"`                  | Non     | E-mail de contact                                                                                                                                                   |
+| `CONTACT_NAME`        | `"inett GmbH"`                        | Non     | Nom de la personne/organisation de contact                                                                                                                          |
+| `CONTACT_URL`         | `"https://inett.de"`                  | Non     | Site web de contact                                                                                                                                                 |
+| `CORS_ORIGINS`        | `[""]`                                | **Oui** | Origines autorisées pour CORS (URL du frontend)                                                                                                                     |
+| `DOCS_ENABLED`        | `False`                               | Non     | Activer les endpoints OpenAPI (`/docs`, `/redoc`, `/openapi.json`)                                                                                                  |
+| `PROJECT_DESCRIPTION` | `"Kursverwaltungssoftware - Backend"` | Non     | Description du projet                                                                                                                                               |
+| `PROJECT_NAME`        | `"OpenVLE"`                           | Non     | Nom interne du projet                                                                                                                                               |
+| `PROJECT_TITLE`       | `"OpenVLE"`                           | Non     | Titre affiché dans l'interface                                                                                                                                      |
+| `PROJECT_VERSION`     | `1.0`                                 | Non     | Version du projet                                                                                                                                                   |
 
 ### Authentification {#auth}
 

@@ -77,7 +77,9 @@ class TestGetTemplateById:
         assert data["ram"] == sample_template.ram
         assert data["disk"] == sample_template.disk
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/templates/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404
@@ -87,7 +89,9 @@ class TestGetTemplateById:
         resp = client.get(f"{API}/templates/{fake_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_template):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_template
+    ):
         """Without mock_permission_allow, templates_read is denied."""
         resp = client.get(
             f"{API}/templates/{sample_template.id}",

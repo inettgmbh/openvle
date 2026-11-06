@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from controllers.apps import *
 from core import dependencies
 from core.exceptions import DuplicateFieldException, PermissionDenied
+from core.responses import CRUD_RESPONSES
 from models import (
     Application as ApplicationModel,
     Template as TemplateModel,
@@ -17,7 +18,7 @@ from schemas.virtual_machines import VirtualMachineList
 router = APIRouter(
     prefix="/applications",
     tags=["applications"],
-    responses={404: {"detail": "Not found"}},
+    responses=CRUD_RESPONSES,
 )
 
 
@@ -29,6 +30,7 @@ router = APIRouter(
     operation_id="applications_create",
     summary="Create Application",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `applications_create`",
 )
 def create_application(
     *,
@@ -60,6 +62,7 @@ def create_application(
     operation_id="applications_read_all",
     summary="Get Applications",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `applications_read`",
 )
 def get_applications(
     request: Request,
@@ -104,6 +107,7 @@ def get_applications(
     operation_id="applications_read_one",
     summary="Get Application",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `applications_read`",
 )
 def get_application(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -124,6 +128,7 @@ def get_application(
     operation_id="applications_update",
     summary="Update Application",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `applications_update`",
 )
 def update_application(
     *,
@@ -149,6 +154,7 @@ def update_application(
     operation_id="applications_delete",
     summary="Delete Application",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `applications_delete`",
 )
 def delete_application(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -169,6 +175,7 @@ def delete_application(
     operation_id="application_templates_read_all",
     summary="Get Application's Templates ",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `applications_read`",
 )
 def get_apps_templates(
     request: Request,
@@ -224,6 +231,7 @@ def get_apps_templates(
     operation_id="application_virtual_machines_read_all",
     summary="Get Application's VirtualMachines",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `applications_read`",
 )
 def get_apps_vms(
     request: Request,
@@ -279,6 +287,7 @@ def get_apps_vms(
     operation_id="applications_documents_update",
     summary="Add documents to application",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `applications_update`",
 )
 def update_app_documents(
     *,
@@ -305,6 +314,7 @@ def update_app_documents(
     operation_id="applications_documents_set",
     summary="Set documents for application",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `applications_update`",
 )
 def set_app_documents(
     *,

@@ -4,11 +4,11 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from controllers.tasks import CRUDTask
 from core.exceptions import ObjectNotFound
 from models import Event, Task
 from schemas.tasks import TaskCreate
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -40,7 +40,12 @@ class TestCRUDTaskCreate:
         assert result.updatedAt is not None
 
     def test_create_task_with_valid_event(
-        self, db_session, active_user, system_user, event_statuses, sample_course
+        self,
+        db_session,
+        active_user,
+        system_user,
+        event_statuses,
+        sample_course,
     ):
         """Creating a task with a valid event_id should link the task to the event."""
         now = datetime.now(timezone.utc)
@@ -68,7 +73,9 @@ class TestCRUDTaskCreate:
 
         assert result.event_id == event.id
 
-    def test_create_task_with_nonexistent_event_raises(self, db_session, active_user):
+    def test_create_task_with_nonexistent_event_raises(
+        self, db_session, active_user
+    ):
         """Creating a task with a non-existent event_id should raise ObjectNotFound."""
         request = create_mock_request(active_user)
         fake_event_id = uuid.uuid4()
@@ -77,7 +84,9 @@ class TestCRUDTaskCreate:
         with pytest.raises(ObjectNotFound):
             self.crud.create(db_session, request, obj_in=obj_in)
 
-    def test_create_task_default_status_is_queued(self, db_session, active_user):
+    def test_create_task_default_status_is_queued(
+        self, db_session, active_user
+    ):
         """Default status for a new task should be 'queued'."""
         request = create_mock_request(active_user)
         obj_in = TaskCreate(name="Default Status Task", event_id=None)

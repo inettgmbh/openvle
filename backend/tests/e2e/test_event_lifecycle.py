@@ -10,10 +10,7 @@ import uuid
 from datetime import datetime, timezone
 from unittest.mock import patch
 
-
-from tests.e2e.conftest import API
-from tests.e2e.conftest import _set_event_status
-
+from tests.e2e.conftest import API, _set_event_status
 
 # ------------------------------------------------------------------
 # Helpers
@@ -134,7 +131,11 @@ class TestEventLifecycleHappyPath:
         # Step 6: Simulate worker completing (set status to Aktiv)
         from models import Event
 
-        event = db_session.query(Event).filter(Event.id == uuid.UUID(event_id)).first()
+        event = (
+            db_session.query(Event)
+            .filter(Event.id == uuid.UUID(event_id))
+            .first()
+        )
         _set_event_status(db_session, event, "Aktiv", event_statuses)
 
         # Step 7: End event
@@ -146,7 +147,11 @@ class TestEventLifecycleHappyPath:
         assert resp.json()["status"] == str(event_statuses["Archiving"].id)
 
         # Step 8: Simulate worker completing (set status to Archiviert)
-        event = db_session.query(Event).filter(Event.id == uuid.UUID(event_id)).first()
+        event = (
+            db_session.query(Event)
+            .filter(Event.id == uuid.UUID(event_id))
+            .first()
+        )
         _set_event_status(db_session, event, "Archiviert", event_statuses)
 
         # Step 9: Delete event
@@ -214,7 +219,9 @@ class TestEventStatusValidations:
     ):
         """Deleting an active event returns 422."""
         _set_event_status(db_session, workflow_event, "Aktiv", event_statuses)
-        resp = client.delete(f"{API}/events/{workflow_event.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/events/{workflow_event.id}", headers=auth_headers
+        )
         assert resp.status_code == 422
 
     def test_can_delete_archiviert_event(
@@ -228,8 +235,12 @@ class TestEventStatusValidations:
         role_teacher,
     ):
         """Deleting an archived event returns 200."""
-        _set_event_status(db_session, workflow_event, "Archiviert", event_statuses)
-        resp = client.delete(f"{API}/events/{workflow_event.id}", headers=auth_headers)
+        _set_event_status(
+            db_session, workflow_event, "Archiviert", event_statuses
+        )
+        resp = client.delete(
+            f"{API}/events/{workflow_event.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
 
     def test_can_delete_geplant_event(
@@ -244,7 +255,9 @@ class TestEventStatusValidations:
     ):
         """Deleting a planned event returns 200."""
         # Already in Geplant
-        resp = client.delete(f"{API}/events/{workflow_event.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/events/{workflow_event.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
 
     def test_can_delete_core_fehler_event(
@@ -258,8 +271,12 @@ class TestEventStatusValidations:
         role_teacher,
     ):
         """Deleting an event in 'Core Fehler' returns 200."""
-        _set_event_status(db_session, workflow_event, "Core Fehler", event_statuses)
-        resp = client.delete(f"{API}/events/{workflow_event.id}", headers=auth_headers)
+        _set_event_status(
+            db_session, workflow_event, "Core Fehler", event_statuses
+        )
+        resp = client.delete(
+            f"{API}/events/{workflow_event.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
 
     def test_cannot_delete_deploying_event(
@@ -273,8 +290,12 @@ class TestEventStatusValidations:
         role_teacher,
     ):
         """Deleting an event in 'Deploying' returns 422."""
-        _set_event_status(db_session, workflow_event, "Deploying", event_statuses)
-        resp = client.delete(f"{API}/events/{workflow_event.id}", headers=auth_headers)
+        _set_event_status(
+            db_session, workflow_event, "Deploying", event_statuses
+        )
+        resp = client.delete(
+            f"{API}/events/{workflow_event.id}", headers=auth_headers
+        )
         assert resp.status_code == 422
 
 
@@ -487,7 +508,11 @@ class TestActiveEventChanges:
         # Manually set to Aktiv (simulating worker)
         from models import Event
 
-        event = db_session.query(Event).filter(Event.id == uuid.UUID(event_id)).first()
+        event = (
+            db_session.query(Event)
+            .filter(Event.id == uuid.UUID(event_id))
+            .first()
+        )
         _set_event_status(db_session, event, "Aktiv", event_statuses)
 
         return event_id
@@ -624,7 +649,9 @@ class TestEventUpdateAndRecovery:
         workflow_event,
     ):
         """Updating an event in 'Core Fehler' resets status to 'Geplant'."""
-        _set_event_status(db_session, workflow_event, "Core Fehler", event_statuses)
+        _set_event_status(
+            db_session, workflow_event, "Core Fehler", event_statuses
+        )
 
         resp = client.put(
             f"{API}/events/{workflow_event.id}",
@@ -685,7 +712,9 @@ class TestEventUpdateAndRecovery:
         workflow_event,
     ):
         """Updating a deploying event returns 422."""
-        _set_event_status(db_session, workflow_event, "Deploying", event_statuses)
+        _set_event_status(
+            db_session, workflow_event, "Deploying", event_statuses
+        )
 
         resp = client.put(
             f"{API}/events/{workflow_event.id}",
@@ -704,7 +733,9 @@ class TestEventUpdateAndRecovery:
         workflow_event,
     ):
         """Updating an archived event returns 422."""
-        _set_event_status(db_session, workflow_event, "Archiviert", event_statuses)
+        _set_event_status(
+            db_session, workflow_event, "Archiviert", event_statuses
+        )
 
         resp = client.put(
             f"{API}/events/{workflow_event.id}",
@@ -733,7 +764,9 @@ class TestEventSlugAndNameValidation:
     ):
         """Creating two events with the same name returns 409."""
         name = f"Unique Name {uuid.uuid4().hex[:6]}"
-        payload = _create_event_payload(event_statuses, workflow_course.id, name=name)
+        payload = _create_event_payload(
+            event_statuses, workflow_course.id, name=name
+        )
         resp = client.post(f"{API}/events/", json=payload, headers=auth_headers)
         assert resp.status_code == 201
 
@@ -743,7 +776,9 @@ class TestEventSlugAndNameValidation:
             name=name,
             slug=f"ev-{uuid.uuid4().hex[:4]}",
         )
-        resp = client.post(f"{API}/events/", json=payload2, headers=auth_headers)
+        resp = client.post(
+            f"{API}/events/", json=payload2, headers=auth_headers
+        )
         assert resp.status_code == 409
 
     def test_create_event_duplicate_slug_returns_409(
@@ -757,7 +792,9 @@ class TestEventSlugAndNameValidation:
     ):
         """Creating two events with the same slug returns 409."""
         slug = f"ds-{uuid.uuid4().hex[:4]}"
-        payload = _create_event_payload(event_statuses, workflow_course.id, slug=slug)
+        payload = _create_event_payload(
+            event_statuses, workflow_course.id, slug=slug
+        )
         resp = client.post(f"{API}/events/", json=payload, headers=auth_headers)
         assert resp.status_code == 201
 
@@ -767,7 +804,9 @@ class TestEventSlugAndNameValidation:
             slug=slug,
             name=f"Different Name {uuid.uuid4().hex[:6]}",
         )
-        resp = client.post(f"{API}/events/", json=payload2, headers=auth_headers)
+        resp = client.post(
+            f"{API}/events/", json=payload2, headers=auth_headers
+        )
         assert resp.status_code == 409
 
     def test_slug_validation_too_short(
@@ -780,7 +819,9 @@ class TestEventSlugAndNameValidation:
         workflow_course,
     ):
         """Slug shorter than 4 characters returns 422."""
-        payload = _create_event_payload(event_statuses, workflow_course.id, slug="ab")
+        payload = _create_event_payload(
+            event_statuses, workflow_course.id, slug="ab"
+        )
         resp = client.post(f"{API}/events/", json=payload, headers=auth_headers)
         assert resp.status_code == 422
 
@@ -810,6 +851,8 @@ class TestEventSlugAndNameValidation:
         workflow_course,
     ):
         """Slug with uppercase or special characters returns 422."""
-        payload = _create_event_payload(event_statuses, workflow_course.id, slug="AB@D")
+        payload = _create_event_payload(
+            event_statuses, workflow_course.id, slug="AB@D"
+        )
         resp = client.post(f"{API}/events/", json=payload, headers=auth_headers)
         assert resp.status_code == 422

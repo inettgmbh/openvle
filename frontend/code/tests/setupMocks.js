@@ -60,6 +60,9 @@ vi.mock('@/services', () => ({
     users: UserServiceMock,
     vendors: VendorServiceMock,
     vms: VMServiceMock,
+    // Interceptor-silencing helpers from BackendClient
+    beginSilent: vi.fn(),
+    endSilent: vi.fn(),
   },
 }))
 

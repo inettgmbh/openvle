@@ -1,6 +1,7 @@
 <script setup>
 import {
   mdiAccountBox,
+  mdiAlert,
   mdiApplicationBrackets,
   mdiApps,
   mdiCalendarOutline,
@@ -27,6 +28,8 @@ import {
   mdiRename,
   mdiRestart,
   mdiServer,
+  mdiShieldHalfFull,
+  mdiShieldRemove,
   mdiStop,
   mdiVectorArrangeAbove,
 } from '@mdi/js'
@@ -48,6 +51,7 @@ import CardBoxComponentHeader from '@/components/CardBoxComponentHeader.vue'
 import CardBoxDeleteModal from '@/components/CardBoxDeleteModal.vue'
 import CardBoxDeleteRelationModal from '@/components/CardBoxDeleteRelationModal.vue'
 import CardBoxModal from '@/components/CardBoxModal.vue'
+import FormCheckRadio from '@/components/FormCheckRadio.vue'
 import FormControl from '@/components/FormControl.vue'
 import FormField from '@/components/FormField.vue'
 import ImportConnectionProfileModal from '@/components/ImportConnectionProfileModal.vue'
@@ -67,6 +71,7 @@ import {
 } from '@/components/Tables/searchBarFieldConfigs'
 import TableChangelogs from '@/components/Tables/TableChangelogs.vue'
 import TablePermissions from '@/components/Tables/TablePermissions.vue'
+import { FIELD_LIMITS, FIELD_VALUE_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import backend from '@/services'
 import { useMainStore } from '@/stores/main'
@@ -79,6 +84,7 @@ import {
 import {
   connectionProtocolFormatterIcon,
   eventCreateTypeIcon,
+  haStateIconVM,
   taskStatusIcon,
   vmStatusIcon,
 } from '@/utils/icons'
@@ -104,6 +110,7 @@ const modals = {
   deleteConnections: ref(false),
   deleteGuacamoles: ref(false),
   deleteVms: ref(false),
+  haConfig: ref(false),
   importConnections: ref(false),
 }
 const pendingAction = ref(null)
@@ -133,6 +140,20 @@ const vmConnectionProfiles = ref([])
 const vmGuacamoles = ref([])
 const relatedGuacamoles = ref([])
 const actionPermissions = ref({})
+
+/* HA (High Availability) */
+const haInfo = ref(null)
+const haUnavailable = ref(false)
+const haForm = ref({
+  enabled: false,
+  state: 'started',
+  maxRestart: 5,
+  maxRelocate: 5,
+})
+const haFormInitial = ref(null)
+let haFetchPromise = null
+let haRefetchTimeoutId = null
+let haRefetchStopped = false
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -200,6 +221,10 @@ function requestAction(action) {
     fetchIPv4(vm.value.id)
     return
   }
+  if (action === 'haConfigure') {
+    openHaConfigModal()
+    return
+  }
   pendingAction.value = action
   modals.confirmAction.value = true
 }
@@ -221,6 +246,8 @@ const getDisabledState = (action) => {
       reset: status === 'stopped',
       updateip: status !== 'running',
       createTemplate: status !== 'stopped',
+      haConfigure: !vm.value?.proxmoxId,
+      haRemove: !vm.value?.proxmoxId,
     }[action] ?? false
   )
 }
@@ -292,6 +319,16 @@ const dropdownItems = computed(() => {
       tooltip: t('views.vms.detail.actions.createTemplateTooltip'),
       disabledTooltip: t('views.vms.detail.actions.mustBeStopped'),
     },
+    { divider: true },
+    {
+      id: 10,
+      label: t('views.vms.detail.ha.actions.configure'),
+      icon: mdiShieldHalfFull,
+      action: 'haConfigure',
+      permission: 'update',
+      tooltip: t('views.vms.detail.ha.actions.configureTooltip'),
+      disabledTooltip: t('views.vms.detail.ha.actions.noProxmoxTooltip'),
+    },
   ]
     .filter((item) => !item.permission || perms[item.permission])
     .map((item) => ({
@@ -302,6 +339,220 @@ const dropdownItems = computed(() => {
 })
 
 const userHasAction = computed(() => dropdownItems.value.length !== 0)
+
+/* HA (High Availability) — state is fetched on demand only, no auto-refresh */
+const KNOWN_HA_STATES = [
+  'disabled',
+  'error',
+  'fence',
+  'freeze',
+  'ignored',
+  'migrate',
+  'queued',
+  'recovery',
+  'relocate',
+  'request_start',
+  'request_stop',
+  'started',
+  'stopped',
+  'unknown',
+]
+// deliberately without 'disabled': the simplified toggle model only knows
+// managed (started/stopped) or not managed at all (HA removed)
+const HA_SELECTABLE_STATES = ['started', 'stopped']
+
+// digest-based: the backend synthesizes digest=null only when the VM is not
+// under HA management ('ignored' alone is ambiguous, it is also a valid state)
+const haConfigured = computed(() => Boolean(haInfo.value?.digest))
+
+const haState = computed(() => {
+  if (haUnavailable.value) return 'unknown'
+  return haInfo.value?.state ?? null
+})
+
+const haStateLabel = computed(() => {
+  const state = haState.value
+  if (state == null) return null
+  const key = String(state).toLowerCase()
+  return KNOWN_HA_STATES.includes(key)
+    ? t(`views.vms.detail.ha.states.${key}`)
+    : String(state)
+})
+
+const haStateOptions = computed(() =>
+  HA_SELECTABLE_STATES.map((state) => ({
+    value: state,
+    label: t(`views.vms.detail.ha.states.${state}`),
+  })),
+)
+
+const haFormValid = computed(() =>
+  [
+    [
+      haForm.value.maxRestart,
+      FIELD_LIMITS.vm.haMaxRestart,
+      FIELD_VALUE_LIMITS.vm.haMaxRestart,
+    ],
+    [
+      haForm.value.maxRelocate,
+      FIELD_LIMITS.vm.haMaxRelocate,
+      FIELD_VALUE_LIMITS.vm.haMaxRelocate,
+    ],
+  ].every(([value, maxChars, maxValue]) => {
+    const n = Number(value)
+    return (
+      Number.isInteger(n) &&
+      n >= 0 &&
+      n <= maxValue &&
+      String(value).trim().length <= maxChars
+    )
+  }),
+)
+
+// numbers arrive as strings from number inputs, compare a canonical form
+function haFormNormalized(form) {
+  return {
+    enabled: Boolean(form.enabled),
+    state: form.state,
+    maxRestart: Number(form.maxRestart),
+    maxRelocate: Number(form.maxRelocate),
+  }
+}
+
+const haFormDirty = computed(
+  () =>
+    haFormInitial.value === null ||
+    JSON.stringify(haFormNormalized(haForm.value)) !== haFormInitial.value,
+)
+
+// confirming while unchanged would be a no-op (or a stray remove on an
+// unconfigured VM), confirming while enabled needs valid limits
+const haConfirmDisabled = computed(() => {
+  if (!haFormDirty.value) return true
+  if (haForm.value.enabled) return !haFormValid.value
+  return false
+})
+
+// requesting 'stopped' for a running VM makes the HA manager shut it down
+// right after confirming — warn so nobody stops a VM by accident
+const haStopWarning = computed(
+  () =>
+    haForm.value.enabled &&
+    haForm.value.state === 'stopped' &&
+    vm.value?.status === 'running',
+)
+
+async function fetchHaState() {
+  if (!vm.value?.id || !vm.value?.proxmoxId) return false
+  if (haFetchPromise) return haFetchPromise
+
+  haFetchPromise = (async () => {
+    backend.beginSilent()
+    try {
+      haInfo.value = await backend.vms.getHa(route.params.id)
+      haUnavailable.value = false
+      return true
+    } catch {
+      haUnavailable.value = true
+      return false
+    } finally {
+      backend.endSilent()
+      haFetchPromise = null
+    }
+  })()
+
+  return haFetchPromise
+}
+
+// HA add/remove only enqueue an async job; re-fetch until the change is
+// visible on Proxmox (digest differs), bounded so this never polls permanently
+const HA_REFETCH_INTERVAL_MS = 3000
+const HA_REFETCH_MAX_TRIES = 10
+
+function scheduleHaRefetch() {
+  const previousDigest = haInfo.value?.digest ?? null
+  let tries = 0
+
+  const poll = async () => {
+    tries += 1
+    await fetchHaState()
+    if (haRefetchStopped) return
+    const digest = haInfo.value?.digest ?? null
+    if (digest !== previousDigest || tries >= HA_REFETCH_MAX_TRIES) return
+    haRefetchTimeoutId = setTimeout(poll, HA_REFETCH_INTERVAL_MS)
+  }
+
+  clearTimeout(haRefetchTimeoutId)
+  haRefetchTimeoutId = setTimeout(poll, HA_REFETCH_INTERVAL_MS)
+}
+
+async function openHaConfigModal() {
+  if (!(await fetchHaState())) {
+    toast.error(t('views.vms.detail.ha.fetchError'))
+    return
+  }
+  haForm.value = haConfigured.value
+    ? {
+        enabled: true,
+        state: HA_SELECTABLE_STATES.includes(haInfo.value.state)
+          ? haInfo.value.state
+          : 'started',
+        maxRestart: haInfo.value.max_restart ?? 5,
+        maxRelocate: haInfo.value.max_relocate ?? 5,
+      }
+    : { enabled: false, state: 'started', maxRestart: 5, maxRelocate: 5 }
+  haFormInitial.value = JSON.stringify(haFormNormalized(haForm.value))
+  modals.haConfig.value = true
+}
+
+// vault: vue-controlled-radio-desync — segmented control uses button-radios,
+// arrow keys move the selection like a native radio group
+function onHaStateKeydown(event) {
+  const navKeys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp']
+  if (!navKeys.includes(event.key)) return
+
+  event.preventDefault()
+  const forward = event.key === 'ArrowRight' || event.key === 'ArrowDown'
+  const nextIndex =
+    (HA_SELECTABLE_STATES.indexOf(haForm.value.state) +
+      (forward ? 1 : -1) +
+      HA_SELECTABLE_STATES.length) %
+    HA_SELECTABLE_STATES.length
+  haForm.value.state = HA_SELECTABLE_STATES[nextIndex]
+}
+
+async function applyHaConfig() {
+  // toggle switched off on a configured VM: confirming removes HA management
+  if (!haForm.value.enabled) {
+    await removeHaConfig()
+    return
+  }
+  try {
+    await backend.vms.setHa(vm.value.id, {
+      haState: haForm.value.state,
+      haMaxRestart: Number(haForm.value.maxRestart),
+      haMaxRelocate: Number(haForm.value.maxRelocate),
+    })
+    toast.success(
+      t('views.vms.detail.ha.applySuccess', { name: vm.value.name }),
+    )
+    scheduleHaRefetch()
+  } catch (error) {
+    toast.error(t('views.vms.detail.ha.applyError', { name: vm.value.name }))
+  }
+}
+
+async function removeHaConfig() {
+  try {
+    await backend.vms.removeHa(vm.value.id)
+    toast.success(
+      t('views.vms.detail.ha.removeSuccess', { name: vm.value.name }),
+    )
+    scheduleHaRefetch()
+  } catch (error) {
+    toast.error(t('views.vms.detail.ha.removeError', { name: vm.value.name }))
+  }
+}
 
 /* PAGINATION ONLY */
 const {
@@ -925,6 +1176,7 @@ const graphLabel = computed(() => {
 let intervalId
 onMounted(async () => {
   await fetchVM(true)
+  fetchHaState()
   await fetchPermissions()
 
   intervalId = setInterval(() => {
@@ -1000,6 +1252,8 @@ onMounted(async () => {
 
 onUnmounted(() => {
   clearInterval(intervalId)
+  haRefetchStopped = true
+  clearTimeout(haRefetchTimeoutId)
 })
 </script>
 
@@ -1027,6 +1281,123 @@ onUnmounted(() => {
     <p>{{ actionConfirmConfig.text }}</p>
   </CardBoxModal>
 
+  <!-- Modal: HA configuration (enable, adjust or remove) -->
+  <CardBoxModal
+    v-model="modals.haConfig.value"
+    form
+    :title="$t('views.vms.detail.ha.actions.configure')"
+    :button="!haForm.enabled && haConfigured ? 'danger' : 'success'"
+    :button-label="$t('common.confirm')"
+    :disabled="haConfirmDisabled"
+    has-cancel
+    @form-submitted="applyHaConfig"
+  >
+    <div class="mt-4">
+      <FormCheckRadio
+        v-model="haForm.enabled"
+        name="ha_enabled"
+        type="switch"
+        :label="$t('views.vms.detail.ha.modal.enabledLabel')"
+        :help="$t('views.vms.detail.ha.modal.enabledHelp')"
+      />
+    </div>
+
+    <template v-if="haForm.enabled">
+      <FormField
+        :label="$t('views.vms.detail.ha.modal.stateLabel')"
+        :help="$t('views.vms.detail.ha.modal.stateHelp')"
+        :tooltip="$t('views.vms.detail.ha.modal.stateTooltip')"
+      >
+        <div
+          role="radiogroup"
+          :aria-label="$t('views.vms.detail.ha.modal.stateLabel')"
+          class="inline-flex gap-1 rounded-lg border border-gray-300 bg-gray-100 p-1 dark:border-slate-600 dark:bg-slate-800/60"
+        >
+          <button
+            v-for="opt in haStateOptions"
+            :key="opt.value"
+            type="button"
+            role="radio"
+            :aria-checked="haForm.state === opt.value"
+            :tabindex="haForm.state === opt.value ? 0 : -1"
+            class="cursor-pointer rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            :class="
+              haForm.state === opt.value
+                ? 'bg-blue-500 text-white shadow-sm'
+                : 'text-gray-600 hover:bg-white/70 hover:text-gray-900 dark:text-slate-300 dark:hover:bg-slate-700/60 dark:hover:text-white'
+            "
+            @click="haForm.state = opt.value"
+            @keydown="onHaStateKeydown"
+          >
+            {{ opt.label }}
+          </button>
+        </div>
+      </FormField>
+
+      <NotificationBar
+        v-if="haStopWarning"
+        color="warning"
+        :icon="mdiAlert"
+        :dismissable="false"
+      >
+        {{ $t('views.vms.detail.ha.modal.stopWarning') }}
+      </NotificationBar>
+
+      <div class="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+        <FormField
+          :label="$t('views.vms.detail.ha.modal.maxRestartLabel')"
+          :help="$t('views.vms.detail.ha.modal.maxRestartHelp')"
+          :tooltip="
+            $t('views.vms.detail.ha.modal.limitTooltip', {
+              min: 0,
+              max: FIELD_VALUE_LIMITS.vm.haMaxRestart,
+            })
+          "
+        >
+          <FormControl
+            v-model="haForm.maxRestart"
+            type="number"
+            min="0"
+            :max="FIELD_VALUE_LIMITS.vm.haMaxRestart"
+            step="1"
+            :maxlength="FIELD_LIMITS.vm.haMaxRestart"
+            required
+          />
+        </FormField>
+
+        <FormField
+          :label="$t('views.vms.detail.ha.modal.maxRelocateLabel')"
+          :help="$t('views.vms.detail.ha.modal.maxRelocateHelp')"
+          :tooltip="
+            $t('views.vms.detail.ha.modal.limitTooltip', {
+              min: 0,
+              max: FIELD_VALUE_LIMITS.vm.haMaxRelocate,
+            })
+          "
+        >
+          <FormControl
+            v-model="haForm.maxRelocate"
+            type="number"
+            min="0"
+            :max="FIELD_VALUE_LIMITS.vm.haMaxRelocate"
+            step="1"
+            :maxlength="FIELD_LIMITS.vm.haMaxRelocate"
+            required
+          />
+        </FormField>
+      </div>
+    </template>
+
+    <NotificationBar
+      v-else-if="haConfigured"
+      color="danger"
+      :icon="mdiShieldRemove"
+      :dismissable="false"
+    >
+      {{ $t('views.vms.detail.ha.modal.removeWarning') }}
+    </NotificationBar>
+  </CardBoxModal>
+
   <!-- Modal: Add vm guacamole connection profile association -->
   <CardBoxModal
     v-model="modals.addGuacamoles.value"
@@ -1047,6 +1418,7 @@ onUnmounted(() => {
       <FormControl
         v-model="objToAdd"
         :icon="mdiRename"
+        :maxlength="FIELD_LIMITS.guacamole.name"
         :placeholder="$t('views.vms.detail.connectionNamePlaceholder')"
         required
         @set-ref="
@@ -1103,6 +1475,7 @@ onUnmounted(() => {
 
   <!-- Modal: Import Connection Profile -->
   <ImportConnectionProfileModal
+    v-if="vm.id"
     v-model="modals.importConnections.value"
     :target-object-type="objectModel"
     :target-object-id="vm.id"
@@ -1277,6 +1650,14 @@ onUnmounted(() => {
                 :icon="mdiServer"
                 :value="vm.proxmoxLabel ?? '–'"
                 :label="$t('common.proxmox')"
+                color="slate"
+              />
+
+              <SpecCard
+                v-if="vm.proxmoxId"
+                :icon="haStateIconVM(haState)"
+                :value="haStateLabel ?? '–'"
+                :label="$t('views.vms.detail.ha.specLabel')"
                 color="slate"
               />
 

@@ -67,7 +67,9 @@ class TestCreateGuacamoleConnectionProfile:
             "objectId": str(uuid.uuid4()),
             "objectType": "VirtualMachine",
         }
-        resp = client.post(f"{API}/guacamole-connection-profiles/", json=payload)
+        resp = client.post(
+            f"{API}/guacamole-connection-profiles/", json=payload
+        )
         assert resp.status_code in (401, 403)
 
     def test_create_permission_denied_returns_403(self, client, auth_headers):
@@ -164,7 +166,9 @@ class TestGetGuacamoleConnectionProfileById:
         assert data["port"] == sample_gcp.port
         assert data["protocol"] == sample_gcp.protocol
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(
             f"{API}/guacamole-connection-profiles/{fake_id}",
@@ -177,7 +181,9 @@ class TestGetGuacamoleConnectionProfileById:
         resp = client.get(f"{API}/guacamole-connection-profiles/{fake_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_gcp):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_gcp
+    ):
         """Without mock_permission_allow, guacamole_connection_profiles_read is denied."""
         resp = client.get(
             f"{API}/guacamole-connection-profiles/{sample_gcp.id}",

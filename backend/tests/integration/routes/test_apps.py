@@ -62,7 +62,9 @@ class TestCreateApplication:
             "vendor": str(sample_vendor.id),
             "description": "A brand new application",
         }
-        resp = client.post(f"{API}/applications/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/applications/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 201
         data = resp.json()
         assert data["name"] == "New App"
@@ -87,7 +89,9 @@ class TestCreateApplication:
             "key": "denied-app",
             "vendor": str(sample_vendor.id),
         }
-        resp = client.post(f"{API}/applications/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/applications/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 403
 
 
@@ -127,14 +131,18 @@ class TestGetApplicationById:
     def test_returns_application(
         self, client, auth_headers, mock_permission_allow, sample_app
     ):
-        resp = client.get(f"{API}/applications/{sample_app.id}", headers=auth_headers)
+        resp = client.get(
+            f"{API}/applications/{sample_app.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["id"] == str(sample_app.id)
         assert data["name"] == sample_app.name
         assert data["key"] == sample_app.key
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/applications/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404
@@ -144,9 +152,13 @@ class TestGetApplicationById:
         resp = client.get(f"{API}/applications/{fake_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_app):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_app
+    ):
         """Without mock_permission_allow, applications_read is denied."""
-        resp = client.get(f"{API}/applications/{sample_app.id}", headers=auth_headers)
+        resp = client.get(
+            f"{API}/applications/{sample_app.id}", headers=auth_headers
+        )
         assert resp.status_code == 403
 
 
@@ -206,7 +218,9 @@ class TestDeleteApplication:
         self, client, auth_headers, mock_permission_allow
     ):
         fake_id = uuid.uuid4()
-        resp = client.delete(f"{API}/applications/{fake_id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/applications/{fake_id}", headers=auth_headers
+        )
         assert resp.status_code == 404
 
     def test_delete_unauthenticated_returns_401(self, client):

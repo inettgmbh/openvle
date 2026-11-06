@@ -1,6 +1,6 @@
 import re
 
-from pydantic import UUID4, BaseModel, ConfigDict, field_validator
+from pydantic import UUID4, BaseModel, ConfigDict, Field, field_validator
 
 from core.exceptions import InvalidFieldValue, MailSubjectTooLong
 
@@ -31,33 +31,105 @@ def _validate_mail_subject(value: str) -> str:
 
 # Base MailTemplate class
 class MailTemplateBase(DBBase):
-    name: str | None = None
-    subject: str | None = None
-    description: str | None = None
-    fromName: str | None = None
-    fromMail: str | None = None
-    contentHTML: str | None = None
-    contentPlain: str | None = None
-    language: UUID4 | None = None
-    protected: bool | None = None
-    replyTo: str | None = None
-    mail_action: UUID4 | None = None
+    """Base schema for email template objects used to render outgoing emails."""
+
+    name: str | None = Field(
+        None, description="Display name of the mail template"
+    )
+    subject: str | None = Field(
+        None,
+        description="Email subject line (max 75 chars, supports {{event.slug}} placeholder)",
+    )
+    description: str | None = Field(
+        None, description="Optional description of the mail template"
+    )
+    fromName: str | None = Field(
+        None,
+        description="Sender display name used when sending emails with this template",
+    )
+    fromMail: str | None = Field(
+        None,
+        description="Sender email address used when sending emails with this template",
+    )
+    contentHTML: str | None = Field(
+        None, description="HTML content of the email template"
+    )
+    contentPlain: str | None = Field(
+        None, description="Plain-text content of the email template"
+    )
+    language: UUID4 | None = Field(
+        None, description="ID of the language this template is written in"
+    )
+    protected: bool | None = Field(
+        None, description="If true, the template cannot be deleted"
+    )
+    replyTo: str | None = Field(
+        None,
+        description="Reply-to email address for emails sent with this template",
+    )
+    mail_action: UUID4 | None = Field(
+        None, description="ID of the mail action that uses this template"
+    )
     model_config = ConfigDict(from_attributes=True)
 
 
 # Properties to receive via API on creation
 class MailTemplateCreate(DBBaseCreate):
-    name: str
-    subject: str
-    description: str | None = None
-    fromName: str | None = None
-    fromMail: str | None = None
-    contentHTML: str
-    contentPlain: str
-    language: UUID4
-    protected: bool
-    replyTo: str | None = None
-    mail_action: UUID4 | None = None
+    """Payload for creating a new email template."""
+
+    name: str = Field(..., description="Display name of the mail template")
+    subject: str = Field(
+        ...,
+        description="Email subject line (max 75 chars, supports {{event.slug}} placeholder)",
+    )
+    description: str | None = Field(
+        None, description="Optional description of the mail template"
+    )
+    fromName: str | None = Field(
+        None,
+        description="Sender display name used when sending emails with this template",
+    )
+    fromMail: str | None = Field(
+        None,
+        description="Sender email address used when sending emails with this template",
+    )
+    contentHTML: str = Field(
+        ..., description="HTML content of the email template"
+    )
+    contentPlain: str = Field(
+        ..., description="Plain-text content of the email template"
+    )
+    language: UUID4 = Field(
+        ..., description="ID of the language this template is written in"
+    )
+    protected: bool = Field(
+        ..., description="If true, the template cannot be deleted"
+    )
+    replyTo: str | None = Field(
+        None,
+        description="Reply-to email address for emails sent with this template",
+    )
+    mail_action: UUID4 | None = Field(
+        None, description="ID of the mail action that uses this template"
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "name": "Willkommens-E-Mail",
+                "subject": "Willkommen im OpenVLE-System",
+                "description": "Vorlage für die Begrüßungs-E-Mail neuer Benutzer",
+                "fromName": "OpenVLE",
+                "fromMail": "noreply@example.com",
+                "contentHTML": "<p>Willkommen im System, {{ user.name }}!</p>",
+                "contentPlain": "Willkommen im System, {{ user.name }}!",
+                "language": "00000000-0000-0000-0000-000000000001",
+                "protected": False,
+                "replyTo": None,
+                "mail_action": None,
+            }
+        }
+    )
 
     @field_validator("subject")
     @classmethod
@@ -67,17 +139,45 @@ class MailTemplateCreate(DBBaseCreate):
 
 # Properties to receive via API on update
 class MailTemplateUpdate(DBBaseUpdate):
-    name: str | None = None
-    subject: str | None = None
-    description: str | None = None
-    fromName: str | None = None
-    fromMail: str | None = None
-    contentHTML: str | None = None
-    contentPlain: str | None = None
-    language: UUID4 | None = None
-    protected: bool | None = None
-    replyTo: str | None = None
-    mail_action: UUID4 | None = None
+    """Payload for updating an existing email template."""
+
+    name: str | None = Field(
+        None, description="Display name of the mail template"
+    )
+    subject: str | None = Field(
+        None,
+        description="Email subject line (max 75 chars, supports {{event.slug}} placeholder)",
+    )
+    description: str | None = Field(
+        None, description="Optional description of the mail template"
+    )
+    fromName: str | None = Field(
+        None,
+        description="Sender display name used when sending emails with this template",
+    )
+    fromMail: str | None = Field(
+        None,
+        description="Sender email address used when sending emails with this template",
+    )
+    contentHTML: str | None = Field(
+        None, description="HTML content of the email template"
+    )
+    contentPlain: str | None = Field(
+        None, description="Plain-text content of the email template"
+    )
+    language: UUID4 | None = Field(
+        None, description="ID of the language this template is written in"
+    )
+    protected: bool | None = Field(
+        None, description="If true, the template cannot be deleted"
+    )
+    replyTo: str | None = Field(
+        None,
+        description="Reply-to email address for emails sent with this template",
+    )
+    mail_action: UUID4 | None = Field(
+        None, description="ID of the mail action that uses this template"
+    )
 
     @field_validator("subject")
     @classmethod
@@ -90,6 +190,8 @@ class MailTemplateUpdate(DBBaseUpdate):
 
 
 class MailTemplateInDBBase(MailTemplateBase):
+    """Internal mail template schema with required ID field."""
+
     id: UUID4
 
     model_config = ConfigDict(from_attributes=True)
@@ -97,17 +199,23 @@ class MailTemplateInDBBase(MailTemplateBase):
 
 # Main class used as response model
 class MailTemplate(MailTemplateInDBBase):
+    """Full mail template response schema."""
+
     model_config = ConfigDict(from_attributes=True)
 
 
 # Class used for when MailTemplate is to appear as a nested model and will only display ID
 class MailTemplateNested(DBBaseUpdate):
-    id: UUID4
+    """Minimal mail template schema for nested references, shows ID only."""
+
+    id: UUID4 = Field(..., description="Unique identifier of the mail template")
 
     model_config = ConfigDict(from_attributes=True)
 
 
 # List object of MailTemplate
 class MailTemplateList(BaseModel):
+    """Paginated list of mail template objects."""
+
     pageDetails: PaginationPageDetails
     items: list[MailTemplate]

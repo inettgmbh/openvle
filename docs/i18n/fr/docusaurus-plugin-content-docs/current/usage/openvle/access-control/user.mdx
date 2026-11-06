@@ -118,6 +118,83 @@ Le **nom d'utilisateur** ne peut **pas être modifié ultérieurement**.
 
 ---
 
+## Importer des utilisateurs via CSV {#import-users}
+
+L'**import d'utilisateurs** vous permet de **créer** de nombreux comptes utilisateur en une seule étape à partir d'un **fichier CSV** — idéal pour configurer tout un groupe de participants en tant que comptes locaux au début d'une formation.
+
+<NavigationHint
+  path="Contrôle d'accès → Utilisateurs → Importer"
+  alternative="Via le bouton « Importer » dans la vue d'ensemble des utilisateurs"
+/>
+
+L'import vous guide à travers un **assistant en quatre étapes** :
+
+1. **Téléverser** – sélectionner le fichier CSV.
+2. **Associer les colonnes** – associer les colonnes du fichier aux champs attendus.
+3. **Aperçu et import** – vérifier les données et lancer l'import.
+4. **Résultat** – récapitulatif des lignes réussies et en échec.
+
+### Choisir le format du nom
+
+Avant l'association, un commutateur vous permet d'indiquer comment le **nom** est structuré dans votre fichier :
+
+- **Prénom et nom séparés** – deux colonnes `firstname` et `lastname` (fusionnées en un seul nom lors de l'import).
+- **Nom complet** – une seule colonne `fullname`.
+
+OpenVLE ne stocke de toute façon qu'un **seul** nom en interne ; ce choix n'affecte que le format de votre fichier CSV. Le modèle **téléchargeable** s'adapte automatiquement au format sélectionné.
+
+### Colonnes CSV
+
+<FieldReference
+  fields={[
+    {
+      name: 'email',
+      description:
+        "Obligatoire. Adresse e-mail de l'utilisateur. Doit contenir un « @ » — sinon la ligne est rejetée.",
+    },
+    {
+      name: 'username',
+      description:
+        'Obligatoire. Nom de connexion unique. Ne peut plus être modifié après la création.',
+    },
+    {
+      name: 'fullname',
+      description:
+        "Uniquement au format « Nom complet ». Nom complet de l'utilisateur dans une seule colonne.",
+    },
+    {
+      name: 'firstname',
+      description:
+        'Uniquement au format « Prénom et nom séparés ». Prénom ; fusionné avec `lastname` pour former le nom.',
+    },
+    {
+      name: 'lastname',
+      description:
+        'Uniquement au format « Prénom et nom séparés ». Nom ; fusionné avec `firstname` pour former le nom.',
+    },
+  ]}
+/>
+
+:::note
+Dans le modèle téléchargeable, les en-têtes de colonnes portent les libellés traduits (par ex. **E-mail**, **Prénom**, **Nom**, **Nom d'utilisateur**) — et non les noms de champs internes indiqués ici.
+:::
+
+### Limites et résultat
+
+- Chaque import traite au maximum **5000 lignes** ; une taille de fichier maximale de **5 Mo** s'applique également.
+- Les utilisateurs créés reçoivent le statut **Actif** et la langue par défaut du système.
+- Après l'import, la vue des résultats indique pour chaque ligne si elle a été créée avec succès ou rejetée avec une erreur. Erreurs fréquentes :
+  - **E-mail invalide** – l'adresse ne contient pas de « @ ».
+  - **Déjà existant** – le nom d'utilisateur ou l'e-mail existe déjà (le message exact provient du serveur).
+
+L'import nécessite la même permission que la création manuelle d'un utilisateur (`users_create`, voir [Permissions requises](#permissions-requises)).
+
+:::info Créer ou ajouter
+L'import d'utilisateurs **crée de nouveaux comptes utilisateur**. Pour ajouter des utilisateurs **existants** à un événement, utilisez plutôt l'[import de participants](/docs/usage/openvle/events/#import-participants) — celui-ci ne crée pas d'utilisateurs, mais ajoute ceux qui existent déjà.
+:::
+
+---
+
 ## Activer ou désactiver un utilisateur
 
 1. Ouvrez dans le menu principal la section **Contrôle d'accès → Utilisateurs**.

@@ -2,11 +2,17 @@ from typing import Any
 
 from fastapi import Request
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from core.config import Settings
-from core.exceptions import BadRequestError, RequiredParameterMissingError
+from core.exceptions import (
+    BadRequestError,
+    ObjectInUseError,
+    RequiredParameterMissingError,
+)
 from models.courses import Course
+from models.events import Event
 from models.templates import Template
 from schemas.courses import CourseCreate, CourseUpdate, CourseUpdateTemplate
 
@@ -20,6 +26,20 @@ class CRUDCourse(CRUDBase[Course, CourseCreate, CourseUpdate]):
     def get_by_name(self, db: Session, *, name: str) -> Course | None:
         course = db.query(Course).filter(Course.name == name).first()
         return course
+
+    # Delete Course, blocking while Events still reference it
+    def delete(self, db: Session, id: Any):
+        # Resolve the object first so a missing Course yields 404, not 409
+        self.get(db, id)
+        event_count = (
+            db.query(func.count(Event.id)).filter(Event.course == id).scalar()
+        )
+        if event_count:
+            raise ObjectInUseError(
+                model_name=Course.__name__,
+                references={Event.__name__: event_count},
+            )
+        return super().delete(db, id)
 
     # Update Course Template
     def update_template(

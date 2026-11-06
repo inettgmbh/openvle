@@ -12,6 +12,7 @@ from core.auth import authenticate, create_access_token
 from core.auth_oidc import handle_oidc_callback, handle_oidc_login
 from core.config import Settings
 from core.exceptions import SystemUserLoginException
+from core.responses import AUTH_ERROR_RESPONSES, build_description
 from models import Policy
 from schemas.auth import TokenResponse
 from schemas.users import *
@@ -21,7 +22,7 @@ settings = Settings()
 router = APIRouter(
     prefix="/auth",
     tags=["auth"],
-    responses={404: {"detail": "Not found"}},
+    responses=AUTH_ERROR_RESPONSES,
 )
 
 
@@ -50,6 +51,14 @@ def _build_token_response(db: Session, user) -> dict:
     "/login",
     response_model=TokenResponse,
     operation_id="auth_login",
+    summary="User login",
+    description=build_description(
+        description="Authenticates a user with username and password and returns a JWT bearer token.",
+        notes=[
+            "If the user has outstanding policy acceptances, a `policy_required` token is returned instead of a standard bearer token.",
+            "The `system` user cannot log in outside of `dev` environments.",
+        ],
+    ),
 )
 def login(
     user_in: OAuth2PasswordRequestForm = Depends(),
@@ -68,6 +77,13 @@ def login(
     "/reauthenticate",
     response_model=TokenResponse,
     operation_id="auth_reauthenticate",
+    summary="Reauthenticate after policy acceptance",
+    description=build_description(
+        description="Exchanges a `policy_required` token for a standard bearer token after the user has accepted all outstanding policies.",
+        notes=[
+            "Only `policy_required` tokens are accepted — standard bearer tokens will be rejected.",
+        ],
+    ),
 )
 def reauthenticate(
     user=Depends(dependencies.get_current_user_reauth),
@@ -85,6 +101,9 @@ if settings.oidc_enabled:
         status_code=302,
         operation_id="auth_oidc_login",
         summary="OIDC login start",
+        description=build_description(
+            description="Initiates the OIDC authorization code flow by redirecting the user to the configured identity provider.",
+        ),
     )
     async def oidc_login(request: Request):
         return await handle_oidc_login(request=request)
@@ -94,6 +113,9 @@ if settings.oidc_enabled:
         response_model=TokenResponse,
         operation_id="auth_oidc_callback",
         summary="OIDC login callback",
+        description=build_description(
+            description="Handles the OIDC provider callback and returns a JWT bearer token, or redirects with token/error query parameters.",
+        ),
         responses={
             302: {
                 "description": (

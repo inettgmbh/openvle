@@ -218,7 +218,7 @@ const contentClass = computed(() => ({
 
 <template>
   <OverlayLayer v-show="modelValue" @overlay-click="handleClose">
-    <CardBox v-show="modelValue" :class="componentClass" is-modal>
+    <CardBox v-show="modelValue" :class="componentClass" is-modal has-search>
       <CardBoxComponentTitle :title="title">
         <BaseButton
           v-if="phase === 'selecting'"

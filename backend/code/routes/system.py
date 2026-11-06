@@ -4,6 +4,7 @@ from pydantic import UUID4
 from controllers.system import *
 from core import dependencies
 from core.exceptions import PermissionDenied
+from core.responses import CRUD_RESPONSES
 from models import SystemSetting as SystemSettingModel
 from schemas.system import (
     SystemSetting,
@@ -14,7 +15,7 @@ from schemas.system import (
 router = APIRouter(
     prefix="/system",
     tags=["system"],
-    responses={404: {"detail": "Not found"}},
+    responses=CRUD_RESPONSES,
 )
 
 
@@ -67,6 +68,7 @@ async def get_system_settings(
     operation_id="system_update",
     summary="Update system setting",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `system_update`",
 )
 def update_system_settings(
     *,

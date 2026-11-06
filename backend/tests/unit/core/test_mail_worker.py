@@ -8,9 +8,9 @@ from email.mime.text import MIMEText
 from unittest.mock import MagicMock
 
 import pytest
-
 from models import Language, Mail, MailAction, MailTemplate, SubTask, Task
 from pve.worker_utils import TaskException
+
 from tests.helpers.mock_smtp import MockSMTP
 
 
@@ -41,7 +41,9 @@ def sample_mail_action(db_session, system_user):
 
 
 @pytest.fixture()
-def sample_mail_template(db_session, system_user, sample_language, sample_mail_action):
+def sample_mail_template(
+    db_session, system_user, sample_language, sample_mail_action
+):
     now = datetime.now(timezone.utc)
     tpl = MailTemplate(
         id=uuid.uuid4(),
@@ -78,7 +80,9 @@ def _make_task(db, system_user, event_id=None):
     return task
 
 
-def _make_subtask(db, system_user, parent_task, action="mails_send", job_id=None):
+def _make_subtask(
+    db, system_user, parent_task, action="mails_send", job_id=None
+):
     now = datetime.now(timezone.utc)
     subtask = SubTask(
         id=uuid.uuid4(),
@@ -128,9 +132,9 @@ def _patch_session_and_smtp(monkeypatch, db_session, smtp_method="PLAIN"):
     """Patch SessionLocal, mail_construct, and SMTP for mail_worker tests."""
     monkeypatch.setattr("core.mail_worker.SessionLocal", lambda: db_session)
     # Also patch SessionLocal in modules called by worker_process_success/fail
-    import core.mariadb as m
     import controllers.sub_tasks as st
     import core.mail_automated as ma
+    import core.mariadb as m
 
     monkeypatch.setattr(m, "SessionLocal", lambda: db_session)
     monkeypatch.setattr(st, "SessionLocal", lambda: db_session)
@@ -152,7 +156,9 @@ def _patch_session_and_smtp(monkeypatch, db_session, smtp_method="PLAIN"):
     mock_msg["To"] = "recipient@example.com"
     mock_msg["Subject"] = "Test"
     mock_msg.attach(MIMEText("plain body", "plain"))
-    monkeypatch.setattr("core.mail_worker.mail_construct", lambda **kw: mock_msg)
+    monkeypatch.setattr(
+        "core.mail_worker.mail_construct", lambda **kw: mock_msg
+    )
 
     return mock_settings
 
@@ -177,7 +183,9 @@ class TestMailWorkerSend:
 
         from core.mail_worker import mail_worker_send
 
-        result = mail_worker_send(kvs_task_object_id=subtask.id, kvs_mail_id=mail.id)
+        result = mail_worker_send(
+            kvs_task_object_id=subtask.id, kvs_mail_id=mail.id
+        )
 
         assert result is True
         db_session.expire_all()
@@ -223,7 +231,9 @@ class TestMailWorkerSend:
 
         from core.mail_worker import mail_worker_send
 
-        with pytest.raises(TaskException, match="MailTemplate object not found"):
+        with pytest.raises(
+            TaskException, match="MailTemplate object not found"
+        ):
             mail_worker_send(
                 kvs_task_object_id=subtask.id,
                 kvs_mail_id=mail.id,
@@ -313,7 +323,9 @@ class TestMailWorkerSend:
         self, db_session, system_user, monkeypatch, sample_mail_template
     ):
         """Unknown SMTP method raises TaskException with code 422."""
-        _patch_session_and_smtp(monkeypatch, db_session, smtp_method="unknown_method")
+        _patch_session_and_smtp(
+            monkeypatch, db_session, smtp_method="unknown_method"
+        )
 
         task = _make_task(db_session, system_user)
         subtask = _make_subtask(db_session, system_user, task)
@@ -352,7 +364,9 @@ class TestMailWorkerSend:
 
         from core.mail_worker import mail_worker_send
 
-        result = mail_worker_send(kvs_task_object_id=subtask.id, kvs_mail_id=mail.id)
+        result = mail_worker_send(
+            kvs_task_object_id=subtask.id, kvs_mail_id=mail.id
+        )
 
         assert result is True
 
@@ -391,9 +405,11 @@ class TestMailWorkerSend:
         _patch_session_and_smtp(monkeypatch, db_session)
 
         def exploding_construct(**kw):
-            raise Exception("Jinja2 template error")
+            raise RuntimeError("Jinja2 template error")
 
-        monkeypatch.setattr("core.mail_worker.mail_construct", exploding_construct)
+        monkeypatch.setattr(
+            "core.mail_worker.mail_construct", exploding_construct
+        )
 
         task = _make_task(db_session, system_user)
         subtask = _make_subtask(db_session, system_user, task)
@@ -401,7 +417,9 @@ class TestMailWorkerSend:
 
         from core.mail_worker import mail_worker_send
 
-        with pytest.raises(TaskException, match="Failed to render email template"):
+        with pytest.raises(
+            TaskException, match="Failed to render email template"
+        ):
             mail_worker_send(kvs_task_object_id=subtask.id, kvs_mail_id=mail.id)
 
     # -----------------------------------------------------------------------
@@ -424,7 +442,9 @@ class TestMailWorkerSend:
 
         from core.mail_worker import mail_worker_send
 
-        result = mail_worker_send(kvs_task_object_id=subtask.id, kvs_mail_id=mail.id)
+        result = mail_worker_send(
+            kvs_task_object_id=subtask.id, kvs_mail_id=mail.id
+        )
         assert result is True
 
     @pytest.mark.parametrize("method", ["SSL", "Ssl", "ssl"])
@@ -448,7 +468,9 @@ class TestMailWorkerSend:
 
         from core.mail_worker import mail_worker_send
 
-        result = mail_worker_send(kvs_task_object_id=subtask.id, kvs_mail_id=mail.id)
+        result = mail_worker_send(
+            kvs_task_object_id=subtask.id, kvs_mail_id=mail.id
+        )
         assert result is True
 
     @pytest.mark.parametrize("method", ["TLS", "Tls", "tls"])
@@ -472,7 +494,9 @@ class TestMailWorkerSend:
 
         from core.mail_worker import mail_worker_send
 
-        result = mail_worker_send(kvs_task_object_id=subtask.id, kvs_mail_id=mail.id)
+        result = mail_worker_send(
+            kvs_task_object_id=subtask.id, kvs_mail_id=mail.id
+        )
         assert result is True
 
     # -----------------------------------------------------------------------
@@ -506,7 +530,9 @@ class TestMailWorkerSend:
 
         from core.mail_worker import mail_worker_send
 
-        result = mail_worker_send(kvs_task_object_id=subtask.id, kvs_mail_id=mail.id)
+        result = mail_worker_send(
+            kvs_task_object_id=subtask.id, kvs_mail_id=mail.id
+        )
         assert result is True
         assert login_called["user"] == "testuser"
         assert login_called["password"] == "testpass"
@@ -536,7 +562,9 @@ class TestMailWorkerSend:
 
         from core.mail_worker import mail_worker_send
 
-        result = mail_worker_send(kvs_task_object_id=subtask.id, kvs_mail_id=mail.id)
+        result = mail_worker_send(
+            kvs_task_object_id=subtask.id, kvs_mail_id=mail.id
+        )
         assert result is True
 
     def test_plain_auth_error_with_username(

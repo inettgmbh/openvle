@@ -19,6 +19,7 @@ import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import UnsavedChangesModal from '@/components/UnsavedChangesModal.vue'
 import { useUnsavedChanges } from '@/composables/useUnsavedChanges'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -149,7 +150,7 @@ watch(
               v-model="vm.name"
               :icon="mdiRename"
               :placeholder="$t('views.vms.namePlaceholder')"
-              maxlength="50"
+              :maxlength="FIELD_LIMITS.vm.name"
               required
             />
           </FormField>
@@ -208,8 +209,13 @@ watch(
         <FormField
           :label="$t('common.description')"
           :help="$t('views.vms.descriptionHelpMarkdown')"
+          :tooltip="$t('common.maxChars', { max: FIELD_LIMITS.vm.description })"
         >
-          <BaseMarkdown v-model="vm.description" action="edit" />
+          <BaseMarkdown
+            v-model="vm.description"
+            action="edit"
+            :maxlength="FIELD_LIMITS.vm.description"
+          />
         </FormField>
 
         <BaseDivider />

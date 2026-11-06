@@ -15,6 +15,7 @@ import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import UnsavedChangesModal from '@/components/UnsavedChangesModal.vue'
 import { useUnsavedChanges } from '@/composables/useUnsavedChanges'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -93,8 +94,8 @@ function onCancel() {
           <FormControl
             v-model="policy.name"
             :icon="mdiRename"
+            :maxlength="FIELD_LIMITS.policy.name"
             :placeholder="$t('views.policies.form.editPlaceholder')"
-            maxlength="40"
             required
           />
         </FormField>
@@ -103,7 +104,11 @@ function onCancel() {
           :label="$t('common.description')"
           :help="$t('views.policies.form.descriptionHelp')"
         >
-          <FormControl v-model="policy.description" :icon="mdiTextBox" />
+          <FormControl
+            v-model="policy.description"
+            :icon="mdiTextBox"
+            :maxlength="FIELD_LIMITS.policy.description"
+          />
         </FormField>
 
         <FormField

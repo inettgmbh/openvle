@@ -6,6 +6,14 @@ from controllers.templates import *
 from controllers.virtual_machines import CRUDVirtualMachine
 from core import dependencies
 from core.exceptions import DuplicateFieldException, PermissionDenied
+from core.responses import (
+    BASE_RESPONSES,
+    CRUD_RESPONSES,
+    DELETE_RESPONSES,
+    READ_RESPONSES,
+    WRITE_RESPONSES,
+    build_description,
+)
 from models.apps import Application as ApplicationModel
 from models.courses import Course as CourseModel
 from models.templates import Template as TemplateModel
@@ -18,7 +26,7 @@ from schemas.virtual_machines import VirtualMachineList
 router = APIRouter(
     prefix="/templates",
     tags=["templates"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -28,8 +36,20 @@ router = APIRouter(
     status_code=201,
     response_model=Template,
     operation_id="templates_create",
+    responses=WRITE_RESPONSES,
     summary="Create Template",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Creates a new template record and enqueues cloning and conversion of the source virtual machine on Proxmox.",
+        permission="templates_create",
+        is_async=True,
+        notes=[
+            "The source VM must have a valid `proxmoxId` and be in `stopped` status.",
+            "Creator is automatically granted `object_full` permission on the new template.",
+            "`GuacamoleConnectionProfile`s linked to the source VM are automatically copied to the new template.",
+            "Tags from the source VM are inherited by the new template.",
+        ],
+    ),
 )
 def create_template(
     *,
@@ -55,6 +75,10 @@ def create_template(
     operation_id="templates_read_all",
     summary="Get Templates",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a paginated list of all templates visible to the requesting user.",
+        permission="templates_read",
+    ),
 )
 def get_templates(
     request: Request,
@@ -97,8 +121,13 @@ def get_templates(
     status_code=200,
     response_model=Template,
     operation_id="templates_read_one",
+    responses=READ_RESPONSES,
     summary="Get Template",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a single template by ID.",
+        permission="templates_read",
+    ),
 )
 def get_template(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -117,8 +146,14 @@ def get_template(
     status_code=200,
     response_model=Template,
     operation_id="templates_update",
+    responses=CRUD_RESPONSES,
     summary="Update Template",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Updates template metadata and enqueues a template refresh on Proxmox.",
+        permission="templates_update",
+        is_async=True,
+    ),
 )
 def update_template(
     *,
@@ -151,8 +186,13 @@ def update_template(
     status_code=200,
     response_model=Template,
     operation_id="templates_apps_update",
+    responses=WRITE_RESPONSES,
     summary="Update Template Apps",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Replaces the application list associated with a template.",
+        permission="templates_update",
+    ),
 )
 def update_template_apps(
     *,
@@ -176,8 +216,18 @@ def update_template_apps(
     "/{id}",
     status_code=200,
     operation_id="templates_delete",
+    responses=DELETE_RESPONSES,
     summary="Delete Template",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Deletes a template record and enqueues removal from Proxmox.",
+        permission="templates_delete",
+        is_async=True,
+        notes=[
+            "Blocked if the template has `prevent_delete` set or if PVE protection is enabled on the underlying VM.",
+            "Blocked if the template is still linked to virtual machines, courses, or events.",
+        ],
+    ),
 )
 def delete_template(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -196,8 +246,13 @@ def delete_template(
     response_model=VirtualMachineList,
     status_code=200,
     operation_id="templates_vms_read_all",
+    responses=READ_RESPONSES,
     summary="Get all Virtual Machines with Template",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all virtual machines created from this template.",
+        permission="templates_read",
+    ),
 )
 def get_template_vms(
     request: Request,
@@ -247,8 +302,13 @@ def get_template_vms(
     status_code=200,
     response_model=ApplicationList,
     operation_id="templates_application_read_all",
+    responses=READ_RESPONSES,
     summary="Get Template's Applications",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all applications associated with a template.",
+        permission="templates_read",
+    ),
 )
 def get_templates_apps(
     request: Request,
@@ -302,8 +362,13 @@ def get_templates_apps(
     status_code=200,
     response_model=CourseList,
     operation_id="templates_courses_read_all",
+    responses=READ_RESPONSES,
     summary="Get Template's Courses",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all courses associated with a template.",
+        permission="templates_read",
+    ),
 )
 def get_templates_courses(
     request: Request,

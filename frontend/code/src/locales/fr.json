@@ -43,6 +43,7 @@
     "label": "Libellé",
     "loading": "Chargement...",
     "manual": "Manuel",
+    "maxChars": "Maximum {max} caractères",
     "memory": "Mémoire vive",
     "name": "Nom",
     "next": "Suivant",
@@ -146,7 +147,6 @@
       "addTag": "Ajouter un tag",
       "tagExample": "département : 3",
       "formatHelp": "Aperçu",
-      "maxChars": "Maximum {max} caractères",
       "nameRequired": "Le nom du tag est requis",
       "preview": "Aperçu",
       "tagAdded": "Tag ajouté",
@@ -254,6 +254,7 @@
     "deleteModal": {
       "confirmAction": "Confirmer l'action",
       "confirmPrompt": "Veuillez saisir pour confirmer :",
+      "tooltipBlocked": "Suppression impossible tant que des objets liés existent",
       "tooltipBothMissing": "Saisir le texte de confirmation et activer la confirmation supplémentaire",
       "tooltipExtraMissing": "Activer la confirmation supplémentaire ci-dessus",
       "tooltipNameMissing": "Saisir le texte de confirmation pour supprimer",
@@ -1261,6 +1262,13 @@
       }
     },
     "courses": {
+      "delete": {
+        "blockedError": "L'environnement ne peut pas être supprimé car des événements y sont encore associés. Veuillez d'abord supprimer les événements associés.",
+        "cascadeInfo": "La suppression de l'environnement supprime aussi automatiquement ses changelogs, permissions d'objet et tags. Les modèles VM associés sont conservés ; seule l'association est supprimée.",
+        "moreEvents": "… et un autre événement | … et {count} autres événements",
+        "relatedLabel": "Événements associés :",
+        "relatedWarning": "Un événement est encore associé à cet environnement. L'environnement ne peut pas être supprimé tant que celui-ci existe. | {count} événements sont encore associés à cet environnement. L'environnement ne peut pas être supprimé tant qu'ils existent."
+      },
       "detail": {
         "assignTemplate": "Ajouter un modèle VM",
         "cloneNameLabel": "Nom du nouvel environnement",
@@ -1309,6 +1317,12 @@
       "create": {
         "errorDuplicate": "Ce nom ou slug est déjà utilisé. Veuillez en choisir un autre.",
         "errorInvalidSlug": "Nom court (slug) invalide. Autorisé : 4 à 8 caractères (a-z, 0-9, -, _)"
+      },
+      "delete": {
+        "blockedError": "L'événement ne peut pas être supprimé car des VMs y sont encore attribuées. Veuillez d'abord les décommissionner.",
+        "moreVms": "… et une autre VM | … et {count} autres VMs",
+        "relatedLabel": "VMs attribuées :",
+        "relatedWarning": "Une VM est encore attribuée à cet événement. Il ne peut pas être supprimé tant que celle-ci existe. | {count} VMs sont encore attribuées à cet événement. Il ne peut pas être supprimé tant qu'elles existent."
       },
       "detail": {
         "actions": {
@@ -1902,6 +1916,12 @@
         "vmMustBeStopped": "Les modèles VM ne peuvent être créés qu'à partir de machines virtuelles actuellement éteintes. Veuillez d'abord arrêter la VM.",
         "vmNotStopped": "La VM source n'est pas dans le statut « Stopped » (statut actuel : {status})."
       },
+      "delete": {
+        "blockedError": "Le modèle de VM ne peut pas être supprimé car il est encore utilisé (VMs, environnements ou événements). Veuillez d'abord supprimer les références.",
+        "moreItems": "… et un autre objet | … et {count} autres objets",
+        "relatedLabel": "Objets liés :",
+        "relatedWarning": "Ce modèle de VM est encore utilisé par un objet. Il ne peut pas être supprimé tant que celui-ci existe. | Ce modèle de VM est encore utilisé par {count} objets. Il ne peut pas être supprimé tant qu'ils existent."
+      },
       "detail": {
         "applicationAdded": "Application ajoutée",
         "applicationRemoved": "Application retirée du modèle VM",
@@ -2042,8 +2062,13 @@
       "import": {
         "email": "E-mail",
         "firstname": "Prénom",
+        "fullname": "Nom complet",
         "invalidEmail": "E-mail invalide",
         "lastname": "Nom de famille",
+        "nameFormat": "Format du nom",
+        "nameFormatFull": "Nom complet",
+        "nameFormatHint": "Choisissez si votre CSV contient le nom dans une seule colonne (« Nom complet ») ou séparé en prénom et nom. Changer réinitialise un import déjà commencé.",
+        "nameFormatSplit": "Prénom et nom séparés",
         "unknownError": "Erreur inconnue",
         "username": "Nom d'utilisateur"
       },
@@ -2127,6 +2152,49 @@
         "customChart": "Graphique personnalisé",
         "disk": "Disque dur",
         "event": "Événement",
+        "ha": {
+          "actions": {
+            "configure": "Configurer la HA",
+            "configureTooltip": "Configurer la haute disponibilité (HA) de cette VM sur Proxmox",
+            "noProxmoxTooltip": "La VM n'existe pas (encore) sur Proxmox"
+          },
+          "applyError": "La configuration HA de {name} n'a pas pu être appliquée",
+          "applySuccess": "La configuration HA de {name} est en cours d'application",
+          "fetchError": "Impossible de récupérer l'état HA, action annulée",
+          "modal": {
+            "enabledHelp": "Restauration automatique de la VM après une panne de nœud",
+            "enabledLabel": "Haute disponibilité active",
+            "limitTooltip": "Valeurs autorisées : de {min} à {max}",
+            "maxRelocateHelp": "Déplacements vers d'autres nœuds en cas de panne (max_relocate)",
+            "maxRelocateLabel": "Max. déplacements",
+            "maxRestartHelp": "Tentatives de redémarrage en cas de panne (max_restart)",
+            "maxRestartLabel": "Max. redémarrages",
+            "removeWarning": "La configuration HA sera supprimée après confirmation. La VM ne sera plus redémarrée automatiquement après une panne de nœud.",
+            "stateHelp": "État cible souhaité de la VM sous gestion HA",
+            "stateLabel": "État demandé",
+            "stateTooltip": "Démarrée : la VM fonctionne et est redémarrée automatiquement après une panne de nœud. Arrêtée : la VM reste éteinte mais reste gérée par la HA.",
+            "stopWarning": "La VM est en cours d'exécution et sera arrêtée immédiatement après confirmation."
+          },
+          "removeError": "La configuration HA de {name} n'a pas pu être supprimée",
+          "removeSuccess": "La configuration HA de {name} est en cours de suppression",
+          "specLabel": "État HA",
+          "states": {
+            "disabled": "Désactivée",
+            "error": "Erreur",
+            "fence": "Fencing (isolement)",
+            "freeze": "Gelée",
+            "ignored": "Non activée",
+            "migrate": "En migration",
+            "queued": "En file d'attente",
+            "recovery": "Récupération",
+            "relocate": "Déplacement",
+            "request_start": "Démarrage demandé",
+            "request_stop": "Arrêt demandé",
+            "started": "Démarrée",
+            "stopped": "Arrêtée",
+            "unknown": "Inconnu"
+          }
+        },
         "ipv4Address": "Adresse IPv4",
         "ipv4UpdateError": "L'IPv4 n'a pas pu être mis à jour",
         "ipv4UpdateSuccess": "IPv4 mis à jour",

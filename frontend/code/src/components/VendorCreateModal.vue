@@ -7,6 +7,7 @@ import { useToast } from 'vue-toastification'
 import CardBoxModal from '@/components/CardBoxModal.vue'
 import FormControl from '@/components/FormControl.vue'
 import FormField from '@/components/FormField.vue'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import backend from '@/services'
 import { useMainStore } from '@/stores/main'
 
@@ -86,6 +87,7 @@ async function onSubmit() {
       <FormControl
         v-model="name"
         :icon="mdiDomain"
+        :maxlength="FIELD_LIMITS.vendor.name"
         :placeholder="t('common.name')"
         required
         @set-ref="(ref) => (autoFocusInputRef = ref)"
@@ -93,7 +95,11 @@ async function onSubmit() {
     </FormField>
 
     <FormField :label="t('common.description')">
-      <FormControl v-model="description" :icon="mdiTextBox" />
+      <FormControl
+        v-model="description"
+        :icon="mdiTextBox"
+        :maxlength="FIELD_LIMITS.vendor.description"
+      />
     </FormField>
   </CardBoxModal>
 </template>

@@ -36,6 +36,7 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import { templateSearchBarFields } from '@/components/Tables/searchBarFieldConfigs'
 import TableChangelogs from '@/components/Tables/TableChangelogs.vue'
 import TablePermissions from '@/components/Tables/TablePermissions.vue'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import backend from '@/services'
 import { useMainStore } from '@/stores/main'
@@ -154,7 +155,48 @@ async function cloneCourse(course) {
   }
 }
 
+const BLOCKING_EVENTS_LIMIT = 5
+const blockingEvents = ref([])
+const blockingEventsTotal = ref(0)
+
+async function openDeleteCourseModal(courseObj) {
+  objToRemove.value = courseObj
+  blockingEvents.value = []
+  blockingEventsTotal.value = 0
+  backend.beginSilent()
+  try {
+    const result = await backend.events.list({
+      page: 1,
+      limit: BLOCKING_EVENTS_LIMIT,
+      search_field: 'course',
+      search_value: courseObj.id,
+    })
+    blockingEvents.value = result?.items ?? []
+    blockingEventsTotal.value =
+      result?.pageDetails?.totalCount ?? blockingEvents.value.length
+  } catch {
+    // Fail open: without the pre-check the backend 409 still blocks the delete
+  } finally {
+    backend.endSilent()
+  }
+  modals.deleteCourse.value = true
+}
+
+const blockingEventItems = computed(() => {
+  const items = blockingEvents.value.map((event) => ({
+    label: event.name ?? event.id,
+  }))
+  const more = blockingEventsTotal.value - blockingEvents.value.length
+  if (more > 0) {
+    items.push({
+      label: t('views.courses.delete.moreEvents', { count: more }, more),
+    })
+  }
+  return items
+})
+
 async function deleteCourse(courseId) {
+  backend.beginSilent()
   try {
     await backend.courses.delete(courseId)
     router.push({ path: `/courses` })
@@ -162,9 +204,20 @@ async function deleteCourse(courseId) {
       t('common.deleteSuccess', { entity: t('objectTypes.course.singular') }),
     )
   } catch (error) {
-    toast.error(
-      t('common.deleteError', { entity: t('objectTypes.course.singular') }),
-    )
+    const errorCode = error?.response?.data?.error_code
+    if (
+      errorCode === 'OBJECT_IN_USE' ||
+      errorCode === 'OBJECT_DELETE_INTEGRITY_ERROR'
+    ) {
+      toast.error(t('views.courses.delete.blockedError'), { timeout: 8400 })
+    } else {
+      const detail = String(error?.response?.data?.detail || '')
+      toast.error(
+        `${t('common.deleteError', { entity: t('objectTypes.course.singular') })}${detail ? '\n' + detail : ''}`,
+      )
+    }
+  } finally {
+    backend.endSilent()
   }
 }
 
@@ -400,6 +453,7 @@ watch(
       <FormControl
         v-model="clonedCourse.name"
         :icon="mdiRename"
+        :maxlength="FIELD_LIMITS.course.name"
         :placeholder="$t('views.courses.form.namePlaceholder')"
         required
       />
@@ -411,6 +465,22 @@ watch(
     v-model="modals.deleteCourse.value"
     :name="course.name"
     :checkvalue="course.name"
+    :blocked="blockingEventsTotal > 0"
+    :info="
+      blockingEventsTotal > 0 ? null : $t('views.courses.delete.cascadeInfo')
+    "
+    :warning="
+      blockingEventsTotal > 0
+        ? $t(
+            'views.courses.delete.relatedWarning',
+            { count: blockingEventsTotal },
+            blockingEventsTotal,
+          )
+        : null
+    "
+    :related-items="blockingEventItems"
+    :related-label="$t('views.courses.delete.relatedLabel')"
+    :related-count="blockingEventsTotal"
     @form-submitted="deleteCourse(objToRemove.id)"
   />
 
@@ -462,7 +532,7 @@ watch(
             color="danger"
             rounded-full
             small
-            @click="showModal('deleteCourse', course)"
+            @click="openDeleteCourseModal(course)"
           />
         </BaseButtons>
       </SectionTitleLineWithButton>

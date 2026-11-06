@@ -7,6 +7,7 @@ from controllers.os import *
 from controllers.vendor import *
 from core import dependencies
 from core.exceptions import DuplicateFieldException, PermissionDenied
+from core.responses import CRUD_RESPONSES
 from models.apps import Application as ApplicationModel
 from models.os import OS as OSModel
 from models.vendor import Vendor as VendorModel
@@ -17,7 +18,7 @@ from schemas.vendor import Vendor, VendorList
 router = APIRouter(
     prefix="/vendors",
     tags=["vendors"],
-    responses={404: {"detail": "Not found"}},
+    responses=CRUD_RESPONSES,
 )
 
 
@@ -29,6 +30,7 @@ router = APIRouter(
     operation_id="vendors_create",
     summary="Create Vendor",
     dependencies=[Depends(dependencies.PermissionChecker())],
+    description="**Required permission:** `vendors_create`",
 )
 def create_vendor(
     *,
@@ -58,6 +60,7 @@ def create_vendor(
     operation_id="vendors_read_all",
     summary="Get Vendors",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `vendors_read`",
 )
 def get_vendors(
     request: Request,
@@ -102,6 +105,7 @@ def get_vendors(
     operation_id="vendors_read_one",
     summary="Get Vendor",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `vendors_read`",
 )
 def get_vendor(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -122,6 +126,7 @@ def get_vendor(
     operation_id="vendors_update",
     summary="Update Vendor",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `vendors_update`",
 )
 def update_vendor(
     *,
@@ -151,6 +156,7 @@ def update_vendor(
     operation_id="vendors_delete",
     summary="Delete Vendor",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `vendors_delete`",
 )
 def delete_vendor(
     id: UUID4, request: Request, db: Session = Depends(dependencies.get_db)
@@ -171,6 +177,7 @@ def delete_vendor(
     operation_id="vendors_os_read_all",
     summary="Get all OS with Vendor",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `vendors_read`",
 )
 def get_vendor_os(
     id: UUID4,
@@ -220,6 +227,7 @@ def get_vendor_os(
     operation_id="vendors_apps_read_all",
     summary="Get all Applications with Vendor",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `vendors_read`",
 )
 def get_vendor_apps(
     id: UUID4,

@@ -3,7 +3,6 @@
 import uuid
 
 import pytest
-
 from core.exceptions import InvalidFieldValue
 from schemas.guacamole_connection_profiles import (
     GuacamoleConnectionProfileClone,

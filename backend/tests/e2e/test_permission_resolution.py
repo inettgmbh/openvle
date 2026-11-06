@@ -8,9 +8,7 @@ Tests object permissions, permission hierarchy, fallthrough pattern
 import uuid
 from datetime import date, datetime, time, timezone
 
-
 from tests.e2e.conftest import API
-
 
 # ------------------------------------------------------------------
 # Helpers
@@ -291,7 +289,9 @@ class TestFallthroughPattern:
         user_b_headers,
     ):
         """User without any event permissions gets empty list."""
-        _create_event_via_db(db_session, system_user, event_statuses, workflow_course)
+        _create_event_via_db(
+            db_session, system_user, event_statuses, workflow_course
+        )
 
         resp = client.get(f"{API}/events/", headers=user_b_headers)
         assert resp.status_code == 200
@@ -347,10 +347,17 @@ class TestProtectedObjects:
     """Test that protected roles and permissions cannot be modified."""
 
     def test_cannot_delete_protected_role(
-        self, client, db_session, role_admin, mock_permission_allow, auth_headers
+        self,
+        client,
+        db_session,
+        role_admin,
+        mock_permission_allow,
+        auth_headers,
     ):
         """Deleting a protected role (admin_full) returns 403."""
-        resp = client.delete(f"{API}/roles/{role_admin.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/roles/{role_admin.id}", headers=auth_headers
+        )
         assert resp.status_code == 403
 
     def test_duplicate_object_permission_returns_409(

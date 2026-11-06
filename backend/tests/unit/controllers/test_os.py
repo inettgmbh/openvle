@@ -4,10 +4,10 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from controllers.os import CRUDOperatingSystem
 from models import OS, Document, ObjectPermission, Vendor
 from schemas.os import OSCreate, OSUpdate, OSUpdateDocuments
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -190,7 +190,9 @@ class TestCRUDOSUpdate:
         result = self.crud.update(os_obj.id, db_session, request, obj_in=obj_in)
         assert result.name == "Updated OS"
 
-    def test_update_vendor(self, db_session, active_user, sample_vendor, second_vendor):
+    def test_update_vendor(
+        self, db_session, active_user, sample_vendor, second_vendor
+    ):
         now = datetime.now(timezone.utc)
         os_obj = OS(
             id=uuid.uuid4(),
@@ -263,7 +265,9 @@ class TestCRUDOSDocuments:
         # First add a document
         request = create_mock_request(active_user)
         obj_in = OSUpdateDocuments(documents=[{"id": str(sample_document.id)}])
-        self.crud.update_documents(os_obj.id, db_session, request, obj_in=obj_in)
+        self.crud.update_documents(
+            os_obj.id, db_session, request, obj_in=obj_in
+        )
 
         # Now set (replace) with empty list
         obj_in_empty = OSUpdateDocuments(documents=[])

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from controllers.policies import *
 from core import dependencies
 from core.exceptions import DuplicateFieldException, PermissionDenied
+from core.responses import CRUD_RESPONSES
 from models import PoliciesUser as PolicyUserModel, Policy as PolicyModel
 from schemas.policies import (
     Policy,
@@ -19,7 +20,7 @@ from schemas.policies import (
 router = APIRouter(
     prefix="/policies",
     tags=["policies"],
-    responses={404: {"detail": "Not found"}},
+    responses=CRUD_RESPONSES,
 )
 
 
@@ -31,6 +32,7 @@ router = APIRouter(
     operation_id="policies_create",
     summary="Create Policy",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `policies_create`",
 )
 def create_policy(
     *,
@@ -60,6 +62,7 @@ def create_policy(
     operation_id="policies_read_all",
     summary="Get Policies",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `policies_read`",
 )
 def get_policies(
     request: Request,
@@ -113,6 +116,7 @@ def get_policy(
     operation_id="policies_update",
     summary="Update Policy",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `policies_update`",
 )
 def update_policy(
     *,
@@ -142,6 +146,7 @@ def update_policy(
     operation_id="policies_delete",
     summary="Delete Policy",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `policies_delete`",
 )
 def delete_policy(
     id: UUID4, request: Request, db: Session = Depends(dependencies.get_db)
@@ -188,6 +193,7 @@ def actions_policy(
     operation_id="policies_users_read_all",
     summary="Get all User - Policy associations",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `policies_users_read`",
 )
 def get_policies_users(
     request: Request,
@@ -223,6 +229,7 @@ def get_policies_users(
     operation_id="policies_user_read_one",
     summary="Returns Policy - User object if user has agreed to policy",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `policies_user_read`",
 )
 def get_policy_user(
     id: UUID4,

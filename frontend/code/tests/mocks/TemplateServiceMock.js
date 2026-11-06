@@ -194,4 +194,14 @@ export default {
   ]),
 
   getName: vi.fn().mockResolvedValue('A Mock Template 421'),
+
+  getVMs: vi.fn().mockResolvedValue({
+    pageDetails: { page: 1, perPage: 10, pageCount: 0, totalCount: 0 },
+    items: [],
+  }),
+
+  getCourses: vi.fn().mockResolvedValue({
+    pageDetails: { page: 1, perPage: 10, pageCount: 0, totalCount: 0 },
+    items: [],
+  }),
 }

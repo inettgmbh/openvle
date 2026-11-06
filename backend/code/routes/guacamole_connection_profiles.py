@@ -5,6 +5,12 @@ from sqlalchemy.orm import Session
 from controllers.guacamole_connection_profiles import *
 from core import dependencies
 from core.exceptions import PermissionDenied
+from core.responses import (
+    BASE_RESPONSES,
+    READ_RESPONSES,
+    WRITE_RESPONSES,
+    build_description,
+)
 from models import GuacamoleConnectionProfile as GuacamoleConnectionProfileModel
 from schemas.guacamole_connection_profiles import (
     GuacamoleConnectionProfile,
@@ -16,7 +22,7 @@ from schemas.guacamole_connection_profiles import (
 router = APIRouter(
     prefix="/guacamole-connection-profiles",
     tags=["guacamole-connection-profiles"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -26,8 +32,17 @@ router = APIRouter(
     status_code=201,
     response_model=GuacamoleConnectionProfile,
     operation_id="guacamole_connection_profiles_create",
+    responses=WRITE_RESPONSES,
     summary="Create GuacamoleConnectionProfile",
     dependencies=[Depends(dependencies.PermissionChecker())],
+    description=build_description(
+        description="Creates a Guacamole connection profile defining the protocol and credentials for a virtual machine or template.",
+        permission="guacamole_connection_profiles_create",
+        notes=[
+            "The referenced `objectId` must be a valid VirtualMachine or Template.",
+            "Creator is automatically granted `object_full` permission on the new profile.",
+        ],
+    ),
 )
 def create_guacamole_connection_profile(
     *,
@@ -53,6 +68,10 @@ def create_guacamole_connection_profile(
     operation_id="guacamole_connection_profiles_read_all",
     summary="Get GuacamoleConnectionProfiles",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a paginated list of all Guacamole connection profiles visible to the requesting user.",
+        permission="guacamole_connection_profiles_read",
+    ),
 )
 def get_guacamole_connection_profiles(
     request: Request,
@@ -98,8 +117,13 @@ def get_guacamole_connection_profiles(
     "/{id}",
     status_code=200,
     operation_id="guacamole_connection_profiles_read_one",
+    responses=READ_RESPONSES,
     summary="Get GuacamoleConnectionProfile",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a single Guacamole connection profile by ID.",
+        permission="guacamole_connection_profiles_read",
+    ),
 )
 def get_guacamole_connection_profile(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -120,8 +144,18 @@ def get_guacamole_connection_profile(
     status_code=201,
     response_model=GuacamoleConnectionProfile,
     operation_id="guacamole_connection_profiles_clone",
+    responses=WRITE_RESPONSES,
     summary="Clone a GuacamoleConnectionProfile",
     dependencies=[Depends(dependencies.PermissionChecker())],
+    description=build_description(
+        description="Clones a Guacamole connection profile and assigns it to a different virtual machine or template.",
+        permission="guacamole_connection_profiles_create",
+        notes=[
+            "The target `objectId` must be a valid VirtualMachine or Template.",
+            "Port, protocol, username, and password are inherited from the source profile if not overridden.",
+            "Creator is automatically granted `object_full` permission on the cloned profile.",
+        ],
+    ),
 )
 def clone_guacamole_connection_profile(
     *,
@@ -145,8 +179,16 @@ def clone_guacamole_connection_profile(
     "/{id}",
     status_code=200,
     operation_id="guacamole_connection_profiles_delete",
+    responses=WRITE_RESPONSES,
     summary="Delete GuacamoleConnectionProfile",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Deletes a Guacamole connection profile by ID.",
+        permission="guacamole_connection_profiles_delete",
+        notes=[
+            "Guacamole connections created from this profile will lose their profile reference.",
+        ],
+    ),
 )
 def delete_guacamole_connection_profile(
     id: UUID4, request: Request, db: Session = Depends(dependencies.get_db)
@@ -167,8 +209,13 @@ def delete_guacamole_connection_profile(
     status_code=200,
     response_model=GuacamoleConnectionProfileList,
     operation_id="guacamole_connection_profiles_objects_read_all",
+    responses=READ_RESPONSES,
     summary="Get GuacamoleConnectionProfiles by objectType and objectId",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all Guacamole connection profiles associated with a specific object (VirtualMachine or Template).",
+        permission="guacamole_connection_profiles_read",
+    ),
 )
 def get_gcp_for_object(
     objectId: UUID4,

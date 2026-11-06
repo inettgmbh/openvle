@@ -9,7 +9,6 @@ import uuid
 from datetime import date, datetime, timezone
 
 import pytest
-
 from controllers.base import CRUDBase, build_object_permission_filter
 from core.exceptions import (
     InvalidFieldValue,
@@ -24,6 +23,7 @@ from models.associations import (
     user_role_association_table,
 )
 from schemas.courses import CourseCreate, CourseUpdate
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -39,12 +39,16 @@ class TestCRUDBaseGet:
         assert result.id == sample_course.id
         assert result.name == sample_course.name
 
-    def test_get_nonexistent_id_raises_object_not_found(self, db_session, system_user):
+    def test_get_nonexistent_id_raises_object_not_found(
+        self, db_session, system_user
+    ):
         fake_id = uuid.uuid4()
         with pytest.raises(ObjectNotFound):
             self.crud.get(db_session, id=fake_id)
 
-    def test_get_sets_db_obj_attribute(self, db_session, system_user, sample_course):
+    def test_get_sets_db_obj_attribute(
+        self, db_session, system_user, sample_course
+    ):
         self.crud.get(db_session, id=sample_course.id)
         assert self.crud.db_obj is not None
         assert self.crud.db_obj.id == sample_course.id
@@ -73,7 +77,9 @@ class TestCRUDBaseGetMulti:
         db_session.flush()
         return courses
 
-    def test_get_multi_returns_paginated_structure(self, db_session, system_user):
+    def test_get_multi_returns_paginated_structure(
+        self, db_session, system_user
+    ):
         self._create_courses(db_session, system_user, 3)
         result = self.crud.get_multi(db_session, limit=10, page=1)
         assert "pageDetails" in result
@@ -171,7 +177,9 @@ class TestCRUDBaseGetMulti:
         assert result["pageDetails"]["totalCount"] == 1
         assert result["items"][0].name == "GuacOff"
 
-    def test_get_multi_search_boolean_invalid_raises(self, db_session, system_user):
+    def test_get_multi_search_boolean_invalid_raises(
+        self, db_session, system_user
+    ):
         self._create_courses(db_session, system_user, 1)
         with pytest.raises(InvalidFieldValue):
             self.crud.get_multi(
@@ -203,28 +211,38 @@ class TestCRUDBaseCreate:
 
     def test_create_assigns_uuid_id(self, db_session, active_user):
         request = create_mock_request(active_user)
-        obj_in = CourseCreate(name="New Course", description="Desc", guacamole=True)
+        obj_in = CourseCreate(
+            name="New Course", description="Desc", guacamole=True
+        )
         result = self.crud.create(db_session, request, obj_in=obj_in)
         assert result.id is not None
         assert isinstance(result.id, uuid.UUID)
 
     def test_create_sets_timestamps(self, db_session, active_user):
         request = create_mock_request(active_user)
-        obj_in = CourseCreate(name="New Course 2", description="Desc", guacamole=True)
+        obj_in = CourseCreate(
+            name="New Course 2", description="Desc", guacamole=True
+        )
         result = self.crud.create(db_session, request, obj_in=obj_in)
         assert result.createdAt is not None
         assert result.updatedAt is not None
 
     def test_create_sets_audit_user(self, db_session, active_user):
         request = create_mock_request(active_user)
-        obj_in = CourseCreate(name="Audit Course", description="Desc", guacamole=False)
+        obj_in = CourseCreate(
+            name="Audit Course", description="Desc", guacamole=False
+        )
         result = self.crud.create(db_session, request, obj_in=obj_in)
         assert result.createdById == active_user.id
         assert result.updatedById == active_user.id
 
-    def test_create_object_permission_for_standard_model(self, db_session, active_user):
+    def test_create_object_permission_for_standard_model(
+        self, db_session, active_user
+    ):
         request = create_mock_request(active_user)
-        obj_in = CourseCreate(name="Perm Course", description="Desc", guacamole=True)
+        obj_in = CourseCreate(
+            name="Perm Course", description="Desc", guacamole=True
+        )
         result = self.crud.create(db_session, request, obj_in=obj_in)
         # Course is not in MODELS_NO_OBJ_PERM, so ObjectPermission should be created
         obj_perm = (
@@ -248,20 +266,28 @@ class TestCRUDBaseUpdate:
     ):
         request = create_mock_request(active_user)
         obj_in = CourseUpdate(name="Updated Course Name")
-        result = self.crud.update(sample_course.id, db_session, request, obj_in=obj_in)
+        result = self.crud.update(
+            sample_course.id, db_session, request, obj_in=obj_in
+        )
         assert result.name == "Updated Course Name"
 
-    def test_update_nonexistent_id_raises_not_found(self, db_session, active_user):
+    def test_update_nonexistent_id_raises_not_found(
+        self, db_session, active_user
+    ):
         request = create_mock_request(active_user)
         fake_id = uuid.uuid4()
         obj_in = CourseUpdate(name="X")
         with pytest.raises(ObjectNotFound):
             self.crud.update(fake_id, db_session, request, obj_in=obj_in)
 
-    def test_update_sets_updated_meta(self, db_session, active_user, sample_course):
+    def test_update_sets_updated_meta(
+        self, db_session, active_user, sample_course
+    ):
         request = create_mock_request(active_user)
         obj_in = CourseUpdate(name="Meta Updated")
-        result = self.crud.update(sample_course.id, db_session, request, obj_in=obj_in)
+        result = self.crud.update(
+            sample_course.id, db_session, request, obj_in=obj_in
+        )
         assert result.updatedById == active_user.id
         # updatedAt should be set (may differ in tz-awareness from fixture)
         assert result.updatedAt is not None
@@ -273,7 +299,9 @@ class TestCRUDBaseUpdate:
         original_description = sample_course.description
         # Only update name, leave description as None (should not change it)
         obj_in = {"name": "Only Name Changed"}
-        result = self.crud.update(sample_course.id, db_session, request, obj_in=obj_in)
+        result = self.crud.update(
+            sample_course.id, db_session, request, obj_in=obj_in
+        )
         assert result.description == original_description
 
     def test_update_null_on_not_null_field_raises_422(
@@ -283,7 +311,9 @@ class TestCRUDBaseUpdate:
         request = create_mock_request(active_user)
         obj_in = {"name": None}
         with pytest.raises(InvalidFieldValue):
-            self.crud.update(sample_course.id, db_session, request, obj_in=obj_in)
+            self.crud.update(
+                sample_course.id, db_session, request, obj_in=obj_in
+            )
 
     def test_update_null_on_not_null_bool_field_raises_422(
         self, db_session, active_user, sample_course
@@ -292,7 +322,9 @@ class TestCRUDBaseUpdate:
         request = create_mock_request(active_user)
         obj_in = {"guacamole": None}
         with pytest.raises(InvalidFieldValue):
-            self.crud.update(sample_course.id, db_session, request, obj_in=obj_in)
+            self.crud.update(
+                sample_course.id, db_session, request, obj_in=obj_in
+            )
 
     def test_update_null_on_nullable_field_succeeds(
         self, db_session, active_user, sample_course
@@ -300,7 +332,9 @@ class TestCRUDBaseUpdate:
         """Course.description is nullable — setting to None is allowed."""
         request = create_mock_request(active_user)
         obj_in = {"description": None}
-        result = self.crud.update(sample_course.id, db_session, request, obj_in=obj_in)
+        result = self.crud.update(
+            sample_course.id, db_session, request, obj_in=obj_in
+        )
         assert result.description is None
 
 
@@ -326,7 +360,9 @@ class TestCRUDBaseDelete:
     ):
         # Create a course with object permission
         request = create_mock_request(active_user)
-        obj_in = CourseCreate(name="Delete Test", description="D", guacamole=True)
+        obj_in = CourseCreate(
+            name="Delete Test", description="D", guacamole=True
+        )
         course = self.crud.create(db_session, request, obj_in=obj_in)
         course_id = course.id
 
@@ -372,7 +408,9 @@ class TestBuildObjectPermissionFilter:
         db_session.flush()
 
         # Build filter and query
-        perm_filter = build_object_permission_filter(db_session, Course, active_user.id)
+        perm_filter = build_object_permission_filter(
+            db_session, Course, active_user.id
+        )
         result = db_session.query(Course).filter(perm_filter).all()
         assert any(c.id == sample_course.id for c in result)
 
@@ -405,7 +443,9 @@ class TestBuildObjectPermissionFilter:
         db_session.add(op)
         db_session.flush()
 
-        perm_filter = build_object_permission_filter(db_session, Course, active_user.id)
+        perm_filter = build_object_permission_filter(
+            db_session, Course, active_user.id
+        )
         result = db_session.query(Course).filter(perm_filter).all()
         assert any(c.id == sample_course.id for c in result)
 
@@ -427,7 +467,9 @@ class TestBuildObjectPermissionFilter:
         db_session.add(course)
         db_session.flush()
 
-        perm_filter = build_object_permission_filter(db_session, Course, active_user.id)
+        perm_filter = build_object_permission_filter(
+            db_session, Course, active_user.id
+        )
         result = db_session.query(Course).filter(perm_filter).all()
         assert not any(c.id == course.id for c in result)
 
@@ -580,10 +622,14 @@ class TestCRUDBaseGetMultiAuth:
         db_session.flush()
         return op
 
-    def test_returns_only_permitted_courses(self, db_session, active_user, system_user):
+    def test_returns_only_permitted_courses(
+        self, db_session, active_user, system_user
+    ):
         visible = self._create_course(db_session, system_user, "Visible Course")
         self._create_course(db_session, system_user, "Hidden Course")
-        self._grant_user_permission(db_session, system_user, active_user, visible)
+        self._grant_user_permission(
+            db_session, system_user, active_user, visible
+        )
 
         request = create_mock_request(active_user)
         result = self.crud.get_multi_auth(db_session, request, limit=10, page=1)
@@ -634,7 +680,9 @@ class TestCRUDBaseGetMultiAuth:
     def test_respects_pagination(self, db_session, active_user, system_user):
         courses = []
         for i in range(5):
-            c = self._create_course(db_session, system_user, f"Auth Course {i:03d}")
+            c = self._create_course(
+                db_session, system_user, f"Auth Course {i:03d}"
+            )
             self._grant_user_permission(db_session, system_user, active_user, c)
             courses.append(c)
 
@@ -664,7 +712,9 @@ class TestCRUDBaseGetMultiAuth:
         assert result["pageDetails"]["totalCount"] == 1
         assert result["items"][0].name == "Alpha Course"
 
-    def test_limit_exceeds_max_raises(self, db_session, active_user, system_user):
+    def test_limit_exceeds_max_raises(
+        self, db_session, active_user, system_user
+    ):
         request = create_mock_request(active_user)
         with pytest.raises(PaginationLimitError):
             self.crud.get_multi_auth(db_session, request, limit=10000, page=1)
@@ -823,7 +873,9 @@ class TestCRUDBaseGetMultiForeignKey:
     def setup_method(self):
         self.crud = CRUDBase(Event)
 
-    def _create_event(self, db_session, system_user, name, course_id, status_id):
+    def _create_event(
+        self, db_session, system_user, name, course_id, status_id
+    ):
         now = datetime.now(timezone.utc)
         event = Event(
             id=uuid.uuid4(),
@@ -918,7 +970,11 @@ class TestCRUDBaseGetMultiForeignKey:
         status_id = event_statuses["Geplant"].id
         for i in range(5):
             self._create_event(
-                db_session, system_user, f"FKPag{i:02d}", sample_course.id, status_id
+                db_session,
+                system_user,
+                f"FKPag{i:02d}",
+                sample_course.id,
+                status_id,
             )
 
         result = self.crud.get_multi_foreign_key(
@@ -994,7 +1050,9 @@ class TestCRUDBaseGetMultiForeignKeyAuth:
     def setup_method(self):
         self.crud = CRUDBase(Event)
 
-    def _create_event(self, db_session, system_user, name, course_id, status_id):
+    def _create_event(
+        self, db_session, system_user, name, course_id, status_id
+    ):
         now = datetime.now(timezone.utc)
         event = Event(
             id=uuid.uuid4(),
@@ -1036,7 +1094,12 @@ class TestCRUDBaseGetMultiForeignKeyAuth:
         return op
 
     def test_returns_only_permitted_events_for_course(
-        self, db_session, active_user, system_user, sample_course, event_statuses
+        self,
+        db_session,
+        active_user,
+        system_user,
+        sample_course,
+        event_statuses,
     ):
         status_id = event_statuses["Geplant"].id
         visible = self._create_event(
@@ -1045,7 +1108,9 @@ class TestCRUDBaseGetMultiForeignKeyAuth:
         self._create_event(
             db_session, system_user, "FKA-Hid", sample_course.id, status_id
         )
-        self._grant_event_permission(db_session, system_user, active_user, visible)
+        self._grant_event_permission(
+            db_session, system_user, active_user, visible
+        )
 
         request = create_mock_request(active_user)
         result = self.crud.get_multi_foreign_key_auth(
@@ -1060,7 +1125,12 @@ class TestCRUDBaseGetMultiForeignKeyAuth:
         assert result["items"][0].id == visible.id
 
     def test_empty_when_no_permissions(
-        self, db_session, active_user, system_user, sample_course, event_statuses
+        self,
+        db_session,
+        active_user,
+        system_user,
+        sample_course,
+        event_statuses,
     ):
         status_id = event_statuses["Geplant"].id
         self._create_event(
@@ -1078,7 +1148,9 @@ class TestCRUDBaseGetMultiForeignKeyAuth:
         )
         assert result["pageDetails"]["totalCount"] == 0
 
-    def test_invalid_fk_field_raises(self, db_session, active_user, system_user):
+    def test_invalid_fk_field_raises(
+        self, db_session, active_user, system_user
+    ):
         request = create_mock_request(active_user)
         with pytest.raises(ModelFieldNotFound):
             self.crud.get_multi_foreign_key_auth(
@@ -1091,14 +1163,25 @@ class TestCRUDBaseGetMultiForeignKeyAuth:
             )
 
     def test_respects_pagination(
-        self, db_session, active_user, system_user, sample_course, event_statuses
+        self,
+        db_session,
+        active_user,
+        system_user,
+        sample_course,
+        event_statuses,
     ):
         status_id = event_statuses["Geplant"].id
         for i in range(5):
             e = self._create_event(
-                db_session, system_user, f"FKAP{i:03d}", sample_course.id, status_id
+                db_session,
+                system_user,
+                f"FKAP{i:03d}",
+                sample_course.id,
+                status_id,
             )
-            self._grant_event_permission(db_session, system_user, active_user, e)
+            self._grant_event_permission(
+                db_session, system_user, active_user, e
+            )
 
         request = create_mock_request(active_user)
         result = self.crud.get_multi_foreign_key_auth(
@@ -1113,7 +1196,12 @@ class TestCRUDBaseGetMultiForeignKeyAuth:
         assert result["pageDetails"]["totalCount"] == 5
 
     def test_search_within_fk_auth_filter(
-        self, db_session, active_user, system_user, sample_course, event_statuses
+        self,
+        db_session,
+        active_user,
+        system_user,
+        sample_course,
+        event_statuses,
     ):
         status_id = event_statuses["Geplant"].id
         e1 = self._create_event(
@@ -1194,7 +1282,9 @@ class TestCRUDBaseGetMultiAssociation:
         )
         db_session.flush()
 
-    def test_returns_courses_associated_with_template(self, db_session, system_user):
+    def test_returns_courses_associated_with_template(
+        self, db_session, system_user
+    ):
         tpl = self._create_template(db_session, system_user, "Assoc Tpl")
         c1 = self._create_course(db_session, system_user, "Assoc C1")
         c2 = self._create_course(db_session, system_user, "Assoc C2")
@@ -1215,7 +1305,9 @@ class TestCRUDBaseGetMultiAssociation:
         assert c1.id in result_ids
         assert c2.id in result_ids
 
-    def test_excludes_courses_not_linked_to_template(self, db_session, system_user):
+    def test_excludes_courses_not_linked_to_template(
+        self, db_session, system_user
+    ):
         tpl = self._create_template(db_session, system_user, "Assoc Tpl2")
         linked = self._create_course(db_session, system_user, "Assoc Linked")
         self._create_course(db_session, system_user, "Assoc Unlinked")
@@ -1381,7 +1473,9 @@ class TestCRUDBaseGetMultiAssociationAuth:
         hidden = self._create_course(db_session, system_user, "AssocAuth Hid")
         self._link_course_template(db_session, visible, tpl)
         self._link_course_template(db_session, hidden, tpl)
-        self._grant_course_permission(db_session, system_user, active_user, visible)
+        self._grant_course_permission(
+            db_session, system_user, active_user, visible
+        )
 
         request = create_mock_request(active_user)
         result = self.crud.get_multi_association_auth(
@@ -1417,7 +1511,9 @@ class TestCRUDBaseGetMultiAssociationAuth:
         )
         assert result["pageDetails"]["totalCount"] == 0
 
-    def test_invalid_parent_field_raises(self, db_session, active_user, system_user):
+    def test_invalid_parent_field_raises(
+        self, db_session, active_user, system_user
+    ):
         request = create_mock_request(active_user)
         with pytest.raises(ModelFieldNotFound):
             self.crud.get_multi_association_auth(
@@ -1436,7 +1532,9 @@ class TestCRUDBaseGetMultiAssociationAuth:
         for i in range(5):
             c = self._create_course(db_session, system_user, f"AAP C{i:03d}")
             self._link_course_template(db_session, c, tpl)
-            self._grant_course_permission(db_session, system_user, active_user, c)
+            self._grant_course_permission(
+                db_session, system_user, active_user, c
+            )
 
         request = create_mock_request(active_user)
         result = self.crud.get_multi_association_auth(
@@ -1452,7 +1550,9 @@ class TestCRUDBaseGetMultiAssociationAuth:
         assert len(result["items"]) == 2
         assert result["pageDetails"]["totalCount"] == 5
 
-    def test_search_within_association_auth(self, db_session, active_user, system_user):
+    def test_search_within_association_auth(
+        self, db_session, active_user, system_user
+    ):
         tpl = self._create_template(db_session, system_user, "AAS Tpl")
         c1 = self._create_course(db_session, system_user, "AAS Alpha")
         c2 = self._create_course(db_session, system_user, "AAS Beta")

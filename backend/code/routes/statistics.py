@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from core import dependencies
 from core.config import Settings
 from core.exceptions import ProxmoxConnectionError
+from core.responses import READ_RESPONSES
 from models import (
     Course,
     Event,
@@ -23,7 +24,7 @@ settings = Settings()
 router = APIRouter(
     prefix="/statistics",
     tags=["statistics"],
-    responses={404: {"detail": "Not found"}},
+    responses=READ_RESPONSES,
 )
 
 

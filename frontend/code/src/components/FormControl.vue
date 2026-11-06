@@ -28,7 +28,7 @@ const props = defineProps({
     default: null,
   },
   maxlength: {
-    type: String,
+    type: [String, Number],
     default: null,
   },
   placeholder: {

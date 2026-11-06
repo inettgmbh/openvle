@@ -5,13 +5,19 @@ from sqlalchemy.orm import Session
 from controllers.tags import *
 from core import dependencies
 from core.exceptions import PermissionDenied
+from core.responses import (
+    BASE_RESPONSES,
+    READ_RESPONSES,
+    WRITE_RESPONSES,
+    build_description,
+)
 from models import Tag as TagModel, object_type_map
 from schemas.tags import Tag, TagCreate, TagList
 
 router = APIRouter(
     prefix="/tags",
     tags=["tags"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -21,8 +27,15 @@ router = APIRouter(
     status_code=201,
     response_model=Tag,
     operation_id="tags_create",
+    responses=WRITE_RESPONSES,
     summary="Create Tag",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Creates a new tag on an object.",
+        notes=[
+            "Permission required is `{objectType}_update` on the target object.",
+        ],
+    ),
 )
 def create_tag(
     *,
@@ -55,6 +68,12 @@ def create_tag(
     operation_id="tags_read_all",
     summary="Get Tags",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a paginated list of all tags visible to the requesting user.",
+        notes=[
+            "Results are filtered to tags whose parent objects the user has read access to.",
+        ],
+    ),
 )
 def get_tags(
     request: Request,
@@ -84,8 +103,15 @@ def get_tags(
     status_code=200,
     response_model=Tag,
     operation_id="tags_read_one",
+    responses=READ_RESPONSES,
     summary="Get Tag",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a single tag by ID.",
+        notes=[
+            "Access is additionally gated by the requesting user's read permission on the tagged object.",
+        ],
+    ),
 )
 def get_tag(
     id: UUID4, request: Request, db: Session = Depends(dependencies.get_db)
@@ -114,8 +140,15 @@ def get_tag(
     "/{id}",
     status_code=200,
     operation_id="tags_delete",
+    responses=WRITE_RESPONSES,
     summary="Delete Tag",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Deletes a tag by ID.",
+        notes=[
+            "Permission required is `{objectType}_update` on the tagged object.",
+        ],
+    ),
 )
 def delete_tag(
     id: UUID4, request: Request, db: Session = Depends(dependencies.get_db)
@@ -147,6 +180,12 @@ def delete_tag(
     operation_id="tags_objects_read_all",
     summary="Get Tags by objectType and objectId",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all tags for a specific object type and ID.",
+        notes=[
+            "Results are filtered to tags whose parent objects the user has read access to.",
+        ],
+    ),
 )
 def get_tags_for_object(
     objectId: UUID4,
@@ -182,6 +221,9 @@ def get_tags_for_object(
     operation_id="tags_key_read_all",
     summary="Get Tags by Key",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all tags matching a given key, filtered to objects the user has read access to.",
+    ),
 )
 def get_tags_key(
     key: str,
@@ -215,6 +257,9 @@ def get_tags_key(
     operation_id="tags_key_value_read_all",
     summary="Get Tags by Key-Value pair",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all tags matching a given key-value pair, filtered to objects the user has read access to.",
+    ),
 )
 def get_tags_key_value(
     key: str,

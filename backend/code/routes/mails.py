@@ -5,13 +5,19 @@ from sqlalchemy.orm import Session
 from controllers.mails import *
 from core import dependencies
 from core.exceptions import PermissionDenied
+from core.responses import (
+    BASE_RESPONSES,
+    READ_RESPONSES,
+    WRITE_RESPONSES,
+    build_description,
+)
 from models.mails import Mail as MailModel
 from schemas.mails import Mail, MailList
 
 router = APIRouter(
     prefix="/mails",
     tags=["mails"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -21,8 +27,13 @@ router = APIRouter(
     status_code=201,
     response_model=Mail,
     operation_id="mails_send",
+    responses=WRITE_RESPONSES,
     summary="Create Mail",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Sends a new mail message.",
+        permission="mails_send",
+    ),
 )
 def create_mail(
     *,
@@ -48,6 +59,10 @@ def create_mail(
     operation_id="mails_read_all",
     summary="Get Mails",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a paginated list of all mail messages.",
+        permission="mails_read",
+    ),
 )
 def get_mails(
     request: Request,
@@ -90,8 +105,13 @@ def get_mails(
     status_code=200,
     response_model=Mail,
     operation_id="mails_read_one",
+    responses=READ_RESPONSES,
     summary="Get Mail",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a single mail message by ID.",
+        permission="mails_read",
+    ),
 )
 def get_mail(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)

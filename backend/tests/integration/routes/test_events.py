@@ -2,11 +2,12 @@
 
 import uuid
 from datetime import date, datetime, time, timezone
+from typing import ClassVar
 
 import pytest
-
 from models.sub_tasks import SubTask
 from models.tasks import Task
+
 from tests.integration.conftest import API
 
 
@@ -145,7 +146,9 @@ class TestGetEventById:
         mock_permission_allow,
         sample_event,
     ):
-        resp = client.get(f"{API}/events/{sample_event.id}", headers=auth_headers)
+        resp = client.get(
+            f"{API}/events/{sample_event.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["id"] == str(sample_event.id)
@@ -153,7 +156,9 @@ class TestGetEventById:
         assert data["slug"] == sample_event.slug
         assert data["description"] == sample_event.description
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/events/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404
@@ -163,9 +168,13 @@ class TestGetEventById:
         resp = client.get(f"{API}/events/{fake_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_event):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_event
+    ):
         """Without mock_permission_allow, events_read is denied."""
-        resp = client.get(f"{API}/events/{sample_event.id}", headers=auth_headers)
+        resp = client.get(
+            f"{API}/events/{sample_event.id}", headers=auth_headers
+        )
         assert resp.status_code == 403
 
 
@@ -237,7 +246,9 @@ class TestUpdateEventEndDate:
         resp = client.post(f"{API}/events/{fake_id}/end-date", json=payload)
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_event):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_event
+    ):
         """Without mock_permission_allow, events_update is denied."""
         payload = {
             "dateEnd": "2026-12-31",
@@ -262,7 +273,9 @@ class TestDeleteEvent:
         role_teacher,
         sample_event,
     ):
-        resp = client.delete(f"{API}/events/{sample_event.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/events/{sample_event.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
 
     def test_delete_not_found_returns_404(
@@ -281,7 +294,9 @@ class TestDeleteEvent:
         self, client, auth_headers, sample_event
     ):
         """Without mock_permission_allow, events_delete is denied."""
-        resp = client.delete(f"{API}/events/{sample_event.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/events/{sample_event.id}", headers=auth_headers
+        )
         assert resp.status_code == 403
 
 
@@ -326,7 +341,9 @@ class TestAddEventUser:
         resp = client.post(f"{API}/events/{fake_id}/users", json=payload)
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_event):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_event
+    ):
         """Without mock_permission_allow, events_update is denied."""
         payload = {
             "user_id": str(uuid.uuid4()),
@@ -377,7 +394,9 @@ class TestDeleteEventUser:
         )
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_event):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_event
+    ):
         """Without mock_permission_allow, events_update is denied."""
         fake_user_id = uuid.uuid4()
         fake_role_id = uuid.uuid4()
@@ -459,7 +478,9 @@ class TestAddEventTemplates:
         resp = client.post(f"{API}/events/{fake_id}/templates", json=payload)
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_event):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_event
+    ):
         """Without mock_permission_allow, events_templates_update is denied."""
         payload = {"templates": [{"id": str(uuid.uuid4())}]}
         resp = client.post(
@@ -514,7 +535,7 @@ class TestEventBulkVMActions:
     """
 
     # Actions that take no request body
-    SIMPLE_ACTIONS = [
+    SIMPLE_ACTIONS: ClassVar[list[str]] = [
         "start",
         "stop",
         "pause",
@@ -604,7 +625,9 @@ class TestEventBulkVMActions:
     # HA-Remove (DELETE)
     def test_ha_remove_unauthenticated_returns_401(self, client):
         fake_id = uuid.uuid4()
-        resp = client.delete(f"{API}/events/{fake_id}/virtual-machines/bulk-actions/ha")
+        resp = client.delete(
+            f"{API}/events/{fake_id}/virtual-machines/bulk-actions/ha"
+        )
         assert resp.status_code in (401, 403)
 
     def test_ha_remove_permission_denied_returns_403(
@@ -663,12 +686,16 @@ class TestEventBulkGuacamoleActions:
 
     def test_create_unauthenticated_returns_401(self, client):
         fake_id = uuid.uuid4()
-        resp = client.post(f"{API}/events/{fake_id}/guacamoles/bulk-actions/create")
+        resp = client.post(
+            f"{API}/events/{fake_id}/guacamoles/bulk-actions/create"
+        )
         assert resp.status_code in (401, 403)
 
     def test_delete_unauthenticated_returns_401(self, client):
         fake_id = uuid.uuid4()
-        resp = client.post(f"{API}/events/{fake_id}/guacamoles/bulk-actions/delete")
+        resp = client.post(
+            f"{API}/events/{fake_id}/guacamoles/bulk-actions/delete"
+        )
         assert resp.status_code in (401, 403)
 
 
@@ -777,14 +804,20 @@ class TestGetEventStatus:
         resp = client.get(f"{API}/events/{uuid.uuid4()}/status")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_event):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_event
+    ):
         resp = client.get(
             f"{API}/events/{sample_event.id}/status", headers=auth_headers
         )
         assert resp.status_code == 403
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
-        resp = client.get(f"{API}/events/{uuid.uuid4()}/status", headers=auth_headers)
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
+        resp = client.get(
+            f"{API}/events/{uuid.uuid4()}/status", headers=auth_headers
+        )
         assert resp.status_code == 404
 
     # ------------------------------------------------------------------
@@ -825,7 +858,9 @@ class TestGetEventStatus:
         )
         connection_stats = resp.json()["connectionStats"]
         for field in ("total", "deployed", "pending"):
-            assert field in connection_stats, f"connectionStats missing '{field}'"
+            assert field in connection_stats, (
+                f"connectionStats missing '{field}'"
+            )
         # No Guacamole records on the bare sample_event → all zero
         assert connection_stats["total"] == 0
         assert connection_stats["deployed"] == 0
@@ -875,7 +910,9 @@ class TestGetEventStatus:
         db_session.add(event)
         db_session.flush()
 
-        resp = client.get(f"{API}/events/{event.id}/status", headers=auth_headers)
+        resp = client.get(
+            f"{API}/events/{event.id}/status", headers=auth_headers
+        )
         data = resp.json()
         assert data["currentStatus"] == "Geplant"
         assert data["statusInitiator"] == str(system_user.id)
@@ -921,12 +958,16 @@ class TestGetEventStatus:
         task = _make_task(db_session, system_user, event, name="Start Event")
         _make_subtask(db_session, active_user, task, status="processing")
         _make_subtask(db_session, active_user, task, status="queued")
-        _make_vm(db_session, active_user, event, vm_status="running", ipv4="10.0.0.1")
+        _make_vm(
+            db_session, active_user, event, vm_status="running", ipv4="10.0.0.1"
+        )
         _make_vm(
             db_session, active_user, event, vm_status="stopped", ipv4=None
         )  # pending
 
-        resp = client.get(f"{API}/events/{event.id}/status", headers=auth_headers)
+        resp = client.get(
+            f"{API}/events/{event.id}/status", headers=auth_headers
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["currentStatus"] == "Deploying"
@@ -976,8 +1017,12 @@ class TestGetEventStatus:
 
         task = _make_task(db_session, system_user, event, name="Start Event")
         _make_subtask(db_session, active_user, task, status="success")
-        _make_vm(db_session, active_user, event, vm_status="running", ipv4="10.0.0.1")
-        _make_vm(db_session, active_user, event, vm_status="running", ipv4="10.0.0.2")
+        _make_vm(
+            db_session, active_user, event, vm_status="running", ipv4="10.0.0.1"
+        )
+        _make_vm(
+            db_session, active_user, event, vm_status="running", ipv4="10.0.0.2"
+        )
         _make_vm(
             db_session,
             active_user,
@@ -987,7 +1032,9 @@ class TestGetEventStatus:
             prevent_delete=True,
         )
 
-        resp = client.get(f"{API}/events/{event.id}/status", headers=auth_headers)
+        resp = client.get(
+            f"{API}/events/{event.id}/status", headers=auth_headers
+        )
         data = resp.json()
         assert data["currentStatus"] == "Aktiv"
         assert data["statusInitiator"] == str(system_user.id)
@@ -1034,7 +1081,9 @@ class TestGetEventStatus:
         task = _make_task(db_session, system_user, event, name="End Event")
         _make_subtask(db_session, active_user, task, status="processing")
 
-        resp = client.get(f"{API}/events/{event.id}/status", headers=auth_headers)
+        resp = client.get(
+            f"{API}/events/{event.id}/status", headers=auth_headers
+        )
         data = resp.json()
         assert data["currentStatus"] == "Archiving"
         assert data["statusInitiator"] == str(system_user.id)
@@ -1073,10 +1122,16 @@ class TestGetEventStatus:
         task = _make_task(db_session, system_user, event, name="End Event")
         _make_subtask(db_session, active_user, task, status="success")
         # Protected VMs remain after archiving
-        _make_vm(db_session, active_user, event, ipv4="10.0.0.1", prevent_delete=True)
-        _make_vm(db_session, active_user, event, ipv4="10.0.0.2", prevent_delete=True)
+        _make_vm(
+            db_session, active_user, event, ipv4="10.0.0.1", prevent_delete=True
+        )
+        _make_vm(
+            db_session, active_user, event, ipv4="10.0.0.2", prevent_delete=True
+        )
 
-        resp = client.get(f"{API}/events/{event.id}/status", headers=auth_headers)
+        resp = client.get(
+            f"{API}/events/{event.id}/status", headers=auth_headers
+        )
         data = resp.json()
         assert data["currentStatus"] == "Archiviert"
         assert data["statusInitiator"] == str(system_user.id)
@@ -1121,10 +1176,14 @@ class TestGetEventStatus:
         task = _make_task(db_session, system_user, event, name="Start Event")
         _make_subtask(db_session, active_user, task, status="failed")
         # Some VMs deployed, some still pending
-        _make_vm(db_session, active_user, event, vm_status="running", ipv4="10.0.0.1")
+        _make_vm(
+            db_session, active_user, event, vm_status="running", ipv4="10.0.0.1"
+        )
         _make_vm(db_session, active_user, event, vm_status="stopped", ipv4=None)
 
-        resp = client.get(f"{API}/events/{event.id}/status", headers=auth_headers)
+        resp = client.get(
+            f"{API}/events/{event.id}/status", headers=auth_headers
+        )
         data = resp.json()
         assert data["currentStatus"] == "Deployment Fehler"
         assert data["statusInitiator"] == str(system_user.id)
@@ -1165,9 +1224,13 @@ class TestGetEventStatus:
 
         task = _make_task(db_session, system_user, event, name="End Event")
         _make_subtask(db_session, active_user, task, status="failed")
-        _make_vm(db_session, active_user, event, ipv4="10.0.0.1")  # VM still exists
+        _make_vm(
+            db_session, active_user, event, ipv4="10.0.0.1"
+        )  # VM still exists
 
-        resp = client.get(f"{API}/events/{event.id}/status", headers=auth_headers)
+        resp = client.get(
+            f"{API}/events/{event.id}/status", headers=auth_headers
+        )
         data = resp.json()
         assert data["currentStatus"] == "Archival Fehler"
         assert data["statusInitiator"] == str(system_user.id)

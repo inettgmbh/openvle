@@ -3,7 +3,6 @@
 import uuid
 
 import factory
-
 from models import Tag
 
 from .base import BaseFactory

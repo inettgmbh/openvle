@@ -5,10 +5,10 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock
 
 import pytest
-
 from core.moodlelib import MoodleAPIError
 from models import Event, EventsUser, Role, SubTask, Task, User
 from pve.worker_utils import TaskException
+
 from tests.helpers.mock_moodle import MockMoodleClient
 
 
@@ -110,7 +110,9 @@ def _make_events_user(db, system_user, event, user, role):
     return eu
 
 
-def _patch_moodle_worker(monkeypatch, db_session, mock_moodle, **settings_overrides):
+def _patch_moodle_worker(
+    monkeypatch, db_session, mock_moodle, **settings_overrides
+):
     """Patch SessionLocal + moodle_connect + settings for worker tests."""
     monkeypatch.setattr("core.moodle.SessionLocal", lambda: db_session)
 
@@ -241,7 +243,9 @@ class TestResolveMoodleUser:
 
     def test_api_error_returns_none(self):
         mock = MockMoodleClient()
-        mock._errors["get_users_by_field"] = MoodleAPIError("invalidparam", "Bad param")
+        mock._errors["get_users_by_field"] = MoodleAPIError(
+            "invalidparam", "Bad param"
+        )
 
         from core.moodle import resolve_moodle_user
 
@@ -423,12 +427,22 @@ class TestMoodleDeployCourseWorker:
         sample_course.moodleCourseId = 100
         db_session.flush()
 
-        event = _make_event(db_session, system_user, sample_course, event_statuses)
+        event = _make_event(
+            db_session, system_user, sample_course, event_statuses
+        )
         teacher = _make_user(
-            db_session, system_user, "teacher1", "teacher1@example.com", "Teacher One"
+            db_session,
+            system_user,
+            "teacher1",
+            "teacher1@example.com",
+            "Teacher One",
         )
         student = _make_user(
-            db_session, system_user, "student1", "student1@example.com", "Student One"
+            db_session,
+            system_user,
+            "student1",
+            "student1@example.com",
+            "Student One",
         )
         _make_events_user(db_session, system_user, event, teacher, role_teacher)
         _make_events_user(db_session, system_user, event, student, role_student)
@@ -438,7 +452,10 @@ class TestMoodleDeployCourseWorker:
 
         mock_moodle = MockMoodleClient()
         mock_moodle.returns["get_courses"] = [{"id": 100, "categoryid": 2}]
-        mock_moodle.returns["duplicate_course"] = {"id": 200, "shortname": "DUP"}
+        mock_moodle.returns["duplicate_course"] = {
+            "id": 200,
+            "shortname": "DUP",
+        }
         mock_moodle.returns["get_users_by_field"] = [{"id": 42}]
 
         _patch_moodle_worker(monkeypatch, db_session, mock_moodle)
@@ -451,7 +468,9 @@ class TestMoodleDeployCourseWorker:
         refreshed_event = db_session.get(Event, event.id)
         assert refreshed_event.moodleCourseId == 200
 
-        enrol_calls = [c for c in mock_moodle.calls if c["method"] == "enrol_users"]
+        enrol_calls = [
+            c for c in mock_moodle.calls if c["method"] == "enrol_users"
+        ]
         assert len(enrol_calls) == 1
         assert len(enrol_calls[0]["enrolments"]) == 2
 
@@ -463,7 +482,9 @@ class TestMoodleDeployCourseWorker:
         sample_course,
         event_statuses,
     ):
-        event = _make_event(db_session, system_user, sample_course, event_statuses)
+        event = _make_event(
+            db_session, system_user, sample_course, event_statuses
+        )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(db_session, system_user, task)
 
@@ -514,7 +535,9 @@ class TestMoodleDeployCourseWorker:
         event_statuses,
     ):
         # sample_course.moodleCourseId is None by default
-        event = _make_event(db_session, system_user, sample_course, event_statuses)
+        event = _make_event(
+            db_session, system_user, sample_course, event_statuses
+        )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(db_session, system_user, task)
 
@@ -541,7 +564,9 @@ class TestMoodleDeployCourseWorker:
         sample_course.moodleCourseId = 100
         db_session.flush()
 
-        event = _make_event(db_session, system_user, sample_course, event_statuses)
+        event = _make_event(
+            db_session, system_user, sample_course, event_statuses
+        )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(db_session, system_user, task)
 
@@ -572,7 +597,9 @@ class TestMoodleDeployCourseWorker:
         sample_course.moodleCourseId = 100
         db_session.flush()
 
-        event = _make_event(db_session, system_user, sample_course, event_statuses)
+        event = _make_event(
+            db_session, system_user, sample_course, event_statuses
+        )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(db_session, system_user, task)
 
@@ -602,15 +629,23 @@ class TestMoodleDeployCourseWorker:
         sample_course.moodleCourseId = 100
         db_session.flush()
 
-        event = _make_event(db_session, system_user, sample_course, event_statuses)
+        event = _make_event(
+            db_session, system_user, sample_course, event_statuses
+        )
         user_ok = _make_user(
             db_session, system_user, "user_ok", "ok@example.com", "Ok User"
         )
         user_fail = _make_user(
-            db_session, system_user, "user_fail", "fail@example.com", "Fail User"
+            db_session,
+            system_user,
+            "user_fail",
+            "fail@example.com",
+            "Fail User",
         )
         _make_events_user(db_session, system_user, event, user_ok, role_student)
-        _make_events_user(db_session, system_user, event, user_fail, role_student)
+        _make_events_user(
+            db_session, system_user, event, user_fail, role_student
+        )
 
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(db_session, system_user, task)
@@ -619,7 +654,10 @@ class TestMoodleDeployCourseWorker:
 
         mock_moodle = MockMoodleClient()
         mock_moodle.returns["get_courses"] = [{"id": 100, "categoryid": 2}]
-        mock_moodle.returns["duplicate_course"] = {"id": 200, "shortname": "DUP"}
+        mock_moodle.returns["duplicate_course"] = {
+            "id": 200,
+            "shortname": "DUP",
+        }
 
         # First call succeeds, second raises
         def alternating_get_users(field, values):
@@ -637,7 +675,9 @@ class TestMoodleDeployCourseWorker:
         moodle_deploy_course_worker(event.id, subtask.id)
 
         # Should still succeed with 1 enrolment
-        enrol_calls = [c for c in mock_moodle.calls if c["method"] == "enrol_users"]
+        enrol_calls = [
+            c for c in mock_moodle.calls if c["method"] == "enrol_users"
+        ]
         assert len(enrol_calls) == 1
         assert len(enrol_calls[0]["enrolments"]) == 1
 
@@ -652,13 +692,18 @@ class TestMoodleDeployCourseWorker:
         sample_course.moodleCourseId = 100
         db_session.flush()
 
-        event = _make_event(db_session, system_user, sample_course, event_statuses)
+        event = _make_event(
+            db_session, system_user, sample_course, event_statuses
+        )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(db_session, system_user, task)
 
         mock_moodle = MockMoodleClient()
         mock_moodle.returns["get_courses"] = [{"id": 100, "categoryid": 2}]
-        mock_moodle.returns["duplicate_course"] = {"id": 200, "shortname": "DUP"}
+        mock_moodle.returns["duplicate_course"] = {
+            "id": 200,
+            "shortname": "DUP",
+        }
         _patch_moodle_worker(monkeypatch, db_session, mock_moodle)
 
         from core.moodle import moodle_deploy_course_worker
@@ -669,7 +714,9 @@ class TestMoodleDeployCourseWorker:
         refreshed = db_session.get(SubTask, subtask.id)
         assert refreshed.status == "success"
         # No enrol_users call
-        enrol_calls = [c for c in mock_moodle.calls if c["method"] == "enrol_users"]
+        enrol_calls = [
+            c for c in mock_moodle.calls if c["method"] == "enrol_users"
+        ]
         assert len(enrol_calls) == 0
 
     def test_unknown_role_uses_default_5(
@@ -698,7 +745,9 @@ class TestMoodleDeployCourseWorker:
         db_session.add(custom_role)
         db_session.flush()
 
-        event = _make_event(db_session, system_user, sample_course, event_statuses)
+        event = _make_event(
+            db_session, system_user, sample_course, event_statuses
+        )
         user = _make_user(
             db_session, system_user, "guest1", "guest@example.com", "Guest User"
         )
@@ -709,7 +758,10 @@ class TestMoodleDeployCourseWorker:
 
         mock_moodle = MockMoodleClient()
         mock_moodle.returns["get_courses"] = [{"id": 100, "categoryid": 2}]
-        mock_moodle.returns["duplicate_course"] = {"id": 200, "shortname": "DUP"}
+        mock_moodle.returns["duplicate_course"] = {
+            "id": 200,
+            "shortname": "DUP",
+        }
         mock_moodle.returns["get_users_by_field"] = [{"id": 42}]
         _patch_moodle_worker(monkeypatch, db_session, mock_moodle)
 
@@ -717,7 +769,9 @@ class TestMoodleDeployCourseWorker:
 
         moodle_deploy_course_worker(event.id, subtask.id)
 
-        enrol_calls = [c for c in mock_moodle.calls if c["method"] == "enrol_users"]
+        enrol_calls = [
+            c for c in mock_moodle.calls if c["method"] == "enrol_users"
+        ]
         assert enrol_calls[0]["enrolments"][0]["roleid"] == 5
 
 
@@ -741,7 +795,11 @@ class TestMoodleEnrolUserWorker:
             moodle_course_id=200,
         )
         user = _make_user(
-            db_session, system_user, "enrol_user", "eu@example.com", "Enrol User"
+            db_session,
+            system_user,
+            "enrol_user",
+            "eu@example.com",
+            "Enrol User",
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(db_session, system_user, task)
@@ -785,7 +843,9 @@ class TestMoodleEnrolUserWorker:
         from core.moodle import moodle_enrol_user_worker
 
         with pytest.raises(TaskException):
-            moodle_enrol_user_worker(event.id, uuid.uuid4(), "studierende", subtask.id)
+            moodle_enrol_user_worker(
+                event.id, uuid.uuid4(), "studierende", subtask.id
+            )
 
         db_session.expire_all()
         refreshed = db_session.get(SubTask, subtask.id)
@@ -814,7 +874,9 @@ class TestMoodleEnrolUserWorker:
         from core.moodle import moodle_enrol_user_worker
 
         with pytest.raises(TaskException):
-            moodle_enrol_user_worker(event.id, uuid.uuid4(), "studierende", subtask.id)
+            moodle_enrol_user_worker(
+                event.id, uuid.uuid4(), "studierende", subtask.id
+            )
 
         db_session.expire_all()
         refreshed = db_session.get(SubTask, subtask.id)
@@ -844,7 +906,9 @@ class TestMoodleEnrolUserWorker:
         from core.moodle import moodle_enrol_user_worker
 
         with pytest.raises(TaskException, match="User not found"):
-            moodle_enrol_user_worker(event.id, uuid.uuid4(), "studierende", subtask.id)
+            moodle_enrol_user_worker(
+                event.id, uuid.uuid4(), "studierende", subtask.id
+            )
 
         db_session.expire_all()
         refreshed = db_session.get(SubTask, subtask.id)
@@ -873,13 +937,17 @@ class TestMoodleEnrolUserWorker:
 
         mock_moodle = MockMoodleClient()
         mock_moodle.returns["get_users_by_field"] = [{"id": 42}]
-        mock_moodle._errors["enrol_users"] = MoodleAPIError("err", "enrol failed")
+        mock_moodle._errors["enrol_users"] = MoodleAPIError(
+            "err", "enrol failed"
+        )
         _patch_moodle_worker(monkeypatch, db_session, mock_moodle)
 
         from core.moodle import moodle_enrol_user_worker
 
         with pytest.raises(TaskException):
-            moodle_enrol_user_worker(event.id, user.id, "studierende", subtask.id)
+            moodle_enrol_user_worker(
+                event.id, user.id, "studierende", subtask.id
+            )
 
         db_session.expire_all()
         refreshed = db_session.get(SubTask, subtask.id)
@@ -914,7 +982,9 @@ class TestMoodleEnrolUserWorker:
 
         moodle_enrol_user_worker(event.id, user.id, "lehrende", subtask.id)
 
-        enrol_calls = [c for c in mock_moodle.calls if c["method"] == "enrol_users"]
+        enrol_calls = [
+            c for c in mock_moodle.calls if c["method"] == "enrol_users"
+        ]
         assert enrol_calls[0]["enrolments"][0]["roleid"] == 3
 
     def test_role_studierende_maps_to_5(
@@ -932,7 +1002,9 @@ class TestMoodleEnrolUserWorker:
             event_statuses,
             moodle_course_id=200,
         )
-        user = _make_user(db_session, system_user, "stud_e", "se@example.com", "Stud E")
+        user = _make_user(
+            db_session, system_user, "stud_e", "se@example.com", "Stud E"
+        )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(db_session, system_user, task)
 
@@ -944,7 +1016,9 @@ class TestMoodleEnrolUserWorker:
 
         moodle_enrol_user_worker(event.id, user.id, "studierende", subtask.id)
 
-        enrol_calls = [c for c in mock_moodle.calls if c["method"] == "enrol_users"]
+        enrol_calls = [
+            c for c in mock_moodle.calls if c["method"] == "enrol_users"
+        ]
         assert enrol_calls[0]["enrolments"][0]["roleid"] == 5
 
 
@@ -968,7 +1042,11 @@ class TestMoodleUnenrolUserWorker:
             moodle_course_id=200,
         )
         user = _make_user(
-            db_session, system_user, "unenrol1", "ue1@example.com", "Unenrol User"
+            db_session,
+            system_user,
+            "unenrol1",
+            "ue1@example.com",
+            "Unenrol User",
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(db_session, system_user, task)
@@ -1099,7 +1177,11 @@ class TestMoodleUnenrolUserWorker:
             moodle_course_id=200,
         )
         user = _make_user(
-            db_session, system_user, "unenrol2", "ue2@example.com", "Unenrol Two"
+            db_session,
+            system_user,
+            "unenrol2",
+            "ue2@example.com",
+            "Unenrol Two",
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(db_session, system_user, task)
@@ -1111,7 +1193,9 @@ class TestMoodleUnenrolUserWorker:
         from core.moodle import moodle_unenrol_user_worker
 
         with pytest.raises(TaskException, match="Moodle user not found"):
-            moodle_unenrol_user_worker(event.id, user.id, "studierende", subtask.id)
+            moodle_unenrol_user_worker(
+                event.id, user.id, "studierende", subtask.id
+            )
 
         db_session.expire_all()
         refreshed = db_session.get(SubTask, subtask.id)
@@ -1133,20 +1217,28 @@ class TestMoodleUnenrolUserWorker:
             moodle_course_id=200,
         )
         user = _make_user(
-            db_session, system_user, "unenrol3", "ue3@example.com", "Unenrol Three"
+            db_session,
+            system_user,
+            "unenrol3",
+            "ue3@example.com",
+            "Unenrol Three",
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(db_session, system_user, task)
 
         mock_moodle = MockMoodleClient()
         mock_moodle.returns["get_users_by_field"] = [{"id": 42}]
-        mock_moodle._errors["unenrol_users"] = MoodleAPIError("err", "unenrol failed")
+        mock_moodle._errors["unenrol_users"] = MoodleAPIError(
+            "err", "unenrol failed"
+        )
         _patch_moodle_worker(monkeypatch, db_session, mock_moodle)
 
         from core.moodle import moodle_unenrol_user_worker
 
         with pytest.raises(TaskException):
-            moodle_unenrol_user_worker(event.id, user.id, "studierende", subtask.id)
+            moodle_unenrol_user_worker(
+                event.id, user.id, "studierende", subtask.id
+            )
 
         db_session.expire_all()
         refreshed = db_session.get(SubTask, subtask.id)
@@ -1175,10 +1267,18 @@ class TestMoodleEndEventWorker:
             moodle_course_id=200,
         )
         teacher = _make_user(
-            db_session, system_user, "end_teacher", "et@example.com", "End Teacher"
+            db_session,
+            system_user,
+            "end_teacher",
+            "et@example.com",
+            "End Teacher",
         )
         student = _make_user(
-            db_session, system_user, "end_student", "es@example.com", "End Student"
+            db_session,
+            system_user,
+            "end_student",
+            "es@example.com",
+            "End Student",
         )
         _make_events_user(db_session, system_user, event, teacher, role_teacher)
         _make_events_user(db_session, system_user, event, student, role_student)
@@ -1199,11 +1299,15 @@ class TestMoodleEndEventWorker:
         assert refreshed.status == "success"
 
         # Only students unenrolled (1 student), teacher not touched
-        unenrol_calls = [c for c in mock_moodle.calls if c["method"] == "unenrol_users"]
+        unenrol_calls = [
+            c for c in mock_moodle.calls if c["method"] == "unenrol_users"
+        ]
         assert len(unenrol_calls) == 1
 
         # Course hidden
-        update_calls = [c for c in mock_moodle.calls if c["method"] == "update_courses"]
+        update_calls = [
+            c for c in mock_moodle.calls if c["method"] == "update_courses"
+        ]
         assert len(update_calls) == 1
         assert update_calls[0]["courses"][0]["visible"] == 0
 
@@ -1305,9 +1409,13 @@ class TestMoodleEndEventWorker:
         refreshed = db_session.get(SubTask, subtask.id)
         assert refreshed.status == "success"
         # No unenrol calls, but course still hidden
-        unenrol_calls = [c for c in mock_moodle.calls if c["method"] == "unenrol_users"]
+        unenrol_calls = [
+            c for c in mock_moodle.calls if c["method"] == "unenrol_users"
+        ]
         assert len(unenrol_calls) == 0
-        update_calls = [c for c in mock_moodle.calls if c["method"] == "update_courses"]
+        update_calls = [
+            c for c in mock_moodle.calls if c["method"] == "update_courses"
+        ]
         assert len(update_calls) == 1
 
     def test_student_unenrol_api_error_continues(
@@ -1336,7 +1444,9 @@ class TestMoodleEndEventWorker:
 
         mock_moodle = MockMoodleClient()
         mock_moodle.returns["get_users_by_field"] = [{"id": 42}]
-        mock_moodle._errors["unenrol_users"] = MoodleAPIError("err", "unenrol fail")
+        mock_moodle._errors["unenrol_users"] = MoodleAPIError(
+            "err", "unenrol fail"
+        )
         _patch_moodle_worker(monkeypatch, db_session, mock_moodle)
 
         from core.moodle import moodle_end_event_worker
@@ -1347,7 +1457,9 @@ class TestMoodleEndEventWorker:
         refreshed = db_session.get(SubTask, subtask.id)
         assert refreshed.status == "success"
         # Course still hidden despite unenrol error
-        update_calls = [c for c in mock_moodle.calls if c["method"] == "update_courses"]
+        update_calls = [
+            c for c in mock_moodle.calls if c["method"] == "update_courses"
+        ]
         assert len(update_calls) == 1
 
     def test_no_student_role_zero_unenrols(
@@ -1380,7 +1492,9 @@ class TestMoodleEndEventWorker:
         refreshed = db_session.get(SubTask, subtask.id)
         assert refreshed.status == "success"
         # Course still hidden
-        update_calls = [c for c in mock_moodle.calls if c["method"] == "update_courses"]
+        update_calls = [
+            c for c in mock_moodle.calls if c["method"] == "update_courses"
+        ]
         assert len(update_calls) == 1
 
     def test_teacher_not_unenrolled(
@@ -1400,7 +1514,11 @@ class TestMoodleEndEventWorker:
             moodle_course_id=200,
         )
         teacher = _make_user(
-            db_session, system_user, "keep_teach", "kt@example.com", "Keep Teacher"
+            db_session,
+            system_user,
+            "keep_teach",
+            "kt@example.com",
+            "Keep Teacher",
         )
         _make_events_user(db_session, system_user, event, teacher, role_teacher)
 
@@ -1415,7 +1533,9 @@ class TestMoodleEndEventWorker:
         moodle_end_event_worker(event.id, subtask.id)
 
         # No unenrol calls for teacher
-        unenrol_calls = [c for c in mock_moodle.calls if c["method"] == "unenrol_users"]
+        unenrol_calls = [
+            c for c in mock_moodle.calls if c["method"] == "unenrol_users"
+        ]
         assert len(unenrol_calls) == 0
 
 
@@ -1439,7 +1559,9 @@ class TestMoodleDeleteCourse:
 
         moodle_delete_course(42)
 
-        delete_calls = [c for c in mock_moodle.calls if c["method"] == "delete_courses"]
+        delete_calls = [
+            c for c in mock_moodle.calls if c["method"] == "delete_courses"
+        ]
         assert len(delete_calls) == 1
         assert delete_calls[0]["ids"] == [42]
 

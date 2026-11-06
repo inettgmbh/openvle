@@ -4,9 +4,8 @@ import uuid
 from datetime import date, datetime, timezone
 
 import pytest
-from pydantic import ValidationError
-
 from core.exceptions import InvalidFieldValue
+from pydantic import ValidationError
 from schemas.events import (
     EventCreate,
     EventStatusReport,
@@ -226,22 +225,36 @@ class TestEventStatusReportTaskStats:
 
     def test_missing_field_raises(self):
         with pytest.raises(ValidationError):
-            EventStatusReportTaskStats(total=1, queued=1, processing=0, success=0)
+            EventStatusReportTaskStats(
+                total=1, queued=1, processing=0, success=0
+            )
 
 
 class TestEventStatusReport:
     def _make_vm_stats(self, **kwargs):
-        defaults = dict(total=0, running=0, stopped=0, pending=0, protected=0)
+        defaults = {
+            "total": 0,
+            "running": 0,
+            "stopped": 0,
+            "pending": 0,
+            "protected": 0,
+        }
         defaults.update(kwargs)
         return EventStatusReportVmStats(**defaults)
 
     def _make_connection_stats(self, **kwargs):
-        defaults = dict(total=0, deployed=0, pending=0)
+        defaults = {"total": 0, "deployed": 0, "pending": 0}
         defaults.update(kwargs)
         return EventStatusReportConnectionStats(**defaults)
 
     def _make_task_stats(self, **kwargs):
-        defaults = dict(total=0, queued=0, processing=0, success=0, failed=0)
+        defaults = {
+            "total": 0,
+            "queued": 0,
+            "processing": 0,
+            "success": 0,
+            "failed": 0,
+        }
         defaults.update(kwargs)
         return EventStatusReportTaskStats(**defaults)
 
@@ -265,7 +278,9 @@ class TestEventStatusReport:
             currentStatus="Deploying",
             statusInitiator=uid,
             vmStats=self._make_vm_stats(total=5, running=3, pending=2),
-            connectionStats=self._make_connection_stats(total=5, deployed=3, pending=2),
+            connectionStats=self._make_connection_stats(
+                total=5, deployed=3, pending=2
+            ),
             taskStats=self._make_task_stats(total=5, queued=3, processing=2),
             tasks=[],
         )

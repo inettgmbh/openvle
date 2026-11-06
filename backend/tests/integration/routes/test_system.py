@@ -49,7 +49,9 @@ class TestGetSystemSettings:
         assert "pageDetails" in data
         assert "items" in data
 
-    def test_returns_limited_settings_without_auth(self, client, sample_setting):
+    def test_returns_limited_settings_without_auth(
+        self, client, sample_setting
+    ):
         """Settings endpoint works without auth but returns limited data."""
         resp = client.get(f"{API}/system/settings")
         assert resp.status_code == 200
@@ -89,7 +91,9 @@ class TestUpdateSystemSetting:
         assert data["value"] == "updated_value"
         assert data["key"] == "test.public.setting"
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         payload = {"value": "new_value"}
         resp = client.put(

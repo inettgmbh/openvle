@@ -55,7 +55,9 @@ def protected_role(db_session, system_user):
 class TestCreateRole:
     """POST /roles/ -- create a new role."""
 
-    def test_create_role_returns_201(self, client, auth_headers, mock_permission_allow):
+    def test_create_role_returns_201(
+        self, client, auth_headers, mock_permission_allow
+    ):
         payload = {
             "name": "New Role",
             "description": "A brand new role",
@@ -135,7 +137,9 @@ class TestGetRoleById:
         assert data["key"] == sample_role.key
         assert data["protected"] is False
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/roles/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404
@@ -145,7 +149,9 @@ class TestGetRoleById:
         resp = client.get(f"{API}/roles/{fake_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_role):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_role
+    ):
         """Without mock_permission_allow, roles_read is denied."""
         resp = client.get(f"{API}/roles/{sample_role.id}", headers=auth_headers)
         assert resp.status_code == 403
@@ -221,7 +227,9 @@ class TestDeleteRole:
         mock_permission_allow,
         sample_role,
     ):
-        resp = client.delete(f"{API}/roles/{sample_role.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/roles/{sample_role.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
 
     def test_delete_protected_returns_403(
@@ -231,7 +239,9 @@ class TestDeleteRole:
         mock_permission_allow,
         protected_role,
     ):
-        resp = client.delete(f"{API}/roles/{protected_role.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/roles/{protected_role.id}", headers=auth_headers
+        )
         assert resp.status_code == 403
 
     def test_delete_not_found_returns_404(

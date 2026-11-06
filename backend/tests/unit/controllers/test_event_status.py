@@ -1,10 +1,10 @@
 """Tests for controllers/event_status.py - CRUDEventStatus operations."""
 
 import pytest
-
 from controllers.event_status import CRUDEventStatus
 from models import EventStatus, ObjectPermission
 from schemas.event_status import EventStatusCreate
+
 from tests.helpers.mock_request import create_mock_request
 
 

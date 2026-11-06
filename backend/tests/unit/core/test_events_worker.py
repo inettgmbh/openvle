@@ -12,11 +12,10 @@ Tests cover:
 """
 
 import uuid
-from datetime import datetime, date, timezone
+from datetime import date, datetime, timezone
 from unittest.mock import MagicMock
 
 import pytest
-
 from models import (
     Event,
     EventsUser,
@@ -28,7 +27,6 @@ from models import (
 )
 from models.associations import course_template_association_table
 from pve.worker_utils import TaskException
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -104,7 +102,9 @@ def _make_template(db, system_user, course=None, proxmox_id=100):
     return template
 
 
-def _make_vm(db, system_user, event, name="test-vm", ipv4=None, prevent_delete=False):
+def _make_vm(
+    db, system_user, event, name="test-vm", ipv4=None, prevent_delete=False
+):
     """Create a VirtualMachine row for testing."""
     now = datetime.now(timezone.utc)
     vm = VirtualMachine(
@@ -199,21 +199,35 @@ class TestEventsPostDeployment:
     """Tests for events_post_deployment()."""
 
     def test_success_all_vms_have_ipv4(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """When all VMs have ipv4, event status should become Aktiv."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(
             db_session, system_user, task, action="events_post_deployment"
         )
 
-        vm1 = _make_vm(db_session, system_user, event, name="vm-1", ipv4="10.0.0.1")
-        vm2 = _make_vm(db_session, system_user, event, name="vm-2", ipv4="10.0.0.2")
+        vm1 = _make_vm(
+            db_session, system_user, event, name="vm-1", ipv4="10.0.0.1"
+        )
+        vm2 = _make_vm(
+            db_session, system_user, event, name="vm-2", ipv4="10.0.0.2"
+        )
 
         from core.events_worker import events_post_deployment
 
@@ -230,21 +244,35 @@ class TestEventsPostDeployment:
         assert updated_event.status == event_statuses["Aktiv"].id
 
     def test_failure_vm_missing_ipv4(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """When some VMs lack ipv4, the worker should report failure."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(
             db_session, system_user, task, action="events_post_deployment"
         )
 
-        vm_ok = _make_vm(db_session, system_user, event, name="vm-ok", ipv4="10.0.0.1")
-        vm_fail = _make_vm(db_session, system_user, event, name="vm-fail", ipv4=None)
+        vm_ok = _make_vm(
+            db_session, system_user, event, name="vm-ok", ipv4="10.0.0.1"
+        )
+        vm_fail = _make_vm(
+            db_session, system_user, event, name="vm-fail", ipv4=None
+        )
 
         from core.events_worker import events_post_deployment
 
@@ -256,13 +284,23 @@ class TestEventsPostDeployment:
             )
 
     def test_failure_vm_not_found_in_db(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """When a VM ID does not exist in DB, it should be treated as failed deployment."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(
@@ -281,13 +319,23 @@ class TestEventsPostDeployment:
             )
 
     def test_event_not_found(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """When event does not exist, worker should fail gracefully."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(
@@ -306,7 +354,12 @@ class TestEventsPostDeployment:
             )
 
     def test_session_local_failure(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """When SessionLocal() raises, worker should not crash (bare except)."""
 
@@ -341,13 +394,23 @@ class TestEventsPostDecommission:
     """Tests for events_post_decommission()."""
 
     def test_success_no_vms_remain(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """When no VMs remain for the event, status should become Archiviert."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(
@@ -367,13 +430,23 @@ class TestEventsPostDecommission:
         assert updated_event.status == event_statuses["Archiviert"].id
 
     def test_failure_vms_still_exist(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """When VMs still belong to the event, decommission should fail."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(
@@ -384,7 +457,9 @@ class TestEventsPostDecommission:
 
         from core.events_worker import events_post_decommission
 
-        with pytest.raises(TaskException, match="errors during decommissioning"):
+        with pytest.raises(
+            TaskException, match="errors during decommissioning"
+        ):
             events_post_decommission(
                 kvs_task_object_id=subtask.id,
                 kvs_event_id=event.id,
@@ -392,13 +467,23 @@ class TestEventsPostDecommission:
             )
 
     def test_event_not_found(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """When event does not exist, worker should fail."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(
@@ -415,13 +500,23 @@ class TestEventsPostDecommission:
             )
 
     def test_success_message_includes_protected_count_when_nonzero(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """When protected_vm_count > 0, success message must mention the count."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(
@@ -443,13 +538,23 @@ class TestEventsPostDecommission:
         assert "protected" in updated_subtask.response_message.lower()
 
     def test_success_message_omits_protected_info_when_zero(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """When protected_vm_count == 0 (default), success message must not mention protected."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(
@@ -499,24 +604,38 @@ class TestEventsPostDeploymentMissingStatus:
     """Tests for events_post_deployment when EventStatus 'Aktiv' is missing."""
 
     def test_fails_when_aktiv_status_missing(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """When EventStatus 'Aktiv' is missing, worker should fail gracefully."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(
             db_session, system_user, task, action="events_post_deployment"
         )
 
-        vm = _make_vm(db_session, system_user, event, name="vm-ok", ipv4="10.0.0.1")
+        vm = _make_vm(
+            db_session, system_user, event, name="vm-ok", ipv4="10.0.0.1"
+        )
 
         from models import EventStatus
 
-        db_session.query(EventStatus).filter(EventStatus.name == "Aktiv").delete()
+        db_session.query(EventStatus).filter(
+            EventStatus.name == "Aktiv"
+        ).delete()
         db_session.flush()
 
         from core.events_worker import events_post_deployment
@@ -533,13 +652,23 @@ class TestEventsPostDecommissionMissingStatus:
     """Tests for events_post_decommission when EventStatus 'Archiviert' is missing."""
 
     def test_fails_when_archiviert_status_missing(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """When EventStatus 'Archiviert' is missing, worker should fail gracefully."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
         task = _make_task(db_session, system_user, event.id)
         subtask = _make_subtask(
@@ -548,7 +677,9 @@ class TestEventsPostDecommissionMissingStatus:
 
         from models import EventStatus
 
-        db_session.query(EventStatus).filter(EventStatus.name == "Archiviert").delete()
+        db_session.query(EventStatus).filter(
+            EventStatus.name == "Archiviert"
+        ).delete()
         db_session.flush()
 
         from core.events_worker import events_post_decommission
@@ -576,17 +707,26 @@ class TestEventsStartWorkerMissingRole:
         monkeypatch,
     ):
         """When role 'lehrende' is missing, worker should fail gracefully."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
         # Use student role only so we can delete teacher role without FK violation
-        student = _make_extra_user(db_session, system_user, username="student-mr")
+        student = _make_extra_user(
+            db_session, system_user, username="student-mr"
+        )
         _make_events_user(db_session, system_user, event, student, role_student)
 
         task = _make_task(db_session, system_user, event.id)
-        subtask = _make_subtask(db_session, system_user, task, action="events_start")
+        subtask = _make_subtask(
+            db_session, system_user, task, action="events_start"
+        )
 
         from models import Role as RoleModel
 
@@ -617,7 +757,10 @@ class TestCreateVmForEventUser:
     ):
         """Should create a new VirtualMachine and return it with worker_tasks."""
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
         template = _make_template(db_session, system_user, proxmox_id=100)
 
@@ -629,19 +772,26 @@ class TestCreateVmForEventUser:
             event,
             name=f"{event.slug}-{active_user.username}-t{template.proxmoxId}",
         )
-        mock_vm_result_dict = {"VirtualMachine": mock_vm_obj, "worker_tasks": ["job-1"]}
+        mock_vm_result_dict = {
+            "VirtualMachine": mock_vm_obj,
+            "worker_tasks": ["job-1"],
+        }
 
         monkeypatch.setattr(
             "core.events_worker.CRUDVirtualMachine",
             lambda model: MagicMock(
-                create_from_template_event=MagicMock(return_value=mock_vm_result_dict)
+                create_from_template_event=MagicMock(
+                    return_value=mock_vm_result_dict
+                )
             ),
         )
 
         from core.events_worker import create_vm_for_event_user
 
         # First, make sure there is no existing VM with that name
-        expected_name = f"{event.slug}-{active_user.username}-t{template.proxmoxId}"
+        expected_name = (
+            f"{event.slug}-{active_user.username}-t{template.proxmoxId}"
+        )
         (
             db_session.query(VirtualMachine)
             .filter(VirtualMachine.name == expected_name)
@@ -670,10 +820,15 @@ class TestCreateVmForEventUser:
     ):
         """If a VM with the same name already exists, should return it without creating."""
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
         template = _make_template(db_session, system_user, proxmox_id=100)
-        expected_name = f"{event.slug}-{active_user.username}-t{template.proxmoxId}"
+        expected_name = (
+            f"{event.slug}-{active_user.username}-t{template.proxmoxId}"
+        )
 
         existing_vm = _make_vm(
             db_session, system_user, event, name=expected_name, ipv4="10.0.0.5"
@@ -697,11 +852,19 @@ class TestTaskEventPostDeployment:
     """Tests for task_event_post_deployment()."""
 
     def test_creates_task_subtask_and_enqueues_job(
-        self, db_session, system_user, event_statuses, sample_course, mock_redis_queues
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        mock_redis_queues,
     ):
         """Should create a Task, SubTask, and enqueue a post-deployment job."""
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
         vm_ids = [uuid.uuid4(), uuid.uuid4()]
 
@@ -734,11 +897,19 @@ class TestTaskEventPostDeployment:
         assert len(core_jobs) >= 1
 
     def test_raises_on_enqueue_failure(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """If queue.enqueue returns falsy, should raise JobEnqueueError."""
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
 
         import core.redis as redis_mod
@@ -747,7 +918,9 @@ class TestTaskEventPostDeployment:
         mock_queue.enqueue.return_value = None
         monkeypatch.setattr(redis_mod, "queue_core_periodic", mock_queue)
         # Also patch the module-level import in events_worker
-        monkeypatch.setattr("core.events_worker.queue_core_periodic", mock_queue)
+        monkeypatch.setattr(
+            "core.events_worker.queue_core_periodic", mock_queue
+        )
 
         from core.events_worker import task_event_post_deployment
         from core.exceptions import JobEnqueueError
@@ -765,11 +938,19 @@ class TestTaskEventPostDecommission:
     """Tests for task_event_post_decommission()."""
 
     def test_creates_task_subtask_and_enqueues_job(
-        self, db_session, system_user, event_statuses, sample_course, mock_redis_queues
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        mock_redis_queues,
     ):
         """Should create a Task, SubTask, and enqueue a post-decommission job."""
         event = _make_event(
-            db_session, system_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
 
         from core.events_worker import task_event_post_decommission
@@ -794,11 +975,19 @@ class TestTaskEventPostDecommission:
         assert len(core_jobs) >= 1
 
     def test_raises_on_enqueue_failure(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """If queue.enqueue returns falsy, should raise JobEnqueueError."""
         event = _make_event(
-            db_session, system_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
 
         import core.redis as redis_mod
@@ -806,7 +995,9 @@ class TestTaskEventPostDecommission:
         mock_queue = MagicMock()
         mock_queue.enqueue.return_value = None
         monkeypatch.setattr(redis_mod, "queue_core_periodic", mock_queue)
-        monkeypatch.setattr("core.events_worker.queue_core_periodic", mock_queue)
+        monkeypatch.setattr(
+            "core.events_worker.queue_core_periodic", mock_queue
+        )
 
         from core.events_worker import task_event_post_decommission
         from core.exceptions import JobEnqueueError
@@ -820,11 +1011,19 @@ class TestTaskEventPostDecommission:
             )
 
     def test_protected_vm_count_forwarded_to_enqueue(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """protected_vm_count must be passed through to the enqueued job."""
         event = _make_event(
-            db_session, system_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
 
         import core.redis as redis_mod
@@ -836,7 +1035,9 @@ class TestTaskEventPostDecommission:
             enqueue_kwargs.update(kwargs) or mock_job
         )
         monkeypatch.setattr(redis_mod, "queue_core_periodic", mock_queue)
-        monkeypatch.setattr("core.events_worker.queue_core_periodic", mock_queue)
+        monkeypatch.setattr(
+            "core.events_worker.queue_core_periodic", mock_queue
+        )
 
         from core.events_worker import task_event_post_decommission
 
@@ -855,14 +1056,26 @@ class TestPreStartMail:
     """Tests for pre_start_mail()."""
 
     def test_sends_mails_to_admins(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """Should call CRUDMail.create_system_mail for each admin."""
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
-        teacher1 = _make_extra_user(db_session, system_user, username="teacher1")
-        teacher2 = _make_extra_user(db_session, system_user, username="teacher2")
+        teacher1 = _make_extra_user(
+            db_session, system_user, username="teacher1"
+        )
+        teacher2 = _make_extra_user(
+            db_session, system_user, username="teacher2"
+        )
 
         mail_calls = []
         mock_crud_mail_instance = MagicMock()
@@ -886,11 +1099,19 @@ class TestPreStartMail:
         assert len(mail_calls) == 2
 
     def test_handles_empty_admin_list(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """Should return immediately when event_admin is empty."""
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
 
         mock_crud_mail_instance = MagicMock()
@@ -906,11 +1127,19 @@ class TestPreStartMail:
         mock_crud_mail_instance.create_system_mail.assert_not_called()
 
     def test_skips_nonexistent_user_ids(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """Should skip user IDs that do not exist in the database."""
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
         real_teacher = _make_extra_user(
             db_session, system_user, username="real-teacher"
@@ -954,22 +1183,35 @@ class TestEventsStartWorker:
         monkeypatch,
     ):
         """Full start flow: create VMs per template x user, enqueue post-deployment."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Deploying"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Deploying"].id,
+            sample_course.id,
         )
-        _make_template(db_session, system_user, course=sample_course, proxmox_id=100)
+        _make_template(
+            db_session, system_user, course=sample_course, proxmox_id=100
+        )
 
-        teacher = _make_extra_user(db_session, system_user, username="teacher-start")
-        student = _make_extra_user(db_session, system_user, username="student-start")
+        teacher = _make_extra_user(
+            db_session, system_user, username="teacher-start"
+        )
+        student = _make_extra_user(
+            db_session, system_user, username="student-start"
+        )
 
         _make_events_user(db_session, system_user, event, teacher, role_teacher)
         _make_events_user(db_session, system_user, event, student, role_student)
 
         # Create a parent task and subtask for the worker
         task = _make_task(db_session, system_user, event.id)
-        subtask = _make_subtask(db_session, system_user, task, action="events_start")
+        subtask = _make_subtask(
+            db_session, system_user, task, action="events_start"
+        )
 
         # Mock create_vm_for_event_user to avoid Proxmox calls
         call_count = {"n": 0}
@@ -1009,13 +1251,22 @@ class TestEventsStartWorker:
         assert len(core_jobs) >= 1
 
     def test_event_not_found(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """Should fail gracefully when event does not exist."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         task = _make_task(db_session, system_user)
-        subtask = _make_subtask(db_session, system_user, task, action="events_start")
+        subtask = _make_subtask(
+            db_session, system_user, task, action="events_start"
+        )
 
         from core.events_worker import events_start_worker
 
@@ -1040,16 +1291,23 @@ class TestEventsEndWorker:
         monkeypatch,
     ):
         """End flow without guacamole: enqueue VM deletion tasks."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
         mock_proxmox = MagicMock()
         mock_proxmox.pve_get_node.return_value = "pve-node-1"
         mock_proxmox.proxmox.nodes.return_value.qemu.return_value.config.get.return_value = {
             "protection": 0
         }
-        monkeypatch.setattr("core.events_worker.ProxmoxCluster", lambda: mock_proxmox)
+        monkeypatch.setattr(
+            "core.events_worker.ProxmoxCluster", lambda: mock_proxmox
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
         # guacamole=False by default in _make_event
 
@@ -1058,7 +1316,9 @@ class TestEventsEndWorker:
         _make_vm(db_session, system_user, event, name="vm-end-2")
 
         task = _make_task(db_session, system_user, event.id)
-        subtask = _make_subtask(db_session, system_user, task, action="events_end")
+        subtask = _make_subtask(
+            db_session, system_user, task, action="events_end"
+        )
 
         # Mock CRUDVirtualMachine methods that enqueue worker jobs
         mock_crud_vm_instance = MagicMock()
@@ -1095,10 +1355,15 @@ class TestEventsEndWorker:
         monkeypatch,
     ):
         """Protected VMs should be detached from event, not deleted."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
 
         protected_vm = _make_vm(
@@ -1110,7 +1375,9 @@ class TestEventsEndWorker:
         )
 
         task = _make_task(db_session, system_user, event.id)
-        subtask = _make_subtask(db_session, system_user, task, action="events_end")
+        subtask = _make_subtask(
+            db_session, system_user, task, action="events_end"
+        )
 
         mock_crud_vm_instance = MagicMock()
         monkeypatch.setattr(
@@ -1144,17 +1411,24 @@ class TestEventsEndWorker:
     ):
         """VM not marked prevent_delete in DB but protected in Proxmox: DB must be updated
         and VM detached from event, not enqueued for deletion."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         mock_proxmox = MagicMock()
         mock_proxmox.pve_get_node.return_value = "pve-node-1"
         mock_proxmox.proxmox.nodes.return_value.qemu.return_value.config.get.return_value = {
             "protection": 1
         }
-        monkeypatch.setattr("core.events_worker.ProxmoxCluster", lambda: mock_proxmox)
+        monkeypatch.setattr(
+            "core.events_worker.ProxmoxCluster", lambda: mock_proxmox
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
         vm = _make_vm(
             db_session,
@@ -1165,7 +1439,9 @@ class TestEventsEndWorker:
         )
 
         task = _make_task(db_session, system_user, event.id)
-        subtask = _make_subtask(db_session, system_user, task, action="events_end")
+        subtask = _make_subtask(
+            db_session, system_user, task, action="events_end"
+        )
 
         mock_crud_vm_instance = MagicMock()
         monkeypatch.setattr(
@@ -1196,28 +1472,45 @@ class TestEventsEndWorker:
         monkeypatch,
     ):
         """protected_vm_count must reflect the number of skipped VMs in the enqueued job."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         mock_proxmox = MagicMock()
         mock_proxmox.pve_get_node.return_value = "pve-node-1"
         mock_proxmox.proxmox.nodes.return_value.qemu.return_value.config.get.return_value = {
             "protection": 0
         }
-        monkeypatch.setattr("core.events_worker.ProxmoxCluster", lambda: mock_proxmox)
+        monkeypatch.setattr(
+            "core.events_worker.ProxmoxCluster", lambda: mock_proxmox
+        )
 
         event = _make_event(
-            db_session, system_user, event_statuses["Archiving"].id, sample_course.id
+            db_session,
+            system_user,
+            event_statuses["Archiving"].id,
+            sample_course.id,
         )
         _make_vm(db_session, system_user, event, name="normal-vm")
         _make_vm(
-            db_session, system_user, event, name="protected-vm-1", prevent_delete=True
+            db_session,
+            system_user,
+            event,
+            name="protected-vm-1",
+            prevent_delete=True,
         )
         _make_vm(
-            db_session, system_user, event, name="protected-vm-2", prevent_delete=True
+            db_session,
+            system_user,
+            event,
+            name="protected-vm-2",
+            prevent_delete=True,
         )
 
         task = _make_task(db_session, system_user, event.id)
-        subtask = _make_subtask(db_session, system_user, task, action="events_end")
+        subtask = _make_subtask(
+            db_session, system_user, task, action="events_end"
+        )
 
         mock_crud_vm_instance = MagicMock()
         mock_crud_vm_instance._subtask_ha_remove.return_value = "job-ha"
@@ -1236,7 +1529,9 @@ class TestEventsEndWorker:
             enqueue_kwargs.update(kwargs) or MagicMock()
         )
         monkeypatch.setattr(redis_mod, "queue_core_periodic", mock_queue)
-        monkeypatch.setattr("core.events_worker.queue_core_periodic", mock_queue)
+        monkeypatch.setattr(
+            "core.events_worker.queue_core_periodic", mock_queue
+        )
 
         from core.events_worker import events_end_worker
 
@@ -1245,13 +1540,22 @@ class TestEventsEndWorker:
         assert enqueue_kwargs.get("protected_vm_count") == 2
 
     def test_event_not_found(
-        self, db_session, system_user, event_statuses, sample_course, monkeypatch
+        self,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+        monkeypatch,
     ):
         """Should fail gracefully when event does not exist."""
-        monkeypatch.setattr("core.events_worker.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.events_worker.SessionLocal", lambda: db_session
+        )
 
         task = _make_task(db_session, system_user)
-        subtask = _make_subtask(db_session, system_user, task, action="events_end")
+        subtask = _make_subtask(
+            db_session, system_user, task, action="events_end"
+        )
 
         from core.events_worker import events_end_worker
 

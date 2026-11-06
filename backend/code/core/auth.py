@@ -1,3 +1,4 @@
+import string
 import uuid
 from collections.abc import MutableMapping
 from datetime import datetime, timedelta, timezone
@@ -46,6 +47,67 @@ def get_password_hash(password: str) -> str:
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode(
         "utf-8"
     )
+
+
+# Validate password against configurable rules stored in sys_settings
+def validate_password(password: str, db: Session) -> None:
+    from models import SystemSetting
+
+    _keys = [
+        "passwords.min",
+        "passwords.max",
+        "passwords.lowercase.min",
+        "passwords.uppercase.min",
+        "passwords.numbers.min",
+        "passwords.special.min",
+    ]
+    rows = db.query(SystemSetting).filter(SystemSetting.key.in_(_keys)).all()
+    cfg = {row.key: int(row.value) for row in rows}
+
+    length = len(password)
+    min_len = cfg.get("passwords.min", 0)
+    max_len = cfg.get("passwords.max", 9999)
+    min_lower = cfg.get("passwords.lowercase.min", 0)
+    min_upper = cfg.get("passwords.uppercase.min", 0)
+    min_digits = cfg.get("passwords.numbers.min", 0)
+    min_special = cfg.get("passwords.special.min", 0)
+
+    if length < min_len:
+        raise BadRequestError(
+            message=_("Password must be at least {n} characters long.").format(
+                n=min_len
+            )
+        )
+    if length > max_len:
+        raise BadRequestError(
+            message=_("Password must not exceed {n} characters.").format(
+                n=max_len
+            )
+        )
+    if sum(1 for c in password if c.islower()) < min_lower:
+        raise BadRequestError(
+            message=_(
+                "Password must contain at least {n} lowercase letter(s)."
+            ).format(n=min_lower)
+        )
+    if sum(1 for c in password if c.isupper()) < min_upper:
+        raise BadRequestError(
+            message=_(
+                "Password must contain at least {n} uppercase letter(s)."
+            ).format(n=min_upper)
+        )
+    if sum(1 for c in password if c.isdigit()) < min_digits:
+        raise BadRequestError(
+            message=_("Password must contain at least {n} digit(s).").format(
+                n=min_digits
+            )
+        )
+    if sum(1 for c in password if c in string.punctuation) < min_special:
+        raise BadRequestError(
+            message=_(
+                "Password must contain at least {n} special character(s)."
+            ).format(n=min_special)
+        )
 
 
 # Authenticate username/email and password combo

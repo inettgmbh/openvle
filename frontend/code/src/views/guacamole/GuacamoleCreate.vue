@@ -23,6 +23,7 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import UnsavedChangesModal from '@/components/UnsavedChangesModal.vue'
 import { protocolConfig } from '@/composables/useConnectionForm'
 import { useUnsavedChanges } from '@/composables/useUnsavedChanges'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -184,6 +185,7 @@ onMounted(async () => {
           <FormControl
             v-model="guacamole.name"
             :icon="mdiRename"
+            :maxlength="FIELD_LIMITS.guacamole.name"
             :placeholder="$t('views.guacamole.form.namePlaceholder')"
             :validate="validateName"
             :autofocus="true"

@@ -34,7 +34,9 @@ class TestGetApiVersion:
 class TestHealthAuthenticated:
     """GET /system/health/authenticated -- health with auth."""
 
-    def test_returns_health_status(self, client, auth_headers, mock_permission_allow):
+    def test_returns_health_status(
+        self, client, auth_headers, mock_permission_allow
+    ):
         resp = client.get("/system/health/authenticated", headers=auth_headers)
         assert resp.status_code == 200
         data = resp.json()
@@ -85,7 +87,9 @@ class TestHealthToken:
         assert "Redis" in data
 
     def test_wrong_token_returns_403(self, client):
-        resp = client.get("/system/health/token", headers={"token": "wrong-token"})
+        resp = client.get(
+            "/system/health/token", headers={"token": "wrong-token"}
+        )
         assert resp.status_code == 403
 
     def test_no_token_returns_403(self, client):

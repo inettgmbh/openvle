@@ -28,6 +28,7 @@ from core.exceptions import (
     InvalidStatusError,
     JobEnqueueError,
     ObjectDeleteIntegrityError,
+    ObjectInUseError,
     ObjectNotFound,
     OperationDependencyMissing,
     ProtectedObjectError,
@@ -1673,10 +1674,11 @@ class CRUDEvent(CRUDBase[Event, EventCreate, EventUpdate]):
             .filter(VirtualMachine.event == self.db_obj.id)
             .first()
         ):
-            raise BadRequestError(
-                message=_(
+            raise ObjectInUseError(
+                model_name=Event.__name__,
+                detail=_(
                     "There are still active VirtualMachines assigned to the Event. Please decommission them before deleting the Event."
-                )
+                ),
             )
 
         try:

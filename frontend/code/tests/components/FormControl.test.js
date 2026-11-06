@@ -194,6 +194,11 @@ describe('FormControl', () => {
       expect(wrapper.find('input').attributes('maxlength')).toBe('50')
     })
 
+    it('accepts a numeric maxlength (e.g. from centralized field limits)', () => {
+      const wrapper = createWrapper({ maxlength: 35 })
+      expect(wrapper.find('input').attributes('maxlength')).toBe('35')
+    })
+
     it('sets autocomplete attribute', () => {
       const wrapper = createWrapper({ autocomplete: 'email' })
       expect(wrapper.find('input').attributes('autocomplete')).toBe('email')

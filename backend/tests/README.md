@@ -159,6 +159,7 @@ All factories use `factory-boy` with `SQLAlchemyModelFactory` and are automatica
 ```python
 from tests.factories.user_factory import UserFactory
 
+
 def test_something(db_session):
     user = UserFactory()  # Creates user in test DB
     assert user.status == "Active"

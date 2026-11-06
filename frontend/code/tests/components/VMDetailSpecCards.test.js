@@ -39,7 +39,18 @@ vi.mock('@/services', () => ({
       setProtection: vi.fn().mockResolvedValue({}),
       delete: vi.fn().mockResolvedValue({}),
       updateApps: vi.fn().mockResolvedValue({}),
+      getHa: vi.fn().mockResolvedValue({
+        type: 'vm',
+        state: 'ignored',
+        max_restart: 0,
+        max_relocate: 0,
+        digest: null,
+      }),
+      setHa: vi.fn().mockResolvedValue({}),
+      removeHa: vi.fn().mockResolvedValue({}),
     },
+    beginSilent: vi.fn(),
+    endSilent: vi.fn(),
     connections: {
       listByObject: vi.fn().mockResolvedValue({
         items: [],
@@ -115,6 +126,7 @@ vi.mock('vue-toastification', () => ({
 vi.mock('@/utils/icons', () => ({
   connectionProtocolFormatterIcon: vi.fn(),
   eventCreateTypeIcon: vi.fn(),
+  haStateIconVM: vi.fn().mockReturnValue('M0 0h24v24H0z'),
   taskStatusIcon: vi.fn(),
   vmStatusIcon: vi.fn(),
 }))
@@ -267,7 +279,7 @@ describe('VMDetail - Spec Cards', () => {
   })
 
   describe('card rendering', () => {
-    it('renders 8 spec cards when all fields are present', async () => {
+    it('renders 9 spec cards when all fields are present', async () => {
       await createWrapper({}, (from, to) => {
         const names = {
           osName: 'Ubuntu 22.04',
@@ -280,21 +292,30 @@ describe('VMDetail - Spec Cards', () => {
       })
 
       const cards = wrapper.findAllComponents(SpecCard)
-      expect(cards.length).toBe(8)
+      expect(cards.length).toBe(9)
     })
 
-    it('renders 6 spec cards when event and template are missing', async () => {
+    it('renders 7 spec cards when event and template are missing', async () => {
       await createWrapper({ event: null, template: null })
 
       const cards = wrapper.findAllComponents(SpecCard)
-      expect(cards.length).toBe(6)
+      expect(cards.length).toBe(7)
     })
 
-    it('renders 7 spec cards when only event is missing', async () => {
+    it('renders 8 spec cards when only event is missing', async () => {
       await createWrapper({ event: null })
 
       const cards = wrapper.findAllComponents(SpecCard)
-      expect(cards.length).toBe(7)
+      expect(cards.length).toBe(8)
+    })
+
+    it('omits the HA card when the VM has no Proxmox ID', async () => {
+      await createWrapper({ proxmoxId: null })
+
+      const cards = wrapper.findAllComponents(SpecCard)
+      expect(cards.find((c) => c.props('label') === 'HA-Status')).toBe(
+        undefined,
+      )
     })
   })
 
@@ -333,6 +354,13 @@ describe('VMDetail - Spec Cards', () => {
       const cards = wrapper.findAllComponents(SpecCard)
       const pveCard = cards.find((c) => c.props('label') === 'Proxmox VE')
       expect(pveCard.props('value')).toBe('421 (proxmox01)')
+    })
+
+    it('displays the HA state fetched on mount', async () => {
+      await createWrapper({}, () => 'Resolved')
+      const cards = wrapper.findAllComponents(SpecCard)
+      const haCard = cards.find((c) => c.props('label') === 'HA-Status')
+      expect(haCard.props('value')).toBe('Nicht aktiviert')
     })
   })
 

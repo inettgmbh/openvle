@@ -6,6 +6,7 @@ from pydantic import (
     UUID4,
     BaseModel,
     BeforeValidator,
+    Field,
     model_validator,
 )
 from sqlalchemy import inspect as sa_inspect
@@ -71,11 +72,24 @@ def _infer_model_class(schema_class_name: str) -> Any | None:
 
 # Base DB class for all objects
 class DBBase(BaseModel):
-    id: UUID4 | None = None
-    createdAt: datetime | None = datetime.now(timezone.utc)
-    createdById: UUID4 | None = None
-    updatedAt: datetime | None = datetime.now(timezone.utc)
-    updatedById: UUID4 | None = None
+    """Base model for all database-backed objects, includes audit fields."""
+
+    id: UUID4 | None = Field(
+        None, description="Unique identifier of the object"
+    )
+    createdAt: datetime | None = Field(
+        datetime.now(timezone.utc),
+        description="Timestamp when the object was created",
+    )
+    createdById: UUID4 | None = Field(
+        None, description="ID of the user who created the object"
+    )
+    updatedAt: datetime | None = Field(
+        datetime.now(timezone.utc), description="Timestamp of the last update"
+    )
+    updatedById: UUID4 | None = Field(
+        None, description="ID of the user who last updated the object"
+    )
 
     @classmethod
     def create(cls, user_id: UUID4, **kwargs):
@@ -99,6 +113,8 @@ class DBBase(BaseModel):
 
 # Base DB Update class for all objects
 class DBBaseUpdate(BaseModel):
+    """Base schema for update payloads with column-length enforcement."""
+
     model_class: ClassVar[Any] = None
 
     def update(self, user_id: UUID4, **kwargs):
@@ -132,6 +148,8 @@ class DBBaseUpdate(BaseModel):
 
 # Base DB Create class for all objects
 class DBBaseCreate(BaseModel):
+    """Base schema for creation payloads with column-length enforcement."""
+
     model_class: ClassVar[Any] = None
 
     @classmethod
@@ -163,12 +181,20 @@ class DBBaseCreate(BaseModel):
 
 # Base DB Create class for all objects
 class DBBaseId(BaseModel):
-    id: UUID4 | None = None
+    """Minimal schema exposing only the object's UUID."""
+
+    id: UUID4 | None = Field(
+        None, description="Unique identifier of the object"
+    )
 
 
 # pageDetails class for pagination
 class PaginationPageDetails(BaseModel):
-    page: int
-    perPage: int
-    pageCount: int
-    totalCount: int
+    """Pagination metadata returned with list responses."""
+
+    page: int = Field(..., description="Current page number (1-based)")
+    perPage: int = Field(..., description="Number of items per page")
+    pageCount: int = Field(..., description="Total number of pages")
+    totalCount: int = Field(
+        ..., description="Total number of items across all pages"
+    )

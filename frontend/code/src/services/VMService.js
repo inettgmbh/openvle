@@ -263,6 +263,58 @@ export default class VMService {
   }
 
   // ============================================================
+  // High Availability (HA)
+  // ============================================================
+
+  /**
+   * Retrieves the live HA state of a VM from Proxmox.
+   * Returns the raw Proxmox resource dict, e.g.
+   * { type: 'vm', state: 'started', max_restart: 5, max_relocate: 5, digest: '…' }.
+   * When the VM is not under HA management the backend returns
+   * { state: 'ignored', max_restart: 0, max_relocate: 0, digest: null }.
+   *
+   * @param {string} id - The ID of the VM.
+   * @returns {Promise<Object>}
+   */
+  async getHa(id) {
+    const { data } = await this.http.get(`${this.path}/${id}/actions/ha`)
+    return data
+  }
+
+  /**
+   * Creates or updates the HA configuration of a VM (asynchronous job).
+   *
+   * @param {string} id - The ID of the VM.
+   * @param {Object} [config] - The HA configuration.
+   * @param {string} [config.haState] - Desired HA state (started, stopped, disabled).
+   * @param {number} [config.haMaxRestart] - Maximum number of HA restart attempts.
+   * @param {number} [config.haMaxRelocate] - Maximum number of HA relocation attempts.
+   * @returns {Promise<Object>} The VM object (the HA job is enqueued).
+   */
+  async setHa(
+    id,
+    { haState = 'started', haMaxRestart = 5, haMaxRelocate = 5 } = {},
+  ) {
+    const { data } = await this.http.post(`${this.path}/${id}/actions/ha`, {
+      ha_state: haState,
+      ha_max_restart: haMaxRestart,
+      ha_max_relocate: haMaxRelocate,
+    })
+    return data
+  }
+
+  /**
+   * Removes the HA configuration of a VM (asynchronous job).
+   *
+   * @param {string} id - The ID of the VM.
+   * @returns {Promise<Object>} The VM object (the HA job is enqueued).
+   */
+  async removeHa(id) {
+    const { data } = await this.http.delete(`${this.path}/${id}/actions/ha`)
+    return data
+  }
+
+  // ============================================================
   // Network Information
   // ============================================================
 

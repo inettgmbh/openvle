@@ -5,13 +5,14 @@ from sqlalchemy.orm import Session
 from controllers.sub_tasks import *
 from core import dependencies
 from core.exceptions import PermissionDenied
+from core.responses import BASE_RESPONSES, READ_RESPONSES, build_description
 from models.sub_tasks import SubTask as SubTaskModel
 from schemas.sub_tasks import SubTask, SubTaskList
 
 router = APIRouter(
     prefix="/sub-tasks",
     tags=["tasks"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -23,6 +24,10 @@ router = APIRouter(
     operation_id="sub_tasks_read_all",
     summary="Get SubTasks",
     dependencies=[Depends(dependencies.PermissionChecker())],
+    description=build_description(
+        description="Returns a paginated list of all sub-tasks.",
+        permission="sub_tasks_read",
+    ),
 )
 def get_sub_tasks(
     request: Request,
@@ -56,8 +61,13 @@ def get_sub_tasks(
     status_code=200,
     response_model=SubTask,
     operation_id="sub_tasks_read_one",
+    responses=READ_RESPONSES,
     summary="Get SubTask",
     dependencies=[Depends(dependencies.PermissionChecker())],
+    description=build_description(
+        description="Returns a single sub-task by ID.",
+        permission="sub_tasks_read",
+    ),
 )
 def get_sub_task(
     id: UUID4, request: Request, db: Session = Depends(dependencies.get_db)
@@ -76,8 +86,16 @@ def get_sub_task(
     status_code=200,
     response_model=SubTask,
     operation_id="sub_tasks_retry",
+    responses=READ_RESPONSES,
     summary="Retry a failed SubTask",
     dependencies=[Depends(dependencies.PermissionChecker())],
+    description=build_description(
+        description="Retries a failed or periodic sub-task by ID.",
+        permission="sub_tasks_read",
+        notes=[
+            "Only sub-tasks with status `failed` or whose action starts with `periodic` can be retried.",
+        ],
+    ),
 )
 def retry_sub_task(
     id: UUID4, request: Request, db: Session = Depends(dependencies.get_db)

@@ -90,7 +90,9 @@ class TestGetSubTaskById:
         data = resp.json()
         assert data["id"] == str(sample_subtask.id)
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/sub-tasks/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404

@@ -6,6 +6,14 @@ from controllers.courses import *
 from controllers.templates import *
 from core import dependencies
 from core.exceptions import DuplicateFieldException, PermissionDenied
+from core.responses import (
+    BASE_RESPONSES,
+    CRUD_RESPONSES,
+    DELETE_RESPONSES,
+    READ_RESPONSES,
+    WRITE_RESPONSES,
+    build_description,
+)
 from models.courses import Course as CourseModel
 from models.templates import Template as TemplateModel
 from schemas.courses import *
@@ -14,7 +22,7 @@ from schemas.templates import *
 router = APIRouter(
     prefix="/courses",
     tags=["courses"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -24,8 +32,13 @@ router = APIRouter(
     status_code=201,
     response_model=Course,
     operation_id="courses_create",
+    responses=CRUD_RESPONSES,
     summary="Create Course",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Creates a new course.",
+        permission="courses_create",
+    ),
 )
 def create_course(
     *,
@@ -55,6 +68,10 @@ def create_course(
     operation_id="courses_read_all",
     summary="Get Courses",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a paginated list of all courses visible to the requesting user.",
+        permission="courses_read",
+    ),
 )
 def get_courses(
     request: Request,
@@ -97,8 +114,13 @@ def get_courses(
     status_code=200,
     response_model=Course,
     operation_id="courses_read_one",
+    responses=READ_RESPONSES,
     summary="Get Course",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a single course by ID.",
+        permission="courses_read",
+    ),
 )
 def get_course(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -117,8 +139,13 @@ def get_course(
     status_code=200,
     response_model=Course,
     operation_id="courses_update",
+    responses=CRUD_RESPONSES,
     summary="Update Course",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Updates a course's metadata.",
+        permission="courses_update",
+    ),
 )
 def update_course(
     *,
@@ -147,8 +174,13 @@ def update_course(
     "/{id}",
     status_code=200,
     operation_id="courses_delete",
+    responses=DELETE_RESPONSES,
     summary="Delete Course",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Deletes a course by ID.",
+        permission="courses_delete",
+    ),
 )
 def delete_course(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -167,8 +199,13 @@ def delete_course(
     status_code=200,
     response_model=Course,
     operation_id="courses_template_update",
+    responses=WRITE_RESPONSES,
     summary="Update Course Templates",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Adds a template association to a course.",
+        permission="courses_update",
+    ),
 )
 def update_course_template(
     *,
@@ -193,8 +230,13 @@ def update_course_template(
     status_code=200,
     response_model=Course,
     operation_id="courses_template_delete",
+    responses=WRITE_RESPONSES,
     summary="Delete Template from Course",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Removes a template association from a course.",
+        permission="courses_update",
+    ),
 )
 def delete_course_template(
     *,
@@ -219,8 +261,13 @@ def delete_course_template(
     status_code=200,
     response_model=TemplateList,
     operation_id="courses_templates_read_all",
+    responses=READ_RESPONSES,
     summary="Get Course's Templates",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all templates associated with a course.",
+        permission="courses_read",
+    ),
 )
 def get_courses_templates(
     request: Request,

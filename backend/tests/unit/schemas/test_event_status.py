@@ -1,8 +1,7 @@
 """Tests for schemas/event_status.py - EventStatus schema validation."""
 
-from pydantic import ValidationError
 import pytest
-
+from pydantic import ValidationError
 from schemas.event_status import EventStatusCreate, EventStatusUpdate
 
 

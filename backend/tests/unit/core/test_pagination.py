@@ -1,7 +1,6 @@
 """Tests for core/pagination.py - Pagination helper function."""
 
 import pytest
-
 from core.exceptions import PaginationPageError
 from core.pagination import paginate
 
@@ -55,7 +54,9 @@ class TestPaginate:
 
     def test_page_details_accuracy(self):
         items = list(range(10))
-        result = paginate(items, object_query_count=25, current_page=2, limit=10)
+        result = paginate(
+            items, object_query_count=25, current_page=2, limit=10
+        )
         details = result["pageDetails"]
         assert details["page"] == 2
         assert details["perPage"] == 10

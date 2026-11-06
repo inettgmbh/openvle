@@ -1,3 +1,5 @@
+import { useLocalPinia } from '../setup'
+
 import { createTestingPinia } from '@pinia/testing'
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -5,6 +7,10 @@ import { nextTick } from 'vue'
 
 import RateLimitModal from '@/components/RateLimitModal.vue'
 import { useRateLimitStore } from '@/stores/rateLimit'
+
+// This file installs its own pinia (stubActions: false) — opt out of the
+// shared global pinia to avoid a duplicate pinia provide.
+useLocalPinia()
 
 vi.mock('@/stores/style.js', () => ({
   useStyleStore: () => ({ darkMode: false }),

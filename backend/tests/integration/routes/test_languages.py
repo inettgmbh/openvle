@@ -12,7 +12,9 @@ def sample_language(db_session, system_user):
     """Create a language in the test DB."""
     from tests.factories.language_factory import LanguageFactory
 
-    return LanguageFactory(createdById=system_user.id, updatedById=system_user.id)
+    return LanguageFactory(
+        createdById=system_user.id, updatedById=system_user.id
+    )
 
 
 class TestGetLanguages:
@@ -64,7 +66,9 @@ class TestGetLanguageById:
         assert data["id"] == str(sample_language.id)
         assert data["nameEnglish"] == sample_language.nameEnglish
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/languages/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404

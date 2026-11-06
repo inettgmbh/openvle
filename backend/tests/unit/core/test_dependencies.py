@@ -1,17 +1,17 @@
 """Tests for core/dependencies.py - get_db, get_current_user, PermissionChecker, _decode_and_load_user."""
 
+import contextlib
 import uuid
 from datetime import datetime, timedelta, timezone
 
 import pytest
 from jose import jwt
-
 from models import ObjectPermission, Role, User
 from models.associations import (
     user_role_association_table,
 )
-from tests.helpers.mock_request import create_mock_request
 
+from tests.helpers.mock_request import create_mock_request
 
 # ===========================================================================
 # TestGetDb
@@ -26,7 +26,9 @@ class TestGetDb:
         from unittest.mock import MagicMock
 
         mock_session = MagicMock()
-        monkeypatch.setattr("core.dependencies.SessionLocal", lambda: mock_session)
+        monkeypatch.setattr(
+            "core.dependencies.SessionLocal", lambda: mock_session
+        )
 
         from core.dependencies import get_db
 
@@ -36,10 +38,8 @@ class TestGetDb:
         assert db.current_user_id is None
 
         # Exhaust generator (triggers finally block)
-        try:
+        with contextlib.suppress(StopIteration):
             next(gen)
-        except StopIteration:
-            pass
         mock_session.close.assert_called_once()
 
     def test_closes_on_exception(self, monkeypatch):
@@ -47,7 +47,9 @@ class TestGetDb:
         from unittest.mock import MagicMock
 
         mock_session = MagicMock()
-        monkeypatch.setattr("core.dependencies.SessionLocal", lambda: mock_session)
+        monkeypatch.setattr(
+            "core.dependencies.SessionLocal", lambda: mock_session
+        )
 
         from core.dependencies import get_db
 
@@ -55,10 +57,8 @@ class TestGetDb:
         next(gen)
 
         # Simulate an exception in the caller
-        try:
+        with contextlib.suppress(RuntimeError):
             gen.throw(RuntimeError("test error"))
-        except RuntimeError:
-            pass
         mock_session.close.assert_called_once()
 
 
@@ -94,7 +94,9 @@ class TestGetCurrentUser:
         from core.dependencies import get_current_user
         from core.exceptions import OutstandingPoliciesException
 
-        token = _make_jwt({"sub": str(active_user.id), "type": "policy_required"})
+        token = _make_jwt(
+            {"sub": str(active_user.id), "type": "policy_required"}
+        )
         with pytest.raises(OutstandingPoliciesException):
             _run_async(get_current_user(db=db_session, token=token))
 
@@ -120,14 +122,18 @@ class TestGetCurrentUserOptional:
         from core.dependencies import get_current_user_optional
 
         token = _make_jwt({"sub": str(active_user.id)})
-        result = _run_async(get_current_user_optional(db=db_session, token=token))
+        result = _run_async(
+            get_current_user_optional(db=db_session, token=token)
+        )
         assert result.id == active_user.id
 
     def test_returns_false_on_invalid_token(self, db_session, system_user):
         """Should return False when token is invalid."""
         from core.dependencies import get_current_user_optional
 
-        result = _run_async(get_current_user_optional(db=db_session, token="bad-token"))
+        result = _run_async(
+            get_current_user_optional(db=db_session, token="bad-token")
+        )
         assert result is False
 
     def test_returns_false_on_expired_token(self, db_session, active_user):
@@ -136,7 +142,9 @@ class TestGetCurrentUserOptional:
 
         expired = datetime.now(timezone.utc) - timedelta(hours=1)
         token = _make_jwt({"sub": str(active_user.id), "exp": expired})
-        result = _run_async(get_current_user_optional(db=db_session, token=token))
+        result = _run_async(
+            get_current_user_optional(db=db_session, token=token)
+        )
         assert result is False
 
 
@@ -152,7 +160,9 @@ class TestGetCurrentUserReauth:
         """Should return user even with policy_required token."""
         from core.dependencies import get_current_user_reauth
 
-        token = _make_jwt({"sub": str(active_user.id), "type": "policy_required"})
+        token = _make_jwt(
+            {"sub": str(active_user.id), "type": "policy_required"}
+        )
         result = _run_async(get_current_user_reauth(db=db_session, token=token))
         assert result.id == active_user.id
 
@@ -162,7 +172,9 @@ class TestGetCurrentUserReauth:
         from core.exceptions import InvalidAuthToken
 
         with pytest.raises(InvalidAuthToken):
-            _run_async(get_current_user_reauth(db=db_session, token="bad-token"))
+            _run_async(
+                get_current_user_reauth(db=db_session, token="bad-token")
+            )
 
     def test_rejects_bearer_token(self, db_session, active_user):
         """Should reject regular bearer tokens (only policy_required allowed)."""
@@ -187,7 +199,9 @@ class TestPermissionCheckerCall:
         from core.dependencies import PermissionChecker
 
         request = create_mock_request(active_user)
-        checker = PermissionChecker(permissions_required="events_read", request=request)
+        checker = PermissionChecker(
+            permissions_required="events_read", request=request
+        )
         checker(user=active_user)
         assert checker.user is active_user
 
@@ -221,7 +235,14 @@ class TestPermissionChecker:
         return role
 
     def _create_obj_permission(
-        self, db, entity_id, entity_type, object_type, object_id, perm_key, system_user
+        self,
+        db,
+        entity_id,
+        entity_type,
+        object_type,
+        object_id,
+        perm_key,
+        system_user,
     ):
         now = datetime.now(timezone.utc)
         op = ObjectPermission(
@@ -347,7 +368,9 @@ class TestPermissionChecker:
         )
         assert checker_read.has_permission() is True
 
-    def test_object_update_grants_read(self, db_session, active_user, system_user):
+    def test_object_update_grants_read(
+        self, db_session, active_user, system_user
+    ):
         from core.dependencies import PermissionChecker
 
         self._create_obj_permission(
@@ -447,7 +470,9 @@ class TestPermissionChecker:
 # ===========================================================================
 
 
-def _make_jwt(payload_overrides=None, secret="test-secret-key-for-jwt-testing-only"):
+def _make_jwt(
+    payload_overrides=None, secret="test-secret-key-for-jwt-testing-only"
+):
     """Create a valid JWT for testing."""
     now = datetime.now(timezone.utc)
     payload = {
@@ -467,7 +492,9 @@ def _make_jwt(payload_overrides=None, secret="test-secret-key-for-jwt-testing-on
 class TestDecodeAndLoadUser:
     """Test _decode_and_load_user JWT validation and user loading."""
 
-    def test_valid_token_returns_user(self, db_session, active_user, monkeypatch):
+    def test_valid_token_returns_user(
+        self, db_session, active_user, monkeypatch
+    ):
         """A valid JWT with matching user returns the User object."""
         from core.dependencies import _decode_and_load_user
 
@@ -487,10 +514,15 @@ class TestDecodeAndLoadUser:
 
         with pytest.raises(InvalidAuthToken):
             _decode_and_load_user(
-                "not-a-jwt", db_session, allow_policy_required=False, optional=False
+                "not-a-jwt",
+                db_session,
+                allow_policy_required=False,
+                optional=False,
             )
 
-    def test_invalid_format_optional_returns_false(self, db_session, system_user):
+    def test_invalid_format_optional_returns_false(
+        self, db_session, system_user
+    ):
         """A malformed token with optional=True returns False."""
         from core.dependencies import _decode_and_load_user
 
@@ -517,7 +549,9 @@ class TestDecodeAndLoadUser:
                 token, db_session, allow_policy_required=False, optional=False
             )
 
-    def test_expired_token_optional_returns_false(self, db_session, active_user):
+    def test_expired_token_optional_returns_false(
+        self, db_session, active_user
+    ):
         """An expired JWT with optional=True returns False."""
         from core.dependencies import _decode_and_load_user
 
@@ -569,7 +603,9 @@ class TestDecodeAndLoadUser:
 
         assert result.id == active_user.id
 
-    def test_require_policy_required_rejects_bearer(self, db_session, active_user):
+    def test_require_policy_required_rejects_bearer(
+        self, db_session, active_user
+    ):
         """require_policy_required=True rejects bearer tokens."""
         from core.dependencies import _decode_and_load_user
         from core.exceptions import CredentialsNotValid
@@ -591,7 +627,9 @@ class TestDecodeAndLoadUser:
         """require_policy_required=True accepts policy_required tokens."""
         from core.dependencies import _decode_and_load_user
 
-        token = _make_jwt({"sub": str(active_user.id), "type": "policy_required"})
+        token = _make_jwt(
+            {"sub": str(active_user.id), "type": "policy_required"}
+        )
 
         result = _decode_and_load_user(
             token,
@@ -695,7 +733,9 @@ class TestParsePermission:
         db_session.add(op)
         db_session.flush()
 
-    def test_known_type_vms_actions_start(self, db_session, active_user, system_user):
+    def test_known_type_vms_actions_start(
+        self, db_session, active_user, system_user
+    ):
         """'vms_actions_start' is parsed as type='vms'."""
         from core.dependencies import PermissionChecker
 
@@ -735,7 +775,9 @@ class TestParsePermission:
         """Unknown type falls back to first part as type, rest as action."""
         from core.dependencies import PermissionChecker
 
-        self._grant(db_session, active_user, "templates", "object_full", system_user)
+        self._grant(
+            db_session, active_user, "templates", "object_full", system_user
+        )
 
         request = create_mock_request(active_user)
         checker = PermissionChecker(
@@ -745,11 +787,15 @@ class TestParsePermission:
         )
         assert checker.has_permission() is True
 
-    def test_action_stop_granted_by_delete(self, db_session, active_user, system_user):
+    def test_action_stop_granted_by_delete(
+        self, db_session, active_user, system_user
+    ):
         """'vms_stop' (maps to object_update) is granted by object_delete via hierarchy."""
         from core.dependencies import PermissionChecker
 
-        self._grant(db_session, active_user, "vms", "object_delete", system_user)
+        self._grant(
+            db_session, active_user, "vms", "object_delete", system_user
+        )
 
         request = create_mock_request(active_user)
         checker = PermissionChecker(
@@ -793,7 +839,9 @@ class TestCheckPermissionHierarchy:
         """object_delete should grant read and update access."""
         from core.dependencies import PermissionChecker
 
-        self._grant(db_session, active_user, "events", "object_delete", system_user)
+        self._grant(
+            db_session, active_user, "events", "object_delete", system_user
+        )
 
         request = create_mock_request(active_user)
 
@@ -817,7 +865,9 @@ class TestCheckPermissionHierarchy:
         """object_update should grant read but NOT delete."""
         from core.dependencies import PermissionChecker
 
-        self._grant(db_session, active_user, "events", "object_update", system_user)
+        self._grant(
+            db_session, active_user, "events", "object_update", system_user
+        )
 
         request = create_mock_request(active_user)
 

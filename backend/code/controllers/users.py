@@ -10,7 +10,7 @@ from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
-from core.auth import get_password_hash, verify_password
+from core.auth import get_password_hash, validate_password, verify_password
 from core.config import Settings
 from core.core_utils import get_system_user
 from core.exceptions import (
@@ -227,6 +227,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if obj_in.password and obj_in.password_repeat:
             if obj_in.password != obj_in.password_repeat:
                 raise BadRequestError(message=_(msg_passwords_do_not_match))
+            validate_password(obj_in.password, db)
             USER_PASSWORD = get_password_hash(obj_in.password)
         # TODO: Add check for empty password and not empty password_repeat
         elif obj_in.password and not obj_in.password_repeat:
@@ -356,6 +357,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
                     "Your new password cannot be the same as your old password."
                 )
             )
+        validate_password(obj_data["password_new"], db)
         self.db_obj.hashed_password = get_password_hash(
             obj_data["password_new"]
         )
@@ -392,6 +394,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         # Verify that password_new and password_new_repeat are the same
         if obj_data["password_new"] != obj_data["password_new_repeat"]:
             raise BadRequestError(message=_(msg_passwords_do_not_match))
+        validate_password(obj_data["password_new"], db)
         self.db_obj.hashed_password = get_password_hash(
             obj_data["password_new"]
         )

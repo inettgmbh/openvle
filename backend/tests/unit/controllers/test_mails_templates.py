@@ -4,10 +4,10 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from controllers.mails_templates import CRUDMailTemplate
 from models import Language, MailTemplate, ObjectPermission
 from schemas.mails_templates import MailTemplateCreate
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -51,7 +51,9 @@ class TestCRUDMailTemplateCreate:
     def setup_method(self):
         self.crud = CRUDMailTemplate(MailTemplate)
 
-    def test_create_mail_template(self, db_session, active_user, sample_language):
+    def test_create_mail_template(
+        self, db_session, active_user, sample_language
+    ):
         request = create_mock_request(active_user)
         obj_in = MailTemplateCreate(
             name="New Template",
@@ -96,7 +98,9 @@ class TestCRUDMailTemplateUpdate:
     def setup_method(self):
         self.crud = CRUDMailTemplate(MailTemplate)
 
-    def test_update_mail_template(self, db_session, active_user, sample_language):
+    def test_update_mail_template(
+        self, db_session, active_user, sample_language
+    ):
         """Update the subject of a MailTemplate."""
         request = create_mock_request(active_user)
         obj_in = MailTemplateCreate(
@@ -123,7 +127,9 @@ class TestCRUDMailTemplateDelete:
     def setup_method(self):
         self.crud = CRUDMailTemplate(MailTemplate)
 
-    def test_delete_mail_template(self, db_session, active_user, sample_language):
+    def test_delete_mail_template(
+        self, db_session, active_user, sample_language
+    ):
         """Delete a MailTemplate and verify it is gone."""
         request = create_mock_request(active_user)
         obj_in = MailTemplateCreate(
@@ -147,7 +153,9 @@ class TestCRUDMailTemplateGetMulti:
     def setup_method(self):
         self.crud = CRUDMailTemplate(MailTemplate)
 
-    def test_get_multi_returns_all(self, db_session, active_user, sample_language):
+    def test_get_multi_returns_all(
+        self, db_session, active_user, sample_language
+    ):
         """Create several MailTemplates, get_multi returns all."""
         request = create_mock_request(active_user)
         for i in range(3):
@@ -164,7 +172,9 @@ class TestCRUDMailTemplateGetMulti:
         result = self.crud.get_multi(db_session)
         assert len(result["items"]) >= 3
 
-    def test_get_by_name_case_sensitive(self, db_session, active_user, sample_language):
+    def test_get_by_name_case_sensitive(
+        self, db_session, active_user, sample_language
+    ):
         """Verify get_by_name matches the correct case."""
         request = create_mock_request(active_user)
         obj_in = MailTemplateCreate(

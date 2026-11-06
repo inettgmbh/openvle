@@ -16,6 +16,7 @@ from core.exceptions import (
 )
 from core.mongodb import db
 from core.pagination import paginate
+from core.responses import BASE_RESPONSES, READ_RESPONSES, build_description
 from schemas.activities import ActivitiesList, ActivitiesOwnList, Activity
 
 settings = Settings()
@@ -23,7 +24,7 @@ settings = Settings()
 router = APIRouter(
     prefix="/activities",
     tags=["activities"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 collection = db["sys_activities"]
@@ -35,6 +36,9 @@ collection = db["sys_activities"]
     operation_id="activities_read_own",
     summary="Get My Activities",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a paginated list of the currently authenticated user's own activity log.",
+    ),
 )
 async def get_own(
     request: Request,
@@ -135,8 +139,13 @@ async def get_own(
     "/{id}",
     response_model=Activity,
     operation_id="activities_read_one",
+    responses=READ_RESPONSES,
     summary="Get Activity",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a single activity log entry by MongoDB ObjectId.",
+        permission="activities_read",
+    ),
 )
 async def getOneById(
     request: Request,
@@ -161,6 +170,10 @@ async def getOneById(
     operation_id="activities_read_all",
     summary="Get Activities",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a paginated list of all activity log entries.",
+        permission="activities_read",
+    ),
 )
 async def getAll(
     request: Request,

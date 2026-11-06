@@ -2,7 +2,6 @@
 
 import uuid
 
-
 from tests.integration.conftest import API
 
 
@@ -44,15 +43,21 @@ class TestGetEventStatusById:
         self, client, auth_headers, mock_permission_allow, event_statuses
     ):
         status = event_statuses["Geplant"]
-        resp = client.get(f"{API}/status/events/{status.id}", headers=auth_headers)
+        resp = client.get(
+            f"{API}/status/events/{status.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["id"] == str(status.id)
         assert data["name"] == "Geplant"
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
-        resp = client.get(f"{API}/status/events/{fake_id}", headers=auth_headers)
+        resp = client.get(
+            f"{API}/status/events/{fake_id}", headers=auth_headers
+        )
         assert resp.status_code == 404
 
     def test_unauthenticated_returns_401(self, client):

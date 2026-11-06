@@ -13,6 +13,7 @@ from core.exceptions import (
     PermissionDenied,
     ProxmoxConnectionError,
 )
+from core.responses import BASE_RESPONSES, HTTP_400, build_description
 from middlewares.i18n import _
 from models import Template
 from pve.cluster import ProxmoxCluster
@@ -26,7 +27,7 @@ from schemas.proxmox import (
 router = APIRouter(
     prefix="/proxmox",
     tags=["proxmox"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -37,6 +38,10 @@ router = APIRouter(
     operation_id="cluster_logs_read_all",
     summary="Get PVE cluster logs",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns the task log from the Proxmox cluster.",
+        permission="proxmox_read",
+    ),
 )
 def get_cluster_logs(
     request: Request, db: Session = Depends(dependencies.get_db)
@@ -63,6 +68,10 @@ def get_cluster_logs(
     operation_id="cluster_resources_read_all",
     summary="Get PVE cluster resources",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all resources currently tracked by the Proxmox cluster.",
+        permission="proxmox_read",
+    ),
 )
 def get_cluster_resources(
     request: Request, db: Session = Depends(dependencies.get_db)
@@ -89,6 +98,10 @@ def get_cluster_resources(
     operation_id="cluster_status_read",
     summary="Get PVE cluster status",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns the current status of the Proxmox cluster.",
+        permission="proxmox_read",
+    ),
 )
 def get_cluster_status(
     request: Request, db: Session = Depends(dependencies.get_db)
@@ -115,6 +128,10 @@ def get_cluster_status(
     operation_id="cluster_tasks_read_all",
     summary="Get PVE cluster tasks",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns active and recent tasks from the Proxmox cluster.",
+        permission="proxmox_read",
+    ),
 )
 def get_cluster_tasks(
     request: Request, db: Session = Depends(dependencies.get_db)
@@ -141,6 +158,10 @@ def get_cluster_tasks(
     operation_id="cluster_counts_read_all",
     summary="Get PVE cluster counts",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns VM counts by status (total, running, stopped) from the Proxmox cluster.",
+        permission="proxmox_read",
+    ),
 )
 def get_cluster_counts(
     request: Request, db: Session = Depends(dependencies.get_db)
@@ -185,6 +206,10 @@ def get_cluster_counts(
     operation_id="nodes_read_all",
     summary="Get list of nodes on cluster",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns the list of nodes in the Proxmox cluster with their status, IP, and FQDN.",
+        permission="proxmox_read",
+    ),
 )
 def get_nodes_all(request: Request, db: Session = Depends(dependencies.get_db)):
     if dependencies.PermissionChecker(
@@ -220,8 +245,13 @@ def get_nodes_all(request: Request, db: Session = Depends(dependencies.get_db)):
     "/nodes/{node}/rrd",
     status_code=200,
     operation_id="nodes_rrd_read",
+    responses={**HTTP_400},
     summary="Read node RRD statistics (returns PNG)",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns an RRD statistic graph as a PNG image for a Proxmox node.",
+        permission="proxmox_read",
+    ),
 )
 def get_node_rrd(
     node: str,
@@ -275,9 +305,14 @@ def get_node_rrd(
     "/nodes/{node}/rrddata",
     status_code=200,
     operation_id="nodes_rrddata_read",
+    responses={**HTTP_400},
     summary="Read node RRD statistic data",
     response_model=ProxmoxNodeMetricsList,
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns RRD metric data for a Proxmox node.",
+        permission="proxmox_read",
+    ),
 )
 def get_node_rrddata(
     node: str,
@@ -315,8 +350,16 @@ def get_node_rrddata(
     "/templates/load",
     status_code=200,
     operation_id="template_load_get",
+    responses={**HTTP_400},
     summary="Get config for Template on PVE",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Fetches the raw configuration for a PVE template by its Proxmox VM ID.",
+        permission="templates_create",
+        notes=[
+            "The PVE VM must already be configured as a template on Proxmox.",
+        ],
+    ),
 )
 def get_template(
     proxmox_id: int,
@@ -339,8 +382,17 @@ def get_template(
     "/templates/load",
     status_code=200,
     operation_id="template_load_create",
+    responses={**HTTP_400},
     summary="Create Template in DB based on Template on PVE",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Imports a PVE template into the database by reading its configuration from Proxmox.",
+        permission="templates_create",
+        notes=[
+            "The PVE VM must already be configured as a template on Proxmox.",
+            "The `proxmoxId` must not already be registered in the database.",
+        ],
+    ),
 )
 def create_template(
     proxmox_id: int,

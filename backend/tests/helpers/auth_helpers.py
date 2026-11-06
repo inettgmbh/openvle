@@ -2,9 +2,8 @@
 
 from datetime import datetime, timedelta, timezone
 
-from jose import jwt
-
 from core.config import Settings
+from jose import jwt
 
 settings = Settings()
 

@@ -6,6 +6,7 @@ from controllers.base import CRUDBase
 from controllers.mails_templates import CRUDMailTemplate
 from core import dependencies
 from core.exceptions import PermissionDenied
+from core.responses import CRUD_RESPONSES
 from models import (
     MailAction as MailActionModel,
     MailTemplate as MailTemplateModel,
@@ -16,7 +17,7 @@ from schemas.mails_templates import MailTemplateList
 router = APIRouter(
     prefix="/mailactions",
     tags=["mailactions"],
-    responses={404: {"detail": "Not found"}},
+    responses=CRUD_RESPONSES,
 )
 
 
@@ -28,6 +29,7 @@ router = APIRouter(
     operation_id="mail_actions_read_all",
     summary="Get MailActions",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `mail_templates_read`",
 )
 def get_mail_actions(
     request: Request,
@@ -63,6 +65,7 @@ def get_mail_actions(
     operation_id="mail_actions_read_one",
     summary="Get MailAction",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `mail_templates_read`",
 )
 def get_mail_action(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -83,6 +86,7 @@ def get_mail_action(
     operation_id="mail_action_templates_read_all",
     summary="Get MailTemplates assigned to MailAction",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `mail_templates_read`",
 )
 def get_mail_templates_for_mail_action(
     id: UUID4,

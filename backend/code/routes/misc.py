@@ -4,11 +4,12 @@ from sqlalchemy.orm import Session
 from controllers.system import *
 from core import dependencies
 from core.exceptions import PermissionDenied
+from core.responses import AUTH_ERROR_RESPONSES, build_description
 
 router = APIRouter(
     prefix="/system",
     tags=["system"],
-    responses={404: {"detail": "Not found"}},
+    responses=AUTH_ERROR_RESPONSES,
 )
 
 
@@ -97,6 +98,10 @@ def get_services_status():
     operation_id="api_version_read",
     summary="Get current version of API",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns the current API version string.",
+        permission="system_read",
+    ),
 )
 def get_api_version(
     request: Request, db: Session = Depends(dependencies.get_db)
@@ -122,6 +127,10 @@ def get_api_version(
     operation_id="system_health_auth",
     summary="Get health status of API - Requires user authentication",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns the health status of all dependent services. Requires an authenticated session.",
+        permission="system_read",
+    ),
 )
 def get_health_auth(
     request: Request, db: Session = Depends(dependencies.get_db)
@@ -140,6 +149,9 @@ def get_health_auth(
     status_code=200,
     operation_id="system_health_token",
     summary="Get health status of API - Requires HEALTH_API_TOKEN",
+    description=build_description(
+        description="Returns the health status of all dependent services. Requires a static `HEALTH_API_TOKEN` header instead of a user session.",
+    ),
 )
 def get_health_token(request: Request):
     from core.config import Settings

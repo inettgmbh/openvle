@@ -7,10 +7,9 @@ Access-Control-Expose-Headers so frontend JavaScript can read them.
 import asyncio
 
 import httpx
+from core.config import Settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from core.config import Settings
 
 
 def _request(app, headers=None):

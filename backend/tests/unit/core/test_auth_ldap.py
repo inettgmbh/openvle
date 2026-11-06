@@ -4,8 +4,8 @@ import ssl
 from unittest.mock import MagicMock
 
 import pytest
-
 from core.exceptions import LdapConnectionError
+
 from tests.helpers.mock_ldap import MockLDAPConnection
 
 
@@ -114,7 +114,7 @@ class TestLdapConnect:
         """Connection raising Exception -> LdapConnectionError."""
 
         def raise_on_connect(*args, **kwargs):
-            raise Exception("Network unreachable")
+            raise RuntimeError("Network unreachable")
 
         monkeypatch.setattr("core.auth_ldap.Connection", raise_on_connect)
         monkeypatch.setattr("core.auth_ldap.Server", MagicMock())

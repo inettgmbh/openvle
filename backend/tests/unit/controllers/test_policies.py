@@ -4,11 +4,15 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from controllers.policies import CRUDPolicy
-from core.exceptions import BadRequestError, InvalidStatusError, RelationNotFound
+from core.exceptions import (
+    BadRequestError,
+    InvalidStatusError,
+    RelationNotFound,
+)
 from models import ObjectPermission, PoliciesUser, Policy
 from schemas.policies import PolicyCreate, PolicyUpdate, PolicyUserAgree
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -115,11 +119,15 @@ class TestCRUDPolicyUpdate:
         )
         assert result.name == "Updated Policy"
 
-    def test_update_active_content_raises(self, db_session, active_user, active_policy):
+    def test_update_active_content_raises(
+        self, db_session, active_user, active_policy
+    ):
         request = create_mock_request(active_user)
         obj_in = PolicyUpdate(name="Changed Name")
         with pytest.raises(InvalidStatusError):
-            self.crud.update(active_policy.id, db_session, request, obj_in=obj_in)
+            self.crud.update(
+                active_policy.id, db_session, request, obj_in=obj_in
+            )
 
     def test_activate_policy(self, db_session, active_user, inactive_policy):
         request = create_mock_request(active_user)
@@ -143,10 +151,14 @@ class TestCRUDPolicyAgreement:
         assert result.user_id == active_user.id
         assert result.policy_id == active_policy.id
 
-    def test_duplicate_agreement_raises(self, db_session, active_user, active_policy):
+    def test_duplicate_agreement_raises(
+        self, db_session, active_user, active_policy
+    ):
         request = create_mock_request(active_user)
         obj_in = PolicyUserAgree(agree=True)
-        self.crud.agree_to_policy(active_policy.id, db_session, request, obj_in=obj_in)
+        self.crud.agree_to_policy(
+            active_policy.id, db_session, request, obj_in=obj_in
+        )
 
         with pytest.raises(BadRequestError):
             self.crud.agree_to_policy(
@@ -158,19 +170,27 @@ class TestCRUDPolicyGetOutstanding:
     def setup_method(self):
         self.crud = CRUDPolicy(Policy)
 
-    def test_returns_outstanding_policies(self, db_session, active_user, active_policy):
+    def test_returns_outstanding_policies(
+        self, db_session, active_user, active_policy
+    ):
         result = self.crud.get_outstanding(db_session, user_id=active_user.id)
         assert active_policy.id in result
 
-    def test_excludes_agreed_policies(self, db_session, active_user, active_policy):
+    def test_excludes_agreed_policies(
+        self, db_session, active_user, active_policy
+    ):
         request = create_mock_request(active_user)
         obj_in = PolicyUserAgree(agree=True)
-        self.crud.agree_to_policy(active_policy.id, db_session, request, obj_in=obj_in)
+        self.crud.agree_to_policy(
+            active_policy.id, db_session, request, obj_in=obj_in
+        )
 
         result = self.crud.get_outstanding(db_session, user_id=active_user.id)
         assert active_policy.id not in result
 
-    def test_excludes_inactive_policies(self, db_session, active_user, inactive_policy):
+    def test_excludes_inactive_policies(
+        self, db_session, active_user, inactive_policy
+    ):
         result = self.crud.get_outstanding(db_session, user_id=active_user.id)
         assert inactive_policy.id not in result
 

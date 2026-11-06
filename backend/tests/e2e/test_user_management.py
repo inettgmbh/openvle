@@ -8,10 +8,8 @@ password operations, and user deletion cascade.
 import uuid
 from datetime import datetime, timezone
 
-
-from tests.helpers.auth_helpers import create_test_token
 from tests.e2e.conftest import API
-
+from tests.helpers.auth_helpers import create_test_token
 
 # ------------------------------------------------------------------
 # Scenario A: User creation and role assignment
@@ -179,8 +177,8 @@ class TestSelfAccess:
         headers = {"Authorization": f"Bearer {create_test_token(login_user)}"}
         payload = {
             "password_old": "testpassword123",
-            "password_new": "newpassword456",
-            "password_new_repeat": "newpassword456",
+            "password_new": "NewPassword456!!",
+            "password_new_repeat": "NewPassword456!!",
         }
         resp = client.put(f"{API}/me/password", json=payload, headers=headers)
         assert resp.status_code == 200
@@ -201,7 +199,7 @@ class TestSelfAccess:
             f"{API}/auth/login",
             data={
                 "username": login_user.username,
-                "password": "newpassword456",
+                "password": "NewPassword456!!",
             },
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
@@ -220,7 +218,9 @@ class TestSelfAccess:
         resp = client.put(f"{API}/me/password", json=payload, headers=headers)
         assert resp.status_code == 400
 
-    def test_password_mismatch_returns_400(self, client, db_session, login_user):
+    def test_password_mismatch_returns_400(
+        self, client, db_session, login_user
+    ):
         """Password and repeat must match."""
         headers = {"Authorization": f"Bearer {create_test_token(login_user)}"}
         payload = {
@@ -231,7 +231,9 @@ class TestSelfAccess:
         resp = client.put(f"{API}/me/password", json=payload, headers=headers)
         assert resp.status_code == 400
 
-    def test_new_password_same_as_old_returns_400(self, client, db_session, login_user):
+    def test_new_password_same_as_old_returns_400(
+        self, client, db_session, login_user
+    ):
         """New password cannot be the same as old password."""
         headers = {"Authorization": f"Bearer {create_test_token(login_user)}"}
         payload = {
@@ -279,7 +281,9 @@ class TestUserDeletion:
         assert resp.status_code == 200
 
         # Verify anonymization in DB
-        user = db_session.query(User).filter(User.id == uuid.UUID(user_id)).first()
+        user = (
+            db_session.query(User).filter(User.id == uuid.UUID(user_id)).first()
+        )
         assert user is not None
         assert user.username.startswith("deleted_")
         assert user.hashed_password is None
@@ -360,7 +364,9 @@ class TestUserDeletion:
         auth_headers,
     ):
         """Deleting the system user returns 403."""
-        resp = client.delete(f"{API}/users/{system_user.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/users/{system_user.id}", headers=auth_headers
+        )
         assert resp.status_code == 403
 
     def test_cannot_delete_already_deleted_user(
@@ -502,7 +508,9 @@ class TestUserDeletion:
 
         # Associate user with VM
         db_session.execute(
-            user_vm_association_table.insert().values(user_id=user.id, vm_id=vm.id)
+            user_vm_association_table.insert().values(
+                user_id=user.id, vm_id=vm.id
+            )
         )
         db_session.flush()
 

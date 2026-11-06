@@ -50,12 +50,12 @@ const stubs = {
   },
   CardBox: {
     template: `
-      <div class="card-box">
+      <div class="card-box" :data-is-modal="isModal" :data-has-search="hasSearch">
         <slot />
         <slot name="footer" />
       </div>
     `,
-    props: ['isModal'],
+    props: { isModal: Boolean, hasSearch: Boolean },
   },
   CardBoxComponentTitle: {
     template: '<div class="card-title">{{ title }}<slot /></div>',
@@ -157,6 +157,17 @@ describe('BatchAddModal', () => {
     it('renders search control in selecting phase', () => {
       createWrapper()
       expect(wrapper.find('.search-control').exists()).toBe(true)
+    })
+
+    // Regression: the CardBox body applies `overflow-y-auto` when it is a modal
+    // WITHOUT `has-search`, which clips the absolutely-positioned search-results
+    // dropdown. Because this modal contains a SearchControl, it must opt out of
+    // that clipping by setting `has-search`.
+    it('marks the CardBox as has-search so the search dropdown is not clipped', () => {
+      createWrapper()
+      const cardBox = wrapper.find('.card-box')
+      expect(cardBox.attributes('data-is-modal')).toBe('true')
+      expect(cardBox.attributes('data-has-search')).toBe('true')
     })
 
     it('renders close button in selecting phase', () => {

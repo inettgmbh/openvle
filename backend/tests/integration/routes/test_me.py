@@ -49,13 +49,17 @@ class TestUpdateMePassword:
         resp = client.put(f"{API}/me/password", json=payload)
         assert resp.status_code in (401, 403)
 
-    def test_authenticated_with_invalid_old_password(self, client, auth_headers):
+    def test_authenticated_with_invalid_old_password(
+        self, client, auth_headers
+    ):
         """With a dummy hashed_password, old password verification fails."""
         payload = {
             "password_old": "wrongoldpassword",
             "password_new": "newpassword123",
             "password_new_repeat": "newpassword123",
         }
-        resp = client.put(f"{API}/me/password", json=payload, headers=auth_headers)
+        resp = client.put(
+            f"{API}/me/password", json=payload, headers=auth_headers
+        )
         # bcrypt verification will fail on the dummy hash
         assert resp.status_code in (400, 401, 422, 500)

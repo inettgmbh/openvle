@@ -4,10 +4,10 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from controllers.changelog import CRUDChangelog
 from models import Application, ObjectPermission, Vendor
 from models.changelog import Changelog
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -187,7 +187,11 @@ class TestCreateForChangesExtended:
         changes = [
             {"field": "name", "value_old": "App A", "value_new": "App B"},
             {"field": "key", "value_old": "app-a", "value_new": "app-b"},
-            {"field": "description", "value_old": "", "value_new": "New description"},
+            {
+                "field": "description",
+                "value_old": "",
+                "value_new": "New description",
+            },
         ]
         result = self.crud._create_for_changes(
             db_session,
@@ -268,7 +272,11 @@ class TestGetMultiAuthPagination:
         """Very long values are truncated to 1500 chars by _create_for_changes."""
         long_value = "x" * 3000
         changes = [
-            {"field": "description", "value_old": long_value, "value_new": long_value},
+            {
+                "field": "description",
+                "value_old": long_value,
+                "value_new": long_value,
+            },
         ]
         result = self.crud._create_for_changes(
             db_session,

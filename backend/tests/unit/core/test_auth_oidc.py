@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-
 from core.exceptions import (
     CSRFMismatch,
     IncorrectCredentials,
@@ -25,7 +24,9 @@ def anyio_backend(request):
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-def _make_user_info(username="oidcuser", name="OIDC User", email="oidc@example.com"):
+def _make_user_info(
+    username="oidcuser", name="OIDC User", email="oidc@example.com"
+):
     """Build a fake OIDC userinfo dict using default attribute names."""
     return {
         "sub": username,
@@ -42,7 +43,9 @@ def _make_oidc_settings(**overrides):
     s.oidc_attr_name = "name"
     s.oidc_attr_email = "email"
     s.oidc_enroll_users = overrides.get("oidc_enroll_users", True)
-    s.oidc_allowed_redirect_urls = overrides.get("oidc_allowed_redirect_urls", [])
+    s.oidc_allowed_redirect_urls = overrides.get(
+        "oidc_allowed_redirect_urls", []
+    )
     s.project_name = "test_openvle"
     s.auth_secret = "test-secret-key-for-jwt-testing-only"
     s.auth_algorithm = "HS256"
@@ -81,7 +84,9 @@ class TestAuthenticateOidc:
         # Mock CRUDPolicy to return no outstanding policies
         from controllers.policies import CRUDPolicy
 
-        monkeypatch.setattr(CRUDPolicy, "get_outstanding", lambda self, db, user_id: [])
+        monkeypatch.setattr(
+            CRUDPolicy, "get_outstanding", lambda self, db, user_id: []
+        )
 
         from core.auth_oidc import authenticate_oidc
 
@@ -99,7 +104,9 @@ class TestAuthenticateOidc:
         monkeypatch.setattr("core.auth_oidc.settings", mock_settings)
 
         user_info = _make_user_info(
-            username="newoidcuser", name="New OIDC User", email="newoidc@example.com"
+            username="newoidcuser",
+            name="New OIDC User",
+            email="newoidc@example.com",
         )
 
         monkeypatch.setattr(
@@ -108,7 +115,9 @@ class TestAuthenticateOidc:
         )
         from controllers.policies import CRUDPolicy
 
-        monkeypatch.setattr(CRUDPolicy, "get_outstanding", lambda self, db, user_id: [])
+        monkeypatch.setattr(
+            CRUDPolicy, "get_outstanding", lambda self, db, user_id: []
+        )
 
         from core.auth_oidc import authenticate_oidc
 
@@ -116,7 +125,11 @@ class TestAuthenticateOidc:
 
         assert result["access_token"] == "mock-jwt-token"
         # Verify user was created in DB
-        created = db_session.query(User).filter(User.username == "newoidcuser").first()
+        created = (
+            db_session.query(User)
+            .filter(User.username == "newoidcuser")
+            .first()
+        )
         assert created is not None
         assert created.email == "newoidc@example.com"
 
@@ -159,7 +172,9 @@ class TestAuthenticateOidc:
         )
         from controllers.policies import CRUDPolicy
 
-        monkeypatch.setattr(CRUDPolicy, "get_outstanding", lambda self, db, user_id: [])
+        monkeypatch.setattr(
+            CRUDPolicy, "get_outstanding", lambda self, db, user_id: []
+        )
 
         from core.auth_oidc import authenticate_oidc
 
@@ -170,7 +185,9 @@ class TestAuthenticateOidc:
         assert refreshed.name == "Updated Name"
         assert refreshed.email == "updated@example.com"
 
-    def test_authenticate_inactive_user(self, db_session, system_user, monkeypatch):
+    def test_authenticate_inactive_user(
+        self, db_session, system_user, monkeypatch
+    ):
         """Inactive user raises UserNotActiveError."""
         mock_settings = _make_oidc_settings()
         monkeypatch.setattr("core.auth_oidc.settings", mock_settings)
@@ -235,7 +252,9 @@ class TestAuthenticateOidc:
             captured_type["type"] = type
             return "mock-policy-token"
 
-        monkeypatch.setattr("core.auth_oidc.create_access_token", mock_create_token)
+        monkeypatch.setattr(
+            "core.auth_oidc.create_access_token", mock_create_token
+        )
 
         # Return some outstanding policies
         from controllers.policies import CRUDPolicy
@@ -243,7 +262,9 @@ class TestAuthenticateOidc:
         monkeypatch.setattr(
             CRUDPolicy,
             "get_outstanding",
-            lambda self, db, user_id: [{"id": str(uuid.uuid4()), "name": "TOS"}],
+            lambda self, db, user_id: [
+                {"id": str(uuid.uuid4()), "name": "TOS"}
+            ],
         )
 
         from core.auth_oidc import authenticate_oidc
@@ -267,7 +288,9 @@ class TestHandleOidcLogin:
         monkeypatch.setattr("core.auth_oidc.settings", mock_settings)
 
         mock_request = MagicMock()
-        mock_request.query_params = {"redirect": "https://app.example.com/callback"}
+        mock_request.query_params = {
+            "redirect": "https://app.example.com/callback"
+        }
         mock_request.session = MockSession()
         mock_request.url_for.return_value = (
             "https://api.example.com/v1/auth/oidc/callback"
@@ -350,7 +373,9 @@ class TestHandleOidcCallback:
             )
         }
         mock_oauth = MagicMock()
-        mock_oauth.oidc00.authorize_access_token = AsyncMock(return_value=token_data)
+        mock_oauth.oidc00.authorize_access_token = AsyncMock(
+            return_value=token_data
+        )
         monkeypatch.setattr("core.auth_oidc.oauth", mock_oauth)
 
         monkeypatch.setattr(
@@ -359,7 +384,9 @@ class TestHandleOidcCallback:
         )
         from controllers.policies import CRUDPolicy
 
-        monkeypatch.setattr(CRUDPolicy, "get_outstanding", lambda self, db, user_id: [])
+        monkeypatch.setattr(
+            CRUDPolicy, "get_outstanding", lambda self, db, user_id: []
+        )
 
         from core.auth_oidc import handle_oidc_callback
 
@@ -378,11 +405,15 @@ class TestHandleOidcCallback:
         from fastapi.responses import RedirectResponse
 
         redirect_url = "https://app.example.com/callback"
-        mock_settings = _make_oidc_settings(oidc_allowed_redirect_urls=[redirect_url])
+        mock_settings = _make_oidc_settings(
+            oidc_allowed_redirect_urls=[redirect_url]
+        )
         monkeypatch.setattr("core.auth_oidc.settings", mock_settings)
 
         mock_request = MagicMock()
-        mock_request.session = MockSession({"oidc00_post_auth_redirect": redirect_url})
+        mock_request.session = MockSession(
+            {"oidc00_post_auth_redirect": redirect_url}
+        )
 
         token_data = {
             "userinfo": _make_user_info(
@@ -392,7 +423,9 @@ class TestHandleOidcCallback:
             )
         }
         mock_oauth = MagicMock()
-        mock_oauth.oidc00.authorize_access_token = AsyncMock(return_value=token_data)
+        mock_oauth.oidc00.authorize_access_token = AsyncMock(
+            return_value=token_data
+        )
         monkeypatch.setattr("core.auth_oidc.oauth", mock_oauth)
 
         monkeypatch.setattr(
@@ -401,7 +434,9 @@ class TestHandleOidcCallback:
         )
         from controllers.policies import CRUDPolicy
 
-        monkeypatch.setattr(CRUDPolicy, "get_outstanding", lambda self, db, user_id: [])
+        monkeypatch.setattr(
+            CRUDPolicy, "get_outstanding", lambda self, db, user_id: []
+        )
 
         from core.auth_oidc import handle_oidc_callback
 
@@ -465,7 +500,9 @@ class TestHandleOidcCallback:
             )
         }
         mock_oauth = MagicMock()
-        mock_oauth.oidc00.authorize_access_token = AsyncMock(return_value=token_data)
+        mock_oauth.oidc00.authorize_access_token = AsyncMock(
+            return_value=token_data
+        )
         monkeypatch.setattr("core.auth_oidc.oauth", mock_oauth)
 
         from core.auth_oidc import handle_oidc_callback
@@ -481,7 +518,9 @@ class TestHandleOidcCallback:
         from fastapi.responses import RedirectResponse
 
         redirect_url = "https://app.example.com/callback"
-        mock_settings = _make_oidc_settings(oidc_allowed_redirect_urls=[redirect_url])
+        mock_settings = _make_oidc_settings(
+            oidc_allowed_redirect_urls=[redirect_url]
+        )
         monkeypatch.setattr("core.auth_oidc.settings", mock_settings)
 
         now = datetime.now(timezone.utc)
@@ -501,7 +540,9 @@ class TestHandleOidcCallback:
         db_session.flush()
 
         mock_request = MagicMock()
-        mock_request.session = MockSession({"oidc00_post_auth_redirect": redirect_url})
+        mock_request.session = MockSession(
+            {"oidc00_post_auth_redirect": redirect_url}
+        )
 
         token_data = {
             "userinfo": _make_user_info(
@@ -511,7 +552,9 @@ class TestHandleOidcCallback:
             )
         }
         mock_oauth = MagicMock()
-        mock_oauth.oidc00.authorize_access_token = AsyncMock(return_value=token_data)
+        mock_oauth.oidc00.authorize_access_token = AsyncMock(
+            return_value=token_data
+        )
         monkeypatch.setattr("core.auth_oidc.oauth", mock_oauth)
 
         from core.auth_oidc import handle_oidc_callback

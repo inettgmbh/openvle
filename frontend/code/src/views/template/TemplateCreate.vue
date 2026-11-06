@@ -26,6 +26,7 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import TemplateCreateWarning from '@/components/TemplateCreateWarning.vue'
 import UnsavedChangesModal from '@/components/UnsavedChangesModal.vue'
 import { useUnsavedChanges } from '@/composables/useUnsavedChanges'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -234,7 +235,7 @@ onMounted(() => {
               v-model="template.name"
               :icon="mdiRename"
               :placeholder="$t('views.templates.form.namePlaceholder')"
-              maxlength="50"
+              :maxlength="FIELD_LIMITS.template.name"
               required
             />
           </FormField>
@@ -278,9 +279,16 @@ onMounted(() => {
           <FormField
             :label="$t('common.description')"
             :help="$t('views.templates.form.descriptionHelp')"
+            :tooltip="
+              $t('common.maxChars', { max: FIELD_LIMITS.template.description })
+            "
           />
 
-          <BaseMarkdown v-model="template.description" action="edit" />
+          <BaseMarkdown
+            v-model="template.description"
+            action="edit"
+            :maxlength="FIELD_LIMITS.template.description"
+          />
 
           <BaseDivider />
         </div>

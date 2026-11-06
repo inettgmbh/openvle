@@ -1,11 +1,10 @@
 """Tests for controllers/users.py - CRUDUser operations."""
 
 import uuid
-from datetime import datetime, date, timezone
+from datetime import date, datetime, timezone
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from controllers.users import CRUDUser
 from core.auth import get_password_hash
 from core.exceptions import (
@@ -39,6 +38,8 @@ from schemas.users import (
     UserUpdatePassword,
     UserUpdateRoles,
 )
+
+from tests.factories import SystemSettingFactory
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -51,12 +52,16 @@ class TestCRUDUserLookup:
         assert result is not None
         assert result.username == "testuser"
 
-    def test_get_by_username_not_found_returns_none(self, db_session, system_user):
+    def test_get_by_username_not_found_returns_none(
+        self, db_session, system_user
+    ):
         result = self.crud.get_by_username(db_session, username="nonexistent")
         assert result is None
 
     def test_get_by_email_found(self, db_session, active_user):
-        result = self.crud.get_by_email(db_session, email="testuser@example.com")
+        result = self.crud.get_by_email(
+            db_session, email="testuser@example.com"
+        )
         assert result is not None
         assert result.email == "testuser@example.com"
 
@@ -75,8 +80,8 @@ class TestCRUDUserCreate:
             username="newuser",
             email="new@example.com",
             name="New User",
-            password="mysecret123",
-            password_repeat="mysecret123",
+            password="SecurePass12!!",
+            password_repeat="SecurePass12!!",
         )
         result = self.crud.create(db_session, request, obj_in=obj_in)
         assert result.hashed_password is not None
@@ -110,11 +115,15 @@ class TestCRUDUserRoles:
     def setup_method(self):
         self.crud = CRUDUser(User)
 
-    def test_set_roles_system_user_raises(self, db_session, system_user, role_admin):
+    def test_set_roles_system_user_raises(
+        self, db_session, system_user, role_admin
+    ):
         request = create_mock_request(system_user)
         obj_in = UserUpdateRoles(roles=[{"key": "admin_full"}])
         with pytest.raises((ProtectedObjectError, BadRequestError)):
-            self.crud.set_roles(system_user.id, db_session, request, obj_in=obj_in)
+            self.crud.set_roles(
+                system_user.id, db_session, request, obj_in=obj_in
+            )
 
     def test_set_roles_assigns_single_role(
         self, db_session, active_user, system_user, role_admin, role_teacher
@@ -137,7 +146,9 @@ class TestCRUDUserRoles:
             active_user.id,
             db_session,
             request,
-            obj_in=UserUpdateRoles(roles=[{"key": "admin_full"}, {"key": "lehrende"}]),
+            obj_in=UserUpdateRoles(
+                roles=[{"key": "admin_full"}, {"key": "lehrende"}]
+            ),
         )
         role_keys = [r.key for r in result.roles]
         assert "admin_full" in role_keys
@@ -150,9 +161,13 @@ class TestCRUDUserRoles:
         request = create_mock_request(active_user)
         obj_in = UserUpdateRoles(roles=[{"key": "nonexistent_role"}])
         with pytest.raises(ObjectNotFound):
-            self.crud.set_roles(active_user.id, db_session, request, obj_in=obj_in)
+            self.crud.set_roles(
+                active_user.id, db_session, request, obj_in=obj_in
+            )
 
-    def test_set_roles_deleted_user_raises(self, db_session, system_user, role_admin):
+    def test_set_roles_deleted_user_raises(
+        self, db_session, system_user, role_admin
+    ):
         deleted = _create_user(
             db_session,
             system_user,
@@ -170,7 +185,9 @@ class TestCRUDUserDelete:
     def setup_method(self):
         self.crud = CRUDUser(User)
 
-    def test_delete_anonymizes_user_data(self, db_session, active_user, system_user):
+    def test_delete_anonymizes_user_data(
+        self, db_session, active_user, system_user
+    ):
         user_id = active_user.id
         self.crud.delete(db_session, id=user_id)
         deleted = db_session.get(User, user_id)
@@ -187,7 +204,9 @@ class TestCRUDUserPassword:
     def setup_method(self):
         self.crud = CRUDUser(User)
 
-    def test_update_password_success(self, db_session, active_user, system_user):
+    def test_update_password_success(
+        self, db_session, active_user, system_user
+    ):
         # First set a known password
         old_password = "oldpass123"
         active_user.hashed_password = get_password_hash(old_password)
@@ -196,15 +215,15 @@ class TestCRUDUserPassword:
         request = create_mock_request(active_user)
         obj_in = UserUpdatePassword(
             password_old=old_password,
-            password_new="newpass456",
-            password_new_repeat="newpass456",
+            password_new="SecurePass12!!",
+            password_new_repeat="SecurePass12!!",
         )
         result = self.crud.update_password(db_session, request, obj_in=obj_in)
         assert result is not None
         # Verify the new password works
         from core.auth import verify_password
 
-        assert verify_password("newpass456", result.hashed_password)
+        assert verify_password("SecurePass12!!", result.hashed_password)
 
     def test_update_password_wrong_old_raises(
         self, db_session, active_user, system_user
@@ -236,6 +255,183 @@ class TestCRUDUserPassword:
         )
         with pytest.raises(BadRequestError):
             self.crud.update_password(db_session, request, obj_in=obj_in)
+
+
+# ---------------------------------------------------------------------------
+# Fixture: seed password policy settings into the test DB
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture()
+def password_settings(db_session):
+    """Ensure the six passwords.* SystemSettings exist with the required values.
+
+    Uses upsert logic because these rows are already seeded by the Alembic
+    migration; a plain INSERT would raise a duplicate-key error.
+    """
+    from models import SystemSetting
+
+    settings_data = [
+        ("passwords.min", "8", "authenticated", "Minimale Passwortlänge"),
+        ("passwords.max", "64", "authenticated", "Maximale Passwortlänge"),
+        (
+            "passwords.lowercase.min",
+            "2",
+            "authenticated",
+            "Mindestanzahl Kleinbuchstaben",
+        ),
+        (
+            "passwords.uppercase.min",
+            "2",
+            "authenticated",
+            "Mindestanzahl Großbuchstaben",
+        ),
+        (
+            "passwords.numbers.min",
+            "2",
+            "authenticated",
+            "Mindestanzahl Ziffern",
+        ),
+        (
+            "passwords.special.min",
+            "2",
+            "authenticated",
+            "Mindestanzahl Sonderzeichen",
+        ),
+    ]
+
+    for key, value, visibility, description in settings_data:
+        row = db_session.query(SystemSetting).filter_by(key=key).first()
+        if row is None:
+            SystemSettingFactory(
+                key=key,
+                value=value,
+                visibility=visibility,
+                description=description,
+            )
+        elif row.value != value:
+            row.value = value
+    db_session.flush()
+
+
+# ---------------------------------------------------------------------------
+# TestCRUDUserPasswordValidation
+# ---------------------------------------------------------------------------
+
+
+class TestCRUDUserPasswordValidation:
+    """Tests for validate_password() enforcement in create / update_password / set_password."""
+
+    def setup_method(self):
+        self.crud = CRUDUser(User)
+
+    # --- create ---
+
+    def test_create_valid_password_succeeds(
+        self, db_session, active_user, password_settings
+    ):
+        request = create_mock_request(active_user)
+        obj_in = UserCreate(
+            username="validpwuser",
+            email="validpw@example.com",
+            name="Valid PW",
+            password="SecurePass12!!",
+            password_repeat="SecurePass12!!",
+        )
+        result = self.crud.create(db_session, request, obj_in=obj_in)
+        assert result.hashed_password is not None
+
+    def test_create_password_too_short_raises(
+        self, db_session, active_user, password_settings
+    ):
+        request = create_mock_request(active_user)
+        obj_in = UserCreate(
+            username="shortpw",
+            email="shortpw@example.com",
+            name="Short PW",
+            password="Ab1!",
+            password_repeat="Ab1!",
+        )
+        with pytest.raises(BadRequestError):
+            self.crud.create(db_session, request, obj_in=obj_in)
+
+    def test_create_password_missing_uppercase_raises(
+        self, db_session, active_user, password_settings
+    ):
+        request = create_mock_request(active_user)
+        obj_in = UserCreate(
+            username="noupcase",
+            email="noupcase@example.com",
+            name="No Upper",
+            password="securepass12!!",
+            password_repeat="securepass12!!",
+        )
+        with pytest.raises(BadRequestError):
+            self.crud.create(db_session, request, obj_in=obj_in)
+
+    def test_create_password_missing_digits_raises(
+        self, db_session, active_user, password_settings
+    ):
+        request = create_mock_request(active_user)
+        obj_in = UserCreate(
+            username="nodigits",
+            email="nodigits@example.com",
+            name="No Digits",
+            password="SecurePass!!",
+            password_repeat="SecurePass!!",
+        )
+        with pytest.raises(BadRequestError):
+            self.crud.create(db_session, request, obj_in=obj_in)
+
+    def test_create_password_missing_special_raises(
+        self, db_session, active_user, password_settings
+    ):
+        request = create_mock_request(active_user)
+        obj_in = UserCreate(
+            username="nospecial",
+            email="nospecial@example.com",
+            name="No Special",
+            password="SecurePass12",
+            password_repeat="SecurePass12",
+        )
+        with pytest.raises(BadRequestError):
+            self.crud.create(db_session, request, obj_in=obj_in)
+
+    # --- update_password ---
+
+    def test_update_password_invalid_raises(
+        self, db_session, active_user, system_user, password_settings
+    ):
+        old_password = "OldPass12!!"
+        active_user.hashed_password = get_password_hash(old_password)
+        db_session.flush()
+
+        request = create_mock_request(active_user)
+        obj_in = UserUpdatePassword(
+            password_old=old_password,
+            password_new="tooshort",
+            password_new_repeat="tooshort",
+        )
+        with pytest.raises(BadRequestError):
+            self.crud.update_password(db_session, request, obj_in=obj_in)
+
+    # --- set_password ---
+
+    def test_set_password_invalid_raises(
+        self, db_session, active_user, system_user, password_settings
+    ):
+        active_user.hashed_password = get_password_hash("OldPass12!!")
+        db_session.flush()
+
+        request = create_mock_request(system_user)
+        obj_in = UserSetPassword(
+            password_new="tooshort",
+            password_new_repeat="tooshort",
+        )
+        with pytest.raises(BadRequestError):
+            self.crud.set_password(
+                db_session, request, obj_in=obj_in, user_id=active_user.id
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -342,7 +538,9 @@ class TestCRUDUserGetMulti:
     def setup_method(self):
         self.crud = CRUDUser(User)
 
-    def test_get_multi_excludes_system_user(self, db_session, system_user, active_user):
+    def test_get_multi_excludes_system_user(
+        self, db_session, system_user, active_user
+    ):
         result = self.crud.get_multi(db_session)
         usernames = [u.username for u in result["items"]]
         assert "system" not in usernames
@@ -361,7 +559,9 @@ class TestCRUDUserGetMulti:
         usernames = [u.username for u in result["items"]]
         assert "deleted_abc12345" not in usernames
 
-    def test_get_multi_returns_active_users(self, db_session, system_user, active_user):
+    def test_get_multi_returns_active_users(
+        self, db_session, system_user, active_user
+    ):
         _create_user(db_session, system_user, "user2", "user2@example.com")
         result = self.crud.get_multi(db_session)
         usernames = [u.username for u in result["items"]]
@@ -387,7 +587,9 @@ class TestCRUDUserGetMulti:
 
     def test_get_multi_with_limit(self, db_session, system_user, active_user):
         for i in range(5):
-            _create_user(db_session, system_user, f"multi{i}", f"multi{i}@example.com")
+            _create_user(
+                db_session, system_user, f"multi{i}", f"multi{i}@example.com"
+            )
         result = self.crud.get_multi(db_session, limit=2, page=1)
         assert len(result["items"]) <= 2
 
@@ -406,7 +608,9 @@ class TestCRUDUserUpdate:
     def test_update_basic_fields(self, db_session, active_user, system_user):
         request = create_mock_request(active_user)
         obj_in = UserUpdate(name="Updated Name")
-        result = self.crud.update(active_user.id, db_session, request, obj_in=obj_in)
+        result = self.crud.update(
+            active_user.id, db_session, request, obj_in=obj_in
+        )
         assert result.name == "Updated Name"
 
     def test_update_system_user_raises(self, db_session, system_user):
@@ -428,7 +632,9 @@ class TestCRUDUserUpdate:
         with pytest.raises(ProtectedObjectError):
             self.crud.update(deleted.id, db_session, request, obj_in=obj_in)
 
-    def test_update_external_user_cannot_change_name(self, db_session, system_user):
+    def test_update_external_user_cannot_change_name(
+        self, db_session, system_user
+    ):
         """External users (no hashed_password) may not update name or email."""
         ext_user = _create_user(
             db_session,
@@ -442,7 +648,9 @@ class TestCRUDUserUpdate:
         with pytest.raises(BadRequestError):
             self.crud.update(ext_user.id, db_session, request, obj_in=obj_in)
 
-    def test_update_external_user_cannot_change_email(self, db_session, system_user):
+    def test_update_external_user_cannot_change_email(
+        self, db_session, system_user
+    ):
         ext_user = _create_user(
             db_session,
             system_user,
@@ -467,7 +675,9 @@ class TestCRUDUserUpdate:
 
         request = create_mock_request(active_user)
         obj_in = UserUpdate(status="Banned")
-        result = self.crud.update(active_user.id, db_session, request, obj_in=obj_in)
+        result = self.crud.update(
+            active_user.id, db_session, request, obj_in=obj_in
+        )
 
         assert result.status == "Banned"
         mock_guac.lock_user.assert_called_once_with(active_user.username)
@@ -478,7 +688,11 @@ class TestCRUDUserUpdate:
     ):
         """Unbanning a user should call guacamole unlock_user."""
         banned_user = _create_user(
-            db_session, system_user, "banned", "banned@example.com", status="Banned"
+            db_session,
+            system_user,
+            "banned",
+            "banned@example.com",
+            status="Banned",
         )
         mock_guac = MagicMock()
         mock_guac.detail_user.return_value = {"username": banned_user.username}
@@ -487,7 +701,9 @@ class TestCRUDUserUpdate:
 
         request = create_mock_request(banned_user)
         obj_in = UserUpdate(status="Active")
-        result = self.crud.update(banned_user.id, db_session, request, obj_in=obj_in)
+        result = self.crud.update(
+            banned_user.id, db_session, request, obj_in=obj_in
+        )
 
         assert result.status == "Active"
         mock_guac.unlock_user.assert_called_once_with(banned_user.username)
@@ -511,7 +727,9 @@ class TestCRUDUserUpdate:
         request = create_mock_request(active_user)
         obj_in = UserUpdate(name="Still Active", status="Active")
         # Should succeed without any Guacamole mock because status is unchanged
-        result = self.crud.update(active_user.id, db_session, request, obj_in=obj_in)
+        result = self.crud.update(
+            active_user.id, db_session, request, obj_in=obj_in
+        )
         assert result.name == "Still Active"
 
 
@@ -550,11 +768,15 @@ class TestCRUDUserUpdateRoles:
         assert "admin_full" in role_keys
         assert "lehrende" in role_keys
 
-    def test_update_roles_system_user_raises(self, db_session, system_user, role_admin):
+    def test_update_roles_system_user_raises(
+        self, db_session, system_user, role_admin
+    ):
         request = create_mock_request(system_user)
         obj_in = UserUpdateRoles(roles=[{"key": "admin_full"}])
         with pytest.raises(ProtectedObjectError):
-            self.crud.update_roles(system_user.id, db_session, request, obj_in=obj_in)
+            self.crud.update_roles(
+                system_user.id, db_session, request, obj_in=obj_in
+            )
 
     def test_update_roles_deleted_user_raises(
         self, db_session, system_user, role_admin
@@ -569,7 +791,9 @@ class TestCRUDUserUpdateRoles:
         request = create_mock_request(deleted)
         obj_in = UserUpdateRoles(roles=[{"key": "admin_full"}])
         with pytest.raises(ProtectedObjectError):
-            self.crud.update_roles(deleted.id, db_session, request, obj_in=obj_in)
+            self.crud.update_roles(
+                deleted.id, db_session, request, obj_in=obj_in
+            )
 
     def test_update_roles_nonexistent_role_raises(
         self, db_session, active_user, system_user
@@ -577,7 +801,9 @@ class TestCRUDUserUpdateRoles:
         request = create_mock_request(active_user)
         obj_in = UserUpdateRoles(roles=[{"key": "nonexistent_role"}])
         with pytest.raises(ObjectNotFound):
-            self.crud.update_roles(active_user.id, db_session, request, obj_in=obj_in)
+            self.crud.update_roles(
+                active_user.id, db_session, request, obj_in=obj_in
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -597,17 +823,19 @@ class TestCRUDUserSetPassword:
 
         request = create_mock_request(system_user)
         obj_in = UserSetPassword(
-            password_new="brand_new_pass",
-            password_new_repeat="brand_new_pass",
+            password_new="SecurePass12!!",
+            password_new_repeat="SecurePass12!!",
         )
         result = self.crud.set_password(
             db_session, request, obj_in=obj_in, user_id=active_user.id
         )
         from core.auth import verify_password
 
-        assert verify_password("brand_new_pass", result.hashed_password)
+        assert verify_password("SecurePass12!!", result.hashed_password)
 
-    def test_set_password_mismatch_raises(self, db_session, active_user, system_user):
+    def test_set_password_mismatch_raises(
+        self, db_session, active_user, system_user
+    ):
         active_user.hashed_password = get_password_hash("existing")
         db_session.flush()
 
@@ -669,7 +897,9 @@ class TestCRUDUserSetPassword:
                 db_session, request, obj_in=obj_in, user_id=ext_user.id
             )
 
-    def test_set_password_nonexistent_user_raises(self, db_session, system_user):
+    def test_set_password_nonexistent_user_raises(
+        self, db_session, system_user
+    ):
         request = create_mock_request(system_user)
         obj_in = UserSetPassword(
             password_new="newpass",
@@ -816,7 +1046,9 @@ class TestCRUDUserDeletePreview:
     def setup_method(self):
         self.crud = CRUDUser(User)
 
-    def test_delete_preview_response_shape(self, db_session, active_user, system_user):
+    def test_delete_preview_response_shape(
+        self, db_session, active_user, system_user
+    ):
         """Response has stats and all item list fields."""
         result = self.crud.delete_preview(db_session, id=active_user.id)
         assert hasattr(result, "stats")
@@ -870,7 +1102,9 @@ class TestCRUDUserDeletePreview:
         vm_ids = [v.id for v in result.virtual_machines.items]
         assert vm.id in vm_ids
 
-    def test_delete_preview_includes_mails(self, db_session, active_user, system_user):
+    def test_delete_preview_includes_mails(
+        self, db_session, active_user, system_user
+    ):
         mail = _create_mail(db_session, active_user, system_user, "Hello User")
         result = self.crud.delete_preview(db_session, id=active_user.id)
         mail_ids = [m.id for m in result.mails.items]
@@ -897,7 +1131,9 @@ class TestCRUDUserDeletePreview:
         assert perm.id in perm_ids
         assert result.stats.object_permissions >= 1
 
-    def test_delete_preview_includes_tags(self, db_session, active_user, system_user):
+    def test_delete_preview_includes_tags(
+        self, db_session, active_user, system_user
+    ):
         tag = _create_tag(db_session, active_user)
         result = self.crud.delete_preview(db_session, id=active_user.id)
         tag_ids = [t.id for t in result.tags.items]
@@ -905,7 +1141,12 @@ class TestCRUDUserDeletePreview:
         assert result.stats.tags == 1
 
     def test_delete_preview_stats_count_event_memberships(
-        self, db_session, active_user, system_user, event_statuses, sample_course
+        self,
+        db_session,
+        active_user,
+        system_user,
+        event_statuses,
+        sample_course,
     ):
         now = datetime.now(timezone.utc)
         event = _create_event(
@@ -916,7 +1157,9 @@ class TestCRUDUserDeletePreview:
             event_statuses["Geplant"].id,
             sample_course.id,
         )
-        role = _create_role(db_session, f"student_{uuid.uuid4().hex[:6]}", system_user)
+        role = _create_role(
+            db_session, f"student_{uuid.uuid4().hex[:6]}", system_user
+        )
         membership = EventsUser(
             id=uuid.uuid4(),
             event_id=event.id,
@@ -969,7 +1212,9 @@ class TestCRUDUserDeletePreview:
         assert len(result.mails.items) == 100
         assert result.mails.truncated is True
 
-    def test_delete_preview_nonexistent_user_raises(self, db_session, system_user):
+    def test_delete_preview_nonexistent_user_raises(
+        self, db_session, system_user
+    ):
         with pytest.raises(ObjectNotFound):
             self.crud.delete_preview(db_session, id=uuid.uuid4())
 
@@ -1038,10 +1283,17 @@ class TestCRUDUserGetUserEvents:
         sample_course,
         role_student,
     ):
-        other_user = _create_user(db_session, system_user, "other", "other@example.com")
+        other_user = _create_user(
+            db_session, system_user, "other", "other@example.com"
+        )
         status_id = event_statuses["Aktiv"].id
         event = _create_event(
-            db_session, system_user, "Other Evt", "oth001", status_id, sample_course.id
+            db_session,
+            system_user,
+            "Other Evt",
+            "oth001",
+            status_id,
+            sample_course.id,
         )
         eu = EventsUser(
             id=uuid.uuid4(),
@@ -1071,7 +1323,12 @@ class TestCRUDUserGetUserEvents:
         """Events returned should have a role_ids attribute set."""
         status_id = event_statuses["Geplant"].id
         event = _create_event(
-            db_session, system_user, "Role Evt", "rol001", status_id, sample_course.id
+            db_session,
+            system_user,
+            "Role Evt",
+            "rol001",
+            status_id,
+            sample_course.id,
         )
         eu = EventsUser(
             id=uuid.uuid4(),
@@ -1142,7 +1399,9 @@ class TestCRUDUserGetUserVMs:
     def setup_method(self):
         self.crud = CRUDUser(User)
 
-    def test_get_user_vms_via_association(self, db_session, active_user, system_user):
+    def test_get_user_vms_via_association(
+        self, db_session, active_user, system_user
+    ):
         """VMs linked through the user_vm association table should be returned."""
         vm = _create_vm(db_session, system_user, "assoc-vm")
         db_session.execute(
@@ -1156,14 +1415,18 @@ class TestCRUDUserGetUserVMs:
         vm_ids = [v.id for v in result["items"]]
         assert vm.id in vm_ids
 
-    def test_get_user_vms_via_created_by(self, db_session, active_user, system_user):
+    def test_get_user_vms_via_created_by(
+        self, db_session, active_user, system_user
+    ):
         """VMs where createdById matches the user should be returned."""
         vm = _create_vm(db_session, active_user, "created-vm")
         result = self.crud.get_user_vms(db_session, id=active_user.id)
         vm_ids = [v.id for v in result["items"]]
         assert vm.id in vm_ids
 
-    def test_get_user_vms_empty_when_none(self, db_session, active_user, system_user):
+    def test_get_user_vms_empty_when_none(
+        self, db_session, active_user, system_user
+    ):
         result = self.crud.get_user_vms(db_session, id=active_user.id)
         assert result["pageDetails"]["totalCount"] == 0
         assert result["items"] == []
@@ -1186,7 +1449,9 @@ class TestCRUDUserGetUserVMs:
         vm_ids = [v.id for v in result["items"]]
         assert vm.id not in vm_ids
 
-    def test_get_user_vms_deduplicates(self, db_session, active_user, system_user):
+    def test_get_user_vms_deduplicates(
+        self, db_session, active_user, system_user
+    ):
         """A VM that is both created by AND associated to the user should appear only once."""
         vm = _create_vm(db_session, active_user, "dedup-vm")
         db_session.execute(
@@ -1200,7 +1465,9 @@ class TestCRUDUserGetUserVMs:
         vm_ids = [v.id for v in result["items"]]
         assert vm_ids.count(vm.id) == 1
 
-    def test_get_user_vms_pagination(self, db_session, active_user, system_user):
+    def test_get_user_vms_pagination(
+        self, db_session, active_user, system_user
+    ):
         for i in range(4):
             vm = _create_vm(db_session, system_user, f"pag-vm-{i}")
             db_session.execute(
@@ -1210,7 +1477,9 @@ class TestCRUDUserGetUserVMs:
             )
         db_session.flush()
 
-        result = self.crud.get_user_vms(db_session, id=active_user.id, limit=2, page=1)
+        result = self.crud.get_user_vms(
+            db_session, id=active_user.id, limit=2, page=1
+        )
         assert len(result["items"]) == 2
         assert result["pageDetails"]["totalCount"] == 4
 

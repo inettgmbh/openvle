@@ -135,7 +135,9 @@ try:
     if _colima_sock.exists() and "DOCKER_HOST" not in os.environ:
         os.environ["DOCKER_HOST"] = f"unix://{_colima_sock}"
         # Use /var/run/docker.sock inside the VM, not the host path
-        os.environ["TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE"] = "/var/run/docker.sock"
+        os.environ["TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE"] = (
+            "/var/run/docker.sock"
+        )
 except (PermissionError, OSError):
     pass
 
@@ -269,7 +271,9 @@ def test_engine(mariadb_container):
             conn.commit()
         admin_engine.dispose()
 
-        url = parsed.set(database=worker_db).render_as_string(hide_password=False)
+        url = parsed.set(database=worker_db).render_as_string(
+            hide_password=False
+        )
 
     engine = create_engine(
         url,
@@ -287,8 +291,8 @@ def test_engine(mariadb_container):
     )
 
     # Run Alembic migrations to create schema
-    from alembic.config import Config as AlembicConfig
     from alembic import command as alembic_command
+    from alembic.config import Config as AlembicConfig
 
     alembic_cfg = AlembicConfig(str(CODE_DIR / "alembic.ini"))
     alembic_cfg.set_main_option("sqlalchemy.url", url)
@@ -362,8 +366,9 @@ def db_session(test_engine):
 #    auto-discovers them for all test directories without needing
 #    pytest_plugins (which fails with duplicate registration).
 # ---------------------------------------------------------------
-from models import Course, EventStatus, Role, User  # noqa: E402
-from tests.helpers.mock_request import create_mock_request  # noqa: E402
+from models import Course, EventStatus, Role, User
+
+from tests.helpers.mock_request import create_mock_request
 
 
 @pytest.fixture(autouse=True)
@@ -381,7 +386,9 @@ def _bind_factories(request):
 @pytest.fixture()
 def system_user(db_session):
     """Return the 'system' user seeded by the Alembic migration."""
-    user = db_session.get(User, uuid.UUID("1db3d8ac-22d9-4116-976a-93ad6e4fb234"))
+    user = db_session.get(
+        User, uuid.UUID("1db3d8ac-22d9-4116-976a-93ad6e4fb234")
+    )
     assert user is not None, "System user not found — seed migration missing?"
     return user
 

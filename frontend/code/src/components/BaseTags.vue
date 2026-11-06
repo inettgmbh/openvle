@@ -12,6 +12,7 @@ import FormField from '@/components/FormField.vue'
 import PillTag from '@/components/PillTag.vue'
 import PillTagWithDelete from '@/components/PillTagWithDelete.vue'
 import SearchControl from '@/components/SearchControl.vue'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import backend from '@/services'
 import { useAutofocusInput } from '@/utils/useAutofocusInput'
 
@@ -178,7 +179,7 @@ fetchTags()
     <FormField>
       <FormField
         :label="t('common.name')"
-        :help="t('components.baseTags.maxChars', { max: 20 })"
+        :help="t('common.maxChars', { max: FIELD_LIMITS.tag.key })"
       >
         <SearchControl
           v-model="addedTag.key"
@@ -188,7 +189,7 @@ fetchTags()
           :allow-custom-entry="true"
           label-attribute="key"
           return-attribute="key"
-          :maxlength="20"
+          :maxlength="FIELD_LIMITS.tag.key"
           required
           @input="
             (event) => (addedTag.key = sanitizeTagInput(event.target.value))
@@ -205,11 +206,11 @@ fetchTags()
 
       <FormField
         :label="t('common.value')"
-        :help="t('components.baseTags.maxChars', { max: 20 })"
+        :help="t('common.maxChars', { max: FIELD_LIMITS.tag.value })"
       >
         <FormControl
           v-model="addedTag.value"
-          maxlength="20"
+          :maxlength="FIELD_LIMITS.tag.value"
           :icon="mdiTag"
           placeholder="3"
           required

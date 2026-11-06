@@ -247,6 +247,7 @@ watch(
     :has-button="false"
     :title="$t('components.permissionModalCreate.createObjectPermission')"
     custom-class="z-50 w-full md:w-4/5 lg:w-3/5 xl:w-fit !w-[50vw]"
+    has-search
     @cancel="resetAddPermissionForm()"
   >
     <template v-if="loading">

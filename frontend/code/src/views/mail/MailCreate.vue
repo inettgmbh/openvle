@@ -24,6 +24,7 @@ import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import UnsavedChangesModal from '@/components/UnsavedChangesModal.vue'
 import { useUnsavedChanges } from '@/composables/useUnsavedChanges'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -313,6 +314,7 @@ onMounted(async () => {
               <FormControl
                 v-model="mail.subject"
                 :icon="mdiTextBox"
+                :maxlength="FIELD_LIMITS.mail.subject"
                 :placeholder="$t('views.mails.columns.subject')"
                 :disabled="currentStep < 3"
                 required
@@ -327,6 +329,7 @@ onMounted(async () => {
                 <FormControl
                   v-model="mail.fromName"
                   :icon="mdiTextBox"
+                  :maxlength="FIELD_LIMITS.mail.fromName"
                   placeholder="Max Mustermann"
                   :disabled="currentStep < 3"
                   required
@@ -340,6 +343,7 @@ onMounted(async () => {
                 <FormControl
                   v-model="mail.fromMail"
                   :icon="mdiEmailOutline"
+                  :maxlength="FIELD_LIMITS.mail.fromMail"
                   placeholder="absender@example.com"
                   :disabled="currentStep < 3"
                   required
@@ -354,6 +358,7 @@ onMounted(async () => {
               <FormControl
                 v-model="mail.replyTo"
                 :icon="mdiEmailOutline"
+                :maxlength="FIELD_LIMITS.mail.replyTo"
                 placeholder="antwort@example.com"
                 :disabled="currentStep < 3"
               />

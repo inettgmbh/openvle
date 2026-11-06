@@ -5,9 +5,8 @@ from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock
 
 import pytest
-from jose import jwt
-
 from core.config import Settings
+from jose import jwt
 
 settings = Settings()
 
@@ -53,11 +52,17 @@ def _make_jwt_token(
         "sub": sub or str(uuid.uuid4()),
         "aud": audience or settings.project_name,
         "iss": issuer or settings.project_name,
-        "user": {"username": "testuser", "email": "test@example.com", "name": "Test"},
+        "user": {
+            "username": "testuser",
+            "email": "test@example.com",
+            "name": "Test",
+        },
     }
     if extra:
         payload.update(extra)
-    return jwt.encode(payload, settings.auth_secret, algorithm=settings.auth_algorithm)
+    return jwt.encode(
+        payload, settings.auth_secret, algorithm=settings.auth_algorithm
+    )
 
 
 def _make_mock_request(headers=None, url_path="/v1/test"):
@@ -75,7 +80,7 @@ class TestAuthBackendAuthenticate:
     async def test_no_auth_header(self, monkeypatch):
         """Request without Authorization header returns unauthenticated user."""
         monkeypatch.setattr(
-            "middlewares.authentication.SessionLocal", lambda: MagicMock()
+            "middlewares.authentication.SessionLocal", MagicMock
         )
 
         from middlewares.authentication import AuthBackend
@@ -91,15 +96,17 @@ class TestAuthBackendAuthenticate:
     async def test_basic_auth_header(self, monkeypatch):
         """Request with Basic auth header returns unauthenticated user."""
         monkeypatch.setattr(
-            "middlewares.authentication.SessionLocal", lambda: MagicMock()
+            "middlewares.authentication.SessionLocal", MagicMock
         )
 
         from middlewares.authentication import AuthBackend
 
         backend = AuthBackend()
-        request = _make_mock_request(headers={"Authorization": "Basic dXNlcjpwYXNz"})
+        request = _make_mock_request(
+            headers={"Authorization": "Basic dXNlcjpwYXNz"}
+        )
 
-        credentials, user = await backend.authenticate(request)
+        credentials, _user = await backend.authenticate(request)
         assert "unauthenticated" in credentials.scopes
 
     @pytest.mark.anyio
@@ -115,7 +122,9 @@ class TestAuthBackendAuthenticate:
 
         backend = AuthBackend()
         token = _make_jwt_token(sub=str(active_user.id))
-        request = _make_mock_request(headers={"Authorization": f"Bearer {token}"})
+        request = _make_mock_request(
+            headers={"Authorization": f"Bearer {token}"}
+        )
 
         credentials, user = await backend.authenticate(request)
         assert "authenticated" in credentials.scopes
@@ -126,7 +135,7 @@ class TestAuthBackendAuthenticate:
     async def test_invalid_jwt_returns_unauthenticated(self, monkeypatch):
         """Invalid/expired JWT returns unauthenticated user."""
         monkeypatch.setattr(
-            "middlewares.authentication.SessionLocal", lambda: MagicMock()
+            "middlewares.authentication.SessionLocal", MagicMock
         )
 
         from middlewares.authentication import AuthBackend
@@ -145,9 +154,11 @@ class TestAuthBackendAuthenticate:
             "wrong-secret",
             algorithm="HS256",
         )
-        request = _make_mock_request(headers={"Authorization": f"Bearer {bad_token}"})
+        request = _make_mock_request(
+            headers={"Authorization": f"Bearer {bad_token}"}
+        )
 
-        credentials, user = await backend.authenticate(request)
+        credentials, _user = await backend.authenticate(request)
         assert "unauthenticated" in credentials.scopes
 
     @pytest.mark.anyio
@@ -165,9 +176,11 @@ class TestAuthBackendAuthenticate:
         # Use a UUID that doesn't exist in DB
         nonexistent_id = str(uuid.uuid4())
         token = _make_jwt_token(sub=nonexistent_id)
-        request = _make_mock_request(headers={"Authorization": f"Bearer {token}"})
+        request = _make_mock_request(
+            headers={"Authorization": f"Bearer {token}"}
+        )
 
-        credentials, user = await backend.authenticate(request)
+        credentials, _user = await backend.authenticate(request)
         assert "unauthenticated" in credentials.scopes
 
     @pytest.mark.anyio
@@ -186,16 +199,18 @@ class TestAuthBackendAuthenticate:
 
         backend = AuthBackend()
         token = _make_jwt_token(sub=str(active_user.id))
-        request = _make_mock_request(headers={"Authorization": f"Bearer {token}"})
+        request = _make_mock_request(
+            headers={"Authorization": f"Bearer {token}"}
+        )
 
-        credentials, user = await backend.authenticate(request)
+        credentials, _user = await backend.authenticate(request)
         assert "unauthenticated" in credentials.scopes
 
     @pytest.mark.anyio
     async def test_login_endpoint_returns_unauthenticated(self, monkeypatch):
         """Login URL is detected and auth is skipped."""
         monkeypatch.setattr(
-            "middlewares.authentication.SessionLocal", lambda: MagicMock()
+            "middlewares.authentication.SessionLocal", MagicMock
         )
 
         from middlewares.authentication import AuthBackend
@@ -208,14 +223,14 @@ class TestAuthBackendAuthenticate:
             url_path="/v0/auth/login",
         )
 
-        credentials, user = await backend.authenticate(request)
+        credentials, _user = await backend.authenticate(request)
         assert "unauthenticated" in credentials.scopes
 
     @pytest.mark.anyio
     async def test_missing_sub_claim(self, monkeypatch):
         """JWT without sub claim returns unauthenticated."""
         monkeypatch.setattr(
-            "middlewares.authentication.SessionLocal", lambda: MagicMock()
+            "middlewares.authentication.SessionLocal", MagicMock
         )
 
         from middlewares.authentication import AuthBackend
@@ -235,8 +250,10 @@ class TestAuthBackendAuthenticate:
             settings.auth_secret,
             algorithm=settings.auth_algorithm,
         )
-        request = _make_mock_request(headers={"Authorization": f"Bearer {token}"})
+        request = _make_mock_request(
+            headers={"Authorization": f"Bearer {token}"}
+        )
 
-        credentials, user = await backend.authenticate(request)
+        credentials, _user = await backend.authenticate(request)
         # The JWT options require_sub=True, so JWTError is raised and caught
         assert "unauthenticated" in credentials.scopes

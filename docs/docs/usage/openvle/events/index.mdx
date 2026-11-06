@@ -212,6 +212,47 @@ Nur Veranstaltungen im Status **„Geplant“** können bearbeitet werden.
 
 ---
 
+## Teilnehmende per CSV importieren {#import-participants}
+
+Über den **Teilnehmenden-Import** kannst du viele **bereits vorhandene** Benutzer in einem Schritt zu einer Veranstaltung hinzufügen, indem du eine CSV-Datei mit ihren E-Mail-Adressen hochlädst.
+
+<NavigationHint
+  path="Veranstaltungen → Detailansicht → Teilnehmende → Importieren"
+  alternative="Über den Button „Importieren“ im Teilnehmenden-Bereich der Veranstaltung"
+/>
+
+:::warning Fügt bestehende Benutzer hinzu – legt keine an
+Der Teilnehmenden-Import sucht Benutzer **anhand ihrer E-Mail-Adresse** (Groß- und Kleinschreibung wird ignoriert) und weist sie der Veranstaltung mit der Rolle **Teilnehmende (Students)** zu. Er **legt keine neuen Benutzer an**. Benutzer, die noch nicht existieren, müssen zuerst über den [Benutzer-Import](/docs/usage/openvle/access-control/users/#import-users) angelegt werden.
+:::
+
+Der Import nutzt denselben vierstufigen Assistenten wie der Benutzer-Import (Hochladen → Spalten zuordnen → Vorschau & Import → Ergebnis), erwartet aber **nur eine einzige Spalte**:
+
+<FieldReference
+  fields={[
+    {
+      name: 'email',
+      description:
+        'Pflichtfeld und einzige Spalte. E-Mail-Adresse eines bereits vorhandenen Benutzers. Muss ein „@“ enthalten.',
+    },
+  ]}
+/>
+
+### Grenzen und Ergebnis
+
+- Pro Import werden maximal **200 Zeilen** verarbeitet; zusätzlich gilt eine maximale Dateigröße von **5 MB**.
+- Nach dem Import zeigt die Ergebnisansicht je Zeile das Resultat an. Häufige Fehler:
+  - **Ungültige E-Mail** – die Adresse enthält kein „@“.
+  - **Benutzer nicht gefunden** – zu dieser E-Mail-Adresse existiert kein Benutzer (er muss zuerst über den Benutzer-Import angelegt werden).
+  - **Unbekannter Fehler** – das Hinzufügen ist aus einem anderen Grund fehlgeschlagen.
+
+:::note
+Der Import steht nur zur Verfügung, solange Teilnehmende geändert werden dürfen (z. B. in den Stati **Geplant** oder **Aktiv**). Während der Stati **Deploying** oder **Archiving** ist er deaktiviert.
+:::
+
+Der Import erfordert das Bearbeiten der Veranstaltung (`events_update`) sowie das Anzeigen von Benutzern (`users_read`, siehe [Erforderliche Berechtigungen](#erforderliche-berechtigungen)).
+
+---
+
 ## Ausrollen einer Veranstaltung
 
 1. Öffne im Hauptmenü den Bereich **Veranstaltungen**.

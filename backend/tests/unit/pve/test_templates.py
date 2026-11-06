@@ -7,7 +7,6 @@ from unittest.mock import MagicMock
 import pytest
 from proxmoxer.core import ResourceException
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -18,20 +17,20 @@ def _make_template(db_session, system_user, **overrides):
     from models.templates import Template
 
     now = datetime.now(timezone.utc)
-    defaults = dict(
-        id=uuid.uuid4(),
-        name="test-template",
-        proxmoxId=9000,
-        cpu=2,
-        ram=4096,
-        disk=32,
-        status="available",
-        prevent_delete=False,
-        createdAt=now,
-        updatedAt=now,
-        createdById=system_user.id,
-        updatedById=system_user.id,
-    )
+    defaults = {
+        "id": uuid.uuid4(),
+        "name": "test-template",
+        "proxmoxId": 9000,
+        "cpu": 2,
+        "ram": 4096,
+        "disk": 32,
+        "status": "available",
+        "prevent_delete": False,
+        "createdAt": now,
+        "updatedAt": now,
+        "createdById": system_user.id,
+        "updatedById": system_user.id,
+    }
     defaults.update(overrides)
     tpl = Template(**defaults)
     db_session.add(tpl)
@@ -44,20 +43,20 @@ def _make_vm(db_session, system_user, **overrides):
     from models import VirtualMachine
 
     now = datetime.now(timezone.utc)
-    defaults = dict(
-        id=uuid.uuid4(),
-        name="test-vm",
-        proxmoxId=100,
-        cpu=2,
-        ram=4096,
-        disk=32,
-        status="stopped",
-        prevent_delete=False,
-        createdAt=now,
-        updatedAt=now,
-        createdById=system_user.id,
-        updatedById=system_user.id,
-    )
+    defaults = {
+        "id": uuid.uuid4(),
+        "name": "test-vm",
+        "proxmoxId": 100,
+        "cpu": 2,
+        "ram": 4096,
+        "disk": 32,
+        "status": "stopped",
+        "prevent_delete": False,
+        "createdAt": now,
+        "updatedAt": now,
+        "createdById": system_user.id,
+        "updatedById": system_user.id,
+    }
     defaults.update(overrides)
     vm = VirtualMachine(**defaults)
     db_session.add(vm)
@@ -67,8 +66,8 @@ def _make_vm(db_session, system_user, **overrides):
 
 def _make_task_and_subtask(db_session, system_user):
     """Insert Task + SubTask rows."""
-    from models.tasks import Task
     from models import SubTask
+    from models.tasks import Task
 
     now = datetime.now(timezone.utc)
     task = Task(
@@ -108,7 +107,9 @@ def _make_pt(monkeypatch, db_session=None, task_id=None, template_id=None):
     Returns (instance, mock_crud_instance, mock_cluster_instance).
     """
     mock_crud_instance = MagicMock()
-    mock_crud_instance.worker_process_fail.return_value = Exception("worker fail")
+    mock_crud_instance.worker_process_fail.return_value = Exception(
+        "worker fail"
+    )
     mock_crud_instance.worker_process_start.return_value = None
     mock_crud_instance.worker_process_success.return_value = None
     monkeypatch.setattr(
@@ -170,7 +171,9 @@ class TestStartProcess:
 
     def test_opens_db_session(self, monkeypatch, db_session, system_user):
         _, st = _make_task_and_subtask(db_session, system_user)
-        pt, mock_crud, _ = _make_pt(monkeypatch, db_session=db_session, task_id=st.id)
+        pt, mock_crud, _ = _make_pt(
+            monkeypatch, db_session=db_session, task_id=st.id
+        )
 
         pt._start_process()
 
@@ -231,7 +234,9 @@ class TestGetVmAndTemplateObjects:
 
     def test_loads_template(self, monkeypatch, db_session, system_user):
         tpl = _make_template(db_session, system_user)
-        pt, _, _ = _make_pt(monkeypatch, db_session=db_session, template_id=tpl.id)
+        pt, _, _ = _make_pt(
+            monkeypatch, db_session=db_session, template_id=tpl.id
+        )
         pt.db = db_session
 
         pt._get_vm_and_template_objects()
@@ -239,7 +244,9 @@ class TestGetVmAndTemplateObjects:
         assert pt.kvs_template is not None
         assert pt.kvs_template.id == tpl.id
 
-    def test_template_not_found_raises(self, monkeypatch, db_session, system_user):
+    def test_template_not_found_raises(
+        self, monkeypatch, db_session, system_user
+    ):
         pt, mock_crud, _ = _make_pt(
             monkeypatch, db_session=db_session, template_id=uuid.uuid4()
         )
@@ -252,7 +259,9 @@ class TestGetVmAndTemplateObjects:
     def test_loads_source_vm(self, monkeypatch, db_session, system_user):
         tpl = _make_template(db_session, system_user)
         vm = _make_vm(db_session, system_user)
-        pt, _, _ = _make_pt(monkeypatch, db_session=db_session, template_id=tpl.id)
+        pt, _, _ = _make_pt(
+            monkeypatch, db_session=db_session, template_id=tpl.id
+        )
         pt.db = db_session
         pt.source_vm_id = vm.id
 
@@ -294,7 +303,8 @@ class TestJobGet:
     def test_job_fetch_exception_returns_fail(self, monkeypatch):
         pt, mock_crud, _ = _make_pt(monkeypatch)
         monkeypatch.setattr(
-            "pve.templates.Job.fetch", MagicMock(side_effect=Exception("redis down"))
+            "pve.templates.Job.fetch",
+            MagicMock(side_effect=Exception("redis down")),
         )
 
         pt._job_get("test-job-id")
@@ -365,8 +375,12 @@ class TestPveUpdateAndDelete:
     """_pve_update and _pve_delete interact with PVE API."""
 
     def test_update_success(self, monkeypatch, db_session, system_user):
-        tpl = _make_template(db_session, system_user, cpu=4, ram=8192, proxmoxId=9000)
-        pt, _, _ = _make_pt(monkeypatch, db_session=db_session, template_id=tpl.id)
+        tpl = _make_template(
+            db_session, system_user, cpu=4, ram=8192, proxmoxId=9000
+        )
+        pt, _, _ = _make_pt(
+            monkeypatch, db_session=db_session, template_id=tpl.id
+        )
         pt.db = db_session
         pt.kvs_template = tpl
         pt.proxmox = MagicMock()
@@ -383,8 +397,8 @@ class TestPveUpdateAndDelete:
         pt.db = db_session
         pt.kvs_template = tpl
         pt.proxmox = MagicMock()
-        pt.proxmox.nodes.return_value.qemu.return_value.config.put.side_effect = (
-            RuntimeError("update failed")
+        pt.proxmox.nodes.return_value.qemu.return_value.config.put.side_effect = RuntimeError(
+            "update failed"
         )
 
         pt._pve_update()
@@ -393,7 +407,9 @@ class TestPveUpdateAndDelete:
 
     def test_delete_success(self, monkeypatch, db_session, system_user):
         tpl = _make_template(db_session, system_user, proxmoxId=9000)
-        pt, _, _ = _make_pt(monkeypatch, db_session=db_session, template_id=tpl.id)
+        pt, _, _ = _make_pt(
+            monkeypatch, db_session=db_session, template_id=tpl.id
+        )
         pt.db = db_session
         pt.kvs_template = tpl
         pt.proxmox = MagicMock()
@@ -410,7 +426,7 @@ class TestPveUpdateAndDelete:
     ):
         """_pve_delete skips PVE when proxmoxId is None and marks task as success."""
         tpl = _make_template(db_session, system_user, proxmoxId=None)
-        pt, _, mock_cluster = _make_pt(
+        pt, _, _mock_cluster = _make_pt(
             monkeypatch, db_session=db_session, template_id=tpl.id
         )
         pt.db = db_session
@@ -451,7 +467,9 @@ class TestKvsTemplateDelete:
 
     def test_success(self, monkeypatch, db_session, system_user):
         tpl = _make_template(db_session, system_user)
-        pt, _, _ = _make_pt(monkeypatch, db_session=db_session, template_id=tpl.id)
+        pt, _, _ = _make_pt(
+            monkeypatch, db_session=db_session, template_id=tpl.id
+        )
         pt.db = db_session
         pt.kvs_template = tpl
 
@@ -462,7 +480,9 @@ class TestKvsTemplateDelete:
 
         assert db_session.get(Template, tpl.id) is None
 
-    def test_failure_sets_status_deleted(self, monkeypatch, db_session, system_user):
+    def test_failure_sets_status_deleted(
+        self, monkeypatch, db_session, system_user
+    ):
         """If DB delete fails, template status is set to 'deleted'."""
         tpl = _make_template(db_session, system_user)
         pt, mock_crud, _ = _make_pt(
@@ -495,12 +515,17 @@ class TestHighLevelWorkflows:
     """High-level async workflow methods."""
 
     @pytest.mark.anyio
-    async def test_delete_prevent_delete(self, monkeypatch, db_session, system_user):
+    async def test_delete_prevent_delete(
+        self, monkeypatch, db_session, system_user
+    ):
         """delete() returns failure when prevent_delete is True."""
         _, st = _make_task_and_subtask(db_session, system_user)
         tpl = _make_template(db_session, system_user, prevent_delete=True)
         pt, mock_crud, _ = _make_pt(
-            monkeypatch, db_session=db_session, task_id=st.id, template_id=tpl.id
+            monkeypatch,
+            db_session=db_session,
+            task_id=st.id,
+            template_id=tpl.id,
         )
 
         await pt.delete()
@@ -521,7 +546,10 @@ class TestHighLevelWorkflows:
         _, st = _make_task_and_subtask(db_session, system_user)
         tpl = _make_template(db_session, system_user, proxmoxId=9000)
         pt, mock_crud, mock_cluster = _make_pt(
-            monkeypatch, db_session=db_session, task_id=st.id, template_id=tpl.id
+            monkeypatch,
+            db_session=db_session,
+            task_id=st.id,
+            template_id=tpl.id,
         )
 
         # PVE config fetch raises ResourceException (e.g. 501 Not Implemented)
@@ -550,7 +578,10 @@ class TestHighLevelWorkflows:
         _, st = _make_task_and_subtask(db_session, system_user)
         tpl = _make_template(db_session, system_user, proxmoxId=None)
         pt, mock_crud, _ = _make_pt(
-            monkeypatch, db_session=db_session, task_id=st.id, template_id=tpl.id
+            monkeypatch,
+            db_session=db_session,
+            task_id=st.id,
+            template_id=tpl.id,
         )
         pt._pve_delete = MagicMock()
         pt._kvs_template_delete = MagicMock()

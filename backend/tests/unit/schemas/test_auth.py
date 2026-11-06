@@ -1,8 +1,7 @@
 """Tests for schemas/auth.py - Auth schema validation."""
 
-from pydantic import ValidationError
 import pytest
-
+from pydantic import ValidationError
 from schemas.auth import TokenResponse
 
 

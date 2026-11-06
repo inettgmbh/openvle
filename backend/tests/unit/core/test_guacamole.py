@@ -29,7 +29,6 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock
 
 import pytest
-
 from models import (
     Guacamole as GuacamoleModel,
     GuacamoleConnectionProfile,
@@ -37,6 +36,7 @@ from models import (
     Task,
 )
 from pve.worker_utils import TaskException
+
 from tests.helpers.mock_guacamole import MockGuacamoleClient
 
 
@@ -179,7 +179,9 @@ class TestCheckUserExists:
     def test_user_not_found(self):
         """Should return error string when user not found."""
         client = MockGuacamoleClient()
-        client.detail_user = MagicMock(return_value={"message": "User not found"})
+        client.detail_user = MagicMock(
+            return_value={"message": "User not found"}
+        )
 
         from core.guacamole import check_user_exists
 
@@ -234,7 +236,9 @@ class TestCheckCreateUser:
         """Should return error string when user creation fails."""
         client = MockGuacamoleClient()
         client.detail_user = MagicMock(return_value={"message": "Not found"})
-        client.create_user = MagicMock(return_value={"message": "Internal error"})
+        client.create_user = MagicMock(
+            return_value={"message": "Internal error"}
+        )
 
         from core.guacamole import check_create_user
 
@@ -261,7 +265,9 @@ class TestCreateConnection:
         from core.guacamole import settings
 
         monkeypatch.setattr(settings, "guacamole_connections_prefix", "")
-        monkeypatch.setattr(settings, "guacamole_connections_prefix_events", False)
+        monkeypatch.setattr(
+            settings, "guacamole_connections_prefix_events", False
+        )
 
         from core.guacamole import create_connection
 
@@ -285,7 +291,9 @@ class TestCreateConnection:
         from core.guacamole import settings
 
         monkeypatch.setattr(settings, "guacamole_connections_prefix", "")
-        monkeypatch.setattr(settings, "guacamole_connections_prefix_events", False)
+        monkeypatch.setattr(
+            settings, "guacamole_connections_prefix_events", False
+        )
 
         from core.guacamole import create_connection
 
@@ -308,7 +316,9 @@ class TestCreateConnection:
         from core.guacamole import settings
 
         monkeypatch.setattr(settings, "guacamole_connections_prefix", "")
-        monkeypatch.setattr(settings, "guacamole_connections_prefix_events", False)
+        monkeypatch.setattr(
+            settings, "guacamole_connections_prefix_events", False
+        )
 
         from core.guacamole import create_connection
 
@@ -417,7 +427,9 @@ class TestDeleteConnection:
     def test_failure(self):
         """Should return error string on failure."""
         client = MockGuacamoleClient()
-        client.delete_connection = MagicMock(return_value={"message": "Not found"})
+        client.delete_connection = MagicMock(
+            return_value={"message": "Not found"}
+        )
 
         from core.guacamole import delete_connection
 
@@ -446,7 +458,9 @@ class TestDeleteUser:
     def test_failure(self):
         """Should return error string on failure."""
         client = MockGuacamoleClient()
-        client.delete_user = MagicMock(return_value={"message": "User not found"})
+        client.delete_user = MagicMock(
+            return_value={"message": "User not found"}
+        )
 
         from core.guacamole import delete_user
 
@@ -484,7 +498,9 @@ class TestUpdateUserStatus:
     def test_failure(self):
         """Should return error string on failure."""
         client = MockGuacamoleClient()
-        client.update_user = MagicMock(return_value={"message": "Update failed"})
+        client.update_user = MagicMock(
+            return_value={"message": "Update failed"}
+        )
 
         from core.guacamole import update_user_status
 
@@ -513,7 +529,9 @@ class TestProvisionGuacamole:
         from core.guacamole import settings
 
         monkeypatch.setattr(settings, "guacamole_connections_prefix", "")
-        monkeypatch.setattr(settings, "guacamole_connections_prefix_events", False)
+        monkeypatch.setattr(
+            settings, "guacamole_connections_prefix_events", False
+        )
 
         # create_sharing_profile needs to return list-compatible results
         call_count = {"n": 0}
@@ -576,8 +594,8 @@ class TestGuacamoleDeleteWorker:
         monkeypatch.setattr("core.guacamole.SessionLocal", lambda: db_session)
         # Also patch in core.mariadb and controllers.sub_tasks because
         # worker_process_success/fail may call SessionLocal() internally
-        import core.mariadb as mariadb_mod
         import controllers.sub_tasks as sub_tasks_mod
+        import core.mariadb as mariadb_mod
 
         monkeypatch.setattr(mariadb_mod, "SessionLocal", lambda: db_session)
         monkeypatch.setattr(sub_tasks_mod, "SessionLocal", lambda: db_session)
@@ -599,7 +617,9 @@ class TestGuacamoleDeleteWorker:
         )
 
         task = _make_task(db_session, system_user)
-        subtask = _make_subtask(db_session, system_user, task, action="guac_delete")
+        subtask = _make_subtask(
+            db_session, system_user, task, action="guac_delete"
+        )
 
         from core.guacamole import guacamole_delete_worker
 
@@ -611,7 +631,9 @@ class TestGuacamoleDeleteWorker:
         )
         assert result is True
 
-    def test_guacamole_connection_failure(self, db_session, system_user, monkeypatch):
+    def test_guacamole_connection_failure(
+        self, db_session, system_user, monkeypatch
+    ):
         """When guacamole connection fails, should fail the worker."""
         self._patch_session_local(monkeypatch, db_session)
         monkeypatch.setattr(
@@ -620,11 +642,15 @@ class TestGuacamoleDeleteWorker:
         )
 
         task = _make_task(db_session, system_user)
-        subtask = _make_subtask(db_session, system_user, task, action="guac_delete")
+        subtask = _make_subtask(
+            db_session, system_user, task, action="guac_delete"
+        )
 
         from core.guacamole import guacamole_delete_worker
 
-        with pytest.raises(TaskException, match="Failed to initialize Guacamole"):
+        with pytest.raises(
+            TaskException, match="Failed to initialize Guacamole"
+        ):
             guacamole_delete_worker(
                 kvs_guacamole_id=uuid.uuid4(),
                 kvs_task_object_id=subtask.id,
@@ -700,7 +726,9 @@ class TestGuacamoleHostnameUpdate:
     def test_manage_connection_error_response(self, monkeypatch):
         """Should return error string when manage_connection reports an error."""
         client = MockGuacamoleClient()
-        client.manage_connection = MagicMock(return_value={"message": "Update failed"})
+        client.manage_connection = MagicMock(
+            return_value={"message": "Update failed"}
+        )
 
         monkeypatch.setattr(
             "core.guacamole.guacamolelib.session",
@@ -739,7 +767,9 @@ class TestCreateUser:
     def test_failure_returns_error_string(self):
         """Should return error string when creation fails."""
         client = MockGuacamoleClient()
-        client.create_user = MagicMock(return_value={"message": "User already exists"})
+        client.create_user = MagicMock(
+            return_value={"message": "User already exists"}
+        )
 
         from core.guacamole import create_user
 
@@ -775,7 +805,9 @@ class TestGetOrCreateConnectionGroup:
 
         from core.guacamole import get_or_create_connection_group
 
-        result = get_or_create_connection_group(client, connection_groups, "MyGroup")
+        result = get_or_create_connection_group(
+            client, connection_groups, "MyGroup"
+        )
         assert result == "42"
 
     def test_creates_new_group_when_not_found(self):
@@ -806,7 +838,9 @@ class TestCreateUserConnectionGroupPermission:
 
         from core.guacamole import create_user_connection_group_permission
 
-        result = create_user_connection_group_permission(client, "testuser", "42")
+        result = create_user_connection_group_permission(
+            client, "testuser", "42"
+        )
         assert result is True
 
     def test_failure_returns_error_string(self):
@@ -818,7 +852,9 @@ class TestCreateUserConnectionGroupPermission:
 
         from core.guacamole import create_user_connection_group_permission
 
-        result = create_user_connection_group_permission(client, "testuser", "42")
+        result = create_user_connection_group_permission(
+            client, "testuser", "42"
+        )
         assert isinstance(result, str)
         assert "Guacamole Error (11G)" in result
 
@@ -831,7 +867,9 @@ class TestCreateUserConnectionGroupPermission:
 
         from core.guacamole import create_user_connection_group_permission
 
-        result = create_user_connection_group_permission(client, "testuser", "42")
+        result = create_user_connection_group_permission(
+            client, "testuser", "42"
+        )
         assert isinstance(result, str)
         assert "Guacamole Error (11G)" in result
 
@@ -864,7 +902,9 @@ class TestCreateUserSharingProfilesPermissions:
 
         from core.guacamole import create_user_sharing_profiles_permissions
 
-        result = create_user_sharing_profiles_permissions(client, "testuser", ["sp-1"])
+        result = create_user_sharing_profiles_permissions(
+            client, "testuser", ["sp-1"]
+        )
         assert isinstance(result, str)
         assert "Guacamole Error (66)" in result
 
@@ -877,7 +917,9 @@ class TestCreateUserSharingProfilesPermissions:
 
         from core.guacamole import create_user_sharing_profiles_permissions
 
-        result = create_user_sharing_profiles_permissions(client, "testuser", ["sp-1"])
+        result = create_user_sharing_profiles_permissions(
+            client, "testuser", ["sp-1"]
+        )
         assert isinstance(result, str)
         assert "Guacamole Error (66)" in result
 
@@ -915,7 +957,9 @@ class TestDeleteUserConnection:
     def test_exception_returns_error_string(self):
         """Should return error string when an exception occurs."""
         client = MockGuacamoleClient()
-        client.update_user_connection = MagicMock(side_effect=Exception("Timeout"))
+        client.update_user_connection = MagicMock(
+            side_effect=Exception("Timeout")
+        )
 
         from core.guacamole import delete_user_connection
 
@@ -977,7 +1021,9 @@ class TestUpdateUser:
     def test_failure_returns_error_string(self):
         """Should return error string on failure."""
         client = MockGuacamoleClient()
-        client.update_user = MagicMock(return_value={"message": "Update failed"})
+        client.update_user = MagicMock(
+            return_value={"message": "Update failed"}
+        )
 
         from core.guacamole import update_user
 
@@ -1025,7 +1071,9 @@ class TestUpdateConnection:
     def test_failure_returns_error_string(self):
         """Should return error string when manage_connection reports error."""
         client = MockGuacamoleClient()
-        client.manage_connection = MagicMock(return_value={"message": "Not found"})
+        client.manage_connection = MagicMock(
+            return_value={"message": "Not found"}
+        )
 
         from core.guacamole import update_connection
 
@@ -1095,7 +1143,9 @@ class TestGuacamoleDelete:
     def test_delete_error_propagated(self, monkeypatch):
         """Should propagate error string from delete_connection."""
         client = MockGuacamoleClient()
-        client.delete_connection = MagicMock(return_value={"message": "Not found"})
+        client.delete_connection = MagicMock(
+            return_value={"message": "Not found"}
+        )
         monkeypatch.setattr(
             "core.guacamole.guacamolelib.session",
             lambda *args, **kwargs: client,
@@ -1136,11 +1186,15 @@ class TestProvisionGuacamoleWorker:
         )
 
         task = _make_task(db_session, system_user)
-        subtask = _make_subtask(db_session, system_user, task, action="guac_provision")
+        subtask = _make_subtask(
+            db_session, system_user, task, action="guac_provision"
+        )
 
         from core.guacamole import provision_guacamole_worker
 
-        with pytest.raises(TaskException, match="Failed to initialize Guacamole"):
+        with pytest.raises(
+            TaskException, match="Failed to initialize Guacamole"
+        ):
             provision_guacamole_worker(
                 username="testuser",
                 connection_name="test-PROV-conn",
@@ -1166,7 +1220,9 @@ class TestProvisionGuacamoleWorker:
         )
 
         task = _make_task(db_session, system_user)
-        subtask = _make_subtask(db_session, system_user, task, action="guac_provision")
+        subtask = _make_subtask(
+            db_session, system_user, task, action="guac_provision"
+        )
 
         from core.guacamole import provision_guacamole_worker
 

@@ -18,42 +18,97 @@ from .roles import RoleKeyOnly, RoleNested
 
 # Base User class
 class UserBase(DBBase):
-    username: str | None = None
-    name: str | None = None
-    email: LenientEmailStr | None = None
-    status: str | None = "E-Mail-Pending"
-    locale: str | None = "de_DE"
-    description: str | None = None
+    """Base schema for user objects with common profile fields."""
+
+    username: str | None = Field(None, description="Unique login username")
+    name: str | None = Field(None, description="Human-readable display name")
+    email: LenientEmailStr | None = Field(
+        None, description="User's email address"
+    )
+    status: str | None = Field(
+        "E-Mail-Pending",
+        description="User status. One of: Active, Banned, E-Mail-Pending",
+    )
+    locale: str | None = Field(
+        "de_DE", description="User's preferred locale, e.g. de_DE or en_US"
+    )
+    description: str | None = Field(
+        None, description="Optional free-text description of the user"
+    )
     model_config = ConfigDict(from_attributes=True)
 
 
 # Properties to receive via API on creation
 class UserCreate(DBBaseCreate):
-    username: str
-    email: LenientEmailStr
-    name: str | None = None
-    description: str | None = None
-    locale: str | None = "de_DE"
-    status: str | None = "E-Mail-Pending"
-    password: str | None = None
-    password_repeat: str | None = None
+    """Payload for creating a new user account."""
+
+    username: str = Field(..., description="Unique login username")
+    email: LenientEmailStr = Field(..., description="User's email address")
+    name: str | None = Field(None, description="Human-readable display name")
+    description: str | None = Field(
+        None, description="Optional free-text description of the user"
+    )
+    locale: str | None = Field(
+        "de_DE", description="User's preferred locale, e.g. de_DE or en_US"
+    )
+    status: str | None = Field(
+        "E-Mail-Pending",
+        description="User status. One of: Active, Banned, E-Mail-Pending",
+    )
+    password: str | None = Field(
+        None, description="Plain-text password set on creation"
+    )
+    password_repeat: str | None = Field(
+        None, description="Password confirmation, must match password"
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "username": "max.mustermann",
+                "email": "max.mustermann@example.com",
+                "name": "Max Mustermann",
+                "locale": "de_DE",
+                "status": "Active",
+                "password": "SecurePass123!",
+                "password_repeat": "SecurePass123!",
+            }
+        }
+    )
 
 
 # Properties to receive via API on update
 class UserUpdate(DBBaseUpdate):
-    name: str | None = None
-    description: str | None = None
-    email: LenientEmailStr | None = None
-    status: str | None = "E-Mail-Pending"
-    locale: str | None = "de_DE"
+    """Payload for updating an existing user's profile fields."""
+
+    name: str | None = Field(None, description="Human-readable display name")
+    description: str | None = Field(
+        None, description="Optional free-text description of the user"
+    )
+    email: LenientEmailStr | None = Field(
+        None, description="User's email address"
+    )
+    status: str | None = Field(
+        "E-Mail-Pending",
+        description="User status. One of: Active, Banned, E-Mail-Pending",
+    )
+    locale: str | None = Field(
+        "de_DE", description="User's preferred locale, e.g. de_DE or en_US"
+    )
 
 
 # Properties to receive via API on updateRoles
 class UserUpdateRoles(DBBaseUpdate):
-    roles: list[RoleKeyOnly] | None = None
+    """Payload for replacing a user's assigned roles."""
+
+    roles: list[RoleKeyOnly] | None = Field(
+        None, description="List of role keys to assign to the user"
+    )
 
 
 class UserInDBBase(UserBase):
+    """Internal user schema with required ID field."""
+
     id: UUID4
 
     model_config = ConfigDict(from_attributes=True)
@@ -61,23 +116,42 @@ class UserInDBBase(UserBase):
 
 # Additional properties stored in DB but not returned by API
 class UserInDB(UserInDBBase):
-    hashed_password: str
-    resetToken: UUID4
-    resetTokenCreatedAt: datetime
-    twoFactorSecret: str
-    mailValidateToken: UUID4
-    password: str
+    """Full internal user schema including sensitive credential fields."""
+
+    hashed_password: str = Field(
+        ..., description="Bcrypt-hashed password stored in the database"
+    )
+    resetToken: UUID4 = Field(
+        ..., description="Token used for password reset flows"
+    )
+    resetTokenCreatedAt: datetime = Field(
+        ..., description="Timestamp when the reset token was generated"
+    )
+    twoFactorSecret: str = Field(
+        ..., description="TOTP secret used for two-factor authentication"
+    )
+    mailValidateToken: UUID4 = Field(
+        ..., description="Token used to verify the user's email address"
+    )
+    password: str = Field(
+        ...,
+        description="Temporary plain-text password field used during creation",
+    )
 
 
 # Only returns ID
 class UserIdOnly(DBBaseUpdate):
-    id: UUID4
+    """Minimal user schema returning only the UUID."""
+
+    id: UUID4 = Field(..., description="Unique identifier of the user")
 
     model_config = ConfigDict(from_attributes=True)
 
 
 # Main class used as response model
 class User(UserInDBBase):
+    """Full user response schema including roles and computed type."""
+
     roles: list[RoleNested]
 
     @computed_field
@@ -104,6 +178,8 @@ class User(UserInDBBase):
 
 # Restricted schema for /auth/user (own user info)
 class UserSelf(User):
+    """Reduced user schema for the authenticated user's own profile endpoint."""
+
     model_config = ConfigDict(
         from_attributes=True,
         json_schema_extra=lambda schema, _model: [
@@ -125,36 +201,54 @@ class UserSelf(User):
 
 # List object of User
 class UserList(BaseModel):
+    """Paginated list of full user objects."""
+
     pageDetails: PaginationPageDetails
     items: list[User]
 
 
 # Limited schema for users with object_search permission only
 class UserSearch(BaseModel):
+    """Reduced user schema returned for searches with limited permissions."""
+
     id: UUID4
-    username: str | None = None
-    name: str | None = None
-    email: LenientEmailStr | None = None
+    username: str | None = Field(None, description="Unique login username")
+    name: str | None = Field(None, description="Human-readable display name")
+    email: LenientEmailStr | None = Field(
+        None, description="User's email address"
+    )
     model_config = ConfigDict(from_attributes=True)
 
 
 # List object of UserSearch (limited)
 class UserSearchList(BaseModel):
+    """Paginated list of limited user search results."""
+
     pageDetails: PaginationPageDetails
     items: list[UserSearch]
 
 
 # Properties to receive via API on update_password
 class UserUpdatePassword(DBBaseUpdate):
-    password_old: str
-    password_new: str
-    password_new_repeat: str
+    """Payload for changing the authenticated user's own password."""
+
+    password_old: str = Field(
+        ..., description="Current password for verification"
+    )
+    password_new: str = Field(..., description="New password to set")
+    password_new_repeat: str = Field(
+        ..., description="New password confirmation, must match password_new"
+    )
 
 
 # Properties to receive via API on set_password
 class UserSetPassword(DBBaseUpdate):
-    password_new: str
-    password_new_repeat: str
+    """Payload for an admin to set a user's password without the old password."""
+
+    password_new: str = Field(..., description="New password to set")
+    password_new_repeat: str = Field(
+        ..., description="New password confirmation, must match password_new"
+    )
 
 
 T = TypeVar("T")
@@ -248,5 +342,11 @@ class UserDeletePreview(BaseModel):
 
 # Properties to receive via API on Login
 class UserLogin(DBBaseUpdate):
-    username: str
-    password: str
+    """Payload for authenticating a user with username and password."""
+
+    username: str = Field(
+        ..., description="Username of the account to authenticate"
+    )
+    password: str = Field(
+        ..., description="Plain-text password for authentication"
+    )

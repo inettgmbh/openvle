@@ -1,17 +1,18 @@
 """Tests for controllers/courses.py - CRUDCourse operations."""
 
 import uuid
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
 import pytest
-
 from controllers.courses import CRUDCourse
 from core.exceptions import (
     BadRequestError,
+    ObjectInUseError,
     ObjectNotFound,
 )
-from models import Course, Template
+from models import Course, Event, Template
 from schemas.courses import CourseCreate, CourseUpdate, CourseUpdateTemplate
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -51,13 +52,36 @@ class TestCRUDCourseUpdate:
     def test_update_course_name(self, db_session, active_user, sample_course):
         request = create_mock_request(active_user)
         obj_in = CourseUpdate(name="Updated Course")
-        result = self.crud.update(sample_course.id, db_session, request, obj_in=obj_in)
+        result = self.crud.update(
+            sample_course.id, db_session, request, obj_in=obj_in
+        )
         assert result.name == "Updated Course"
 
 
 class TestCRUDCourseDelete:
     def setup_method(self):
         self.crud = CRUDCourse(Course)
+
+    def _create_event(self, db_session, user, status_id, course_id):
+        now = datetime.now(timezone.utc)
+        event = Event(
+            id=uuid.uuid4(),
+            name=f"Event-{uuid.uuid4().hex[:6]}",
+            slug=f"e{uuid.uuid4().hex[:4]}",
+            description="Test",
+            dateStart=date.today(),
+            dateEnd=date.today() + timedelta(days=7),
+            guacamole=False,
+            status=status_id,
+            course=course_id,
+            createdAt=now,
+            updatedAt=now,
+            createdById=user.id,
+            updatedById=user.id,
+        )
+        db_session.add(event)
+        db_session.flush()
+        return event
 
     def test_delete_course(self, db_session, system_user, sample_course):
         course_id = sample_course.id
@@ -68,6 +92,20 @@ class TestCRUDCourseDelete:
     def test_delete_nonexistent_raises(self, db_session, system_user):
         with pytest.raises(ObjectNotFound):
             self.crud.delete(db_session, id=uuid.uuid4())
+
+    def test_delete_course_with_events_raises(
+        self, db_session, active_user, event_statuses, sample_course
+    ):
+        self._create_event(
+            db_session,
+            active_user,
+            event_statuses["Geplant"].id,
+            sample_course.id,
+        )
+        with pytest.raises(ObjectInUseError):
+            self.crud.delete(db_session, id=sample_course.id)
+        # The course must still exist after the rejected delete
+        assert db_session.get(Course, sample_course.id) is not None
 
 
 class TestCRUDCourseTemplates:
@@ -149,7 +187,9 @@ class TestCRUDCourseUpdateTemplate:
         t = self._create_template(db_session, active_user)
         request = create_mock_request(active_user)
         obj_in = CourseUpdateTemplate(templates=[{"id": str(t.id)}])
-        self.crud.update_template(sample_course.id, db_session, request, obj_in=obj_in)
+        self.crud.update_template(
+            sample_course.id, db_session, request, obj_in=obj_in
+        )
         # Try to add the same template again
         with pytest.raises(BadRequestError):
             self.crud.update_template(
@@ -166,11 +206,15 @@ class TestCRUDCourseUpdateTemplate:
                 sample_course.id, db_session, request, obj_in=obj_in
             )
 
-    def test_update_template_nonexistent_course_raises(self, db_session, active_user):
+    def test_update_template_nonexistent_course_raises(
+        self, db_session, active_user
+    ):
         request = create_mock_request(active_user)
         obj_in = CourseUpdateTemplate(templates=[{"id": str(uuid.uuid4())}])
         with pytest.raises(ObjectNotFound):
-            self.crud.update_template(uuid.uuid4(), db_session, request, obj_in=obj_in)
+            self.crud.update_template(
+                uuid.uuid4(), db_session, request, obj_in=obj_in
+            )
 
 
 class TestCRUDCourseDeleteTemplate:

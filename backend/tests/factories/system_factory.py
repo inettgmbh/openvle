@@ -1,7 +1,6 @@
 """Factory for SystemSetting model."""
 
 import factory
-
 from models import SystemSetting
 
 from .base import BaseFactory

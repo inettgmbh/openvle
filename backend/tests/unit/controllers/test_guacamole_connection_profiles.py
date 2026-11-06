@@ -4,17 +4,23 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from controllers.guacamole_connection_profiles import (
     CRUDGuacamoleConnectionProfile,
 )
 from core.exceptions import ModelNotFound, ObjectNotFound
-from models import GuacamoleConnectionProfile, ObjectPermission, Role, Template, Vendor
+from models import (
+    GuacamoleConnectionProfile,
+    ObjectPermission,
+    Role,
+    Template,
+    Vendor,
+)
 from models.associations import user_role_association_table
 from schemas.guacamole_connection_profiles import (
     GuacamoleConnectionProfileClone,
     GuacamoleConnectionProfileCreate,
 )
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -126,7 +132,9 @@ class TestGCPClone:
     def setup_method(self):
         self.crud = CRUDGuacamoleConnectionProfile(GuacamoleConnectionProfile)
 
-    def test_clone_inherits_defaults(self, db_session, active_user, sample_template):
+    def test_clone_inherits_defaults(
+        self, db_session, active_user, sample_template
+    ):
         request = create_mock_request(active_user)
         # Create source GCP
         source_in = GuacamoleConnectionProfileCreate(

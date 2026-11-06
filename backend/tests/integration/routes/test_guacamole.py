@@ -81,7 +81,9 @@ class TestCreateGuacamole:
             "userId": str(active_user.id),
             "eventId": None,
         }
-        resp = client.post(f"{API}/guacamole/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/guacamole/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 201
         data = resp.json()
         assert data["name"] == "New Guacamole"
@@ -114,7 +116,9 @@ class TestCreateGuacamole:
             "userId": str(uuid.uuid4()),
             "eventId": None,
         }
-        resp = client.post(f"{API}/guacamole/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/guacamole/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 403
 
 
@@ -171,7 +175,9 @@ class TestGetGuacamoleById:
         assert data["id"] == str(sample_guacamole.id)
         assert data["name"] == sample_guacamole.name
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/guacamole/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404

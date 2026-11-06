@@ -3,13 +3,14 @@ from sqlalchemy.orm import Session
 
 from controllers.users import CRUDUser
 from core import dependencies
+from core.responses import BASE_RESPONSES, WRITE_RESPONSES, build_description
 from models.users import User as UserModel
 from schemas.users import User, UserSelf, UserUpdatePassword
 
 router = APIRouter(
     prefix="/me",
     tags=["me"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -21,6 +22,9 @@ router = APIRouter(
     operation_id="me_read",
     summary="Get own user",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns the currently authenticated user's own profile.",
+    ),
 )
 def get_me(
     request: Request,
@@ -36,6 +40,9 @@ def get_me(
     operation_id="me_permissions_read",
     summary="Get list of own permissions",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns the full effective permission set for the currently authenticated user.",
+    ),
 )
 def get_me_permissions(
     request: Request,
@@ -52,8 +59,12 @@ def get_me_permissions(
     status_code=200,
     response_model=User,
     operation_id="me_password_update",
+    responses=WRITE_RESPONSES,
     summary="Update own password",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Updates the currently authenticated user's own password.",
+    ),
 )
 def update_me_password(
     *,

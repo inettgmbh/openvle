@@ -212,6 +212,47 @@ Les modifications du **Nom**, de la **Description** ou de l'**environnement attr
 
 ---
 
+## Importer des participants via CSV {#import-participants}
+
+L'**import de participants** vous permet d'ajouter de nombreux utilisateurs **existants** à un événement en une seule étape, en téléversant un fichier CSV contenant leurs adresses e-mail.
+
+<NavigationHint
+  path="Événements → Vue détaillée → Participants → Importer"
+  alternative="Via le bouton « Importer » dans la zone des participants de l'événement"
+/>
+
+:::warning Ajoute des utilisateurs existants — n'en crée aucun
+L'import de participants recherche les utilisateurs **par leur adresse e-mail** (insensible à la casse) et les affecte à l'événement avec le rôle **Participants (Students)**. Il **ne crée pas de nouveaux utilisateurs**. Les utilisateurs qui n'existent pas encore doivent d'abord être créés via l'[import d'utilisateurs](/docs/usage/openvle/access-control/users/#import-users).
+:::
+
+L'import utilise le même assistant en quatre étapes que l'import d'utilisateurs (Téléverser → Associer les colonnes → Aperçu et import → Résultat), mais n'attend **qu'une seule colonne** :
+
+<FieldReference
+  fields={[
+    {
+      name: 'email',
+      description:
+        "Obligatoire et seule colonne. Adresse e-mail d'un utilisateur déjà existant. Doit contenir un « @ ».",
+    },
+  ]}
+/>
+
+### Limites et résultat
+
+- Chaque import traite au maximum **200 lignes** ; une taille de fichier maximale de **5 Mo** s'applique également.
+- Après l'import, la vue des résultats indique le résultat pour chaque ligne. Erreurs fréquentes :
+  - **E-mail invalide** – l'adresse ne contient pas de « @ ».
+  - **Utilisateur introuvable** – aucun utilisateur n'existe pour cette adresse e-mail (il doit d'abord être créé via l'import d'utilisateurs).
+  - **Erreur inconnue** – l'ajout de l'utilisateur a échoué pour une autre raison.
+
+:::note
+L'import n'est disponible que tant que les participants peuvent être modifiés (par ex. dans les statuts **Planifié** ou **Actif**). Pendant les statuts **Deploying** ou **Archiving**, il est désactivé.
+:::
+
+L'import nécessite la modification de l'événement (`events_update`) ainsi que l'affichage des utilisateurs (`users_read`, voir [Permissions requises](#permissions-requises)).
+
+---
+
 ## Déployer un événement
 
 1. Ouvrez dans le menu principal la section **Événements**.

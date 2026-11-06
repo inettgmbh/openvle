@@ -2,7 +2,6 @@
 
 import pytest
 from pydantic import ValidationError
-
 from schemas.system import (
     SystemSettingCreate,
     SystemSettingUpdate,
@@ -14,7 +13,9 @@ from schemas.system import (
 
 class TestSystemSettingCreate:
     def test_valid_create(self):
-        s = SystemSettingCreate(key="my.setting", value="hello", visibility="public")
+        s = SystemSettingCreate(
+            key="my.setting", value="hello", visibility="public"
+        )
         assert s.key == "my.setting"
         assert s.value == "hello"
         assert s.visibility == SystemSettingVisibility.public
@@ -33,7 +34,9 @@ class TestSystemSettingCreate:
         assert s.value is None
 
     def test_value_string(self):
-        s = SystemSettingCreate(key="str.key", value="hello", visibility="public")
+        s = SystemSettingCreate(
+            key="str.key", value="hello", visibility="public"
+        )
         assert s.value == "hello"
 
     def test_description_default_none(self):
@@ -89,6 +92,8 @@ class TestSystemSettingUpdate:
 
 class TestSystemSettingWithoutAudit:
     def test_valid(self):
-        s = SystemSettingWithoutAudit(key="app.mode", value="production", type="string")
+        s = SystemSettingWithoutAudit(
+            key="app.mode", value="production", type="string"
+        )
         assert s.key == "app.mode"
         assert s.type == SystemSettingValueType.string

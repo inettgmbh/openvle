@@ -3,7 +3,6 @@
 import uuid
 
 import factory
-
 from models import Guacamole, GuacamoleConnectionProfile
 
 from .base import BaseFactory

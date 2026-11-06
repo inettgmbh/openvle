@@ -1,7 +1,6 @@
 """Factory for Document model."""
 
 import factory
-
 from models import Document
 
 from .base import BaseFactory

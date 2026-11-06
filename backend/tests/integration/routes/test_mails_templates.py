@@ -12,7 +12,9 @@ def sample_language(db_session, system_user):
     """Create a language in the test DB."""
     from tests.factories.language_factory import LanguageFactory
 
-    return LanguageFactory(createdById=system_user.id, updatedById=system_user.id)
+    return LanguageFactory(
+        createdById=system_user.id, updatedById=system_user.id
+    )
 
 
 @pytest.fixture()
@@ -124,7 +126,9 @@ class TestCreateMailTemplateSubjectValidation:
     ):
         """75-char subject without placeholder → 201."""
         payload = self._payload("A" * 75, str(sample_language.id))
-        resp = client.post(f"{API}/mailtemplates/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/mailtemplates/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 201
 
     def test_subject_over_max_length_rejected(
@@ -132,39 +136,57 @@ class TestCreateMailTemplateSubjectValidation:
     ):
         """76-char subject without placeholder → 422."""
         payload = self._payload("A" * 76, str(sample_language.id))
-        resp = client.post(f"{API}/mailtemplates/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/mailtemplates/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 422
 
     def test_subject_with_slug_at_budget_accepted(
         self, client, auth_headers, mock_permission_allow, sample_language
     ):
         """67 remaining chars + {{event.slug}} → 201."""
-        payload = self._payload("A" * 67 + "{{event.slug}}", str(sample_language.id))
-        resp = client.post(f"{API}/mailtemplates/", json=payload, headers=auth_headers)
+        payload = self._payload(
+            "A" * 67 + "{{event.slug}}", str(sample_language.id)
+        )
+        resp = client.post(
+            f"{API}/mailtemplates/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 201
 
     def test_subject_with_slug_over_budget_rejected(
         self, client, auth_headers, mock_permission_allow, sample_language
     ):
         """68 remaining chars + {{event.slug}} → 422."""
-        payload = self._payload("A" * 68 + "{{event.slug}}", str(sample_language.id))
-        resp = client.post(f"{API}/mailtemplates/", json=payload, headers=auth_headers)
+        payload = self._payload(
+            "A" * 68 + "{{event.slug}}", str(sample_language.id)
+        )
+        resp = client.post(
+            f"{API}/mailtemplates/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 422
 
     def test_subject_with_whitespace_slug_at_budget_accepted(
         self, client, auth_headers, mock_permission_allow, sample_language
     ):
         """67 remaining chars + {{ event.slug }} → 201."""
-        payload = self._payload("A" * 67 + "{{ event.slug }}", str(sample_language.id))
-        resp = client.post(f"{API}/mailtemplates/", json=payload, headers=auth_headers)
+        payload = self._payload(
+            "A" * 67 + "{{ event.slug }}", str(sample_language.id)
+        )
+        resp = client.post(
+            f"{API}/mailtemplates/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 201
 
     def test_subject_with_whitespace_slug_over_budget_rejected(
         self, client, auth_headers, mock_permission_allow, sample_language
     ):
         """68 remaining chars + {{ event.slug }} → 422."""
-        payload = self._payload("A" * 68 + "{{ event.slug }}", str(sample_language.id))
-        resp = client.post(f"{API}/mailtemplates/", json=payload, headers=auth_headers)
+        payload = self._payload(
+            "A" * 68 + "{{ event.slug }}", str(sample_language.id)
+        )
+        resp = client.post(
+            f"{API}/mailtemplates/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 422
 
     def test_update_subject_over_max_rejected(
@@ -220,9 +242,13 @@ class TestGetMailTemplateById:
         assert data["id"] == str(sample_mail_template.id)
         assert data["name"] == sample_mail_template.name
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
-        resp = client.get(f"{API}/mailtemplates/{fake_id}", headers=auth_headers)
+        resp = client.get(
+            f"{API}/mailtemplates/{fake_id}", headers=auth_headers
+        )
         assert resp.status_code == 404
 
     def test_unauthenticated_returns_401(self, client):
@@ -230,7 +256,9 @@ class TestGetMailTemplateById:
         resp = client.get(f"{API}/mailtemplates/{fake_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied(self, client, auth_headers, sample_mail_template):
+    def test_permission_denied(
+        self, client, auth_headers, sample_mail_template
+    ):
         """Without mock_permission_allow, mail_templates_read is denied."""
         resp = client.get(
             f"{API}/mailtemplates/{sample_mail_template.id}",
@@ -263,7 +291,9 @@ class TestUpdateMailTemplate:
         assert data["name"] == "Updated Template"
         assert data["subject"] == "Updated Subject"
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.put(
             f"{API}/mailtemplates/{fake_id}",
@@ -312,9 +342,13 @@ class TestDeleteMailTemplate:
         )
         assert resp.status_code == 403
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
-        resp = client.delete(f"{API}/mailtemplates/{fake_id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/mailtemplates/{fake_id}", headers=auth_headers
+        )
         assert resp.status_code == 404
 
     def test_unauthenticated_returns_401(self, client):

@@ -4,7 +4,6 @@ import uuid
 from datetime import date, timedelta
 
 import factory
-
 from models import Event, EventStatus
 
 from .base import BaseFactory
@@ -37,5 +36,7 @@ class EventFactory(BaseFactory):
     dateStart = factory.LazyFunction(lambda: date.today() + timedelta(days=14))
     dateEnd = factory.LazyFunction(lambda: date.today() + timedelta(days=21))
     guacamole = True
-    status = factory.LazyFunction(uuid.uuid4)  # Must be set to actual EventStatus.id
+    status = factory.LazyFunction(
+        uuid.uuid4
+    )  # Must be set to actual EventStatus.id
     course = factory.LazyFunction(uuid.uuid4)  # Must be set to actual Course.id

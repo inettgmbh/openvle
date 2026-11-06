@@ -2,10 +2,8 @@
 
 import inspect
 
-import pytest
-from fastapi import HTTPException
-
 import core.exceptions as exceptions_module
+import pytest
 from core.exceptions import (
     BadRequestError,
     BulkActionRequirementMissing,
@@ -35,6 +33,7 @@ from core.exceptions import (
     ObjectCommitError,
     ObjectDeleteIntegrityError,
     ObjectInitError,
+    ObjectInUseError,
     ObjectNotFound,
     OperationDependencyMissing,
     OutstandingPoliciesException,
@@ -55,6 +54,7 @@ from core.exceptions import (
     UserAlreadyRegisteredException,
     UserNotActiveError,
 )
+from fastapi import HTTPException
 
 
 class TestExceptionStatusCodes:
@@ -63,24 +63,31 @@ class TestExceptionStatusCodes:
     @pytest.mark.parametrize(
         "exc_factory,expected_status",
         [
-            (lambda: CredentialsNotValid(), 401),
-            (lambda: InvalidAuthToken(), 401),
-            (lambda: IncorrectCredentials(), 401),
-            (lambda: PermissionDenied(), 403),
-            (lambda: SystemUserLoginException(), 403),
-            (lambda: OutstandingPoliciesException(), 403),
-            (lambda: CSRFMismatch(), 403),
+            (CredentialsNotValid, 401),
+            (InvalidAuthToken, 401),
+            (IncorrectCredentials, 401),
+            (PermissionDenied, 403),
+            (SystemUserLoginException, 403),
+            (OutstandingPoliciesException, 403),
+            (CSRFMismatch, 403),
             (lambda: ObjectNotFound("User", id="abc"), 404),
             (lambda: BulkObjectNotFound("User", ["a", "b"]), 404),
-            (lambda: UserAlreadyRegisteredException(), 409),
+            (UserAlreadyRegisteredException, 409),
             (lambda: ObjectDeleteIntegrityError("User"), 409),
-            (lambda: DuplicateEventUserRoleError(), 409),
+            (lambda: ObjectInUseError("Course", {"Event": 2}), 409),
+            (
+                lambda: ObjectInUseError(
+                    "Template", {"VirtualMachine": 2, "Event": 1}
+                ),
+                409,
+            ),
+            (DuplicateEventUserRoleError, 409),
             (lambda: DuplicateObjectPermission("dup"), 409),
             (lambda: DuplicateFieldException("email"), 409),
             (lambda: OperationDependencyMissing("dep"), 409),
-            (lambda: PaginationLimitError(), 422),
-            (lambda: PaginationZeroPageError(), 422),
-            (lambda: PaginationPageError(), 422),
+            (PaginationLimitError, 422),
+            (PaginationZeroPageError, 422),
+            (PaginationPageError, 422),
             (lambda: InvalidFieldValue("val", "field"), 422),
             (lambda: InvalidStatusError("Aktiv", "start", ["Geplant"]), 422),
             (lambda: ModelFieldNotFound("User", "xyz"), 422),
@@ -90,7 +97,7 @@ class TestExceptionStatusCodes:
             (lambda: ModelAssociationNotFound("A", "B"), 422),
             (lambda: InvalidOperationForObject("op", "type"), 422),
             (lambda: InvalidRedirectURL("http://evil"), 422),
-            (lambda: BadRequestError(), 400),
+            (BadRequestError, 400),
             (lambda: BadRequestError("custom"), 400),
             (lambda: UnsupportedFileType("text/plain"), 415),
             (lambda: RelationNotFound("A", "1", "B", "2"), 404),
@@ -98,17 +105,17 @@ class TestExceptionStatusCodes:
             (lambda: ProtectedObjectError("User", "delete"), 403),
             (lambda: ObjectCommitError("err", "User"), 500),
             (lambda: ObjectInitError("err"), 500),
-            (lambda: FileUploadError(), 500),
+            (FileUploadError, 500),
             (lambda: JobEnqueueError("test_job"), 500),
             (lambda: MailGenerationError("err"), 500),
-            (lambda: ProxmoxConnectionError(), 500),
-            (lambda: ProxmoxRequestError(), 500),
-            (lambda: GuacamoleConnectionError(), 500),
-            (lambda: GuacamoleRequestError(), 500),
-            (lambda: LdapConnectionError(), 500),
-            (lambda: MariaDBConnectionError(), 503),
-            (lambda: MongoDBConnectionError(), 503),
-            (lambda: RedisConnectionError(), 503),
+            (ProxmoxConnectionError, 500),
+            (ProxmoxRequestError, 500),
+            (GuacamoleConnectionError, 500),
+            (GuacamoleRequestError, 500),
+            (LdapConnectionError, 500),
+            (MariaDBConnectionError, 503),
+            (MongoDBConnectionError, 503),
+            (RedisConnectionError, 503),
         ],
     )
     def test_status_code(self, exc_factory, expected_status):
@@ -171,7 +178,9 @@ class TestBadRequestError:
 
     def test_without_message_uses_default(self):
         exc = BadRequestError()
-        assert "error" in exc.detail.lower() or "unexpected" in exc.detail.lower()
+        assert (
+            "error" in exc.detail.lower() or "unexpected" in exc.detail.lower()
+        )
 
 
 class TestCredentialsNotValid:
@@ -192,24 +201,24 @@ class TestErrorCodes:
     @pytest.mark.parametrize(
         "exc_factory,expected_code",
         [
-            (lambda: SystemUserLoginException(), "SYSTEM_USER_LOGIN"),
+            (SystemUserLoginException, "SYSTEM_USER_LOGIN"),
             (
-                lambda: UserAlreadyRegisteredException(),
+                UserAlreadyRegisteredException,
                 "USER_ALREADY_REGISTERED",
             ),
-            (lambda: CredentialsNotValid(), "CREDENTIALS_NOT_VALID"),
-            (lambda: InvalidAuthToken(), "INVALID_AUTH_TOKEN"),
+            (CredentialsNotValid, "CREDENTIALS_NOT_VALID"),
+            (InvalidAuthToken, "INVALID_AUTH_TOKEN"),
             (
-                lambda: OutstandingPoliciesException(),
+                OutstandingPoliciesException,
                 "OUTSTANDING_POLICIES",
             ),
-            (lambda: IncorrectCredentials(), "INCORRECT_CREDENTIALS"),
-            (lambda: PermissionDenied(), "PERMISSION_DENIED"),
-            (lambda: UserNotActiveError(), "USER_NOT_ACTIVE"),
-            (lambda: ServiceConnectionError(), "SERVICE_CONNECTION_ERROR"),
-            (lambda: MariaDBConnectionError(), "MARIADB_CONNECTION_ERROR"),
-            (lambda: MongoDBConnectionError(), "MONGODB_CONNECTION_ERROR"),
-            (lambda: RedisConnectionError(), "REDIS_CONNECTION_ERROR"),
+            (IncorrectCredentials, "INCORRECT_CREDENTIALS"),
+            (PermissionDenied, "PERMISSION_DENIED"),
+            (UserNotActiveError, "USER_NOT_ACTIVE"),
+            (ServiceConnectionError, "SERVICE_CONNECTION_ERROR"),
+            (MariaDBConnectionError, "MARIADB_CONNECTION_ERROR"),
+            (MongoDBConnectionError, "MONGODB_CONNECTION_ERROR"),
+            (RedisConnectionError, "REDIS_CONNECTION_ERROR"),
             (lambda: ObjectNotFound("User", id="x"), "OBJECT_NOT_FOUND"),
             (
                 lambda: BulkObjectNotFound("User", ["a"]),
@@ -219,19 +228,19 @@ class TestErrorCodes:
                 lambda: BulkActionRequirementMissing("m"),
                 "BULK_ACTION_REQUIREMENT_MISSING",
             ),
-            (lambda: MailGenerationError(), "MAIL_GENERATION_ERROR"),
+            (MailGenerationError, "MAIL_GENERATION_ERROR"),
             (lambda: InvalidFieldValue("v", "f"), "INVALID_FIELD_VALUE"),
             (lambda: ObjectInitError("e"), "OBJECT_INIT_ERROR"),
             (
                 lambda: ObjectCommitError("e", "M"),
                 "OBJECT_COMMIT_ERROR",
             ),
-            (lambda: PaginationLimitError(), "PAGINATION_LIMIT_ERROR"),
+            (PaginationLimitError, "PAGINATION_LIMIT_ERROR"),
             (
-                lambda: PaginationZeroPageError(),
+                PaginationZeroPageError,
                 "PAGINATION_ZERO_PAGE_ERROR",
             ),
-            (lambda: PaginationPageError(), "PAGINATION_PAGE_ERROR"),
+            (PaginationPageError, "PAGINATION_PAGE_ERROR"),
             (
                 lambda: ModelFieldNotFound("User", "x"),
                 "MODEL_FIELD_NOT_FOUND",
@@ -242,10 +251,18 @@ class TestErrorCodes:
                 "OBJECT_DELETE_INTEGRITY_ERROR",
             ),
             (
+                lambda: ObjectInUseError("Course", {"Event": 2}),
+                "OBJECT_IN_USE",
+            ),
+            (
+                lambda: ObjectInUseError("Event", detail="custom detail"),
+                "OBJECT_IN_USE",
+            ),
+            (
                 lambda: RequiredParameterMissingError("p"),
                 "REQUIRED_PARAMETER_MISSING",
             ),
-            (lambda: FileUploadError(), "FILE_UPLOAD_ERROR"),
+            (FileUploadError, "FILE_UPLOAD_ERROR"),
             (
                 lambda: UnsupportedFileType("text/plain"),
                 "UNSUPPORTED_FILE_TYPE",
@@ -260,14 +277,14 @@ class TestErrorCodes:
                 "INVALID_STATUS",
             ),
             (
-                lambda: DuplicateEventUserRoleError(),
+                DuplicateEventUserRoleError,
                 "DUPLICATE_EVENT_USER_ROLE",
             ),
             (
                 lambda: DuplicateObjectPermission("dup"),
                 "DUPLICATE_OBJECT_PERMISSION",
             ),
-            (lambda: BadRequestError(), "BAD_REQUEST"),
+            (BadRequestError, "BAD_REQUEST"),
             (
                 lambda: OperationDependencyMissing("d"),
                 "OPERATION_DEPENDENCY_MISSING",
@@ -286,28 +303,28 @@ class TestErrorCodes:
             ),
             (lambda: DuplicateFieldException("email"), "DUPLICATE_FIELD"),
             (
-                lambda: ProxmoxConnectionError(),
+                ProxmoxConnectionError,
                 "PROXMOX_CONNECTION_ERROR",
             ),
             (
                 lambda: ProxmoxResourceNotFound("VM", 100, "id"),
                 "PROXMOX_RESOURCE_NOT_FOUND",
             ),
-            (lambda: ProxmoxRequestError(), "PROXMOX_REQUEST_ERROR"),
+            (ProxmoxRequestError, "PROXMOX_REQUEST_ERROR"),
             (
-                lambda: GuacamoleConnectionError(),
+                GuacamoleConnectionError,
                 "GUACAMOLE_CONNECTION_ERROR",
             ),
             (
-                lambda: GuacamoleRequestError(),
+                GuacamoleRequestError,
                 "GUACAMOLE_REQUEST_ERROR",
             ),
-            (lambda: LdapConnectionError(), "LDAP_CONNECTION_ERROR"),
+            (LdapConnectionError, "LDAP_CONNECTION_ERROR"),
             (
                 lambda: InvalidRedirectURL("http://evil"),
                 "INVALID_REDIRECT_URL",
             ),
-            (lambda: CSRFMismatch(), "CSRF_MISMATCH"),
+            (CSRFMismatch, "CSRF_MISMATCH"),
         ],
     )
     def test_error_code(self, exc_factory, expected_code):

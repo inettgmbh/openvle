@@ -5,14 +5,13 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock
 
 import pytest
-
 from models import (
     Event,
+    Language,
     ObjectPermission,
     SubTask,
     Task,
     VirtualMachine,
-    Language,
 )
 
 
@@ -42,7 +41,13 @@ def _make_task(db, system_user, event_id=None):
 
 
 def _make_subtask(
-    db, system_user, parent_task, object_type, object_id, action, status="success"
+    db,
+    system_user,
+    parent_task,
+    object_type,
+    object_id,
+    action,
+    status="success",
 ):
     now = datetime.now(timezone.utc)
     subtask = SubTask(
@@ -113,7 +118,9 @@ def _make_event(db, system_user, event_statuses, sample_course):
 # Tests: get_object_owners
 # ---------------------------------------------------------------------------
 class TestGetObjectOwners:
-    def test_returns_users_with_permissions(self, db_session, system_user, active_user):
+    def test_returns_users_with_permissions(
+        self, db_session, system_user, active_user
+    ):
         """Users with ObjectPermission for an object are returned."""
         from core.mail_automated import get_object_owners
 
@@ -154,7 +161,9 @@ class TestSystemTriggeredMailHandler:
 
     def _patch_all(self, monkeypatch, db_session):
         """Patch SessionLocal and CRUDMail.create_system_mail."""
-        monkeypatch.setattr("core.mail_automated.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "core.mail_automated.SessionLocal", lambda: db_session
+        )
         self._create_system_mail_calls = []
 
         def fake_create_system_mail(
@@ -179,7 +188,9 @@ class TestSystemTriggeredMailHandler:
         # Patch on the class
         from controllers.mails import CRUDMail
 
-        monkeypatch.setattr(CRUDMail, "create_system_mail", fake_create_system_mail)
+        monkeypatch.setattr(
+            CRUDMail, "create_system_mail", fake_create_system_mail
+        )
 
     def test_vm_create_success_sends_mail(
         self, db_session, system_user, active_user, monkeypatch
@@ -286,7 +297,9 @@ class TestSystemTriggeredMailHandler:
         """SubTask Event/events_post_deployment/success -> slug 'events_post_deployment_success'."""
         self._patch_all(monkeypatch, db_session)
 
-        event = _make_event(db_session, system_user, event_statuses, sample_course)
+        event = _make_event(
+            db_session, system_user, event_statuses, sample_course
+        )
         task = _make_task(db_session, system_user, event_id=event.id)
         subtask = _make_subtask(
             db_session,
@@ -301,7 +314,9 @@ class TestSystemTriggeredMailHandler:
         # Mock get_event_admin to return empty list (no admin)
         from controllers.events import CRUDEvent
 
-        monkeypatch.setattr(CRUDEvent, "get_event_admin", lambda self, db, id: [])
+        monkeypatch.setattr(
+            CRUDEvent, "get_event_admin", lambda self, db, id: []
+        )
 
         from core.mail_automated import system_triggered_mail_handler
 
@@ -322,7 +337,9 @@ class TestSystemTriggeredMailHandler:
         """SubTask Event/events_post_deployment/failed -> slug 'events_post_deployment_failed'."""
         self._patch_all(monkeypatch, db_session)
 
-        event = _make_event(db_session, system_user, event_statuses, sample_course)
+        event = _make_event(
+            db_session, system_user, event_statuses, sample_course
+        )
         task = _make_task(db_session, system_user, event_id=event.id)
         subtask = _make_subtask(
             db_session,
@@ -336,7 +353,9 @@ class TestSystemTriggeredMailHandler:
 
         from controllers.events import CRUDEvent
 
-        monkeypatch.setattr(CRUDEvent, "get_event_admin", lambda self, db, id: [])
+        monkeypatch.setattr(
+            CRUDEvent, "get_event_admin", lambda self, db, id: []
+        )
 
         from core.mail_automated import system_triggered_mail_handler
 
@@ -357,7 +376,9 @@ class TestSystemTriggeredMailHandler:
         """SubTask Event/events_post_decommission/success -> slug 'events_post_decommission_success'."""
         self._patch_all(monkeypatch, db_session)
 
-        event = _make_event(db_session, system_user, event_statuses, sample_course)
+        event = _make_event(
+            db_session, system_user, event_statuses, sample_course
+        )
         task = _make_task(db_session, system_user, event_id=event.id)
         subtask = _make_subtask(
             db_session,
@@ -371,7 +392,9 @@ class TestSystemTriggeredMailHandler:
 
         from controllers.events import CRUDEvent
 
-        monkeypatch.setattr(CRUDEvent, "get_event_admin", lambda self, db, id: [])
+        monkeypatch.setattr(
+            CRUDEvent, "get_event_admin", lambda self, db, id: []
+        )
 
         from core.mail_automated import system_triggered_mail_handler
 
@@ -392,7 +415,9 @@ class TestSystemTriggeredMailHandler:
         """SubTask Event/events_post_decommission/failed -> slug 'events_post_decommission_failed'."""
         self._patch_all(monkeypatch, db_session)
 
-        event = _make_event(db_session, system_user, event_statuses, sample_course)
+        event = _make_event(
+            db_session, system_user, event_statuses, sample_course
+        )
         task = _make_task(db_session, system_user, event_id=event.id)
         subtask = _make_subtask(
             db_session,
@@ -406,7 +431,9 @@ class TestSystemTriggeredMailHandler:
 
         from controllers.events import CRUDEvent
 
-        monkeypatch.setattr(CRUDEvent, "get_event_admin", lambda self, db, id: [])
+        monkeypatch.setattr(
+            CRUDEvent, "get_event_admin", lambda self, db, id: []
+        )
 
         from core.mail_automated import system_triggered_mail_handler
 

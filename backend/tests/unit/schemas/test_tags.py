@@ -3,7 +3,6 @@
 import uuid
 
 import pytest
-
 from core.exceptions import InvalidFieldValue
 from schemas.tags import TagCreate
 

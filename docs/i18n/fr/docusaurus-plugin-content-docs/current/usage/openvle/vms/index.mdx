@@ -46,6 +46,7 @@ Chaque VM est gérée de manière centralisée et peut être utilisée directeme
     'Accéder via les connexions Guacamole intégrées (RDP, SSH)',
     "Réinitialiser à l'état initial du modèle",
     'Afficher les informations de ressources telles que CPU, RAM ou utilisation du stockage',
+    'Gérer la haute disponibilité (HA) via le gestionnaire HA de Proxmox',
   ]}
 />
 
@@ -101,6 +102,11 @@ Chaque VM est gérée de manière centralisée et peut être utilisée directeme
       name: 'Statut',
       description:
         'État de fonctionnement actuel de la VM. Les valeurs possibles sont : `running`, `stopped`, `cloning`, `starting`, `stopping`, `deleting`. Le statut est contrôlé par des actions (démarrage, arrêt, clonage, suppression) ou des processus automatiques.',
+    },
+    {
+      name: 'État HA',
+      description:
+        "État actuel de haute disponibilité de la VM sur Proxmox (par ex. « Démarrée », « Arrêtée », « Non activée »). Affiché sous forme de tuile dans la vue détaillée et interrogé en direct une seule fois à l'ouverture de la vue. Visible uniquement si la VM existe déjà sur Proxmox.",
     },
   ]}
 />
@@ -175,11 +181,30 @@ Dans le menu contextuel d'une VM, différentes actions sont disponibles pour con
 4. **Stopper** -- Arrête immédiatement la VM sans arrêt régulier (équivalent à un hard-power-off).
 5. **Reset** -- Effectue un redémarrage immédiat, comparable à l'appui sur le bouton de réinitialisation d'une machine physique.
 6. **Actualiser l'IP** -- Met à jour l'adresse IP de la VM enregistrée dans OpenVLE, si celle-ci a changé ou n'est plus à jour.
+7. **Configurer la HA** -- Ouvre la boîte de dialogue de gestion de la [haute disponibilité (HA)](#ha) de la VM.
 
 :::warning
 Certaines actions, comme **Stopper** ou **Reset**, accèdent directement à l'environnement de virtualisation et peuvent entraîner une perte de données si des modifications non enregistrées sont présentes dans la VM.  
 Ces actions ne doivent être exécutées que si un arrêt ou un redémarrage régulier n'est pas possible.
 :::
+
+---
+
+## Haute disponibilité (HA) {#ha}
+
+L'action **Configurer la HA** dans la vue détaillée permet de contrôler la haute disponibilité d'une VM. Lorsque la HA est active, le gestionnaire HA de Proxmox surveille la VM et la redémarre automatiquement ou la déplace vers un autre nœud après une panne de nœud.
+
+La boîte de dialogue propose les réglages suivants :
+
+- **Haute disponibilité active** -- Interrupteur qui active ou désactive la gestion HA de la VM. Le désactiver pour une VM gérée puis confirmer supprime la configuration HA.
+- **État demandé** -- `Démarrée` : la VM fonctionne et est redémarrée automatiquement après une panne de nœud. `Arrêtée` : la VM reste éteinte mais reste gérée par la HA.
+- **Max. redémarrages / Max. déplacements** -- Définit combien de fois la VM est redémarrée sur le nœud actuel ou déplacée vers un autre nœud en cas de panne (0–20).
+
+:::warning
+Si l'état demandé d'une VM en cours d'exécution est défini sur **Arrêtée**, le gestionnaire HA arrête la VM immédiatement après la confirmation.
+:::
+
+Les modifications de la configuration HA sont exécutées sous forme de tâche d'arrière-plan et peuvent être suivies dans l'onglet **Tasks** de la VM. La tuile d'état HA se met à jour automatiquement dès que la modification a été appliquée.
 
 ---
 
@@ -307,6 +332,11 @@ Ces actions ne doivent être exécutées que si un arrêt ou un redémarrage ré
     {
       action: 'Action VM : Stop',
       permission: 'vms_actions_stop',
+      scoped: true,
+    },
+    {
+      action: 'Configurer / supprimer la HA',
+      permission: 'vms_update',
       scoped: true,
     },
     { action: 'Afficher les modèles de VM', permission: 'templates_read' },

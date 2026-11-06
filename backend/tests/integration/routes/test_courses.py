@@ -40,7 +40,9 @@ class TestCreateCourse:
             "description": "A brand new course",
             "guacamole": False,
         }
-        resp = client.post(f"{API}/courses/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/courses/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 201
         data = resp.json()
         assert data["name"] == "New Course"
@@ -62,7 +64,9 @@ class TestCreateCourse:
             "name": "Denied Course",
             "description": "desc",
         }
-        resp = client.post(f"{API}/courses/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/courses/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 403
 
 
@@ -98,7 +102,9 @@ class TestGetCourseById:
         mock_permission_allow,
         sample_course,
     ):
-        resp = client.get(f"{API}/courses/{sample_course.id}", headers=auth_headers)
+        resp = client.get(
+            f"{API}/courses/{sample_course.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["id"] == str(sample_course.id)
@@ -106,7 +112,9 @@ class TestGetCourseById:
         assert data["description"] == sample_course.description
         assert data["guacamole"] == sample_course.guacamole
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/courses/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404
@@ -116,9 +124,13 @@ class TestGetCourseById:
         resp = client.get(f"{API}/courses/{fake_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_course):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_course
+    ):
         """Without mock_permission_allow, courses_read is denied."""
-        resp = client.get(f"{API}/courses/{sample_course.id}", headers=auth_headers)
+        resp = client.get(
+            f"{API}/courses/{sample_course.id}", headers=auth_headers
+        )
         assert resp.status_code == 403
 
 
@@ -179,7 +191,9 @@ class TestDeleteCourse:
         mock_permission_allow,
         sample_course,
     ):
-        resp = client.delete(f"{API}/courses/{sample_course.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/courses/{sample_course.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
 
     def test_delete_not_found_returns_404(
@@ -188,6 +202,48 @@ class TestDeleteCourse:
         fake_id = uuid.uuid4()
         resp = client.delete(f"{API}/courses/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404
+
+    def test_delete_referenced_course_returns_409(
+        self,
+        client,
+        auth_headers,
+        mock_permission_allow,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
+    ):
+        """A course referenced by an event must not be deletable."""
+        from datetime import date, timedelta
+
+        from models import Event
+
+        now = datetime.now(timezone.utc)
+        event = Event(
+            id=uuid.uuid4(),
+            name="Blocking Event",
+            slug="blk1",
+            description="References the course",
+            dateStart=date.today(),
+            dateEnd=date.today() + timedelta(days=7),
+            guacamole=False,
+            status=event_statuses["Geplant"].id,
+            course=sample_course.id,
+            createdAt=now,
+            updatedAt=now,
+            createdById=system_user.id,
+            updatedById=system_user.id,
+        )
+        db_session.add(event)
+        db_session.flush()
+
+        resp = client.delete(
+            f"{API}/courses/{sample_course.id}", headers=auth_headers
+        )
+        assert resp.status_code == 409
+        data = resp.json()
+        assert data["error_code"] == "OBJECT_IN_USE"
+        assert "1" in data["detail"]
 
     def test_delete_unauthenticated_returns_401(self, client):
         fake_id = uuid.uuid4()

@@ -1,8 +1,7 @@
 """Tests for schemas/users.py - User schema validation."""
 
-from pydantic import ValidationError
 import pytest
-
+from pydantic import ValidationError
 from schemas.users import (
     UserCreate,
     UserLogin,

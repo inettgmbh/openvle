@@ -2,9 +2,8 @@
 
 import uuid
 
-from pydantic import ValidationError
 import pytest
-
+from pydantic import ValidationError
 from schemas.events_user import EventsUserCreate
 
 

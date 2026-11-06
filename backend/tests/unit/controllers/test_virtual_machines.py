@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from controllers.virtual_machines import CRUDVirtualMachine
 from core.exceptions import (
     BadRequestError,
@@ -21,14 +20,15 @@ from models import (
     SubTask,
     Task,
     Template,
-    VirtualMachine,
     Vendor,
+    VirtualMachine,
 )
 from schemas.virtual_machines import (
     VirtualMachineCreate,
     VirtualMachineIdList,
     VirtualMachineUpdate,
 )
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -174,7 +174,9 @@ class TestCRUDVirtualMachineGetByName:
 
 
 class TestCRUDVirtualMachineUpdate:
-    def test_update_cpu(self, db_session, active_user, mock_redis_queues, sample_vm):
+    def test_update_cpu(
+        self, db_session, active_user, mock_redis_queues, sample_vm
+    ):
         crud = CRUDVirtualMachine(db=db_session, id=sample_vm.id)
         request = create_mock_request(active_user)
         obj_in = VirtualMachineUpdate(cpu=4)
@@ -216,7 +218,9 @@ class TestCRUDVirtualMachineUpdate:
 
 
 class TestCRUDVirtualMachineUpdateApps:
-    def test_update_apps(self, db_session, active_user, sample_vm, sample_app_vm):
+    def test_update_apps(
+        self, db_session, active_user, sample_vm, sample_app_vm
+    ):
         crud = CRUDVirtualMachine(db=db_session, id=sample_vm.id)
         request = create_mock_request(active_user)
         result = crud.update_apps(
@@ -228,7 +232,9 @@ class TestCRUDVirtualMachineUpdateApps:
         assert len(result.apps) == 1
         assert result.apps[0].key == "vm-app"
 
-    def test_update_apps_invalid_key_raises(self, db_session, active_user, sample_vm):
+    def test_update_apps_invalid_key_raises(
+        self, db_session, active_user, sample_vm
+    ):
         crud = CRUDVirtualMachine(db=db_session, id=sample_vm.id)
         request = create_mock_request(active_user)
         from core.exceptions import ObjectNotFound
@@ -245,7 +251,12 @@ class TestCRUDVirtualMachineUpdateApps:
 class TestCRUDVirtualMachineDelete:
     @patch("controllers.virtual_machines.ProxmoxCluster")
     def test_delete_sets_status_deleting(
-        self, mock_cluster, db_session, active_user, mock_redis_queues, sample_vm
+        self,
+        mock_cluster,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        sample_vm,
     ):
         mock_cluster.return_value.pve_get_node.return_value = "pve-node-1"
         mock_cluster.return_value.proxmox.nodes.return_value.qemu.return_value.config.get.return_value = {
@@ -260,7 +271,12 @@ class TestCRUDVirtualMachineDelete:
 
     @patch("controllers.virtual_machines.ProxmoxCluster")
     def test_delete_creates_task_chain(
-        self, mock_cluster, db_session, active_user, mock_redis_queues, sample_vm
+        self,
+        mock_cluster,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        sample_vm,
     ):
         mock_cluster.return_value.pve_get_node.return_value = "pve-node-1"
         mock_cluster.return_value.proxmox.nodes.return_value.qemu.return_value.config.get.return_value = {
@@ -289,7 +305,12 @@ class TestCRUDVirtualMachineDelete:
 
     @patch("controllers.virtual_machines.ProxmoxCluster")
     def test_delete_proceeds_when_pve_config_raises_resource_exception(
-        self, mock_cluster, db_session, active_user, mock_redis_queues, sample_vm
+        self,
+        mock_cluster,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        sample_vm,
     ):
         """VM not found on PVE during protection check — deletion still proceeds."""
         from proxmoxer.core import ResourceException
@@ -307,7 +328,12 @@ class TestCRUDVirtualMachineDelete:
 
     @patch("controllers.virtual_machines.ProxmoxCluster")
     def test_delete_no_proxmox_id_proceeds(
-        self, mock_cluster, db_session, active_user, mock_redis_queues, system_user
+        self,
+        mock_cluster,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        system_user,
     ):
         """VM with no proxmoxId skips PVE protection check and proceeds."""
         from datetime import datetime, timezone
@@ -347,7 +373,12 @@ class TestCRUDVirtualMachineActionsStart:
         new_callable=MagicMock,
     )
     def test_start_sets_status_starting(
-        self, mock_periodic, db_session, active_user, mock_redis_queues, stopped_vm
+        self,
+        mock_periodic,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        stopped_vm,
     ):
         crud = CRUDVirtualMachine(db=db_session, id=stopped_vm.id)
         request = create_mock_request(active_user)
@@ -359,7 +390,12 @@ class TestCRUDVirtualMachineActionsStart:
         new_callable=MagicMock,
     )
     def test_start_creates_changelog(
-        self, mock_periodic, db_session, active_user, mock_redis_queues, stopped_vm
+        self,
+        mock_periodic,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        stopped_vm,
     ):
         crud = CRUDVirtualMachine(db=db_session, id=stopped_vm.id)
         request = create_mock_request(active_user)
@@ -377,7 +413,12 @@ class TestCRUDVirtualMachineActionsStart:
         new_callable=MagicMock,
     )
     def test_start_already_running_raises(
-        self, mock_periodic, db_session, active_user, mock_redis_queues, sample_vm
+        self,
+        mock_periodic,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        sample_vm,
     ):
         crud = CRUDVirtualMachine(db=db_session, id=sample_vm.id)
         request = create_mock_request(active_user)
@@ -391,7 +432,12 @@ class TestCRUDVirtualMachineActionsStop:
         new_callable=MagicMock,
     )
     def test_stop_sets_status_stopping(
-        self, mock_periodic, db_session, active_user, mock_redis_queues, sample_vm
+        self,
+        mock_periodic,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        sample_vm,
     ):
         crud = CRUDVirtualMachine(db=db_session, id=sample_vm.id)
         request = create_mock_request(active_user)
@@ -403,7 +449,12 @@ class TestCRUDVirtualMachineActionsStop:
         new_callable=MagicMock,
     )
     def test_stop_already_stopped_raises(
-        self, mock_periodic, db_session, active_user, mock_redis_queues, stopped_vm
+        self,
+        mock_periodic,
+        db_session,
+        active_user,
+        mock_redis_queues,
+        stopped_vm,
     ):
         crud = CRUDVirtualMachine(db=db_session, id=stopped_vm.id)
         request = create_mock_request(active_user)
@@ -628,7 +679,9 @@ class TestCRUDVirtualMachineCreateFromTemplateEvent:
             event=str(sample_event.id),
             user=str(active_user.id),
         )
-        result = crud.create_from_template_event(db_session, request, obj_in=obj_in)
+        result = crud.create_from_template_event(
+            db_session, request, obj_in=obj_in
+        )
         assert "VirtualMachine" in result
         vm = result["VirtualMachine"]
         assert vm.status == "queued"
@@ -701,7 +754,9 @@ class TestCRUDVirtualMachineCreateFromTemplateEvent:
             event=str(sample_event.id),
             user=str(active_user.id),
         )
-        result = crud.create_from_template_event(db_session, request, obj_in=obj_in)
+        result = crud.create_from_template_event(
+            db_session, request, obj_in=obj_in
+        )
         vm = result["VirtualMachine"]
 
         perms = (
@@ -748,7 +803,9 @@ class TestCRUDVirtualMachineActionsClone:
             cpu=2,
             ram=2048,
         )
-        result = crud.actions_clone(stopped_vm.id, db_session, request, obj_in=obj_in)
+        result = crud.actions_clone(
+            stopped_vm.id, db_session, request, obj_in=obj_in
+        )
         assert result.status == "queued"
 
     @patch("controllers.virtual_machines.ProxmoxCluster")
@@ -882,7 +939,9 @@ class TestCRUDVirtualMachineActionsMigrate:
         crud = CRUDVirtualMachine(db=db_session, id=sample_vm.id)
         request = create_mock_request(active_user)
         obj_in = VirtualMachineMigrate(targetNode="pve-node-2")
-        result = crud.actions_migrate(sample_vm.id, db_session, request, obj_in=obj_in)
+        result = crud.actions_migrate(
+            sample_vm.id, db_session, request, obj_in=obj_in
+        )
         assert result.status == "migrating"
 
     @patch(
@@ -910,13 +969,17 @@ class TestCRUDVirtualMachineActionsMigrate:
         crud.actions_migrate(sample_vm.id, db_session, request, obj_in=obj_in)
 
         changelogs = (
-            db_session.query(Changelog).filter(Changelog.objectId == sample_vm.id).all()
+            db_session.query(Changelog)
+            .filter(Changelog.objectId == sample_vm.id)
+            .all()
         )
         assert len(changelogs) >= 1
 
     @patch(
         "controllers.virtual_machines.get_pve_node_info",
-        return_value={"node_list": [{"node": "pve-node-1"}, {"node": "pve-node-2"}]},
+        return_value={
+            "node_list": [{"node": "pve-node-1"}, {"node": "pve-node-2"}]
+        },
     )
     @patch(
         "controllers.virtual_machines.proxmox_node_info_periodic",
@@ -939,7 +1002,9 @@ class TestCRUDVirtualMachineActionsMigrate:
         # sample_vm is on pve-node-1
         obj_in = VirtualMachineMigrate(targetNode="pve-node-1")
         with pytest.raises(BadRequestError):
-            crud.actions_migrate(sample_vm.id, db_session, request, obj_in=obj_in)
+            crud.actions_migrate(
+                sample_vm.id, db_session, request, obj_in=obj_in
+            )
 
     @patch(
         "controllers.virtual_machines.get_pve_node_info",
@@ -966,7 +1031,9 @@ class TestCRUDVirtualMachineActionsMigrate:
         request = create_mock_request(active_user)
         obj_in = VirtualMachineMigrate(targetNode="nonexistent-node")
         with pytest.raises(ProxmoxResourceNotFound):
-            crud.actions_migrate(sample_vm.id, db_session, request, obj_in=obj_in)
+            crud.actions_migrate(
+                sample_vm.id, db_session, request, obj_in=obj_in
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -1012,7 +1079,9 @@ class TestCRUDVirtualMachineActionsHaGet:
 
         mock_pve = MagicMock()
         mock_pve.proxmox.cluster.ha.resources.return_value.get.side_effect = (
-            ResourceException(status_code=404, status_message="Not Found", content="")
+            ResourceException(
+                status_code=404, status_message="Not Found", content=""
+            )
         )
         mock_pve_cls.return_value = mock_pve
 
@@ -1044,7 +1113,9 @@ class TestCRUDVirtualMachineActionsHaAdd:
         obj_in = VirtualMachineHaAdd(
             ha_state="started", ha_max_restart=5, ha_max_relocate=5
         )
-        result = crud.actions_ha_add(sample_vm.id, db_session, request, obj_in=obj_in)
+        result = crud.actions_ha_add(
+            sample_vm.id, db_session, request, obj_in=obj_in
+        )
         assert result is not None
 
         tasks = db_session.query(Task).all()
@@ -1090,7 +1161,9 @@ class TestCRUDVirtualMachineActionsHaRemove:
         assert result is not None
 
         tasks = db_session.query(Task).all()
-        assert any("Remove VirtualMachine from cluster HA" in t.name for t in tasks)
+        assert any(
+            "Remove VirtualMachine from cluster HA" in t.name for t in tasks
+        )
 
     def test_ha_remove_creates_subtask(
         self,
@@ -1148,7 +1221,9 @@ class TestCRUDVirtualMachineActionsPause:
         crud.actions_pause(db_session, request, id=sample_vm.id)
 
         changelogs = (
-            db_session.query(Changelog).filter(Changelog.objectId == sample_vm.id).all()
+            db_session.query(Changelog)
+            .filter(Changelog.objectId == sample_vm.id)
+            .all()
         )
         assert len(changelogs) >= 1
 
@@ -1200,7 +1275,9 @@ class TestCRUDVirtualMachineActionsReset:
         crud.actions_reset(db_session, request, id=sample_vm.id)
 
         changelogs = (
-            db_session.query(Changelog).filter(Changelog.objectId == sample_vm.id).all()
+            db_session.query(Changelog)
+            .filter(Changelog.objectId == sample_vm.id)
+            .all()
         )
         assert len(changelogs) >= 1
 
@@ -1248,7 +1325,9 @@ class TestCRUDVirtualMachineActionsReboot:
         crud.actions_reboot(db_session, request, id=sample_vm.id)
 
         changelogs = (
-            db_session.query(Changelog).filter(Changelog.objectId == sample_vm.id).all()
+            db_session.query(Changelog)
+            .filter(Changelog.objectId == sample_vm.id)
+            .all()
         )
         assert len(changelogs) >= 1
 
@@ -1306,7 +1385,9 @@ class TestCRUDVirtualMachineActionsShutdown:
         crud.actions_shutdown(db_session, request, id=sample_vm.id)
 
         changelogs = (
-            db_session.query(Changelog).filter(Changelog.objectId == sample_vm.id).all()
+            db_session.query(Changelog)
+            .filter(Changelog.objectId == sample_vm.id)
+            .all()
         )
         assert len(changelogs) >= 1
 
@@ -1368,7 +1449,9 @@ class TestCRUDVirtualMachineActionsResume:
         crud.actions_resume(db_session, request, id=paused_vm.id)
 
         changelogs = (
-            db_session.query(Changelog).filter(Changelog.objectId == paused_vm.id).all()
+            db_session.query(Changelog)
+            .filter(Changelog.objectId == paused_vm.id)
+            .all()
         )
         assert len(changelogs) >= 1
 
@@ -1810,7 +1893,9 @@ class TestCRUDVirtualMachineBulkMigrate:
 
     @patch(
         "controllers.virtual_machines.get_pve_node_info",
-        return_value={"node_list": [{"node": "pve-node-1"}, {"node": "pve-node-2"}]},
+        return_value={
+            "node_list": [{"node": "pve-node-1"}, {"node": "pve-node-2"}]
+        },
     )
     @patch("controllers.virtual_machines.ProxmoxCluster")
     def test_bulk_migrate_skips_same_node(
@@ -1828,7 +1913,9 @@ class TestCRUDVirtualMachineBulkMigrate:
         # sample_vm is on pve-node-1
         obj_in = VirtualMachineIdList(vms=[str(sample_vm.id)])
         with pytest.raises(BulkActionRequirementMissing):
-            crud.bulk_migrate(db_session, request, obj_in, target_node="pve-node-1")
+            crud.bulk_migrate(
+                db_session, request, obj_in, target_node="pve-node-1"
+            )
 
     @patch(
         "controllers.virtual_machines.get_pve_node_info",

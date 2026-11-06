@@ -212,6 +212,47 @@ Changes to **Name**, **Description**, or the **assigned environment** are no lon
 
 ---
 
+## Importing Participants via CSV {#import-participants}
+
+The **participant import** lets you add many **existing** users to an event in a single step by uploading a CSV file containing their email addresses.
+
+<NavigationHint
+  path="Events -> Detail view -> Participants -> Import"
+  alternative="Via the 'Import' button in the event's participants area"
+/>
+
+:::warning Adds existing users — does not create any
+The participant import looks up users **by their email address** (case-insensitive) and assigns them to the event with the **Participants (Students)** role. It **does not create new users**. Users who do not yet exist must first be created via the [user import](/docs/usage/openvle/access-control/users/#import-users).
+:::
+
+The import uses the same four-step wizard as the user import (Upload -> Map columns -> Preview & Import -> Result), but expects **only a single column**:
+
+<FieldReference
+  fields={[
+    {
+      name: 'email',
+      description:
+        'Required and the only column. Email address of an already existing user. Must contain an "@".',
+    },
+  ]}
+/>
+
+### Limits and result
+
+- Each import processes at most **200 rows**; a maximum file size of **5 MB** also applies.
+- After the import, the result view shows the outcome for each row. Common errors:
+  - **Invalid email** – the address does not contain an "@".
+  - **User not found** – no user exists for this email address (they must first be created via the user import).
+  - **Unknown error** – adding the user failed for some other reason.
+
+:::note
+The import is only available while participants may be changed (e.g. in the **Planned** or **Active** statuses). During the **Deploying** or **Archiving** statuses, it is disabled.
+:::
+
+The import requires editing the event (`events_update`) as well as viewing users (`users_read`, see [Required Permissions](#required-permissions)).
+
+---
+
 ## Deploying an Event
 
 1. Open the **Events** section in the main menu.

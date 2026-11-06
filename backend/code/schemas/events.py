@@ -1,7 +1,7 @@
 import re
 from datetime import date, datetime, time
 
-from pydantic import UUID4, BaseModel, ConfigDict, field_validator
+from pydantic import UUID4, BaseModel, ConfigDict, Field, field_validator
 
 from core.exceptions import InvalidFieldValue
 
@@ -12,33 +12,98 @@ from .virtual_machines import VirtualMachineIdOnly
 
 # Events base
 class EventBase(DBBase):
-    name: str | None = None
-    slug: str | None = None
-    description: str | None = None
-    dateStart: date | None = None
-    dateEnd: date | None = None
-    timeStart: time | None = None
-    timeEnd: time | None = None
-    guacamole: bool | None = False
-    status: UUID4 | None = None
-    course: UUID4 | None = None
-    templates: list[TemplateNested] | None = None
-    vms: list[VirtualMachineIdOnly] | None = None
+    """Base schema for event objects with common scheduling and status fields."""
+
+    name: str | None = Field(None, description="Display name of the event")
+    slug: str | None = Field(
+        None,
+        description="Short unique slug (4-8 lowercase alphanumeric characters)",
+    )
+    description: str | None = Field(
+        None, description="Optional description of the event"
+    )
+    dateStart: date | None = Field(
+        None, description="Start date of the event in YYYY-MM-DD format"
+    )
+    dateEnd: date | None = Field(
+        None, description="End date of the event in YYYY-MM-DD format"
+    )
+    timeStart: time | None = Field(
+        None, description="Daily start time of the event"
+    )
+    timeEnd: time | None = Field(
+        None, description="Daily end time of the event"
+    )
+    guacamole: bool | None = Field(
+        False,
+        description="Whether Guacamole remote access is enabled for the event",
+    )
+    status: UUID4 | None = Field(
+        None, description="ID of the event status object"
+    )
+    course: UUID4 | None = Field(
+        None, description="ID of the associated course"
+    )
+    templates: list[TemplateNested] | None = Field(
+        None, description="Templates linked to the event"
+    )
+    vms: list[VirtualMachineIdOnly] | None = Field(
+        None, description="Virtual machines linked to the event"
+    )
     model_config = ConfigDict(from_attributes=True)
 
 
 # Properties to receive via API on creation
 class EventCreate(DBBaseCreate):
-    name: str
-    slug: str
-    description: str | None = None
-    dateStart: date = datetime.now().date()
-    dateEnd: date | None = datetime.now().date()
-    timeStart: time = datetime.now().strftime("%H:%M:%S")
-    timeEnd: time | None = datetime.now().strftime("%H:%M:%S")
-    guacamole: bool = False
-    status: UUID4
-    course: UUID4
+    """Payload for creating a new event."""
+
+    name: str = Field(..., description="Display name of the event")
+    slug: str = Field(
+        ...,
+        description="Short unique slug (4-8 lowercase alphanumeric characters)",
+    )
+    description: str | None = Field(
+        None, description="Optional description of the event"
+    )
+    dateStart: date = Field(
+        datetime.now().date(),
+        description="Start date of the event in YYYY-MM-DD format",
+    )
+    dateEnd: date | None = Field(
+        datetime.now().date(),
+        description="End date of the event in YYYY-MM-DD format",
+    )
+    timeStart: time = Field(
+        datetime.now().strftime("%H:%M:%S"),
+        description="Daily start time of the event",
+    )
+    timeEnd: time | None = Field(
+        datetime.now().strftime("%H:%M:%S"),
+        description="Daily end time of the event",
+    )
+    guacamole: bool = Field(
+        False,
+        description="Whether Guacamole remote access is enabled for the event",
+    )
+    status: UUID4 = Field(..., description="ID of the event status object")
+    course: UUID4 = Field(..., description="ID of the associated course")
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "name": "Linux Grundlagen WS24",
+                "slug": "lin24",
+                "description": "Veranstaltung zu den Grundlagen von Linux",
+                "dateStart": "2025-04-01",
+                "dateEnd": "2025-07-31",
+                "timeStart": "08:00:00",
+                "timeEnd": "18:00:00",
+                "guacamole": True,
+                "status": "53b6993a-57d6-40a6-8d42-e55bf08fac4c",
+                "course": "00000000-0000-0000-0000-000000000001",
+            }
+        }
+    )
 
     # Validate dateStart and dateEnd
     @field_validator("dateStart", "dateEnd", mode="before")
@@ -78,13 +143,31 @@ class EventCreate(DBBaseCreate):
 
 # Properties to receive via API on update
 class EventUpdate(DBBaseUpdate):
-    name: str | None = None
-    description: str | None = None
-    dateStart: date | None = datetime.now().date()
-    dateEnd: date | None = datetime.now().date()
-    timeStart: time | None = datetime.now().strftime("%H:%M:%S")
-    timeEnd: time | None = datetime.now().strftime("%H:%M:%S")
-    course: UUID4 | None = None
+    """Payload for updating an existing event's details."""
+
+    name: str | None = Field(None, description="Display name of the event")
+    description: str | None = Field(
+        None, description="Optional description of the event"
+    )
+    dateStart: date | None = Field(
+        datetime.now().date(),
+        description="Start date of the event in YYYY-MM-DD format",
+    )
+    dateEnd: date | None = Field(
+        datetime.now().date(),
+        description="End date of the event in YYYY-MM-DD format",
+    )
+    timeStart: time | None = Field(
+        datetime.now().strftime("%H:%M:%S"),
+        description="Daily start time of the event",
+    )
+    timeEnd: time | None = Field(
+        datetime.now().strftime("%H:%M:%S"),
+        description="Daily end time of the event",
+    )
+    course: UUID4 | None = Field(
+        None, description="ID of the associated course"
+    )
 
     # Validate dateStart and dateEnd
     @field_validator("dateStart", "dateEnd", mode="before")
@@ -103,8 +186,16 @@ class EventUpdate(DBBaseUpdate):
 
 # Properties to receive via API on update
 class EventUpdateEndDateTime(DBBaseUpdate):
-    dateEnd: date = datetime.now().date()
-    timeEnd: time = datetime.now().strftime("%H:%M:%S")
+    """Payload for updating only the end date and time of an event."""
+
+    dateEnd: date = Field(
+        datetime.now().date(),
+        description="New end date of the event in YYYY-MM-DD format",
+    )
+    timeEnd: time = Field(
+        datetime.now().strftime("%H:%M:%S"),
+        description="New daily end time of the event",
+    )
 
     # Validate dateEnd
     @field_validator("dateEnd", mode="before")
@@ -123,15 +214,25 @@ class EventUpdateEndDateTime(DBBaseUpdate):
 
 # Properties to receive via API on updateTemplate
 class EventUpdateTemplate(DBBaseUpdate):
-    templates: list[TemplateIdOnly]
+    """Payload for replacing the templates assigned to an event."""
+
+    templates: list[TemplateIdOnly] = Field(
+        ..., description="List of template IDs to assign to the event"
+    )
 
 
 # Properties to receive via API on updateTemplate
 class EventUpdateVirtualMachine(DBBaseUpdate):
-    vms: list[VirtualMachineIdOnly]
+    """Payload for replacing the virtual machines assigned to an event."""
+
+    vms: list[VirtualMachineIdOnly] = Field(
+        ..., description="List of virtual machine IDs to assign to the event"
+    )
 
 
 class EventInDBBase(EventBase):
+    """Internal event schema with required ID field."""
+
     id: UUID4
 
     model_config = ConfigDict(from_attributes=True)
@@ -139,58 +240,90 @@ class EventInDBBase(EventBase):
 
 # Main class used as response model
 class Event(EventInDBBase):
+    """Full event response schema including templates, VMs, and deployment status."""
+
     templates: list[TemplateIdOnly] | None = None
     vms: list[VirtualMachineIdOnly] | None = None
-    moodleCourseId: int | None = None
-    deployment_status: str | None = None
+    moodleCourseId: int | None = Field(
+        None, description="Associated Moodle course ID, if any"
+    )
+    deployment_status: str | None = Field(
+        None, description="Current VM deployment status for the event"
+    )
     model_config = ConfigDict(from_attributes=True)
 
 
 # User's Event response model
 class UserInEvent(DBBaseUpdate):
+    """Event data as seen by an enrolled user, including their role IDs."""
+
     id: UUID4
-    name: str
-    slug: str
-    description: str | None = None
-    status: UUID4
-    course: UUID4
-    role_ids: list
+    name: str = Field(..., description="Display name of the event")
+    slug: str = Field(..., description="Short unique slug of the event")
+    description: str | None = Field(
+        None, description="Optional description of the event"
+    )
+    status: UUID4 = Field(..., description="ID of the event status object")
+    course: UUID4 = Field(..., description="ID of the associated course")
+    role_ids: list = Field(
+        ..., description="List of role IDs assigned to the user in this event"
+    )
 
     model_config = ConfigDict(from_attributes=True)
 
 
 # Class used for when Event is to appear as a nested model and will display key and name
 class EventNested(DBBaseUpdate):
-    name: str
-    slug: str
-    status: UUID4
-    dateStart: datetime
+    """Minimal event schema for nested references, shows name, slug, status, and start date."""
+
+    name: str = Field(..., description="Display name of the event")
+    slug: str = Field(..., description="Short unique slug of the event")
+    status: UUID4 = Field(..., description="ID of the event status object")
+    dateStart: datetime = Field(
+        ..., description="Start date and time of the event"
+    )
 
     model_config = ConfigDict(from_attributes=True)
 
 
 # VM bulk-action: Migrate
 class EventVirtualMachinesMigrate(DBBaseUpdate):
-    targetNode: str
+    """Payload for bulk-migrating all VMs in an event to a different Proxmox node."""
+
+    targetNode: str = Field(
+        ..., description="Name of the target Proxmox node to migrate VMs to"
+    )
 
 
 # VM bulk-action: HA_Add
 class EventVirtualMachinesHaAdd(DBBaseUpdate):
-    ha_state: str = "started"
-    ha_max_restart: int = 5
-    ha_max_relocate: int = 5
+    """Payload for adding all VMs in an event to Proxmox HA."""
+
+    ha_state: str = Field(
+        "started", description="Desired HA state for the VMs, e.g. started"
+    )
+    ha_max_restart: int = Field(
+        5, description="Maximum number of HA restart attempts"
+    )
+    ha_max_relocate: int = Field(
+        5, description="Maximum number of HA relocation attempts"
+    )
 
     model_config = ConfigDict(from_attributes=True)
 
 
 # List object of Event
 class EventList(BaseModel):
+    """Paginated list of event objects."""
+
     pageDetails: PaginationPageDetails
     items: list[Event]
 
 
 # List object of UserInEvent
 class UserInEventList(BaseModel):
+    """Paginated list of events as seen by an enrolled user."""
+
     pageDetails: PaginationPageDetails
     items: list[UserInEvent]
 

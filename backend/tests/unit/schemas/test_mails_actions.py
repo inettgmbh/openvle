@@ -1,8 +1,7 @@
 """Tests for schemas/mails_actions.py - MailAction schema validation."""
 
-from pydantic import ValidationError
 import pytest
-
+from pydantic import ValidationError
 from schemas.mails_actions import MailActionCreate
 
 

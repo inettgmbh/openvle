@@ -10,7 +10,6 @@ from datetime import datetime, timezone
 
 import httpx
 import pytest
-
 from core.config import Settings
 
 # Shared fixtures (system_user, active_user, mock_permission_allow, etc.)
@@ -101,19 +100,18 @@ def client(db_session, system_user, active_user, monkeypatch):
     monkeypatch.setattr(schemas_users_mod, "SessionLocal", factory)
 
     # Build the FastAPI app
+    from core.dependencies import get_db
+    from core.exception_handler import http_exception_handler
     from fastapi import FastAPI
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi_pagination import add_pagination
-    from starlette.exceptions import HTTPException
-    from starlette.middleware.authentication import AuthenticationMiddleware
-    from starlette.middleware.sessions import SessionMiddleware
-
-    from core.dependencies import get_db
-    from core.exception_handler import http_exception_handler
     from middlewares.authentication import AuthBackend
     from middlewares.language import LanguageMiddleware
     from middlewares.logging import activityLogging
     from routes import app_router, misc
+    from starlette.exceptions import HTTPException
+    from starlette.middleware.authentication import AuthenticationMiddleware
+    from starlette.middleware.sessions import SessionMiddleware
 
     app = FastAPI()
     app.add_exception_handler(HTTPException, http_exception_handler)

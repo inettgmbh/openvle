@@ -19,6 +19,7 @@ import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import UnsavedChangesModal from '@/components/UnsavedChangesModal.vue'
 import { useUnsavedChanges } from '@/composables/useUnsavedChanges'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -120,6 +121,7 @@ role.value.key = computed(() =>
           <FormControl
             v-model="role.name"
             :icon="mdiRename"
+            :maxlength="FIELD_LIMITS.role.name"
             :placeholder="$t('views.roles.form.namePlaceholder')"
             required
           />
@@ -133,6 +135,7 @@ role.value.key = computed(() =>
           <FormControl
             v-model="role.key"
             :icon="mdiKey"
+            :maxlength="FIELD_LIMITS.role.key"
             :placeholder="$t('views.roles.form.keyPlaceholder')"
             required
             readonly
@@ -143,7 +146,11 @@ role.value.key = computed(() =>
           :label="$t('common.description')"
           :help="$t('views.roles.form.descriptionHelp')"
         >
-          <FormControl v-model="role.description" :icon="mdiTextBox" />
+          <FormControl
+            v-model="role.description"
+            :icon="mdiTextBox"
+            :maxlength="FIELD_LIMITS.role.description"
+          />
         </FormField>
 
         <template #footer>

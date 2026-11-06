@@ -4,8 +4,6 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-from jose import jwt
-
 from core.auth import (
     authenticate,
     create_access_token,
@@ -15,6 +13,7 @@ from core.auth import (
 )
 from core.config import Settings
 from core.exceptions import BadRequestError, IncorrectCredentials
+from jose import jwt
 from models import User
 
 settings = Settings()
@@ -65,7 +64,9 @@ class TestPasswordHashing:
         # Pre-computed $2b$ bcrypt hash of "testpassword123". passlib (now
         # removed) produced this same format, so existing DB rows hashed
         # before the migration must continue to verify.
-        fixed_hash = "$2b$12$hWVjRPaaPt3hXGPmuSGqtenU.jU.2iJZ6F3I0L8FnecRwft.pd452"
+        fixed_hash = (
+            "$2b$12$hWVjRPaaPt3hXGPmuSGqtenU.jU.2iJZ6F3I0L8FnecRwft.pd452"
+        )
         assert verify_password("testpassword123", fixed_hash)
         assert not verify_password("wrongpassword", fixed_hash)
 
@@ -172,11 +173,15 @@ class TestAuthenticate:
         db_session.add(user)
         db_session.flush()
 
-        result = authenticate(username="authuser", password=password, db=db_session)
+        result = authenticate(
+            username="authuser", password=password, db=db_session
+        )
         assert result is not None
         assert result.username == "authuser"
 
-    def test_wrong_password_raises_incorrect_credentials(self, db_session, system_user):
+    def test_wrong_password_raises_incorrect_credentials(
+        self, db_session, system_user
+    ):
         password = "correctpass"
         hashed = get_password_hash(password)
         now = datetime.now(timezone.utc)
@@ -197,7 +202,9 @@ class TestAuthenticate:
         db_session.flush()
 
         with pytest.raises(IncorrectCredentials):
-            authenticate(username="authuser2", password="wrongpass", db=db_session)
+            authenticate(
+                username="authuser2", password="wrongpass", db=db_session
+            )
 
     def test_nonexistent_user_raises_incorrect_credentials(self, db_session):
         with pytest.raises(IncorrectCredentials):

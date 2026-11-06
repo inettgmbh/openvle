@@ -2,9 +2,8 @@
 
 import uuid
 
-from pydantic import ValidationError
 import pytest
-
+from pydantic import ValidationError
 from schemas.courses import CourseCreate, CourseUpdate, CourseUpdateTemplate
 
 

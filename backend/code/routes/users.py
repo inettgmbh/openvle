@@ -10,6 +10,13 @@ from core.exceptions import (
     RequiredParameterMissingError,
     UserAlreadyRegisteredException,
 )
+from core.responses import (
+    BASE_RESPONSES,
+    CRUD_RESPONSES,
+    READ_RESPONSES,
+    WRITE_RESPONSES,
+    build_description,
+)
 from models import Guacamole as GuacamoleModel, User
 from schemas.events import UserInEventList
 from schemas.guacamole import GuacamoleList
@@ -19,7 +26,7 @@ from schemas.virtual_machines import VirtualMachineList
 router = APIRouter(
     prefix="/users",
     tags=["users"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -29,8 +36,16 @@ router = APIRouter(
     status_code=201,
     response_model=User,
     operation_id="users_create",
+    responses=CRUD_RESPONSES,
     summary="Create User",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Creates a new user account.",
+        permission="users_create",
+        notes=[
+            "Returns 409 if the username or email address is already registered.",
+        ],
+    ),
 )
 def create_user(
     *,
@@ -66,6 +81,14 @@ def create_user(
     operation_id="users_read_all",
     summary="Get Users",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a paginated list of users.",
+        permission=["users_read", "users_search"],
+        notes=[
+            "With `users_read`: returns the full `User` schema with no search restrictions.",
+            "With `users_search` only: returns the limited `UserSearch` schema. Requires `search_field` and `search_value`. Results are capped at 25 and always return page 1 to prevent enumeration.",
+        ],
+    ),
 )
 def get_users(
     request: Request,
@@ -142,8 +165,13 @@ def get_users(
     status_code=200,
     response_model=User,
     operation_id="users_read_one",
+    responses=READ_RESPONSES,
     summary="Get User",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a single user by ID.",
+        permission="users_read",
+    ),
 )
 def get_user(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -162,8 +190,16 @@ def get_user(
     status_code=200,
     response_model=User,
     operation_id="users_update",
+    responses=CRUD_RESPONSES,
     summary="Update User",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Updates a user's profile.",
+        permission="users_update",
+        notes=[
+            "Returns 409 if the new email address is already in use by a different user.",
+        ],
+    ),
 )
 def update_user(
     *,
@@ -192,8 +228,13 @@ def update_user(
     "/{id}",
     status_code=200,
     operation_id="users_delete",
+    responses=WRITE_RESPONSES,
     summary="Delete User",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Deletes a user by ID.",
+        permission="users_delete",
+    ),
 )
 def delete_user(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -211,9 +252,14 @@ def delete_user(
     "/{id}/delete-preview",
     status_code=200,
     operation_id="users_delete_preview",
+    responses=READ_RESPONSES,
     summary="Preview objects to be deleted along with User upon User deletion",
     response_model=UserDeletePreview,
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a preview of all objects that will be cascade-deleted when this user is deleted.",
+        permission="users_delete",
+    ),
 )
 def user_delete_preview(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -231,8 +277,13 @@ def user_delete_preview(
     "/{id}/password",
     status_code=201,
     operation_id="users_set_password",
+    responses=WRITE_RESPONSES,
     summary="Set user password",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Sets a new password for a user.",
+        permission="users_set_password",
+    ),
 )
 def update_password(
     *,
@@ -257,8 +308,16 @@ def update_password(
     status_code=200,
     response_model=User,
     operation_id="users_roles_put",
+    responses=WRITE_RESPONSES,
     summary="Set User Roles",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Replaces all role assignments for a user.",
+        permission="users_update",
+        notes=[
+            "This overwrites all existing role assignments — use POST to append instead.",
+        ],
+    ),
 )
 def set_user_roles(
     *,
@@ -283,8 +342,13 @@ def set_user_roles(
     status_code=200,
     response_model=User,
     operation_id="users_roles_update",
+    responses=WRITE_RESPONSES,
     summary="Update User Roles",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Appends role assignments to a user without removing existing ones.",
+        permission="users_update",
+    ),
 )
 def update_user_roles(
     *,
@@ -308,8 +372,13 @@ def update_user_roles(
     "/{id}/permissions",
     status_code=200,
     operation_id="users_permissions_read_all",
+    responses=READ_RESPONSES,
     summary="Get User Permissions",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns the full effective permission set for a user.",
+        permission="users_read",
+    ),
 )
 def get_user_permissions(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -328,8 +397,13 @@ def get_user_permissions(
     status_code=200,
     response_model=GuacamoleList,
     operation_id="users_guacamole_read_all",
+    responses=READ_RESPONSES,
     summary="Get all Guacamole associated with User",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all Guacamole connection records associated with a user.",
+        permission="users_read",
+    ),
 )
 def get_user_guacamole(
     request: Request,
@@ -377,8 +451,16 @@ def get_user_guacamole(
     status_code=200,
     response_model=UserInEventList,
     operation_id="users_events_read_all",
+    responses=READ_RESPONSES,
     summary="Get all Events associated with User",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all events the user is enrolled in.",
+        permission="users_read",
+        notes=[
+            "Also accessible by the user themselves without `users_read`.",
+        ],
+    ),
 )
 def get_user_events(
     request: Request,
@@ -417,8 +499,16 @@ def get_user_events(
     status_code=200,
     response_model=VirtualMachineList,
     operation_id="users_vms_read_all",
+    responses=READ_RESPONSES,
     summary="Get all VirtualMachines associated with User",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all virtual machines assigned to a user.",
+        permission="users_read",
+        notes=[
+            "Also accessible by the user themselves without `users_read`.",
+        ],
+    ),
 )
 def get_user_vms(
     request: Request,

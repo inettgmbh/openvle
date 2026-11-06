@@ -26,8 +26,9 @@ def sample_object_permission(db_session, system_user, active_user):
 @pytest.fixture()
 def sample_course_for_perm(db_session, system_user):
     """Create a course that can be referenced by object permissions."""
-    from models import Course
     from datetime import datetime, timezone
+
+    from models import Course
 
     now = datetime.now(timezone.utc)
     course = Course(
@@ -174,7 +175,9 @@ class TestGetObjectPermissionById:
         assert data["object_type"] == "Course"
         assert data["permission_key"] == "object_full"
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(
             f"{API}/object-permissions/{fake_id}",

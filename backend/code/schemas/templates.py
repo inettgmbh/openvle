@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import UUID4, BaseModel, ConfigDict, field_validator
+from pydantic import UUID4, BaseModel, ConfigDict, Field, field_validator
 
 from core.core_utils import sanitize_dns_name
 from core.exceptions import InvalidFieldValue
@@ -11,28 +11,60 @@ from .base import DBBase, DBBaseCreate, DBBaseUpdate, PaginationPageDetails
 
 # Base Template class
 class TemplateBase(DBBase):
-    name: str | None = None
-    description: str | None = None
-    status: str | None = None
-    proxmoxNode: str | None = None
-    proxmoxId: int | None = None
-    cpu: int | None = None
-    ram: int | None = None
-    disk: int | None = None
-    os: UUID4 | None = None
-    prevent_delete: bool | None = None
+    """Base schema for VM template objects with hardware and status fields."""
+
+    name: str | None = Field(None, description="Display name of the template")
+    description: str | None = Field(
+        None, description="Optional description of the template"
+    )
+    status: str | None = Field(
+        None, description="Current status of the template in Proxmox"
+    )
+    proxmoxNode: str | None = Field(
+        None, description="Proxmox node where the template resides"
+    )
+    proxmoxId: int | None = Field(
+        None, description="Proxmox VM ID of the template"
+    )
+    cpu: int | None = Field(None, description="Number of vCPUs assigned (1-24)")
+    ram: int | None = Field(
+        None, description="RAM in MB assigned (1024-268270)"
+    )
+    disk: int | None = Field(
+        None, description="Disk size in GB assigned to the template"
+    )
+    os: UUID4 | None = Field(
+        None,
+        description="ID of the operating system associated with the template",
+    )
+    prevent_delete: bool | None = Field(
+        None, description="If true, deletion of this template is blocked"
+    )
     model_config = ConfigDict(from_attributes=True)
 
 
 # Properties to receive via API on creation
 class TemplateCreate(DBBaseCreate):
-    source_vm: UUID4
-    name: str
-    description: str | None = None
-    cpu: int
-    ram: int
-    disk: int
-    prevent_delete: bool | None = False
+    """Payload for creating a new VM template from an existing VM."""
+
+    source_vm: UUID4 = Field(
+        ...,
+        description="ID of the source virtual machine to clone as a template",
+    )
+    name: str = Field(
+        ..., description="Display name of the template (Proxmox DNS-safe)"
+    )
+    description: str | None = Field(
+        None, description="Optional description of the template (max 999 chars)"
+    )
+    cpu: int = Field(..., description="Number of vCPUs to assign (1-24)")
+    ram: int = Field(..., description="RAM in MB to assign (1024-268270)")
+    disk: int = Field(
+        ..., description="Disk size in GB to assign to the template"
+    )
+    prevent_delete: bool | None = Field(
+        False, description="If true, deletion of this template is blocked"
+    )
 
     # Validate name field according to Proxmox limitations
     @field_validator("name")
@@ -70,17 +102,45 @@ class TemplateCreate(DBBaseCreate):
             )
         return val
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "example": {
+                "source_vm": "00000000-0000-0000-0000-000000000001",
+                "name": "ubuntu-22-04-base",
+                "description": "Ubuntu 22.04 Basisvorlage",
+                "cpu": 2,
+                "ram": 4096,
+                "disk": 32,
+                "prevent_delete": True,
+            }
+        },
+    )
 
 
 # Properties to receive via API on update
 class TemplateUpdate(DBBaseUpdate):
-    name: str | None = None
-    description: str | None = None
-    cpu: int | None = None
-    ram: int | None = None
-    os: UUID4 | None = None
-    prevent_delete: bool | None = None
+    """Payload for updating an existing VM template's configuration."""
+
+    name: str | None = Field(
+        None, description="Display name of the template (Proxmox DNS-safe)"
+    )
+    description: str | None = Field(
+        None, description="Optional description of the template (max 999 chars)"
+    )
+    cpu: int | None = Field(
+        None, description="Number of vCPUs to assign (1-24)"
+    )
+    ram: int | None = Field(
+        None, description="RAM in MB to assign (1024-268270)"
+    )
+    os: UUID4 | None = Field(
+        None,
+        description="ID of the operating system associated with the template",
+    )
+    prevent_delete: bool | None = Field(
+        None, description="If true, deletion of this template is blocked"
+    )
 
     # Validate name field according to Proxmox limitations
     @field_validator("name")
@@ -123,10 +183,16 @@ class TemplateUpdate(DBBaseUpdate):
 
 # Properties to receive via API on updateApps
 class TemplateUpdateApps(DBBaseUpdate):
-    apps: list[Application] | None = None
+    """Payload for replacing the applications linked to a template."""
+
+    apps: list[Application] | None = Field(
+        None, description="List of application keys to assign to the template"
+    )
 
 
 class TemplateInDBBase(TemplateBase):
+    """Internal template schema with required ID field."""
+
     id: UUID4
 
     model_config = ConfigDict(from_attributes=True)
@@ -134,6 +200,8 @@ class TemplateInDBBase(TemplateBase):
 
 # Main class used as response model
 class Template(TemplateInDBBase):
+    """Full template response schema including status, apps, and Proxmox details."""
+
     status: str | None = None
     apps: list[Application] | None = None
     os: UUID4 | None = None
@@ -144,19 +212,25 @@ class Template(TemplateInDBBase):
 
 # Additional properties to return via API
 class TemplateIdOnly(DBBaseUpdate):
-    id: UUID4
+    """Minimal template schema returning only the UUID."""
+
+    id: UUID4 = Field(..., description="Unique identifier of the template")
 
     model_config = ConfigDict(from_attributes=True)
 
 
 # Additional properties to return via API
 class TemplateNested(DBBaseUpdate):
-    name: str
+    """Minimal template schema for nested references, shows name only."""
+
+    name: str = Field(..., description="Display name of the template")
 
     model_config = ConfigDict(from_attributes=True)
 
 
 # List object of Template
 class TemplateList(BaseModel):
+    """Paginated list of template objects."""
+
     pageDetails: PaginationPageDetails
     items: list[Template]

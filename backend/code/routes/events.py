@@ -3,6 +3,14 @@ from fastapi import APIRouter, Depends
 from controllers.events import *
 from core import dependencies
 from core.exceptions import DuplicateFieldException, PermissionDenied
+from core.responses import (
+    BASE_RESPONSES,
+    CRUD_RESPONSES,
+    DELETE_RESPONSES,
+    READ_RESPONSES,
+    WRITE_RESPONSES,
+    build_description,
+)
 from models import (
     Event as EventModel,
     EventsUser as EventsUserModel,
@@ -21,7 +29,7 @@ from schemas.virtual_machines import VirtualMachineList
 router = APIRouter(
     prefix="/events",
     tags=["events"],
-    responses={404: {"detail": "Not found"}},
+    responses=BASE_RESPONSES,
 )
 
 
@@ -31,8 +39,18 @@ router = APIRouter(
     status_code=201,
     response_model=Event,
     operation_id="events_create",
+    responses=CRUD_RESPONSES,
     summary="Create Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Creates a new event in the planned state.",
+        permission="events_create",
+        notes=[
+            "Creator is automatically granted `object_full` permission on the new event.",
+            "Event is initialized with `Geplant` status — required before a start can be triggered.",
+            "The referenced course must be fully configured for deployment to succeed when the event is started.",
+        ],
+    ),
 )
 def create_events(
     *,
@@ -65,6 +83,10 @@ def create_events(
     operation_id="events_read_all",
     summary="Get Events",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a paginated list of all events visible to the requesting user.",
+        permission="events_read",
+    ),
 )
 def get_events(
     request: Request,
@@ -107,8 +129,13 @@ def get_events(
     status_code=200,
     response_model=EventStatusReport,
     operation_id="events_read_status",
+    responses=READ_RESPONSES,
     summary="Get Event Status Report",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a status report for an event including VM counts, Guacamole connection stats, and task progress.",
+        permission="events_read",
+    ),
 )
 def get_event_status(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -127,8 +154,13 @@ def get_event_status(
     status_code=200,
     response_model=Event,
     operation_id="events_read_one",
+    responses=READ_RESPONSES,
     summary="Get Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns a single event by ID.",
+        permission="events_read",
+    ),
 )
 def get_event(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -147,8 +179,16 @@ def get_event(
     status_code=200,
     response_model=Event,
     operation_id="events_update",
+    responses=CRUD_RESPONSES,
     summary="Update Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Updates event metadata.",
+        permission="events_update",
+        notes=[
+            "Blocked if the event has been started — allowed only in `Geplant`, `Core Fehler`, or `Deployment Fehler` status.",
+        ],
+    ),
 )
 def update_event(
     *,
@@ -177,8 +217,16 @@ def update_event(
     status_code=200,
     response_model=Event,
     operation_id="events_update_end",
+    responses=WRITE_RESPONSES,
     summary="Update Event end date/time",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Updates the end date and time of an event.",
+        permission="events_update",
+        notes=[
+            "Allowed in `Geplant`, `Core Fehler`, and `Aktiv` status — the only update permitted on a running event.",
+        ],
+    ),
 )
 def update_event_end(
     *,
@@ -202,8 +250,13 @@ def update_event_end(
     "/{id}",
     status_code=200,
     operation_id="events_delete",
+    responses=DELETE_RESPONSES,
     summary="Delete Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Deletes an event by ID.",
+        permission="events_delete",
+    ),
 )
 def delete_events(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -222,8 +275,13 @@ def delete_events(
     status_code=201,
     response_model=EventsUser,
     operation_id="events_users_add",
+    responses=WRITE_RESPONSES,
     summary="Add User to Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Adds a user/role combination to an event.",
+        permission="events_update",
+    ),
 )
 def add_events_user(
     *,
@@ -248,8 +306,13 @@ def add_events_user(
     status_code=200,
     response_model=EventsUserList,
     operation_id="events_users_read_all",
+    responses=READ_RESPONSES,
     summary="Get all Users associated with Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all user/role combinations associated with an event.",
+        permission="events_read",
+    ),
 )
 def get_events_users(
     request: Request,
@@ -296,8 +359,13 @@ def get_events_users(
     "/{id}/users/{user_id}/roles/{role_id}",
     status_code=200,
     operation_id="events_user_delete",
+    responses=WRITE_RESPONSES,
     summary="Remove User/Role combination from Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Removes a specific user/role combination from an event.",
+        permission="events_update",
+    ),
 )
 def delete_event_user(
     *,
@@ -327,8 +395,13 @@ def delete_event_user(
     status_code=200,
     response_model=MailList,
     operation_id="events_mails_read_all",
+    responses=READ_RESPONSES,
     summary="Get all Mails associated with Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all mail records associated with an event.",
+        permission="events_read",
+    ),
 )
 def get_events_mails(
     request: Request,
@@ -376,8 +449,13 @@ def get_events_mails(
     status_code=200,
     response_model=TemplateList,
     operation_id="events_templates_read_all",
+    responses=READ_RESPONSES,
     summary="Get all Templates associated with Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all templates linked to an event.",
+        permission="events_read",
+    ),
 )
 def get_events_templates(
     request: Request,
@@ -431,8 +509,16 @@ def get_events_templates(
     status_code=200,
     response_model=Event,
     operation_id="events_templates_add",
+    responses=WRITE_RESPONSES,
     summary="Add Templates to Event. If the Event is active, VirtualMachines are deployed for new Template.",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Links one or more templates to an event. If the event is currently active, virtual machines are asynchronously deployed for any newly added templates.",
+        permission="events_templates_update",
+        notes=[
+            "Each added template must have a valid `proxmoxId` for VM deployment to succeed when the event is active.",
+        ],
+    ),
 )
 def add_events_templates(
     request: Request,
@@ -456,8 +542,13 @@ def add_events_templates(
     status_code=200,
     response_model=VirtualMachineList,
     operation_id="events_virtual_machines_read_all",
+    responses=READ_RESPONSES,
     summary="Get all VirtualMachine associated with Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all virtual machines associated with an event.",
+        permission="events_read",
+    ),
 )
 def get_events_virtual_machines(
     request: Request,
@@ -505,8 +596,13 @@ def get_events_virtual_machines(
     status_code=201,
     response_model=Event,
     operation_id="events_virtual_machines_add",
+    responses=WRITE_RESPONSES,
     summary="Add VirtualMachine to Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Associates an existing virtual machine with an event.",
+        permission="events_update",
+    ),
 )
 def add_events_virtual_machines(
     *,
@@ -531,8 +627,13 @@ def add_events_virtual_machines(
     status_code=200,
     response_model=Event,
     operation_id="events_virtual_machines_delete",
+    responses=WRITE_RESPONSES,
     summary="Delete VirtualMachine from Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Removes a virtual machine association from an event.",
+        permission="events_update",
+    ),
 )
 def delete_event_virtual_machines(
     *,
@@ -556,8 +657,14 @@ def delete_event_virtual_machines(
     "/{id}/virtual-machines/bulk-actions/start",
     status_code=200,
     operation_id="events_virtual_machines_bulk_actions_start",
+    responses=WRITE_RESPONSES,
     summary="Start all VirtualMachines related to an Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Enqueues a start operation for all virtual machines associated with an event.",
+        permission="events_update",
+        is_async=True,
+    ),
 )
 def events_virtual_machines_bulk_actions_start(
     request: Request,
@@ -579,8 +686,14 @@ def events_virtual_machines_bulk_actions_start(
     "/{id}/virtual-machines/bulk-actions/stop",
     status_code=200,
     operation_id="events_virtual_machines_bulk_actions_stop",
+    responses=WRITE_RESPONSES,
     summary="Stop all VirtualMachines related to an Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Enqueues a stop operation for all virtual machines associated with an event.",
+        permission="events_update",
+        is_async=True,
+    ),
 )
 def events_virtual_machines_bulk_actions_stop(
     request: Request,
@@ -602,8 +715,14 @@ def events_virtual_machines_bulk_actions_stop(
     "/{id}/virtual-machines/bulk-actions/pause",
     status_code=200,
     operation_id="events_virtual_machines_bulk_actions_pause",
+    responses=WRITE_RESPONSES,
     summary="Pause all VirtualMachines related to an Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Enqueues a pause operation for all virtual machines associated with an event.",
+        permission="events_update",
+        is_async=True,
+    ),
 )
 def events_virtual_machines_bulk_actions_pause(
     request: Request,
@@ -625,8 +744,14 @@ def events_virtual_machines_bulk_actions_pause(
     "/{id}/virtual-machines/bulk-actions/reset",
     status_code=200,
     operation_id="events_virtual_machines_bulk_actions_reset",
+    responses=WRITE_RESPONSES,
     summary="Reset all VirtualMachines related to an Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Enqueues a hard reset for all virtual machines associated with an event.",
+        permission="events_update",
+        is_async=True,
+    ),
 )
 def events_virtual_machines_bulk_actions_reset(
     *,
@@ -649,8 +774,14 @@ def events_virtual_machines_bulk_actions_reset(
     "/{id}/virtual-machines/bulk-actions/reboot",
     status_code=200,
     operation_id="events_virtual_machines_bulk_actions_reboot",
+    responses=WRITE_RESPONSES,
     summary="Reboot all VirtualMachines related to an Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Enqueues a graceful reboot for all virtual machines associated with an event.",
+        permission="events_update",
+        is_async=True,
+    ),
 )
 def events_virtual_machines_bulk_actions_reboot(
     *,
@@ -673,8 +804,14 @@ def events_virtual_machines_bulk_actions_reboot(
     "/{id}/virtual-machines/bulk-actions/shutdown",
     status_code=200,
     operation_id="events_virtual_machines_bulk_actions_shutdown",
+    responses=WRITE_RESPONSES,
     summary="Shutdown all VirtualMachines related to an Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Enqueues a graceful shutdown for all virtual machines associated with an event.",
+        permission="events_update",
+        is_async=True,
+    ),
 )
 def events_virtual_machines_bulk_actions_shutdown(
     *,
@@ -697,8 +834,14 @@ def events_virtual_machines_bulk_actions_shutdown(
     "/{id}/virtual-machines/bulk-actions/resume",
     status_code=200,
     operation_id="events_virtual_machines_bulk_actions_resume",
+    responses=WRITE_RESPONSES,
     summary="Resume all VirtualMachines related to an Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Enqueues a resume operation for all paused virtual machines associated with an event.",
+        permission="events_update",
+        is_async=True,
+    ),
 )
 def events_virtual_machines_bulk_actions_resume(
     *,
@@ -721,8 +864,14 @@ def events_virtual_machines_bulk_actions_resume(
     "/{id}/virtual-machines/bulk-actions/hibernate",
     status_code=200,
     operation_id="events_virtual_machines_bulk_actions_hibernate",
+    responses=WRITE_RESPONSES,
     summary="Hibernate all VirtualMachines related to an Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Enqueues a hibernate operation for all virtual machines associated with an event.",
+        permission="events_update",
+        is_async=True,
+    ),
 )
 def events_virtual_machines_bulk_actions_hibernate(
     *,
@@ -745,8 +894,14 @@ def events_virtual_machines_bulk_actions_hibernate(
     "/{id}/virtual-machines/bulk-actions/migrate",
     status_code=200,
     operation_id="events_virtual_machines_bulk_actions_migrate",
+    responses=WRITE_RESPONSES,
     summary="Migrate all VirtualMachines related to an Event to specified Proxmox node",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Enqueues a migration of all virtual machines associated with an event to the specified Proxmox node.",
+        permission="events_update",
+        is_async=True,
+    ),
 )
 def events_virtual_machines_bulk_actions_migrate(
     *,
@@ -770,8 +925,14 @@ def events_virtual_machines_bulk_actions_migrate(
     "/{id}/virtual-machines/bulk-actions/ha",
     status_code=200,
     operation_id="events_virtual_machines_bulk_actions_ha_add",
+    responses=WRITE_RESPONSES,
     summary="Update all VirtualMachines related to an Event with new HA parameters",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Enqueues an HA configuration update for all virtual machines associated with an event.",
+        permission="events_update",
+        is_async=True,
+    ),
 )
 def events_virtual_machines_bulk_actions_ha_add(
     *,
@@ -795,8 +956,14 @@ def events_virtual_machines_bulk_actions_ha_add(
     "/{id}/virtual-machines/bulk-actions/ha",
     status_code=200,
     operation_id="events_virtual_machines_bulk_actions_ha_remove",
+    responses=WRITE_RESPONSES,
     summary="Remove all VirtualMachines related to an Event from Proxmox cluster HA",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Enqueues removal of all virtual machines associated with an event from Proxmox cluster HA.",
+        permission="events_update",
+        is_async=True,
+    ),
 )
 def events_virtual_machines_bulk_actions_ha_remove(
     *,
@@ -820,8 +987,13 @@ def events_virtual_machines_bulk_actions_ha_remove(
     status_code=200,
     response_model=GuacamoleList,
     operation_id="events_guacamole_read_all",
+    responses=READ_RESPONSES,
     summary="Get all Guacamole associated with Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Returns all Guacamole connection records associated with an event.",
+        permission="events_read",
+    ),
 )
 def get_events_guacamole(
     request: Request,
@@ -868,8 +1040,17 @@ def get_events_guacamole(
     "/{id}/guacamoles/bulk-actions/create",
     status_code=200,
     operation_id="events_guacamoles_bulk_actions_create",
+    responses=WRITE_RESPONSES,
     summary="Create all Guacamole connections related to an Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Enqueues provisioning of all Guacamole connections associated with an event.",
+        permission="events_update",
+        is_async=True,
+        notes=[
+            "Each virtual machine must have a valid IPv4 address before its Guacamole connection can be provisioned.",
+        ],
+    ),
 )
 def events_guacamoles_bulk_actions_create(
     *,
@@ -892,8 +1073,14 @@ def events_guacamoles_bulk_actions_create(
     "/{id}/guacamoles/bulk-actions/delete",
     status_code=200,
     operation_id="events_guacamoles_bulk_actions_delete",
+    responses=WRITE_RESPONSES,
     summary="Delete all Guacamole connections related to an Event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Enqueues deletion of all Guacamole connections associated with an event.",
+        permission="events_update",
+        is_async=True,
+    ),
 )
 def events_guacamoles_bulk_actions_delete(
     *,
@@ -917,8 +1104,19 @@ def events_guacamoles_bulk_actions_delete(
     status_code=200,
     response_model=Event,
     operation_id="events_actions_start",
+    responses=WRITE_RESPONSES,
     summary="Start event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Triggers the event start lifecycle — deploys virtual machines, enrolls users in Moodle, and provisions Guacamole connections.",
+        permission="events_actions_start",
+        is_async=True,
+        notes=[
+            "Event must be in `Geplant` status.",
+            "Each template linked to the event must have a valid `proxmoxId` before deployment can proceed.",
+            "Moodle course enrollment is also enqueued if a course is linked to the event.",
+        ],
+    ),
 )
 def events_actions_start(
     *, id: UUID4, db: Session = Depends(dependencies.get_db), request: Request
@@ -939,8 +1137,17 @@ def events_actions_start(
     status_code=200,
     response_model=Event,
     operation_id="events_actions_stop",
+    responses=WRITE_RESPONSES,
     summary="Stop event",
     dependencies=[Depends(dependencies.get_current_user)],
+    description=build_description(
+        description="Triggers the event stop lifecycle — decommissions virtual machines, unenrolls users from Moodle, and removes Guacamole connections.",
+        permission="events_actions_stop",
+        is_async=True,
+        notes=[
+            "Event must be in an active status (`Aktiv`, `Deploying`, or `Deployment Fehler`) to be stopped.",
+        ],
+    ),
 )
 def events_actions_stop(
     *, id: UUID4, db: Session = Depends(dependencies.get_db), request: Request

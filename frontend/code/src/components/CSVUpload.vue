@@ -93,6 +93,10 @@ const {
   limit: props.limit,
 })
 
+// Let parents react to how far the user has progressed (e.g. warn before a
+// change that would reset an in-progress import). Step 1 = nothing uploaded yet.
+defineExpose({ currentStep })
+
 // ── File input & drag-and-drop ──────────────────────────
 const fileInputRef = ref(null)
 const isDragOver = ref(false)

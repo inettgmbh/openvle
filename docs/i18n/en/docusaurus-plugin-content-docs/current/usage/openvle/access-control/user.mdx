@@ -118,6 +118,83 @@ The **username** **cannot be changed** after creation.
 
 ---
 
+## Importing Users via CSV {#import-users}
+
+The **user import** lets you **create** many user accounts in a single step from a **CSV file** — ideal for setting up an entire group of participants as local accounts at the start of a training.
+
+<NavigationHint
+  path="Access Control -> Users -> Import"
+  alternative="Via the 'Import' button in the user overview"
+/>
+
+The import guides you through a **four-step wizard**:
+
+1. **Upload** – select the CSV file.
+2. **Map columns** – assign the file's columns to the expected fields.
+3. **Preview & Import** – review the data and start the import.
+4. **Result** – summary of successful and failed rows.
+
+### Choosing the name format
+
+Before mapping, a toggle lets you specify how the **name** is structured in your file:
+
+- **Separate first and last name** – two columns `firstname` and `lastname` (combined into a single name during import).
+- **Full name** – a single column `fullname`.
+
+OpenVLE only ever stores a **single** name internally; the choice only affects the format of your CSV file. The **downloadable** template adapts automatically to the selected format.
+
+### CSV columns
+
+<FieldReference
+  fields={[
+    {
+      name: 'email',
+      description:
+        'Required. Email address of the user. Must contain an "@" — otherwise the row is rejected.',
+    },
+    {
+      name: 'username',
+      description:
+        'Required. Unique login name. Cannot be changed after creation.',
+    },
+    {
+      name: 'fullname',
+      description:
+        'Only in the "Full name" format. Full name of the user in a single column.',
+    },
+    {
+      name: 'firstname',
+      description:
+        'Only in the "Separate first and last name" format. First name; combined with `lastname` into the name.',
+    },
+    {
+      name: 'lastname',
+      description:
+        'Only in the "Separate first and last name" format. Last name; combined with `firstname` into the name.',
+    },
+  ]}
+/>
+
+:::note
+In the downloadable template, the column headers carry the translated labels (e.g. **Email**, **First name**, **Last name**, **Username**) — not the internal field names shown here.
+:::
+
+### Limits and result
+
+- Each import processes at most **5000 rows**; a maximum file size of **5 MB** also applies.
+- Created users are given the **Active** status and the system's default language.
+- After the import, the result view shows for each row whether it was created successfully or rejected with an error. Common errors:
+  - **Invalid email** – the address does not contain an "@".
+  - **Already exists** – the username or email already exists (the exact message comes from the server).
+
+The import requires the same permission as manually creating a user (`users_create`, see [Required Permissions](#required-permissions)).
+
+:::info Creating vs. adding
+The user import **creates new user accounts**. To add **existing** users to an event, use the [participant import](/docs/usage/openvle/events/#import-participants) instead — it does not create users, but adds existing ones.
+:::
+
+---
+
 ## Activating or Deactivating a User
 
 1. Open the **Access Control -> Users** section in the main menu.

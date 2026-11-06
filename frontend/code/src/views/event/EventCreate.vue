@@ -23,6 +23,7 @@ import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import UnsavedChangesModal from '@/components/UnsavedChangesModal.vue'
 import { useUnsavedChanges } from '@/composables/useUnsavedChanges'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -143,7 +144,7 @@ onMounted(() => {
             <FormControl
               v-model="event.name"
               :icon="mdiRename"
-              maxlength="25"
+              :maxlength="FIELD_LIMITS.event.name"
               :placeholder="$t('views.events.form.namePlaceholder')"
               :autofocus="true"
               required
@@ -160,7 +161,7 @@ onMounted(() => {
               v-model="event.slug"
               :icon="mdiLabel"
               :validate="(val) => validateEventSlug(val)"
-              maxlength="8"
+              :maxlength="FIELD_LIMITS.event.slug"
               :placeholder="$t('views.events.form.slugPlaceholder')"
               required
             />
@@ -171,7 +172,11 @@ onMounted(() => {
           :label="$t('common.description')"
           :help="$t('views.events.form.descriptionHelp')"
         >
-          <FormControl v-model="event.description" :icon="mdiTextBox" />
+          <FormControl
+            v-model="event.description"
+            :icon="mdiTextBox"
+            :maxlength="FIELD_LIMITS.event.description"
+          />
         </FormField>
 
         <FormField>

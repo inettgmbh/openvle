@@ -4,11 +4,20 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from controllers.mails import CRUDMail
 from core.exceptions import MailSubjectSlugRenderError, ObjectNotFound
-from models import Event, Language, Mail, MailAction, MailTemplate, SubTask, Task, User
+from models import (
+    Event,
+    Language,
+    Mail,
+    MailAction,
+    MailTemplate,
+    SubTask,
+    Task,
+    User,
+)
 from schemas.mails import MailCreate
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -36,7 +45,9 @@ def sample_mail_action(db_session, system_user):
 
 
 @pytest.fixture()
-def sample_mail_template(db_session, system_user, sample_language, sample_mail_action):
+def sample_mail_template(
+    db_session, system_user, sample_language, sample_mail_action
+):
     now = datetime.now(timezone.utc)
     tpl = MailTemplate(
         id=uuid.uuid4(),
@@ -172,7 +183,9 @@ class TestCRUDMailCreate:
         self.crud.create(db_session, request, obj_in=obj_in)
 
         assert len(mock_redis_queues) > 0
-        mail_jobs = [j for j in mock_redis_queues if j["queue"] == "queue_mails"]
+        mail_jobs = [
+            j for j in mock_redis_queues if j["queue"] == "queue_mails"
+        ]
         assert len(mail_jobs) >= 1
 
 
@@ -272,7 +285,9 @@ class TestCRUDMailResend:
 
         # Get the subtask
         subtask = (
-            db_session.query(SubTask).filter(SubTask.object_id == str(mail.id)).first()
+            db_session.query(SubTask)
+            .filter(SubTask.object_id == str(mail.id))
+            .first()
         )
         assert subtask is not None
 
@@ -281,7 +296,9 @@ class TestCRUDMailResend:
         db_session.flush()
 
         initial_count = len(mock_redis_queues)
-        result = self.crud.resend(db_session, request, kvs_subtask_object_id=subtask.id)
+        result = self.crud.resend(
+            db_session, request, kvs_subtask_object_id=subtask.id
+        )
         assert result.status == "queued"
         assert result.attempt == "0"
         assert len(mock_redis_queues) > initial_count

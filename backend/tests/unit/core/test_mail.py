@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from email.mime.multipart import MIMEMultipart
 
 import pytest
-
 from core.exceptions import MailGenerationError
 from core.mail import mail_construct
 from models import User
@@ -89,7 +88,9 @@ class TestMailConstruct:
         assert "text/plain" in content_types
         assert "text/html" in content_types
 
-    def test_plain_text_only_when_no_html(self, db_session, system_user, monkeypatch):
+    def test_plain_text_only_when_no_html(
+        self, db_session, system_user, monkeypatch
+    ):
         """Only plain text is attached when contentHTML is empty."""
         monkeypatch.setattr("core.mail.SessionLocal", lambda: db_session)
 
@@ -170,7 +171,9 @@ class TestMailConstruct:
         plain_text = payload[0].get_payload()
         assert "unknown" in plain_text
 
-    def test_template_render_error_raises(self, db_session, system_user, monkeypatch):
+    def test_template_render_error_raises(
+        self, db_session, system_user, monkeypatch
+    ):
         """Invalid Jinja2 template raises MailGenerationError."""
         monkeypatch.setattr("core.mail.SessionLocal", lambda: db_session)
 

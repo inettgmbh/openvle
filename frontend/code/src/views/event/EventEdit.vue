@@ -22,6 +22,7 @@ import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import UnsavedChangesModal from '@/components/UnsavedChangesModal.vue'
 import { useUnsavedChanges } from '@/composables/useUnsavedChanges'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -121,14 +122,23 @@ function onCancel() {
           :label="$t('common.name')"
           :help="$t('views.events.form.nameHelp')"
         >
-          <FormControl v-model="event.name" :icon="mdiRename" required />
+          <FormControl
+            v-model="event.name"
+            :icon="mdiRename"
+            :maxlength="FIELD_LIMITS.event.name"
+            required
+          />
         </FormField>
 
         <FormField
           :label="$t('common.description')"
           :help="$t('views.events.form.descriptionHelp')"
         >
-          <FormControl v-model="event.description" :icon="mdiTextBox" />
+          <FormControl
+            v-model="event.description"
+            :icon="mdiTextBox"
+            :maxlength="FIELD_LIMITS.event.description"
+          />
         </FormField>
 
         <FormField>

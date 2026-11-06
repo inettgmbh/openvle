@@ -1,7 +1,6 @@
 """Factories for VirtualMachine, Template, and Vendor models."""
 
 import factory
-
 from models import Template, Vendor, VirtualMachine
 
 from .base import BaseFactory

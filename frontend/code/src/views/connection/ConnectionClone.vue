@@ -28,6 +28,7 @@ import SearchControl from '@/components/SearchControl.vue'
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import { useConnectionForm } from '@/composables/useConnectionForm'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import router from '@/router'
 import backend from '@/services'
@@ -485,6 +486,7 @@ onMounted(() => {
                 <FormControl
                   v-model="connection.username"
                   :icon="mdiAccountBox"
+                  :maxlength="FIELD_LIMITS.connectionprofile.username"
                   :placeholder="$t('views.connections.clone.exampleUsername')"
                   :disabled="currentStep < 3"
                   :validate="validateUsername"
@@ -501,6 +503,7 @@ onMounted(() => {
                 <FormControl
                   v-model="connection.password"
                   :icon="mdiKey"
+                  :maxlength="FIELD_LIMITS.connectionprofile.password"
                   type="password"
                   :placeholder="
                     $t('views.connections.clone.keepSourcePassword')

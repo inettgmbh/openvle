@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock
 
 import pytest
-
 from models import SubTask, Template, VirtualMachine
 
 
@@ -44,7 +43,9 @@ class TestUpdatePveNodeInfo:
         template_list = []
         node_list = [{"node": "node2"}]
 
-        update_pve_node_info("PVE resource list", vm_list, template_list, node_list)
+        update_pve_node_info(
+            "PVE resource list", vm_list, template_list, node_list
+        )
 
         mock_collection.update_one.assert_called_once()
         args = mock_collection.update_one.call_args
@@ -72,7 +73,9 @@ class TestGetPveNodeInfo:
 
         result = get_pve_node_info("PVE resource list")
         assert result == expected
-        mock_collection.find_one.assert_called_once_with({"name": "PVE resource list"})
+        mock_collection.find_one.assert_called_once_with(
+            {"name": "PVE resource list"}
+        )
 
     def test_get_pve_node_info_not_found(self, monkeypatch):
         """Returns empty dict when document does not exist."""
@@ -88,7 +91,12 @@ class TestGetPveNodeInfo:
 
 class TestProxmoxNodeInfoPeriodic:
     def _setup_periodic(
-        self, monkeypatch, db_session, system_user, resource_list, mongo_data=None
+        self,
+        monkeypatch,
+        db_session,
+        system_user,
+        resource_list,
+        mongo_data=None,
     ):
         """Helper to set up mocks for proxmox_node_info_periodic."""
         now = datetime.now(timezone.utc)
@@ -128,7 +136,9 @@ class TestProxmoxNodeInfoPeriodic:
         db_session.flush()
 
         # Mock SessionLocal to return our test session (patch in all modules that call it)
-        monkeypatch.setattr("pve.pve_node_info.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "pve.pve_node_info.SessionLocal", lambda: db_session
+        )
         import controllers.sub_tasks as sub_tasks_mod
         import core.mariadb as mariadb_mod
 
@@ -201,7 +211,9 @@ class TestProxmoxNodeInfoPeriodic:
         ]
         mongo_data = {
             "name": "PVE resource list",
-            "qemu_vm_list": [{"vmid": 100, "node": "node1", "status": "running"}],
+            "qemu_vm_list": [
+                {"vmid": 100, "node": "node1", "status": "running"}
+            ],
             "qemu_template_list": [],
             "node_list": [],
         }

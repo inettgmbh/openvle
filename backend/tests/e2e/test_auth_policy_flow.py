@@ -8,9 +8,7 @@ acceptance, reauthentication, and edge cases.
 import uuid
 from datetime import datetime, timezone
 
-
 from tests.e2e.conftest import API
-
 
 # ------------------------------------------------------------------
 # Scenario A: Policy acceptance flow
@@ -164,7 +162,9 @@ class TestPolicyAcceptanceFlow:
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
         assert resp.status_code == 200
-        policy_headers = {"Authorization": f"Bearer {resp.json()['access_token']}"}
+        policy_headers = {
+            "Authorization": f"Bearer {resp.json()['access_token']}"
+        }
 
         # Agree first time
         resp = client.post(
@@ -201,7 +201,9 @@ class TestPolicyLifecycle:
             "description": "Lifecycle test",
             "content": "Content here.",
         }
-        resp = client.post(f"{API}/policies/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/policies/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 201
         policy_id = resp.json()["id"]
         assert resp.json()["active"] is False
@@ -241,7 +243,9 @@ class TestPolicyLifecycle:
             "description": "Will be deleted",
             "content": "Content.",
         }
-        resp = client.post(f"{API}/policies/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/policies/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 201
         policy_id = resp.json()["id"]
 
@@ -262,7 +266,9 @@ class TestPolicyLifecycle:
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
         assert resp.status_code == 200
-        policy_headers = {"Authorization": f"Bearer {resp.json()['access_token']}"}
+        policy_headers = {
+            "Authorization": f"Bearer {resp.json()['access_token']}"
+        }
 
         resp = client.post(
             f"{API}/policies/{policy_id}/actions",
@@ -290,7 +296,9 @@ class TestPolicyLifecycle:
         )
         assert resp.status_code == 200
 
-        resp = client.delete(f"{API}/policies/{policy_id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/policies/{policy_id}", headers=auth_headers
+        )
         assert resp.status_code == 200
 
         # Verify agreement was deleted
@@ -313,7 +321,9 @@ class TestPolicyLifecycle:
             "description": "Cannot delete while active",
             "content": "Content.",
         }
-        resp = client.post(f"{API}/policies/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/policies/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 201
         policy_id = resp.json()["id"]
 
@@ -326,7 +336,9 @@ class TestPolicyLifecycle:
         assert resp.status_code == 200
 
         # Try to delete -> should fail
-        resp = client.delete(f"{API}/policies/{policy_id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/policies/{policy_id}", headers=auth_headers
+        )
         assert resp.status_code == 422
 
     def test_cannot_update_content_of_active_policy(
@@ -338,7 +350,9 @@ class TestPolicyLifecycle:
             "description": "Content locked",
             "content": "Original content.",
         }
-        resp = client.post(f"{API}/policies/", json=payload, headers=auth_headers)
+        resp = client.post(
+            f"{API}/policies/", json=payload, headers=auth_headers
+        )
         assert resp.status_code == 201
         policy_id = resp.json()["id"]
 
@@ -378,7 +392,9 @@ class TestAuthEdgeCases:
         resp = client.get(f"{API}/me", headers=headers)
         assert resp.status_code == 401
 
-    def test_login_wrong_password_returns_401(self, client, db_session, login_user):
+    def test_login_wrong_password_returns_401(
+        self, client, db_session, login_user
+    ):
         """Login with wrong password returns 401."""
         resp = client.post(
             f"{API}/auth/login",
@@ -390,7 +406,9 @@ class TestAuthEdgeCases:
         )
         assert resp.status_code == 401
 
-    def test_login_inactive_user_returns_400(self, client, db_session, system_user):
+    def test_login_inactive_user_returns_400(
+        self, client, db_session, system_user
+    ):
         """Login with inactive user returns 400."""
         from core.auth import get_password_hash
         from models import User

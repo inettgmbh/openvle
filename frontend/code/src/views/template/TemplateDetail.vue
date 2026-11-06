@@ -304,16 +304,83 @@ async function deleteConnectionProfile(id) {
   }
 }
 
+const BLOCKING_ITEMS_LIMIT = 5
+const blockingItems = ref([])
+const blockingItemsTotal = ref(0)
+
+async function openDeleteTemplateModal(templateObj) {
+  objToRemove.value = templateObj
+  blockingItems.value = []
+  blockingItemsTotal.value = 0
+  backend.beginSilent()
+  try {
+    const [vms, courses] = await Promise.all([
+      backend.templates.getVMs(templateObj.id, {
+        page: 1,
+        limit: BLOCKING_ITEMS_LIMIT,
+      }),
+      backend.templates.getCourses(templateObj.id, {
+        page: 1,
+        limit: BLOCKING_ITEMS_LIMIT,
+      }),
+    ])
+    const vmItems = (vms?.items ?? []).map((vm) => ({
+      label: vm.name ?? vm.id,
+      sublabel: t('objectTypes.virtualMachine.singular'),
+    }))
+    const courseItems = (courses?.items ?? []).map((course) => ({
+      label: course.name ?? course.id,
+      sublabel: t('objectTypes.course.singular'),
+    }))
+    blockingItems.value = [...vmItems, ...courseItems].slice(
+      0,
+      BLOCKING_ITEMS_LIMIT,
+    )
+    blockingItemsTotal.value =
+      (vms?.pageDetails?.totalCount ?? vmItems.length) +
+      (courses?.pageDetails?.totalCount ?? courseItems.length)
+  } catch {
+    // Fail open: the backend 409 pre-check still blocks the delete.
+    // Events referencing the template have no list endpoint and are only
+    // caught reactively via OBJECT_IN_USE.
+  } finally {
+    backend.endSilent()
+  }
+  modals.deleteTemplates.value = true
+}
+
+const blockingItemRows = computed(() => {
+  const items = blockingItems.value.slice()
+  const more = blockingItemsTotal.value - items.length
+  if (more > 0) {
+    items.push({
+      label: t('views.templates.delete.moreItems', { count: more }, more),
+    })
+  }
+  return items
+})
+
 async function deleteTemplate(templateId) {
+  backend.beginSilent()
   try {
     await backend.templates.delete(templateId)
     router.push({ path: `/templates` })
     toast.info(t('views.templates.detail.deleteInProgress'))
   } catch (error) {
-    toast.error(
-      `${t('common.deleteError', { entity: t('objectTypes.template.singular') })}\n${error?.response?.data?.detail ?? ''}`,
-      { timeout: 8400 },
-    )
+    const errorCode = error?.response?.data?.error_code
+    if (
+      errorCode === 'OBJECT_IN_USE' ||
+      errorCode === 'OBJECT_DELETE_INTEGRITY_ERROR'
+    ) {
+      toast.error(t('views.templates.delete.blockedError'), { timeout: 8400 })
+    } else {
+      toast.error(
+        `${t('common.deleteError', { entity: t('objectTypes.template.singular') })}\n${error?.response?.data?.detail ?? ''}`,
+        { timeout: 8400 },
+      )
+    }
+  } finally {
+    backend.endSilent()
   }
 }
 
@@ -746,11 +813,25 @@ onUnmounted(() => {
     v-model="modals.deleteTemplates.value"
     :name="template.name"
     :checkvalue="template.name"
+    :blocked="blockingItemsTotal > 0"
+    :warning="
+      blockingItemsTotal > 0
+        ? $t(
+            'views.templates.delete.relatedWarning',
+            { count: blockingItemsTotal },
+            blockingItemsTotal,
+          )
+        : null
+    "
+    :related-items="blockingItemRows"
+    :related-label="$t('views.templates.delete.relatedLabel')"
+    :related-count="blockingItemsTotal"
     @form-submitted="deleteTemplate(objToRemove.id)"
   />
 
   <!-- Modal: Import Connection Profile -->
   <ImportConnectionProfileModal
+    v-if="template.id"
     v-model="modals.importConnections.value"
     :target-object-type="objectModel"
     :target-object-id="template.id"
@@ -891,7 +972,7 @@ onUnmounted(() => {
             rounded-full
             small
             :disabled="template.prevent_delete"
-            @click="showModal('deleteTemplates', template)"
+            @click="openDeleteTemplateModal(template)"
           />
         </div>
       </SectionTitleLineWithButton>

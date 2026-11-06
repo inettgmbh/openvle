@@ -5,9 +5,9 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from controllers.sub_tasks import CRUDSubTask
 from models import Course, Event, SubTask, Task
+
 from tests.helpers.mock_request import create_mock_request
 
 
@@ -55,7 +55,9 @@ class TestWorkerProcessStart:
         self.crud = CRUDSubTask(SubTask)
 
     def test_sets_status_processing(self, db_session, sample_subtask):
-        result = self.crud.worker_process_start(db_session, id=sample_subtask.id)
+        result = self.crud.worker_process_start(
+            db_session, id=sample_subtask.id
+        )
         assert result is True
         db_session.refresh(sample_subtask)
         assert sample_subtask.status == "processing"
@@ -77,7 +79,9 @@ class TestWorkerProcessSuccess:
         self.crud = CRUDSubTask(SubTask)
 
     @patch("core.mail_automated.system_triggered_mail_handler")
-    def test_sets_status_success(self, mock_mail_handler, db_session, sample_subtask):
+    def test_sets_status_success(
+        self, mock_mail_handler, db_session, sample_subtask
+    ):
         self.crud.worker_process_success(
             id=sample_subtask.id,
             response_code=200,
@@ -108,7 +112,9 @@ class TestWorkerProcessFail:
         self.crud = CRUDSubTask(SubTask)
 
     @patch("core.mail_automated.system_triggered_mail_handler")
-    def test_sets_status_failed(self, mock_mail_handler, db_session, sample_subtask):
+    def test_sets_status_failed(
+        self, mock_mail_handler, db_session, sample_subtask
+    ):
         from pve.worker_utils import TaskException
 
         with pytest.raises(TaskException):
@@ -396,7 +402,13 @@ class TestRetry:
     @patch("controllers.sub_tasks.CRUDSubTask._get")
     @patch("controllers.sub_tasks.Job.fetch")
     def test_retry_non_periodic_failed_job_requeues(
-        self, mock_fetch, mock_get, db_session, active_user, system_user, parent_task
+        self,
+        mock_fetch,
+        mock_get,
+        db_session,
+        active_user,
+        system_user,
+        parent_task,
     ):
         """Retrying a non-periodic failed subtask should requeue the Redis job."""
         now = datetime.now(timezone.utc)
@@ -435,7 +447,13 @@ class TestRetry:
     @patch("controllers.sub_tasks.CRUDSubTask._get")
     @patch("controllers.sub_tasks.Job.fetch")
     def test_retry_non_periodic_job_not_found_raises(
-        self, mock_fetch, mock_get, db_session, active_user, system_user, parent_task
+        self,
+        mock_fetch,
+        mock_get,
+        db_session,
+        active_user,
+        system_user,
+        parent_task,
     ):
         """Retrying a non-periodic subtask where the Redis job is missing should raise BadRequestError."""
         from core.exceptions import BadRequestError
@@ -470,7 +488,13 @@ class TestRetry:
     @patch("controllers.sub_tasks.CRUDSubTask._get")
     @patch("controllers.sub_tasks.Job.fetch")
     def test_retry_non_periodic_non_failed_job_does_not_requeue(
-        self, mock_fetch, mock_get, db_session, active_user, system_user, parent_task
+        self,
+        mock_fetch,
+        mock_get,
+        db_session,
+        active_user,
+        system_user,
+        parent_task,
     ):
         """If the Redis job status is not 'failed', the job should not be requeued."""
         now = datetime.now(timezone.utc)
@@ -507,7 +531,13 @@ class TestRetry:
     @patch("controllers.sub_tasks.CRUDSubTask._get")
     @patch("controllers.sub_tasks.Job.fetch")
     def test_retry_with_dependent_jobs_retries_dependents(
-        self, mock_fetch, mock_get, db_session, active_user, system_user, parent_task
+        self,
+        mock_fetch,
+        mock_get,
+        db_session,
+        active_user,
+        system_user,
+        parent_task,
     ):
         """If the job has dependent_ids, retry should attempt to retry dependent subtasks."""
         now = datetime.now(timezone.utc)

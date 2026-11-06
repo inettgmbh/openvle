@@ -3,13 +3,11 @@
 import ipaddress
 import uuid
 from datetime import datetime, timezone
-from unittest.mock import MagicMock, AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from proxmoxer.core import ResourceException
-
 from pve.worker_utils import TaskException
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -21,20 +19,20 @@ def _make_vm(db_session, system_user, **overrides):
     from models import VirtualMachine
 
     now = datetime.now(timezone.utc)
-    defaults = dict(
-        id=uuid.uuid4(),
-        name="test-vm",
-        proxmoxId=100,
-        cpu=2,
-        ram=4096,
-        disk=32,
-        status="stopped",
-        prevent_delete=False,
-        createdAt=now,
-        updatedAt=now,
-        createdById=system_user.id,
-        updatedById=system_user.id,
-    )
+    defaults = {
+        "id": uuid.uuid4(),
+        "name": "test-vm",
+        "proxmoxId": 100,
+        "cpu": 2,
+        "ram": 4096,
+        "disk": 32,
+        "status": "stopped",
+        "prevent_delete": False,
+        "createdAt": now,
+        "updatedAt": now,
+        "createdById": system_user.id,
+        "updatedById": system_user.id,
+    }
     defaults.update(overrides)
     vm = VirtualMachine(**defaults)
     db_session.add(vm)
@@ -47,20 +45,20 @@ def _make_template(db_session, system_user, **overrides):
     from models.templates import Template
 
     now = datetime.now(timezone.utc)
-    defaults = dict(
-        id=uuid.uuid4(),
-        name="test-template",
-        proxmoxId=9000,
-        cpu=2,
-        ram=4096,
-        disk=32,
-        status="available",
-        prevent_delete=False,
-        createdAt=now,
-        updatedAt=now,
-        createdById=system_user.id,
-        updatedById=system_user.id,
-    )
+    defaults = {
+        "id": uuid.uuid4(),
+        "name": "test-template",
+        "proxmoxId": 9000,
+        "cpu": 2,
+        "ram": 4096,
+        "disk": 32,
+        "status": "available",
+        "prevent_delete": False,
+        "createdAt": now,
+        "updatedAt": now,
+        "createdById": system_user.id,
+        "updatedById": system_user.id,
+    }
     defaults.update(overrides)
     tpl = Template(**defaults)
     db_session.add(tpl)
@@ -70,8 +68,8 @@ def _make_template(db_session, system_user, **overrides):
 
 def _make_task_and_subtask(db_session, system_user, **sub_overrides):
     """Insert Task + SubTask rows (SubTask has FK to Task)."""
-    from models.tasks import Task
     from models import SubTask
+    from models.tasks import Task
 
     now = datetime.now(timezone.utc)
     task = Task(
@@ -86,20 +84,20 @@ def _make_task_and_subtask(db_session, system_user, **sub_overrides):
     db_session.add(task)
     db_session.flush()
 
-    sub_defaults = dict(
-        id=uuid.uuid4(),
-        name="sub-task",
-        status="pending",
-        object_type="VirtualMachine",
-        object_id=str(uuid.uuid4()),
-        action="create",
-        attempt="1",
-        parent_task=task.id,
-        createdAt=now,
-        updatedAt=now,
-        createdById=system_user.id,
-        updatedById=system_user.id,
-    )
+    sub_defaults = {
+        "id": uuid.uuid4(),
+        "name": "sub-task",
+        "status": "pending",
+        "object_type": "VirtualMachine",
+        "object_id": str(uuid.uuid4()),
+        "action": "create",
+        "attempt": "1",
+        "parent_task": task.id,
+        "createdAt": now,
+        "updatedAt": now,
+        "createdById": system_user.id,
+        "updatedById": system_user.id,
+    }
     sub_defaults.update(sub_overrides)
     st = SubTask(**sub_defaults)
     db_session.add(st)
@@ -113,11 +111,14 @@ def _make_pvm(monkeypatch, db_session=None, task_id=None, vm_id=None):
     Returns (instance, mock_crud_instance, mock_cluster_instance).
     """
     mock_crud_instance = MagicMock()
-    mock_crud_instance.worker_process_fail.return_value = Exception("worker fail")
+    mock_crud_instance.worker_process_fail.return_value = Exception(
+        "worker fail"
+    )
     mock_crud_instance.worker_process_start.return_value = None
     mock_crud_instance.worker_process_success.return_value = None
     monkeypatch.setattr(
-        "pve.virtual_machines.CRUDSubTask", MagicMock(return_value=mock_crud_instance)
+        "pve.virtual_machines.CRUDSubTask",
+        MagicMock(return_value=mock_crud_instance),
     )
 
     mock_cluster = MagicMock()
@@ -126,11 +127,14 @@ def _make_pvm(monkeypatch, db_session=None, task_id=None, vm_id=None):
     mock_cluster.get_free_node.return_value = "node1"
     mock_cluster.next_vm_id.return_value = 200
     monkeypatch.setattr(
-        "pve.virtual_machines.ProxmoxCluster", MagicMock(return_value=mock_cluster)
+        "pve.virtual_machines.ProxmoxCluster",
+        MagicMock(return_value=mock_cluster),
     )
 
     if db_session is not None:
-        monkeypatch.setattr("pve.virtual_machines.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "pve.virtual_machines.SessionLocal", lambda: db_session
+        )
 
     from pve.virtual_machines import ProxmoxVirtualMachine
 
@@ -184,20 +188,28 @@ class TestStartProcess:
     def test_opens_db_session(self, monkeypatch, db_session, system_user):
         """SessionLocal() is called and stored on self.db."""
         _, st = _make_task_and_subtask(db_session, system_user)
-        pvm, mock_crud, _ = _make_pvm(monkeypatch, db_session=db_session, task_id=st.id)
+        pvm, _mock_crud, _ = _make_pvm(
+            monkeypatch, db_session=db_session, task_id=st.id
+        )
 
         pvm._start_process()
 
         assert pvm.db is db_session
 
-    def test_calls_worker_process_start(self, monkeypatch, db_session, system_user):
+    def test_calls_worker_process_start(
+        self, monkeypatch, db_session, system_user
+    ):
         """CRUDSubTask.worker_process_start is invoked."""
         _, st = _make_task_and_subtask(db_session, system_user)
-        pvm, mock_crud, _ = _make_pvm(monkeypatch, db_session=db_session, task_id=st.id)
+        pvm, mock_crud, _ = _make_pvm(
+            monkeypatch, db_session=db_session, task_id=st.id
+        )
 
         pvm._start_process()
 
-        mock_crud.worker_process_start.assert_called_once_with(db_session, st.id)
+        mock_crud.worker_process_start.assert_called_once_with(
+            db_session, st.id
+        )
 
     def test_sets_request_user_id(self, monkeypatch, db_session, system_user):
         """request_user_id is loaded from SubTask.createdById."""
@@ -217,7 +229,7 @@ class TestPveInit:
 
     def test_success(self, monkeypatch):
         """On success, pve_connection and proxmox are set."""
-        pvm, _, mock_cluster = _make_pvm(monkeypatch)
+        pvm, _, _mock_cluster = _make_pvm(monkeypatch)
 
         pvm._pve_init()
 
@@ -288,7 +300,9 @@ class TestGetVmAndTemplateObjects:
         assert pvm.source_template is not None
         assert pvm.source_template.id == tpl.id
 
-    def test_template_not_found_raises(self, monkeypatch, db_session, system_user):
+    def test_template_not_found_raises(
+        self, monkeypatch, db_session, system_user
+    ):
         """Missing template raises via worker_process_fail."""
         from models import VirtualMachine as VMModel
 
@@ -299,7 +313,9 @@ class TestGetVmAndTemplateObjects:
         mock_db = MagicMock()
         mock_db.get = lambda model, pk: mock_vm if pk == pvm.kvs_vm_id else None
         pvm.db = mock_db
-        mock_crud.worker_process_fail.return_value = Exception("template not found")
+        mock_crud.worker_process_fail.return_value = Exception(
+            "template not found"
+        )
 
         with pytest.raises(Exception, match="template not found"):
             pvm._get_vm_and_template_objects()
@@ -316,7 +332,7 @@ class TestPveVmInit:
     ):
         """When VM exists on PVE (config returns), pve_task_success=True."""
         vm = _make_vm(db_session, system_user, proxmoxId=100)
-        pvm, _, mock_cluster = _make_pvm(
+        pvm, _, _mock_cluster = _make_pvm(
             monkeypatch, db_session=db_session, vm_id=vm.id
         )
         pvm.db = db_session
@@ -331,7 +347,9 @@ class TestPveVmInit:
 
         assert pvm.pve_task_success is True
 
-    def test_resource_exception_continues(self, monkeypatch, db_session, system_user):
+    def test_resource_exception_continues(
+        self, monkeypatch, db_session, system_user
+    ):
         """ResourceException means VM doesn't exist on PVE; allocates new ID."""
         vm = _make_vm(db_session, system_user, proxmoxId=100)
         pvm, _, mock_cluster = _make_pvm(
@@ -341,8 +359,8 @@ class TestPveVmInit:
         pvm.kvs_vm = vm
         pvm.pve_connection = mock_cluster
         pvm.proxmox = MagicMock()
-        pvm.proxmox.nodes.return_value.qemu.return_value.config.get.side_effect = (
-            ResourceException(404, "not found", "")
+        pvm.proxmox.nodes.return_value.qemu.return_value.config.get.side_effect = ResourceException(
+            404, "not found", ""
         )
 
         pvm._pve_vm_init()
@@ -351,11 +369,15 @@ class TestPveVmInit:
         assert pvm.kvs_vm.proxmoxId == 200
         assert pvm.kvs_vm.status == "cloning"
 
-    def test_generic_exception_raises(self, monkeypatch, db_session, system_user):
+    def test_generic_exception_raises(
+        self, monkeypatch, db_session, system_user
+    ):
         """Non-ResourceException raises TaskException."""
         vm = _make_vm(db_session, system_user, proxmoxId=100)
         mock_crud_instance = MagicMock()
-        mock_crud_instance.worker_process_fail.return_value = Exception("pve error")
+        mock_crud_instance.worker_process_fail.return_value = Exception(
+            "pve error"
+        )
         monkeypatch.setattr(
             "pve.virtual_machines.CRUDSubTask",
             MagicMock(return_value=mock_crud_instance),
@@ -366,7 +388,9 @@ class TestPveVmInit:
             "pve.virtual_machines.ProxmoxCluster",
             MagicMock(return_value=mock_cluster),
         )
-        monkeypatch.setattr("pve.virtual_machines.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "pve.virtual_machines.SessionLocal", lambda: db_session
+        )
 
         from pve.virtual_machines import ProxmoxVirtualMachine
 
@@ -374,14 +398,16 @@ class TestPveVmInit:
         pvm.db = db_session
         pvm.kvs_vm = vm
         pvm.proxmox = MagicMock()
-        pvm.proxmox.nodes.return_value.qemu.return_value.config.get.side_effect = (
-            RuntimeError("connection lost")
+        pvm.proxmox.nodes.return_value.qemu.return_value.config.get.side_effect = RuntimeError(
+            "connection lost"
         )
 
         with pytest.raises(TaskException):
             pvm._pve_vm_init()
 
-    def test_no_proxmox_id_gets_new_vmid(self, monkeypatch, db_session, system_user):
+    def test_no_proxmox_id_gets_new_vmid(
+        self, monkeypatch, db_session, system_user
+    ):
         """When proxmoxId is None, allocates a new vmid."""
         vm = _make_vm(db_session, system_user, proxmoxId=None)
         pvm, _, mock_cluster = _make_pvm(
@@ -444,7 +470,9 @@ class TestParseExcludedIps:
     def test_mixed(self, monkeypatch):
         """Combination of single IP, range, and CIDR."""
         pvm = self._make_instance(monkeypatch)
-        result = pvm._parse_excluded_ips("10.0.0.5, 10.0.0.10-10.0.0.11, 10.0.0.0/30")
+        result = pvm._parse_excluded_ips(
+            "10.0.0.5, 10.0.0.10-10.0.0.11, 10.0.0.0/30"
+        )
         assert ipaddress.ip_address("10.0.0.5") in result
         assert ipaddress.ip_address("10.0.0.10") in result
         assert ipaddress.ip_address("10.0.0.11") in result
@@ -471,7 +499,9 @@ class TestGetNextAvailableIp:
         pvm.settings.pve_vms_gateway = "10.0.0.1"
         return pvm, mock_crud
 
-    def test_returns_first_available(self, monkeypatch, db_session, system_user):
+    def test_returns_first_available(
+        self, monkeypatch, db_session, system_user
+    ):
         """Returns first usable IP (skipping .0, .1, .254, .255)."""
         pvm, _ = self._setup_pvm(monkeypatch, db_session, system_user)
 
@@ -528,10 +558,13 @@ class TestMergePveAndKvsTags:
         mock_crud_tag = MagicMock()
         mock_crud_tag._convert_kvs_to_pve.return_value = ["zebra", "alpha"]
         monkeypatch.setattr(
-            "pve.virtual_machines.CRUDTag", MagicMock(return_value=mock_crud_tag)
+            "pve.virtual_machines.CRUDTag",
+            MagicMock(return_value=mock_crud_tag),
         )
 
-        result = pvm._merge_pve_and_kvs_tags(proxmox_id=100, kvs_vm_id=uuid.uuid4())
+        result = pvm._merge_pve_and_kvs_tags(
+            proxmox_id=100, kvs_vm_id=uuid.uuid4()
+        )
 
         assert result == "alpha,zebra"
 
@@ -541,12 +574,15 @@ class TestMergePveAndKvsTags:
         pvm.db = MagicMock()
 
         # Mock _pve_config_get to return PVE tags
-        pvm._pve_config_get = MagicMock(return_value={"tags": "pve-tag1;pve-tag2"})
+        pvm._pve_config_get = MagicMock(
+            return_value={"tags": "pve-tag1;pve-tag2"}
+        )
 
         mock_crud_tag = MagicMock()
         mock_crud_tag._convert_kvs_to_pve.return_value = ["kvs-tag1"]
         monkeypatch.setattr(
-            "pve.virtual_machines.CRUDTag", MagicMock(return_value=mock_crud_tag)
+            "pve.virtual_machines.CRUDTag",
+            MagicMock(return_value=mock_crud_tag),
         )
 
         result = pvm._merge_pve_and_kvs_tags(
@@ -561,12 +597,15 @@ class TestMergePveAndKvsTags:
         """Duplicate tags across PVE and KVS are deduplicated."""
         pvm, _, _ = _make_pvm(monkeypatch)
         pvm.db = MagicMock()
-        pvm._pve_config_get = MagicMock(return_value={"tags": "shared;pve-only"})
+        pvm._pve_config_get = MagicMock(
+            return_value={"tags": "shared;pve-only"}
+        )
 
         mock_crud_tag = MagicMock()
         mock_crud_tag._convert_kvs_to_pve.return_value = ["shared", "kvs-only"]
         monkeypatch.setattr(
-            "pve.virtual_machines.CRUDTag", MagicMock(return_value=mock_crud_tag)
+            "pve.virtual_machines.CRUDTag",
+            MagicMock(return_value=mock_crud_tag),
         )
 
         result = pvm._merge_pve_and_kvs_tags(
@@ -584,7 +623,8 @@ class TestMergePveAndKvsTags:
         mock_crud_tag = MagicMock()
         mock_crud_tag._convert_kvs_to_pve.return_value = ["keep", "remove-me"]
         monkeypatch.setattr(
-            "pve.virtual_machines.CRUDTag", MagicMock(return_value=mock_crud_tag)
+            "pve.virtual_machines.CRUDTag",
+            MagicMock(return_value=mock_crud_tag),
         )
 
         result = pvm._merge_pve_and_kvs_tags(
@@ -607,7 +647,7 @@ class TestPveClone:
         """Successful template clone stores pve_task."""
         tpl = _make_template(db_session, system_user, proxmoxId=9000)
         vm = _make_vm(db_session, system_user, template=tpl.id)
-        pvm, _, mock_cluster = _make_pvm(
+        pvm, _, _mock_cluster = _make_pvm(
             monkeypatch, db_session=db_session, vm_id=vm.id
         )
         pvm.db = db_session
@@ -616,9 +656,7 @@ class TestPveClone:
         pvm.new_vmid = 200
         pvm.target_node = "node1"
         pvm.proxmox = MagicMock()
-        pvm.proxmox.nodes.return_value.qemu.return_value.clone.post.return_value = (
-            "UPID:node1:00001"
-        )
+        pvm.proxmox.nodes.return_value.qemu.return_value.clone.post.return_value = "UPID:node1:00001"
         # Mock tag merging
         pvm._merge_pve_and_kvs_tags = MagicMock(return_value="tag1,tag2")
         # Mock module-level settings
@@ -634,9 +672,11 @@ class TestPveClone:
     def test_clone_vm_success(self, monkeypatch, db_session, system_user):
         """Successful VM clone stores pve_task."""
         tpl = _make_template(db_session, system_user, proxmoxId=9000)
-        source_vm = _make_vm(db_session, system_user, name="source", proxmoxId=150)
+        source_vm = _make_vm(
+            db_session, system_user, name="source", proxmoxId=150
+        )
         vm = _make_vm(db_session, system_user, template=tpl.id, proxmoxId=None)
-        pvm, _, mock_cluster = _make_pvm(
+        pvm, _, _mock_cluster = _make_pvm(
             monkeypatch, db_session=db_session, vm_id=vm.id
         )
         pvm.db = db_session
@@ -646,9 +686,7 @@ class TestPveClone:
         pvm.new_vmid = 200
         pvm.target_node = "node1"
         pvm.proxmox = MagicMock()
-        pvm.proxmox.nodes.return_value.qemu.return_value.clone.post.return_value = (
-            "UPID:node1:00002"
-        )
+        pvm.proxmox.nodes.return_value.qemu.return_value.clone.post.return_value = "UPID:node1:00002"
         pvm._merge_pve_and_kvs_tags = MagicMock(return_value="tag1")
         monkeypatch.setattr(
             "pve.virtual_machines.settings", MagicMock(pve_vms_pool="pool1")
@@ -662,15 +700,17 @@ class TestPveClone:
         """Exception during clone raises worker_process_fail."""
         tpl = _make_template(db_session, system_user, proxmoxId=9000)
         vm = _make_vm(db_session, system_user, template=tpl.id)
-        pvm, mock_crud, _ = _make_pvm(monkeypatch, db_session=db_session, vm_id=vm.id)
+        pvm, mock_crud, _ = _make_pvm(
+            monkeypatch, db_session=db_session, vm_id=vm.id
+        )
         pvm.db = db_session
         pvm.kvs_vm = vm
         pvm.source_template = tpl
         pvm.new_vmid = 200
         pvm.target_node = "node1"
         pvm.proxmox = MagicMock()
-        pvm.proxmox.nodes.return_value.qemu.return_value.clone.post.side_effect = (
-            RuntimeError("clone failed")
+        pvm.proxmox.nodes.return_value.qemu.return_value.clone.post.side_effect = RuntimeError(
+            "clone failed"
         )
         pvm._merge_pve_and_kvs_tags = MagicMock(return_value="")
         monkeypatch.setattr(
@@ -691,7 +731,7 @@ class TestPveActions:
 
     def _setup_pvm_with_vm(self, monkeypatch, db_session, system_user):
         vm = _make_vm(db_session, system_user, proxmoxId=100)
-        pvm, mock_crud, mock_cluster = _make_pvm(
+        pvm, mock_crud, _mock_cluster = _make_pvm(
             monkeypatch, db_session=db_session, vm_id=vm.id
         )
         pvm.db = db_session
@@ -701,7 +741,9 @@ class TestPveActions:
 
     def test_start_success(self, monkeypatch, db_session, system_user):
         """_pve_actions_start stores pve_task on success."""
-        pvm, _, _ = self._setup_pvm_with_vm(monkeypatch, db_session, system_user)
+        pvm, _, _ = self._setup_pvm_with_vm(
+            monkeypatch, db_session, system_user
+        )
         pvm.proxmox.nodes.return_value.qemu.return_value.status.start.post.return_value = "UPID:start"
 
         pvm._pve_actions_start()
@@ -723,16 +765,22 @@ class TestPveActions:
 
     def test_stop_success(self, monkeypatch, db_session, system_user):
         """_pve_actions_stop stores pve_task on success."""
-        pvm, _, _ = self._setup_pvm_with_vm(monkeypatch, db_session, system_user)
+        pvm, _, _ = self._setup_pvm_with_vm(
+            monkeypatch, db_session, system_user
+        )
         pvm.proxmox.nodes.return_value.qemu.return_value.status.stop.post.return_value = "UPID:stop"
 
         pvm._pve_actions_stop()
 
         assert pvm.pve_task == "UPID:stop"
 
-    def test_stop_resource_exception(self, monkeypatch, db_session, system_user):
+    def test_stop_resource_exception(
+        self, monkeypatch, db_session, system_user
+    ):
         """_pve_actions_stop sets pve_task_success on ResourceException."""
-        pvm, _, _ = self._setup_pvm_with_vm(monkeypatch, db_session, system_user)
+        pvm, _, _ = self._setup_pvm_with_vm(
+            monkeypatch, db_session, system_user
+        )
         pvm.proxmox.nodes.return_value.qemu.return_value.status.stop.post.side_effect = ResourceException(
             500, "already stopped", ""
         )
@@ -743,7 +791,9 @@ class TestPveActions:
 
     def test_reboot_success(self, monkeypatch, db_session, system_user):
         """_pve_actions_reboot stores pve_task on success."""
-        pvm, _, _ = self._setup_pvm_with_vm(monkeypatch, db_session, system_user)
+        pvm, _, _ = self._setup_pvm_with_vm(
+            monkeypatch, db_session, system_user
+        )
         pvm.proxmox.nodes.return_value.qemu.return_value.status.reboot.post.return_value = "UPID:reboot"
 
         pvm._pve_actions_reboot()
@@ -765,7 +815,9 @@ class TestPveActions:
 
     def test_shutdown_success(self, monkeypatch, db_session, system_user):
         """_pve_actions_shutdown stores pve_task on success."""
-        pvm, _, _ = self._setup_pvm_with_vm(monkeypatch, db_session, system_user)
+        pvm, _, _ = self._setup_pvm_with_vm(
+            monkeypatch, db_session, system_user
+        )
         pvm.proxmox.nodes.return_value.qemu.return_value.status.shutdown.post.return_value = "UPID:shutdown"
 
         pvm._pve_actions_shutdown()
@@ -862,7 +914,9 @@ class TestPveHa:
 
     def _setup_pvm_with_vm(self, monkeypatch, db_session, system_user):
         vm = _make_vm(db_session, system_user, proxmoxId=100)
-        pvm, mock_crud, _ = _make_pvm(monkeypatch, db_session=db_session, vm_id=vm.id)
+        pvm, mock_crud, _ = _make_pvm(
+            monkeypatch, db_session=db_session, vm_id=vm.id
+        )
         pvm.db = db_session
         pvm.kvs_vm = vm
         pvm.proxmox = MagicMock()
@@ -896,7 +950,9 @@ class TestPveHa:
 
         pvm.proxmox.cluster.ha.resources.post.assert_called_once()
 
-    def test_ha_remove_resource_exception(self, monkeypatch, db_session, system_user):
+    def test_ha_remove_resource_exception(
+        self, monkeypatch, db_session, system_user
+    ):
         """_pve_ha_remove handles ResourceException gracefully."""
         pvm, _ = self._setup_pvm_with_vm(monkeypatch, db_session, system_user)
         pvm.proxmox.cluster.ha.resources.return_value.delete.side_effect = (
@@ -922,25 +978,29 @@ class TestHighLevelWorkflows:
         tpl = _make_template(db_session, system_user, proxmoxId=9000)
         _, st = _make_task_and_subtask(db_session, system_user)
         vm = _make_vm(
-            db_session, system_user, template=tpl.id, proxmoxId=None, status="pending"
+            db_session,
+            system_user,
+            template=tpl.id,
+            proxmoxId=None,
+            status="pending",
         )
 
-        pvm, mock_crud, mock_cluster = _make_pvm(
+        pvm, mock_crud, _mock_cluster = _make_pvm(
             monkeypatch, db_session=db_session, task_id=st.id, vm_id=vm.id
         )
         # Mock _pve_clone_template to set pve_task
         pvm.proxmox = MagicMock()
-        pvm.proxmox.nodes.return_value.qemu.return_value.clone.post.return_value = (
-            "UPID:clone"
-        )
-        pvm.proxmox.nodes.return_value.qemu.return_value.config.get.side_effect = (
-            ResourceException(404, "not found", "")
+        pvm.proxmox.nodes.return_value.qemu.return_value.clone.post.return_value = "UPID:clone"
+        pvm.proxmox.nodes.return_value.qemu.return_value.config.get.side_effect = ResourceException(
+            404, "not found", ""
         )
         # Mock tag merge
         monkeypatch.setattr(
             "pve.virtual_machines.CRUDTag",
             MagicMock(
-                return_value=MagicMock(_convert_kvs_to_pve=MagicMock(return_value=[]))
+                return_value=MagicMock(
+                    _convert_kvs_to_pve=MagicMock(return_value=[])
+                )
             ),
         )
         monkeypatch.setattr("pve.virtual_machines.CRUDChangelog", MagicMock())
@@ -960,7 +1020,9 @@ class TestHighLevelWorkflows:
         mock_crud.worker_process_success.assert_called_once()
 
     @pytest.mark.anyio
-    async def test_delete_prevent_delete(self, monkeypatch, db_session, system_user):
+    async def test_delete_prevent_delete(
+        self, monkeypatch, db_session, system_user
+    ):
         """delete() returns failure when prevent_delete is True."""
         tpl = _make_template(db_session, system_user)
         _, st = _make_task_and_subtask(db_session, system_user)
@@ -1041,7 +1103,9 @@ class TestHighLevelWorkflows:
 # ===========================================================================
 
 
-def _make_event(db_session, system_user, event_statuses, sample_course, slug="evt001"):
+def _make_event(
+    db_session, system_user, event_statuses, sample_course, slug="evt001"
+):
     """Insert an Event row into the test DB."""
     from models import Event
 
@@ -1076,7 +1140,9 @@ def _b64(val):
     return base64.b64encode(str(val).encode()).decode()
 
 
-def _setup_pvm_for_smbios(monkeypatch, db_session, vm, pve_smbios1=f"uuid={PVE_UUID}"):
+def _setup_pvm_for_smbios(
+    monkeypatch, db_session, vm, pve_smbios1=f"uuid={PVE_UUID}"
+):
     """Create a PVM instance with mocked PVE config for SMBIOS tests."""
     pvm, mock_crud, mock_cluster = _make_pvm(
         monkeypatch, db_session=db_session, vm_id=vm.id
@@ -1095,12 +1161,21 @@ class TestBuildSmbios1String:
     """_build_smbios1_string builds the correct SMBIOS type 1 string."""
 
     def test_vm_with_event_uses_slug_as_family(
-        self, monkeypatch, db_session, system_user, event_statuses, sample_course
+        self,
+        monkeypatch,
+        db_session,
+        system_user,
+        event_statuses,
+        sample_course,
     ):
         """family field should contain the base64-encoded event slug."""
         tpl = _make_template(db_session, system_user)
         event = _make_event(
-            db_session, system_user, event_statuses, sample_course, slug="myslug"
+            db_session,
+            system_user,
+            event_statuses,
+            sample_course,
+            slug="myslug",
         )
         vm = _make_vm(db_session, system_user, template=tpl.id, event=event.id)
 
@@ -1123,7 +1198,9 @@ class TestBuildSmbios1String:
 
         assert f"family={_b64('event_slug=null')}" in result
 
-    def test_starts_with_base64_flag(self, monkeypatch, db_session, system_user):
+    def test_starts_with_base64_flag(
+        self, monkeypatch, db_session, system_user
+    ):
         """Result string must start with base64=1."""
         tpl = _make_template(db_session, system_user)
         vm = _make_vm(db_session, system_user, template=tpl.id)
@@ -1134,7 +1211,9 @@ class TestBuildSmbios1String:
 
         assert result.startswith("base64=1,")
 
-    def test_contains_all_smbios_fields(self, monkeypatch, db_session, system_user):
+    def test_contains_all_smbios_fields(
+        self, monkeypatch, db_session, system_user
+    ):
         """Result string must contain all six SMBIOS fields plus uuid."""
         tpl = _make_template(db_session, system_user)
         vm = _make_vm(db_session, system_user, template=tpl.id)
@@ -1154,7 +1233,9 @@ class TestBuildSmbios1String:
         ):
             assert field in result
 
-    def test_manufacturer_is_project_title(self, monkeypatch, db_session, system_user):
+    def test_manufacturer_is_project_title(
+        self, monkeypatch, db_session, system_user
+    ):
         """manufacturer should be base64-encoded settings.project_title."""
         tpl = _make_template(db_session, system_user)
         vm = _make_vm(db_session, system_user, template=tpl.id)
@@ -1169,7 +1250,9 @@ class TestBuildSmbios1String:
     def test_product_is_vm_name(self, monkeypatch, db_session, system_user):
         """product should be base64-encoded VM name."""
         tpl = _make_template(db_session, system_user)
-        vm = _make_vm(db_session, system_user, template=tpl.id, name="my-special-vm")
+        vm = _make_vm(
+            db_session, system_user, template=tpl.id, name="my-special-vm"
+        )
 
         pvm, _, _ = _setup_pvm_for_smbios(monkeypatch, db_session, vm)
 
@@ -1199,7 +1282,9 @@ class TestBuildSmbios1String:
 
         assert f"serial={_b64(f'vm_id={vm.id}')}" in result
 
-    def test_sku_is_null_placeholder(self, monkeypatch, db_session, system_user):
+    def test_sku_is_null_placeholder(
+        self, monkeypatch, db_session, system_user
+    ):
         """sku should be base64-encoded 'null'."""
         tpl = _make_template(db_session, system_user)
         vm = _make_vm(db_session, system_user, template=tpl.id)
@@ -1210,12 +1295,16 @@ class TestBuildSmbios1String:
 
         assert f"sku={_b64('null')}" in result
 
-    def test_values_decode_to_original(self, monkeypatch, db_session, system_user):
+    def test_values_decode_to_original(
+        self, monkeypatch, db_session, system_user
+    ):
         """All base64-encoded values should decode back to originals."""
         import base64
 
         tpl = _make_template(db_session, system_user)
-        vm = _make_vm(db_session, system_user, template=tpl.id, name="test-vm-42")
+        vm = _make_vm(
+            db_session, system_user, template=tpl.id, name="test-vm-42"
+        )
 
         pvm, _, _ = _setup_pvm_for_smbios(monkeypatch, db_session, vm)
 
@@ -1229,11 +1318,16 @@ class TestBuildSmbios1String:
 
         assert base64.b64decode(pairs["product"]).decode() == "name=test-vm-42"
         assert base64.b64decode(pairs["serial"]).decode() == f"vm_id={vm.id}"
-        assert base64.b64decode(pairs["version"]).decode() == f"template_id={tpl.id}"
+        assert (
+            base64.b64decode(pairs["version"]).decode()
+            == f"template_id={tpl.id}"
+        )
         assert base64.b64decode(pairs["sku"]).decode() == "null"
         assert base64.b64decode(pairs["family"]).decode() == "event_slug=null"
 
-    def test_preserves_existing_pve_uuid(self, monkeypatch, db_session, system_user):
+    def test_preserves_existing_pve_uuid(
+        self, monkeypatch, db_session, system_user
+    ):
         """The PVE-assigned UUID must be preserved in the output."""
         tpl = _make_template(db_session, system_user)
         vm = _make_vm(db_session, system_user, template=tpl.id)
@@ -1244,12 +1338,16 @@ class TestBuildSmbios1String:
 
         assert f"uuid={PVE_UUID}" in result
 
-    def test_no_uuid_when_pve_has_none(self, monkeypatch, db_session, system_user):
+    def test_no_uuid_when_pve_has_none(
+        self, monkeypatch, db_session, system_user
+    ):
         """When PVE config has no smbios1 UUID, output should omit uuid=."""
         tpl = _make_template(db_session, system_user)
         vm = _make_vm(db_session, system_user, template=tpl.id)
 
-        pvm, _, _ = _setup_pvm_for_smbios(monkeypatch, db_session, vm, pve_smbios1="")
+        pvm, _, _ = _setup_pvm_for_smbios(
+            monkeypatch, db_session, vm, pve_smbios1=""
+        )
 
         result = pvm._build_smbios1_string()
 
@@ -1274,7 +1372,9 @@ class TestBuildSmbios1String:
 
         assert f"uuid={pve_uuid}" in result
 
-    def test_uuid_survives_pve_config_error(self, monkeypatch, db_session, system_user):
+    def test_uuid_survives_pve_config_error(
+        self, monkeypatch, db_session, system_user
+    ):
         """When PVE config read fails, UUID is omitted gracefully."""
         tpl = _make_template(db_session, system_user)
         vm = _make_vm(db_session, system_user, template=tpl.id)
@@ -1286,8 +1386,8 @@ class TestBuildSmbios1String:
         pvm.kvs_vm = vm
         pvm.proxmox = mock_cluster.proxmox
         # Simulate PVE config read failure
-        pvm.proxmox.nodes.return_value.qemu.return_value.config.get.side_effect = (
-            Exception("PVE unreachable")
+        pvm.proxmox.nodes.return_value.qemu.return_value.config.get.side_effect = Exception(
+            "PVE unreachable"
         )
 
         result = pvm._build_smbios1_string()
@@ -1297,7 +1397,9 @@ class TestBuildSmbios1String:
         assert "uuid=" not in result
         assert "manufacturer=" in result
 
-    def test_pve_update_passes_smbios1(self, monkeypatch, db_session, system_user):
+    def test_pve_update_passes_smbios1(
+        self, monkeypatch, db_session, system_user
+    ):
         """_pve_update should pass smbios1 to Proxmox config.put()."""
         tpl = _make_template(db_session, system_user)
         _, st = _make_task_and_subtask(db_session, system_user)

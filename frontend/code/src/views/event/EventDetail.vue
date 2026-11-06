@@ -76,6 +76,7 @@ import {
 import { SearchOperators } from '@/components/Tables/searchOperators'
 import TableChangelogs from '@/components/Tables/TableChangelogs.vue'
 import TablePermissions from '@/components/Tables/TablePermissions.vue'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import backend from '@/services'
 import { useMainStore } from '@/stores/main'
@@ -545,7 +546,45 @@ async function cloneEvent(event) {
   }
 }
 
+const BLOCKING_VMS_LIMIT = 5
+const blockingVms = ref([])
+const blockingVmsTotal = ref(0)
+
+async function openDeleteEventModal(eventObj) {
+  blockingVms.value = []
+  blockingVmsTotal.value = 0
+  backend.beginSilent()
+  try {
+    const result = await backend.events.getVMs(eventObj.id, {
+      page: 1,
+      limit: BLOCKING_VMS_LIMIT,
+    })
+    blockingVms.value = result?.items ?? []
+    blockingVmsTotal.value =
+      result?.pageDetails?.totalCount ?? blockingVms.value.length
+  } catch {
+    // Fail open: the backend 409 pre-check still blocks the delete
+  } finally {
+    backend.endSilent()
+  }
+  modals.deleteEvents.value = true
+}
+
+const blockingVmRows = computed(() => {
+  const items = blockingVms.value.map((vm) => ({
+    label: vm.name ?? vm.id,
+  }))
+  const more = blockingVmsTotal.value - blockingVms.value.length
+  if (more > 0) {
+    items.push({
+      label: t('views.events.delete.moreVms', { count: more }, more),
+    })
+  }
+  return items
+})
+
 async function deleteEvent(eventId) {
+  backend.beginSilent()
   try {
     await backend.events.delete(eventId)
     router.push({ path: `/events` })
@@ -553,10 +592,21 @@ async function deleteEvent(eventId) {
       t('common.deleteSuccess', { entity: t('objectTypes.event.singular') }),
     )
   } catch (error) {
-    toast.error(
-      `${t('common.deleteError', { entity: t('objectTypes.event.singular') })}\n${error?.response?.data?.detail}`,
-      { timeout: 8400 },
-    )
+    const errorCode = error?.response?.data?.error_code
+    if (
+      errorCode === 'OBJECT_IN_USE' ||
+      errorCode === 'OBJECT_DELETE_INTEGRITY_ERROR'
+    ) {
+      toast.error(t('views.events.delete.blockedError'), { timeout: 8400 })
+    } else {
+      const detail = String(error?.response?.data?.detail || '')
+      toast.error(
+        `${t('common.deleteError', { entity: t('objectTypes.event.singular') })}${detail ? '\n' + detail : ''}`,
+        { timeout: 8400 },
+      )
+    }
+  } finally {
+    backend.endSilent()
   }
 }
 
@@ -1518,6 +1568,7 @@ watch(
       <FormControl
         v-model="clonedEvent.name"
         :icon="mdiRename"
+        :maxlength="FIELD_LIMITS.event.name"
         :placeholder="$t('views.events.form.namePlaceholder')"
         required
       />
@@ -1532,7 +1583,7 @@ watch(
         v-model="clonedEvent.slug"
         :icon="mdiLabel"
         :validate="(val) => validateEventSlug(val)"
-        maxlength="8"
+        :maxlength="FIELD_LIMITS.event.slug"
         :placeholder="$t('views.events.form.slugPlaceholder')"
         required
       />
@@ -1564,6 +1615,19 @@ watch(
     v-model="modals.deleteEvents.value"
     :name="event.name"
     :checkvalue="event.name"
+    :blocked="blockingVmsTotal > 0"
+    :warning="
+      blockingVmsTotal > 0
+        ? $t(
+            'views.events.delete.relatedWarning',
+            { count: blockingVmsTotal },
+            blockingVmsTotal,
+          )
+        : null
+    "
+    :related-items="blockingVmRows"
+    :related-label="$t('views.events.delete.relatedLabel')"
+    :related-count="blockingVmsTotal"
     @form-submitted="deleteEvent(event.id)"
   />
 
@@ -1774,7 +1838,7 @@ watch(
             rounded-full
             small
             :disabled="eventDeleteDisabled"
-            @click="showModal('deleteEvents', event.id)"
+            @click="openDeleteEventModal(event)"
           />
         </BaseButtons>
       </SectionTitleLineWithButton>
@@ -1797,7 +1861,7 @@ watch(
                 <FormControl
                   v-model="event.name"
                   :icon="mdiRename"
-                  maxlength="25"
+                  :maxlength="FIELD_LIMITS.event.name"
                   disabled
                 />
               </FormField>
@@ -1810,7 +1874,7 @@ watch(
                 <FormControl
                   v-model="event.slug"
                   :icon="mdiLabel"
-                  maxlength="8"
+                  :maxlength="FIELD_LIMITS.event.slug"
                   disabled
                 />
               </FormField>

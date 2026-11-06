@@ -7,6 +7,7 @@ from controllers.templates import *
 from controllers.virtual_machines import *
 from core import dependencies
 from core.exceptions import DuplicateFieldException, PermissionDenied
+from core.responses import CRUD_RESPONSES
 from models.os import OS as OSModel
 from models.templates import Template as TemplateModel
 from models.virtual_machines import VirtualMachine as VirtualMachineModel
@@ -17,7 +18,7 @@ from schemas.virtual_machines import VirtualMachineList
 router = APIRouter(
     prefix="/os",
     tags=["os"],
-    responses={404: {"detail": "Not found"}},
+    responses=CRUD_RESPONSES,
 )
 
 
@@ -29,6 +30,7 @@ router = APIRouter(
     operation_id="os_create",
     summary="Create Operating System",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `os_create`",
 )
 def create_operating_system(
     *,
@@ -62,6 +64,7 @@ def create_operating_system(
     operation_id="os_read_all",
     summary="Get Operating Systems",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `os_read`",
 )
 def get_operating_systems(
     request: Request,
@@ -106,6 +109,7 @@ def get_operating_systems(
     operation_id="os_read_one",
     summary="Get Operating System",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `os_read`",
 )
 def get_operating_system(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -126,6 +130,7 @@ def get_operating_system(
     operation_id="os_update",
     summary="Update Operating System",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `os_update`",
 )
 def update_operating_system(
     *,
@@ -156,6 +161,7 @@ def update_operating_system(
     operation_id="os_delete",
     summary="Delete Operating System",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `os_delete`",
 )
 def delete_operating_system(
     request: Request, id: UUID4, db: Session = Depends(dependencies.get_db)
@@ -176,6 +182,7 @@ def delete_operating_system(
     operation_id="os_templates_read_all",
     summary="Get all Templates with OS",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `os_read`",
 )
 def get_operating_system_template(
     request: Request,
@@ -225,6 +232,7 @@ def get_operating_system_template(
     operation_id="os_vms_read_all",
     summary="Get all Virtual Machines with OS",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `os_read`",
 )
 def get_operating_system_vms(
     request: Request,
@@ -274,6 +282,7 @@ def get_operating_system_vms(
     operation_id="os_documents_update",
     summary="Add documents to OS",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `os_update`",
 )
 def update_os_documents(
     *,
@@ -300,6 +309,7 @@ def update_os_documents(
     operation_id="os_documents_set",
     summary="Set documents for OS",
     dependencies=[Depends(dependencies.get_current_user)],
+    description="**Required permission:** `os_update`",
 )
 def set_os_documents(
     *,

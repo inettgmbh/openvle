@@ -38,13 +38,15 @@ def sample_user(db_session, system_user):
 class TestCreateUser:
     """POST /users/ -- create a new user."""
 
-    def test_create_returns_201(self, client, auth_headers, mock_permission_allow):
+    def test_create_returns_201(
+        self, client, auth_headers, mock_permission_allow
+    ):
         payload = {
             "username": f"newuser_{uuid.uuid4().hex[:8]}",
             "email": f"newuser_{uuid.uuid4().hex[:8]}@example.com",
             "name": "New User",
-            "password": "TestPassword123",
-            "password_repeat": "TestPassword123",
+            "password": "TestPassword123!!",
+            "password_repeat": "TestPassword123!!",
         }
         resp = client.post(f"{API}/users/", json=payload, headers=auth_headers)
         assert resp.status_code == 201
@@ -52,7 +54,9 @@ class TestCreateUser:
         assert data["name"] == "New User"
         assert "id" in data
         leaked = SENSITIVE_USER_FIELDS & data.keys()
-        assert not leaked, f"Sensitive fields leaked in POST /users/ response: {leaked}"
+        assert not leaked, (
+            f"Sensitive fields leaked in POST /users/ response: {leaked}"
+        )
 
     def test_create_unauthenticated_returns_401(self, client):
         payload = {
@@ -117,7 +121,9 @@ class TestGetUsers:
         items = resp.json()["items"]
         assert len(items) >= 1
         for item in items:
-            assert "user_type" in item, f"user_type missing for user {item.get('id')}"
+            assert "user_type" in item, (
+                f"user_type missing for user {item.get('id')}"
+            )
             assert item["user_type"] in ("internal", "external")
 
     def test_no_sensitive_fields_in_list(
@@ -304,7 +310,9 @@ class TestGetUsersSearch:
                 },
                 headers=auth_headers,
             )
-            assert resp.status_code == 200, f"sort_by={field} should be accepted"
+            assert resp.status_code == 200, (
+                f"sort_by={field} should be accepted"
+            )
 
 
 # ------------------------------------------------------------------
@@ -337,7 +345,9 @@ class TestGetUserById:
         resp = client.get(f"{API}/users/{sample_user.id}", headers=auth_headers)
         assert resp.status_code == 200
         data = resp.json()
-        assert "user_type" in data, "user_type field missing from GET /users/{id}"
+        assert "user_type" in data, (
+            "user_type field missing from GET /users/{id}"
+        )
         assert data["user_type"] == "internal"
 
     def test_no_sensitive_fields_in_response(
@@ -356,7 +366,9 @@ class TestGetUserById:
             f"Sensitive fields leaked in GET /users/{{id}} response: {leaked}"
         )
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/users/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404
@@ -366,7 +378,9 @@ class TestGetUserById:
         resp = client.get(f"{API}/users/{fake_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_user):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_user
+    ):
         """Without mock_permission_allow, users_read is denied."""
         resp = client.get(f"{API}/users/{sample_user.id}", headers=auth_headers)
         assert resp.status_code == 403
@@ -446,7 +460,9 @@ class TestDeleteUser:
         mock_redis_queues,
         sample_user,
     ):
-        resp = client.delete(f"{API}/users/{sample_user.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/users/{sample_user.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
 
     def test_delete_not_found_returns_404(
@@ -465,7 +481,9 @@ class TestDeleteUser:
         self, client, auth_headers, sample_user
     ):
         """Without mock_permission_allow, users_delete is denied."""
-        resp = client.delete(f"{API}/users/{sample_user.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/users/{sample_user.id}", headers=auth_headers
+        )
         assert resp.status_code == 403
 
 
@@ -514,7 +532,9 @@ class TestDeletePreview:
         for field in list_fields:
             assert field in data, f"missing list field '{field}'"
             assert "items" in data[field], f"'{field}' missing 'items' wrapper"
-            assert "truncated" in data[field], f"'{field}' missing 'truncated' wrapper"
+            assert "truncated" in data[field], (
+                f"'{field}' missing 'truncated' wrapper"
+            )
 
     def test_delete_preview_stats_shape(
         self,
@@ -585,8 +605,8 @@ class TestSetPassword:
         sample_user,
     ):
         payload = {
-            "password_new": "NewPassword456",
-            "password_new_repeat": "NewPassword456",
+            "password_new": "SecurePass12!!",
+            "password_new_repeat": "SecurePass12!!",
         }
         resp = client.post(
             f"{API}/users/{sample_user.id}/password",

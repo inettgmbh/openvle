@@ -4,7 +4,6 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-
 from core.core_utils import (
     convert_to_slug,
     db_save,
@@ -175,7 +174,9 @@ class TestGetSystemUser:
 
 
 class TestRequestUserValidation:
-    def test_returns_request_user_id(self, db_session, mock_request, active_user):
+    def test_returns_request_user_id(
+        self, db_session, mock_request, active_user
+    ):
         result = request_user_validation(db_session, mock_request)
         assert result == active_user.id
 

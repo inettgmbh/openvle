@@ -3,7 +3,6 @@
 import uuid
 
 import pytest
-
 from core.exceptions import BadRequestError, InvalidFieldValue
 from schemas.object_permissions import (
     FORBIDDEN_COMBINATIONS,

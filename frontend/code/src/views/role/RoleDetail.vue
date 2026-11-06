@@ -43,6 +43,7 @@ import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import { userSearchBarFields } from '@/components/Tables/searchBarFieldConfigs'
 import TableChangelogs from '@/components/Tables/TableChangelogs.vue'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import backend from '@/services'
 import { useMainStore } from '@/stores/main'
@@ -610,6 +611,7 @@ watch(
       <FormControl
         v-model="clonedRole.name"
         :icon="mdiRename"
+        :maxlength="FIELD_LIMITS.role.name"
         :placeholder="$t('views.roles.form.namePlaceholder')"
         required
       />

@@ -129,7 +129,9 @@ class TestGetOperatingSystems:
 class TestGetOSById:
     """GET /os/{id} -- get single operating system."""
 
-    def test_returns_os(self, client, auth_headers, mock_permission_allow, sample_os):
+    def test_returns_os(
+        self, client, auth_headers, mock_permission_allow, sample_os
+    ):
         resp = client.get(f"{API}/os/{sample_os.id}", headers=auth_headers)
         assert resp.status_code == 200
         data = resp.json()
@@ -137,7 +139,9 @@ class TestGetOSById:
         assert data["name"] == sample_os.name
         assert data["key"] == sample_os.key
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/os/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404
@@ -147,7 +151,9 @@ class TestGetOSById:
         resp = client.get(f"{API}/os/{fake_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_os):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_os
+    ):
         """Without mock_permission_allow, os_read is denied."""
         resp = client.get(f"{API}/os/{sample_os.id}", headers=auth_headers)
         assert resp.status_code == 403

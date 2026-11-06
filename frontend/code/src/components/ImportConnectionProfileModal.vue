@@ -20,6 +20,7 @@ import FormControl from '@/components/FormControl.vue'
 import FormField from '@/components/FormField.vue'
 import SearchControl from '@/components/SearchControl.vue'
 import { useConnectionForm } from '@/composables/useConnectionForm'
+import { FIELD_LIMITS } from '@/config/fieldLimits'
 import backend from '@/services'
 import { useMainStore } from '@/stores/main'
 
@@ -539,6 +540,7 @@ const submitDisabled = computed(
           <FormControl
             v-model="formData.username"
             :icon="mdiAccountBox"
+            :maxlength="FIELD_LIMITS.connectionprofile.username"
             :placeholder="$t('views.connections.clone.exampleUsername')"
             :disabled="currentStep < 3"
             :validate="validateUsername"
@@ -554,6 +556,7 @@ const submitDisabled = computed(
             v-model="formData.password"
             :icon="mdiKey"
             type="password"
+            :maxlength="FIELD_LIMITS.connectionprofile.password"
             :placeholder="$t('views.connections.clone.keepSourcePassword')"
             :disabled="currentStep < 3"
           />

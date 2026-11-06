@@ -139,7 +139,9 @@ class TestGetTagById:
         assert data["value"] == "prod"
         assert data["objectType"] == "Course"
 
-    def test_not_found_returns_404(self, client, auth_headers, mock_permission_allow):
+    def test_not_found_returns_404(
+        self, client, auth_headers, mock_permission_allow
+    ):
         fake_id = uuid.uuid4()
         resp = client.get(f"{API}/tags/{fake_id}", headers=auth_headers)
         assert resp.status_code == 404
@@ -149,7 +151,9 @@ class TestGetTagById:
         resp = client.get(f"{API}/tags/{fake_id}")
         assert resp.status_code in (401, 403)
 
-    def test_permission_denied_returns_403(self, client, auth_headers, sample_tag):
+    def test_permission_denied_returns_403(
+        self, client, auth_headers, sample_tag
+    ):
         """Without mock_permission_allow, courses_read is denied for the tagged object."""
         resp = client.get(f"{API}/tags/{sample_tag.id}", headers=auth_headers)
         assert resp.status_code == 403
@@ -166,7 +170,9 @@ class TestDeleteTag:
         mock_redis_queues,
         sample_tag,
     ):
-        resp = client.delete(f"{API}/tags/{sample_tag.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/tags/{sample_tag.id}", headers=auth_headers
+        )
         assert resp.status_code == 200
 
     def test_delete_not_found_returns_404(
@@ -185,7 +191,9 @@ class TestDeleteTag:
         self, client, auth_headers, sample_tag
     ):
         """Without mock_permission_allow, courses_update is denied for the tagged object."""
-        resp = client.delete(f"{API}/tags/{sample_tag.id}", headers=auth_headers)
+        resp = client.delete(
+            f"{API}/tags/{sample_tag.id}", headers=auth_headers
+        )
         assert resp.status_code == 403
 
 

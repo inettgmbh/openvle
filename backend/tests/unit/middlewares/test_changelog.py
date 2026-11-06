@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock
 
 import pytest
-
 from models import Vendor
 
 
@@ -43,7 +42,9 @@ class TestChangelogMiddleware:
     async def test_skips_get_request(self, monkeypatch):
         """GET method results in no changelog being created."""
         mock_session = MagicMock()
-        monkeypatch.setattr("middlewares.changelog.SessionLocal", lambda: mock_session)
+        monkeypatch.setattr(
+            "middlewares.changelog.SessionLocal", lambda: mock_session
+        )
 
         middleware = self._make_middleware()
         request = self._make_mock_request(method="GET")
@@ -56,7 +57,9 @@ class TestChangelogMiddleware:
     async def test_skips_delete_request(self, monkeypatch):
         """DELETE method results in no changelog being created."""
         mock_session = MagicMock()
-        monkeypatch.setattr("middlewares.changelog.SessionLocal", lambda: mock_session)
+        monkeypatch.setattr(
+            "middlewares.changelog.SessionLocal", lambda: mock_session
+        )
 
         middleware = self._make_middleware()
         request = self._make_mock_request(method="DELETE")
@@ -69,7 +72,9 @@ class TestChangelogMiddleware:
     async def test_skips_create_no_id(self, monkeypatch):
         """POST without id in path_params results in no changelog."""
         mock_session = MagicMock()
-        monkeypatch.setattr("middlewares.changelog.SessionLocal", lambda: mock_session)
+        monkeypatch.setattr(
+            "middlewares.changelog.SessionLocal", lambda: mock_session
+        )
 
         middleware = self._make_middleware()
         request = self._make_mock_request(
@@ -100,7 +105,9 @@ class TestChangelogMiddleware:
         db_session.add(vendor)
         db_session.flush()
 
-        monkeypatch.setattr("middlewares.changelog.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "middlewares.changelog.SessionLocal", lambda: db_session
+        )
 
         middleware = self._make_middleware()
         request = self._make_mock_request(
@@ -125,7 +132,9 @@ class TestChangelogMiddleware:
     async def test_skips_password_changes(self, monkeypatch):
         """Request body with hashed_password results in no changelog."""
         mock_session = MagicMock()
-        monkeypatch.setattr("middlewares.changelog.SessionLocal", lambda: mock_session)
+        monkeypatch.setattr(
+            "middlewares.changelog.SessionLocal", lambda: mock_session
+        )
 
         middleware = self._make_middleware()
         request = self._make_mock_request(
@@ -139,7 +148,9 @@ class TestChangelogMiddleware:
         mock_session.add.assert_not_called()
 
     @pytest.mark.anyio
-    async def test_skips_when_no_changes(self, monkeypatch, db_session, system_user):
+    async def test_skips_when_no_changes(
+        self, monkeypatch, db_session, system_user
+    ):
         """Same values result in no changelog being created."""
         now = datetime.now(timezone.utc)
         vendor = Vendor(
@@ -154,7 +165,9 @@ class TestChangelogMiddleware:
         db_session.add(vendor)
         db_session.flush()
 
-        monkeypatch.setattr("middlewares.changelog.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "middlewares.changelog.SessionLocal", lambda: db_session
+        )
 
         middleware = self._make_middleware()
         request = self._make_mock_request(
@@ -169,12 +182,16 @@ class TestChangelogMiddleware:
         from models.changelog import Changelog
 
         changelogs = (
-            db_session.query(Changelog).filter(Changelog.objectId == vendor.id).all()
+            db_session.query(Changelog)
+            .filter(Changelog.objectId == vendor.id)
+            .all()
         )
         assert len(changelogs) == 0
 
     @pytest.mark.anyio
-    async def test_handles_attribute_error(self, monkeypatch, db_session, system_user):
+    async def test_handles_attribute_error(
+        self, monkeypatch, db_session, system_user
+    ):
         """Non-existent attribute in request body does not crash."""
         now = datetime.now(timezone.utc)
         vendor = Vendor(
@@ -189,7 +206,9 @@ class TestChangelogMiddleware:
         db_session.add(vendor)
         db_session.flush()
 
-        monkeypatch.setattr("middlewares.changelog.SessionLocal", lambda: db_session)
+        monkeypatch.setattr(
+            "middlewares.changelog.SessionLocal", lambda: db_session
+        )
 
         middleware = self._make_middleware()
         request = self._make_mock_request(

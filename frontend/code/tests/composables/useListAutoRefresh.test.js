@@ -1,3 +1,5 @@
+import { useLocalPinia } from '../setup'
+
 import { createTestingPinia } from '@pinia/testing'
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -9,6 +11,10 @@ import {
   useUserSettingsStore,
   VIEW_KIND,
 } from '@/stores/userSettings'
+
+// This file installs its own pinia (stubActions: false) — opt out of the
+// shared global pinia to avoid a duplicate pinia provide.
+useLocalPinia()
 
 function withSetup(fn) {
   let result

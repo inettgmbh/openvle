@@ -43,6 +43,7 @@
     "label": "Etiqueta",
     "loading": "Cargando...",
     "manual": "Manual",
+    "maxChars": "Máximo {max} caracteres",
     "memory": "Memoria",
     "name": "Nombre",
     "next": "Siguiente",
@@ -146,7 +147,6 @@
       "addTag": "Agregar etiqueta",
       "tagExample": "departamento: 3",
       "formatHelp": "Vista previa",
-      "maxChars": "Máximo {max} caracteres",
       "nameRequired": "El nombre de la etiqueta es obligatorio",
       "preview": "Vista previa",
       "tagAdded": "Etiqueta agregada",
@@ -254,6 +254,7 @@
     "deleteModal": {
       "confirmAction": "Confirmar acción",
       "confirmPrompt": "Ingrese para confirmar:",
+      "tooltipBlocked": "No se puede eliminar mientras existan objetos relacionados",
       "tooltipBothMissing": "Ingrese el texto de confirmación y active la confirmación adicional",
       "tooltipExtraMissing": "Active la confirmación adicional arriba",
       "tooltipNameMissing": "Ingrese el texto de confirmación para eliminar",
@@ -1261,6 +1262,13 @@
       }
     },
     "courses": {
+      "delete": {
+        "blockedError": "El curso no se puede eliminar porque todavía tiene eventos asignados. Elimine primero los eventos asignados.",
+        "cascadeInfo": "Al eliminar el curso también se eliminan automáticamente sus changelogs, permisos de objeto y etiquetas. Las plantillas de VM asignadas se conservan; solo se elimina la asignación.",
+        "moreEvents": "… y un evento más | … y {count} eventos más",
+        "relatedLabel": "Eventos asignados:",
+        "relatedWarning": "Este curso todavía tiene un evento asignado. El curso no se puede eliminar mientras exista. | Este curso todavía tiene {count} eventos asignados. El curso no se puede eliminar mientras existan."
+      },
       "detail": {
         "assignTemplate": "Agregar plantilla de VM",
         "cloneNameLabel": "Nombre del nuevo curso",
@@ -1309,6 +1317,12 @@
       "create": {
         "errorDuplicate": "Este nombre o slug ya está en uso. Elija uno diferente.",
         "errorInvalidSlug": "Nombre corto (slug) no válido. Permitido: 4–8 caracteres (a-z, 0-9, -, _)"
+      },
+      "delete": {
+        "blockedError": "El evento no se puede eliminar porque todavía tiene VMs asignadas. Desactívelas primero.",
+        "moreVms": "… y una VM más | … y {count} VMs más",
+        "relatedLabel": "VMs asignadas:",
+        "relatedWarning": "Este evento todavía tiene una VM asignada. El evento no se puede eliminar mientras exista. | Este evento todavía tiene {count} VMs asignadas. El evento no se puede eliminar mientras existan."
       },
       "detail": {
         "actions": {
@@ -1902,6 +1916,12 @@
         "vmMustBeStopped": "Las plantillas de VM solo se pueden crear a partir de máquinas virtuales que estén actualmente apagadas. Apague / detenga la VM primero.",
         "vmNotStopped": "La VM de origen no está en estado \"Detenida\" (estado actual: {status})."
       },
+      "delete": {
+        "blockedError": "La plantilla de VM no se puede eliminar porque todavía está en uso (VMs, cursos o eventos). Elimine primero las referencias.",
+        "moreItems": "… y un objeto más | … y {count} objetos más",
+        "relatedLabel": "Objetos vinculados:",
+        "relatedWarning": "Esta plantilla de VM todavía es utilizada por un objeto. No se puede eliminar mientras exista. | Esta plantilla de VM todavía es utilizada por {count} objetos. No se puede eliminar mientras existan."
+      },
       "detail": {
         "applicationAdded": "Aplicación agregada",
         "applicationRemoved": "Aplicación eliminada de la plantilla de VM",
@@ -2042,8 +2062,13 @@
       "import": {
         "email": "Correo electrónico",
         "firstname": "Nombre",
+        "fullname": "Nombre completo",
         "invalidEmail": "Correo electrónico no válido",
         "lastname": "Apellido",
+        "nameFormat": "Formato del nombre",
+        "nameFormatFull": "Nombre completo",
+        "nameFormatHint": "Elige si tu CSV contiene el nombre en una sola columna («Nombre completo») o separado en nombre y apellido. Cambiarlo reinicia una importación ya iniciada.",
+        "nameFormatSplit": "Nombre y apellido por separado",
         "unknownError": "Error desconocido",
         "username": "Nombre de usuario"
       },
@@ -2127,6 +2152,49 @@
         "customChart": "Gráfico personalizado",
         "disk": "Disco",
         "event": "Evento",
+        "ha": {
+          "actions": {
+            "configure": "Configurar HA",
+            "configureTooltip": "Configurar la alta disponibilidad (HA) de esta VM en Proxmox",
+            "noProxmoxTooltip": "La VM (aún) no existe en Proxmox"
+          },
+          "applyError": "No se pudo aplicar la configuración de HA para {name}",
+          "applySuccess": "La configuración de HA para {name} se está aplicando",
+          "fetchError": "No se pudo obtener el estado de HA, acción cancelada",
+          "modal": {
+            "enabledHelp": "Recuperación automática de la VM tras un fallo del nodo",
+            "enabledLabel": "Alta disponibilidad activa",
+            "limitTooltip": "Valores permitidos: de {min} a {max}",
+            "maxRelocateHelp": "Reubicaciones a otros nodos en caso de fallo (max_relocate)",
+            "maxRelocateLabel": "Máx. reubicaciones",
+            "maxRestartHelp": "Intentos de reinicio en caso de fallo (max_restart)",
+            "maxRestartLabel": "Máx. reinicios",
+            "removeWarning": "La configuración de HA se eliminará al confirmar. La VM ya no se reiniciará automáticamente tras un fallo del nodo.",
+            "stateHelp": "Estado objetivo deseado de la VM bajo gestión de HA",
+            "stateLabel": "Estado solicitado",
+            "stateTooltip": "Iniciada: la VM se ejecuta y se reinicia automáticamente tras un fallo del nodo. Detenida: la VM permanece apagada, pero sigue gestionada por HA.",
+            "stopWarning": "La VM está en ejecución y se detendrá inmediatamente al confirmar."
+          },
+          "removeError": "No se pudo eliminar la configuración de HA para {name}",
+          "removeSuccess": "La configuración de HA para {name} se está eliminando",
+          "specLabel": "Estado de HA",
+          "states": {
+            "disabled": "Desactivada",
+            "error": "Fallo",
+            "fence": "Fencing (aislamiento)",
+            "freeze": "Congelada",
+            "ignored": "No activada",
+            "migrate": "En migración",
+            "queued": "En cola",
+            "recovery": "Recuperación",
+            "relocate": "Reubicación",
+            "request_start": "Inicio solicitado",
+            "request_stop": "Parada solicitada",
+            "started": "Iniciada",
+            "stopped": "Detenida",
+            "unknown": "Desconocido"
+          }
+        },
         "ipv4Address": "Dirección IPv4",
         "ipv4UpdateError": "No se pudo actualizar la IPv4",
         "ipv4UpdateSuccess": "IPv4 actualizada",
